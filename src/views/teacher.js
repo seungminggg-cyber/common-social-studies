@@ -9,6 +9,7 @@ import { toast, copyText, safeUrl, youtubeId, clampNumber, ddayText, todayKey } 
 import { seedSampleData } from '../seed.js';
 import { dashboardView } from './dashboard.js';
 import { unitList } from '../lib/daily.js';
+import { reviewView, removeContent } from './review.js';
 
 const approved = () => S.t.users.filter((u) => u.status === 'approved');
 const pending = () => S.t.users.filter((u) => u.status !== 'approved');
@@ -491,13 +492,15 @@ export function teacherView() {
         ${tabBtn('dashboard', '현황판')}
         ${tabBtn('students', '학생·성적', waiting ? String(waiting) : '')}
         ${tabBtn('schools', '학교·영상·자료')}
-        ${tabBtn('content', '퀴즈·카드')}
+        ${tabBtn('content', '퀴즈·카드 추가')}
+        ${tabBtn('review', '문제 검토·수정')}
         ${tabBtn('settings', '설정·백업')}
       </div>
       ${tab === 'dashboard' ? dashboardView() : ''}
       ${tab === 'students' ? studentsTab() : ''}
       ${tab === 'schools' ? schoolsTab() : ''}
       ${tab === 'content' ? contentTab() : ''}
+      ${tab === 'review' ? reviewView() : ''}
       ${tab === 'settings' ? settingsTab() : ''}
     </div>
   `;
@@ -773,7 +776,7 @@ export const teacherActions = {
   },
   'del-quiz': async (el) => {
     if (!confirm('이 문제를 삭제할까요?')) return;
-    await deleteDoc(doc(db, 'quizzes', el.dataset.id));
+    await removeContent('quizzes', el.dataset.id);
   },
   'add-concept': async (form, e, data) => {
     const title = str(data, 'title');
@@ -793,7 +796,7 @@ export const teacherActions = {
   },
   'del-card': async (el) => {
     if (!confirm('이 카드를 삭제할까요?')) return;
-    await deleteDoc(doc(db, 'cards', el.dataset.id));
+    await removeContent('cards', el.dataset.id);
   },
 
   // 설정

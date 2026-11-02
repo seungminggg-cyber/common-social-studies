@@ -40,6 +40,7 @@ export async function syncPacks() {
   try {
     let added = 0;
     const ops = [];
+    const deletedByTeacher = new Set(S.config?.deletedPackItems || []);
     for (const pack of todo) {
       const base = Date.now();
       const wanted = { quizzes: new Set(), cards: new Set() };
@@ -47,16 +48,24 @@ export async function syncPacks() {
         ...pack.quizzes.map((q) => ['quizzes', q]),
         ...pack.cards.map((c) => ['cards', c]),
       ];
+      // 이 팩에서 이미 들어가 있는 문제들 (강사님이 고친 것은 그대로 둠)
+      const existing = {};
+      for (const col of ['quizzes', 'cards']) {
+        existing[col] = await getDocs(query(collection(db, col), where('pack', '==', pack.id)));
+      }
+      const edited = new Set(['quizzes', 'cards'].flatMap((col) => existing[col].docs.filter((d) => d.data().edited).map((d) => d.id)));
       items.forEach(([col, { key, ...data }], i) => {
         const id = `${pack.id}-${key}`;
         wanted[col].add(id);
+        if (edited.has(id) || deletedByTeacher.has(id)) return;
         ops.push((b) => b.set(doc(db, col, id), { ...data, pack: pack.id, createdAt: base + i }));
+        added += 1;
       });
-      added += items.length;
-      // 이전 버전에만 있던 문제 정리
+      // 새 버전에서 빠진 문제 정리 (강사님이 고친 문제는 남김)
       for (const col of ['quizzes', 'cards']) {
-        const old = await getDocs(query(collection(db, col), where('pack', '==', pack.id)));
-        old.docs.filter((d) => !wanted[col].has(d.id)).forEach((d) => ops.push((b) => b.delete(d.ref)));
+        existing[col].docs
+          .filter((d) => !wanted[col].has(d.id) && !d.data().edited)
+          .forEach((d) => ops.push((b) => b.delete(d.ref)));
       }
     }
 

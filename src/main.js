@@ -16,9 +16,10 @@ import { teacherView, teacherActions } from './views/teacher.js';
 import { dashboardActions } from './views/dashboard.js';
 import { installBanner, installActions, registerServiceWorker } from './install.js';
 import { syncPacks } from './packs.js';
+import { reviewActions } from './views/review.js';
 
 const actions = {
-  ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions, ...dashboardActions, ...installActions, ...homeActions,
+  ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions, ...dashboardActions, ...installActions, ...homeActions, ...reviewActions,
   tab: (el) => {
     S.ui.tab = el.dataset.tab;
     refresh();
