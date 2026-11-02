@@ -5,6 +5,7 @@ import { S, refresh, savePref, schoolName, teacherName } from '../store.js';
 import { html } from '../lib/html.js';
 import { ddayText, prettyDate, todayKey, parseDateKey } from '../lib/util.js';
 import { quoteOfToday } from '../quotes.js';
+import { todaysQuizzes } from '../lib/daily.js';
 
 function greeting() {
   const h = new Date().getHours();
@@ -61,8 +62,9 @@ function todoItem({ icon, color, title, detail, done, tab, sub }) {
 
 function todoCard() {
   const answers = S.today?.answers || {};
-  const total = S.quizzes.length;
-  const solved = S.quizzes.filter((q) => answers[q.id] !== undefined).length;
+  const daily = todaysQuizzes(S.quizzes);
+  const total = daily.length;
+  const solved = daily.filter((q) => answers[q.id] !== undefined).length;
   const videos = S.school.videos;
   const unwatched = videos.filter((v) => !S.school.summaries[v.id]).length;
   const items = Array.isArray(S.today?.items) ? S.today.items : [];

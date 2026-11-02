@@ -46,6 +46,8 @@ const MATERIALS = {
   gyesan: [{ title: '계산여고 기본권 유형 분류 핵심 요약표', tag: '암기필수' }],
 };
 
+// 예전 샘플 문제 (이전 교육과정 단원명). 지금은 새로 넣지 않고,
+// 문제 팩이 처음 들어갈 때 이미 들어 있던 샘플만 골라서 지우는 데 사용합니다.
 const QUIZZES = [
   {
     type: 'ox', unit: 'Ⅵ. 사회 정의와 불평등',
@@ -112,7 +114,7 @@ export async function seedSampleData() {
     teacherName: '승민T',
     noticeHeadline: '이번 주는 2학기 기말 대비 핵심 선지 정복 주간!',
     noticeSubtext: '등하교 시간 3분만 투자해서 O/X와 빈칸 퀴즈를 풀어보세요. 틀린 문제는 오답 노트에 자동으로 모입니다.',
-  });
+  }, { merge: true });
 
   SCHOOLS.forEach(({ id, ...data }) => {
     batch.set(doc(db, 'schools', id), data);
@@ -128,8 +130,13 @@ export async function seedSampleData() {
     createdAt: t++,
   });
 
-  QUIZZES.forEach((q) => batch.set(doc(collection(db, 'quizzes')), { ...q, createdAt: t++ }));
-  CARDS.forEach((c) => batch.set(doc(collection(db, 'cards')), { ...c, createdAt: t++ }));
+  // 퀴즈와 카드는 문제 팩(src/content)에서 자동으로 들어갑니다.
 
   await batch.commit();
 }
+
+// 예전 샘플인지 확인하는 데 쓰는 문장 목록
+export const LEGACY_SAMPLE_TEXTS = new Set([
+  ...QUIZZES.map((q) => q.question),
+  ...CARDS.map((c) => c.body || c.front),
+]);

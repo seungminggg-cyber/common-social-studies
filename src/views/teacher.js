@@ -8,6 +8,7 @@ import { html } from '../lib/html.js';
 import { toast, copyText, safeUrl, youtubeId, clampNumber, ddayText, todayKey } from '../lib/util.js';
 import { seedSampleData } from '../seed.js';
 import { dashboardView } from './dashboard.js';
+import { unitList } from '../lib/daily.js';
 
 const approved = () => S.t.users.filter((u) => u.status === 'approved');
 const pending = () => S.t.users.filter((u) => u.status !== 'approved');
@@ -334,18 +335,33 @@ function quizForms() {
   `;
 }
 
+function contentFilter() {
+  const units = unitList(S.quizzes, S.cards);
+  const f = S.ui.contentFilter || '';
+  return html`
+    <select class="input !py-1.5 !text-sm" data-change="content-filter" aria-label="단원 필터">
+      <option value="" ${!f ? 'selected' : ''}>전체 단원</option>
+      ${units.map((u) => html`<option value="${u}" ${u === f ? 'selected' : ''}>${u}</option>`)}
+    </select>`;
+}
+
+const byContentFilter = (x) => !S.ui.contentFilter || x.unit === S.ui.contentFilter;
+
 function quizList() {
+  const list = S.quizzes.filter(byContentFilter);
   return html`
     <section class="card space-y-3">
-      <h2 class="card-title">등록된 문제 <span class="text-slate-400 font-medium">${S.quizzes.length}</span></h2>
-      ${S.quizzes.length === 0 ? html`<div class="empty">문제가 없어요.</div>` : html`
+      <h2 class="card-title">등록된 문제 <span class="text-slate-400 font-medium">${list.length}</span></h2>
+      ${contentFilter()}
+      <p class="text-xs text-slate-500"><span class="chip bg-sky-50 text-sky-700">자동</span> 표시는 Claude가 만든 문제 팩에서 자동으로 들어온 문제예요.</p>
+      ${list.length === 0 ? html`<div class="empty">문제가 없어요.</div>` : html`
         <ul class="divide-y divide-slate-100 max-h-[640px] overflow-y-auto pr-1">
-          ${[...S.quizzes].reverse().map((q) => html`
+          ${[...list].reverse().map((q) => html`
             <li class="py-2.5 flex items-start gap-2 text-sm">
               <span class="chip shrink-0 ${q.type === 'ox' ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'}">${q.type === 'ox' ? 'O/X' : '빈칸'}</span>
               <div class="flex-1 min-w-0">
                 <p class="text-slate-800">${q.question}</p>
-                <p class="text-xs text-slate-500 mt-0.5">${q.unit} · 정답 <b>${q.answer}</b></p>
+                <p class="text-xs text-slate-500 mt-0.5">${q.pack ? html`<span class="chip bg-sky-50 text-sky-700 !py-0 mr-1">자동</span>` : ''}${q.unit} · 정답 <b>${q.answer}</b></p>
               </div>
               <button type="button" class="btn btn-ghost btn-sm shrink-0 hover:!text-rose-600" data-action="del-quiz" data-id="${q.id}" aria-label="삭제"><i class="fa-regular fa-trash-can"></i></button>
             </li>`)}
@@ -356,7 +372,7 @@ function quizList() {
 }
 
 function cardForms() {
-  const cards = S.cards;
+  const cards = S.cards.filter(byContentFilter);
   return html`
     <section class="card space-y-3">
       <h2 class="card-title">개념 비교 카드 추가</h2>
@@ -539,6 +555,10 @@ export const teacherActions = {
   'admin-tab': (el) => {
     S.ui.adminTab = el.dataset.tab;
     savePref('adminTab', S.ui.adminTab);
+    refresh();
+  },
+  'content-filter': (el) => {
+    S.ui.contentFilter = el.value;
     refresh();
   },
   'admin-filter': (el) => {

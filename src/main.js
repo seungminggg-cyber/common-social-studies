@@ -15,6 +15,7 @@ import { studyView, studyActions, printModal, addPomoCount } from './views/study
 import { teacherView, teacherActions } from './views/teacher.js';
 import { dashboardActions } from './views/dashboard.js';
 import { installBanner, installActions, registerServiceWorker } from './install.js';
+import { syncPacks } from './packs.js';
 
 const actions = {
   ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions, ...dashboardActions, ...installActions, ...homeActions,
@@ -104,6 +105,7 @@ function isField(el) {
 
 function render() {
   ensureWatches();
+  if (S.role === 'teacher') syncPacks();
   const markup = `<div id="app">${view()}</div>`;
   morphdom(root, markup, {
     onBeforeElUpdated(fromEl, toEl) {

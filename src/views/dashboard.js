@@ -101,7 +101,6 @@ function tile(label, value, sub, cls) {
 
 function activityCard(rows) {
   const dash = S.t.dash;
-  const total = S.quizzes.length;
   return html`
     <section class="card space-y-4">
       <div>
@@ -118,7 +117,7 @@ function activityCard(rows) {
                   <div class="flex gap-1">${dash.dayKeys.map((k) => html`<span class="w-5 text-center">${KOR_DAYS[parseDateKey(k).getDay()]}</span>`)}</div>
                 </th>
                 <th class="py-2 pr-3 font-medium">마지막 활동</th>
-                <th class="py-2 pr-3 font-medium text-right">오늘 퀴즈</th>
+                <th class="py-2 pr-3 font-medium text-right">오늘 푼 문제</th>
                 <th class="py-2 pr-3 font-medium text-right">주간 타이머</th>
                 <th class="py-2 pr-3 font-medium text-right">플래너 달성</th>
                 <th class="py-2 pr-3 font-medium text-right">오답 노트</th>
@@ -141,7 +140,7 @@ function activityCard(rows) {
                     <td class="py-2.5 pr-3 ${warn ? 'text-rose-600 font-semibold' : 'text-slate-600'}">
                       ${s.daysSince === null ? '7일 넘게 없음' : s.daysSince === 0 ? '오늘' : `${s.daysSince}일 전`}
                     </td>
-                    <td class="py-2.5 pr-3 text-right">${s.todayAnswers} / ${total}</td>
+                    <td class="py-2.5 pr-3 text-right">${s.todayAnswers}문제</td>
                     <td class="py-2.5 pr-3 text-right">${s.pomo}회</td>
                     <td class="py-2.5 pr-3 text-right">${s.planAvg === null ? '-' : `${s.planAvg}%`}</td>
                     <td class="py-2.5 pr-3 text-right">${s.weak}개</td>

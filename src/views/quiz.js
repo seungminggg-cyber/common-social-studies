@@ -2,19 +2,39 @@
 import { doc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase.js';
 import { S, refresh } from '../store.js';
-import { html, highlightBrackets } from '../lib/html.js';
+import { html, raw, highlightBrackets } from '../lib/html.js';
+import { todaysQuizzes, todaysCards, unitList, DAILY_OX, DAILY_BLANK } from '../lib/daily.js';
 import { isBlankCorrect, firstAnswer, toast } from '../lib/util.js';
 
 const isStudent = () => S.role === 'student';
 const answers = () => (isStudent() ? S.today?.answers || {} : S.ui.localAnswers);
 const retryCards = () => (isStudent() ? S.profile?.retryCards || [] : S.ui.localRetry);
 
+// 지금 보고 있는 문제 묶음: 오늘의 10문제 또는 선택한 단원 전체
+const filterValue = () => S.ui.quizFilter || 'today';
+function currentQuizzes() {
+  const f = filterValue();
+  return f === 'today' ? todaysQuizzes(S.quizzes) : S.quizzes.filter((q) => q.unit === f);
+}
+
+function filterSelect() {
+  const units = unitList(S.quizzes, S.cards);
+  const f = filterValue();
+  return html`
+    <select class="input !py-2 font-semibold" data-change="quiz-filter" aria-label="문제 범위">
+      <option value="today" ${f === 'today' ? 'selected' : ''}>오늘의 ${DAILY_OX + DAILY_BLANK}문제 (매일 바뀌어요)</option>
+      ${units.length ? html`<optgroup label="단원별로 전부 풀기">
+        ${units.map((u) => html`<option value="${u}" ${f === u ? 'selected' : ''}>${u} (${S.quizzes.filter((q) => q.unit === u).length}문제)</option>`)}
+      </optgroup>` : ''}
+    </select>`;
+}
+
 function isCorrect(q, choice) {
   return q.type === 'ox' ? choice === q.answer : isBlankCorrect(choice, q.answer);
 }
 
 function noticeBanner() {
-  const quizzes = S.quizzes;
+  const quizzes = currentQuizzes();
   const ans = answers();
   const solved = quizzes.filter((q) => ans[q.id] !== undefined).length;
   const pct = quizzes.length ? Math.round((solved / quizzes.length) * 100) : 0;
@@ -22,12 +42,12 @@ function noticeBanner() {
     <section class="rounded-2xl bg-gradient-to-br from-indigo-700 to-violet-700 p-5 sm:p-6 text-white">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="space-y-2 flex-1">
-          <h2 class="text-lg sm:text-xl font-bold">${solved >= quizzes.length && quizzes.length ? '오늘 퀴즈 완료! 대단해요' : '오늘도 3분 퀴즈로 시작해요'}</h2>
+          <h2 class="text-lg sm:text-xl font-bold">${solved >= quizzes.length && quizzes.length ? '모두 풀었어요! 대단해요' : filterValue() === 'today' ? '오늘도 3분 퀴즈로 시작해요' : '단원 전체 문제에 도전해요'}</h2>
           <div class="h-2 rounded-full bg-white/15 overflow-hidden max-w-sm"><div class="h-full rounded-full bg-amber-300 transition-all" style="width:${pct}%"></div></div>
         </div>
         <div class="flex shrink-0 rounded-xl bg-white/10 divide-x divide-white/15">
           <div class="px-4 py-3 text-center">
-            <p class="text-xs text-indigo-200">오늘 푼 문제</p>
+            <p class="text-xs text-indigo-200">${filterValue() === 'today' ? '오늘 푼 문제' : '이 단원 푼 문제'}</p>
             <p class="text-lg font-bold">${solved} / ${quizzes.length}</p>
           </div>
           <div class="px-4 py-3 text-center">
@@ -94,15 +114,17 @@ function blankItem(q, idx) {
 
 function quizCard() {
   const tab = S.ui.quizTab;
-  const ox = S.quizzes.filter((q) => q.type === 'ox');
-  const blank = S.quizzes.filter((q) => q.type === 'blank');
+  const list = currentQuizzes();
+  const ox = list.filter((q) => q.type === 'ox');
+  const blank = list.filter((q) => q.type === 'blank');
   const items = tab === 'ox' ? ox : blank;
   return html`
     <section class="card space-y-4 lg:col-span-7">
       <div class="flex items-center justify-between gap-2">
-        <h2 class="card-title"><i class="fa-solid fa-bolt text-amber-500"></i>오늘의 3분 퀴즈</h2>
+        <h2 class="card-title"><i class="fa-solid fa-bolt text-amber-500"></i>${filterValue() === 'today' ? '오늘의 3분 퀴즈' : '단원별 문제'}</h2>
         <button type="button" class="btn btn-ghost btn-sm" data-action="reset-quiz"><i class="fa-solid fa-rotate-right"></i>다시 풀기</button>
       </div>
+      ${filterSelect()}
       <div class="seg">
         <button type="button" class="seg-btn ${tab === 'ox' ? 'active' : ''}" data-action="quiz-tab" data-tab="ox">O/X 퀴즈 <span class="text-slate-400">${ox.length}</span></button>
         <button type="button" class="seg-btn ${tab === 'blank' ? 'active' : ''}" data-action="quiz-tab" data-tab="blank">빈칸 채우기 <span class="text-slate-400">${blank.length}</span></button>
@@ -117,34 +139,38 @@ function quizCard() {
 }
 
 function conceptCard() {
-  const cards = S.cards.filter((c) => c.type === 'concept');
-  if (cards.length === 0) return '';
+  const all = S.cards.filter((c) => c.type === 'concept');
+  if (all.length === 0) return '';
+  const today = filterValue() === 'today';
+  const cards = today ? todaysCards(all, 2) : all.filter((c) => c.unit === filterValue());
   return html`
     <section class="card space-y-4">
       <div class="flex items-center justify-between gap-2">
-        <h2 class="card-title"><i class="fa-solid fa-scale-balanced text-indigo-500"></i>1분 개념 비교</h2>
+        <h2 class="card-title"><i class="fa-solid fa-scale-balanced text-indigo-500"></i>${today ? '오늘의 1분 개념' : '1분 개념 비교'}</h2>
         <button type="button" class="btn btn-secondary btn-sm" data-action="toggle-blur">
           <i class="fa-solid ${S.ui.blur ? 'fa-eye' : 'fa-eye-slash'}"></i>${S.ui.blur ? '키워드 보기' : '키워드 가리기'}
         </button>
       </div>
       <div class="space-y-3">
+        ${cards.length === 0 ? html`<div class="empty">이 단원에는 개념 카드가 없어요.</div>` : ''}
         ${cards.map((c) => html`
           <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-1.5">
             <div class="flex items-center justify-between gap-2">
               <h3 class="font-semibold text-slate-900">${c.title}</h3>
               ${c.tag ? html`<span class="chip bg-indigo-50 text-indigo-700">${c.tag}</span>` : ''}
             </div>
-            <p class="text-sm text-slate-700 leading-relaxed" ${S.ui.blur ? 'data-action="toggle-blur"' : ''}>${highlightBrackets(c.body, S.ui.blur ? 'key-hidden' : 'key')}</p>
+            <p class="text-sm text-slate-700 leading-relaxed" ${S.ui.blur ? raw('data-action="toggle-blur"') : ''}>${highlightBrackets(c.body, S.ui.blur ? 'key-hidden' : 'key')}</p>
           </div>
         `)}
       </div>
-      ${S.ui.blur ? html`<p class="text-xs text-slate-400">가려진 칸을 누르면 키워드가 보여요.</p>` : ''}
+      <p class="text-xs text-slate-400">${S.ui.blur ? '가려진 칸을 누르면 키워드가 보여요. ' : ''}${today ? '위에서 단원을 고르면 그 단원의 개념 카드를 모두 볼 수 있어요.' : ''}</p>
     </section>
   `;
 }
 
 function flashcard() {
-  const all = S.cards.filter((c) => c.type === 'flash');
+  const f = filterValue();
+  const all = S.cards.filter((c) => c.type === 'flash' && (f === 'today' || c.unit === f));
   const retry = retryCards();
   const deck = S.ui.fcFilter === 'retry' ? all.filter((c) => retry.includes(c.id)) : all;
   if (S.ui.fcIndex >= deck.length) S.ui.fcIndex = 0;
@@ -231,6 +257,12 @@ async function updateRetry(id, add) {
 }
 
 export const quizActions = {
+  'quiz-filter': (el) => {
+    S.ui.quizFilter = el.value;
+    S.ui.fcIndex = 0;
+    S.ui.fcFlipped = false;
+    refresh();
+  },
   'quiz-tab': (el) => {
     S.ui.quizTab = el.dataset.tab;
     refresh();
