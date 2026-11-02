@@ -17,14 +17,13 @@ function noticeBanner() {
   const quizzes = S.quizzes;
   const ans = answers();
   const solved = quizzes.filter((q) => ans[q.id] !== undefined).length;
-  const c = S.config || {};
+  const pct = quizzes.length ? Math.round((solved / quizzes.length) * 100) : 0;
   return html`
     <section class="rounded-2xl bg-gradient-to-br from-indigo-700 to-violet-700 p-5 sm:p-6 text-white">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div class="space-y-1.5">
-          <span class="chip bg-white/15 text-white">공지</span>
-          <h2 class="text-lg sm:text-xl font-bold">${c.noticeHeadline || '오늘도 3분 퀴즈로 시작해요'}</h2>
-          ${c.noticeSubtext ? html`<p class="text-sm text-indigo-100 leading-relaxed">${c.noticeSubtext}</p>` : ''}
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-2 flex-1">
+          <h2 class="text-lg sm:text-xl font-bold">${solved >= quizzes.length && quizzes.length ? '오늘 퀴즈 완료! 대단해요' : '오늘도 3분 퀴즈로 시작해요'}</h2>
+          <div class="h-2 rounded-full bg-white/15 overflow-hidden max-w-sm"><div class="h-full rounded-full bg-amber-300 transition-all" style="width:${pct}%"></div></div>
         </div>
         <div class="flex shrink-0 rounded-xl bg-white/10 divide-x divide-white/15">
           <div class="px-4 py-3 text-center">

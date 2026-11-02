@@ -7,7 +7,7 @@ import {
 import { auth, db } from './firebase.js';
 import { todayKey, dateKey } from './lib/util.js';
 
-function loadPref(key, fallback) {
+export function loadPref(key, fallback) {
   try {
     const v = localStorage.getItem('tongsa:' + key);
     return v === null ? fallback : JSON.parse(v);
@@ -43,7 +43,7 @@ export const S = {
   school: { id: '', videos: [], materials: [], intels: [], summaries: {}, loaded: false },
   t: { users: [], reports: {} }, // 강사 전용 데이터
   ui: {
-    tab: loadPref('tab', 'quiz'),
+    tab: 'home', // 앱을 열면 항상 홈 화면부터
     quizTab: 'ox',
     blur: true,
     fcFilter: 'all',

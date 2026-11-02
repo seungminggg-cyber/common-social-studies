@@ -9,6 +9,7 @@ import {
   loadingView, loginView, profileSetupView, pendingView, authActions, authErrorMessage,
 } from './views/auth.js';
 import { quizView, quizActions } from './views/quiz.js';
+import { homeView, homeActions } from './views/home.js';
 import { schoolView, schoolActions } from './views/school.js';
 import { studyView, studyActions, printModal, addPomoCount } from './views/study.js';
 import { teacherView, teacherActions } from './views/teacher.js';
@@ -16,10 +17,9 @@ import { dashboardActions } from './views/dashboard.js';
 import { installBanner, installActions, registerServiceWorker } from './install.js';
 
 const actions = {
-  ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions, ...dashboardActions, ...installActions,
+  ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions, ...dashboardActions, ...installActions, ...homeActions,
   tab: (el) => {
     S.ui.tab = el.dataset.tab;
-    savePref('tab', S.ui.tab);
     refresh();
     window.scrollTo({ top: 0 });
   },
@@ -28,6 +28,7 @@ const actions = {
 // ---------- 화면 구성 ----------
 function tabsFor() {
   const tabs = [
+    { id: 'home', label: '홈', short: '홈', icon: 'fa-house' },
     { id: 'quiz', label: '오늘의 퀴즈', short: '퀴즈', icon: 'fa-bolt' },
     { id: 'school', label: '우리 학교', short: '우리 학교', icon: 'fa-school' },
   ];
@@ -83,8 +84,9 @@ function view() {
   if (S.role === 'pending') return pendingView();
 
   const ids = tabsFor().map((t) => t.id);
-  if (!ids.includes(S.ui.tab)) S.ui.tab = 'quiz';
+  if (!ids.includes(S.ui.tab)) S.ui.tab = 'home';
   const content = {
+    home: homeView,
     quiz: quizView,
     school: schoolView,
     study: studyView,

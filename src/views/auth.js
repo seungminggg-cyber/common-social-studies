@@ -2,12 +2,33 @@
 import {
   GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, sendPasswordResetEmail, signOut,
+  setPersistence, browserLocalPersistence, browserSessionPersistence,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
-import { S, refresh, appTitle, teacherName, schoolName } from '../store.js';
+import { S, refresh, appTitle, teacherName, schoolName, loadPref, savePref } from '../store.js';
 import { html } from '../lib/html.js';
 import { toast, copyText, isKakaoInApp, isInAppBrowser } from '../lib/util.js';
+
+// 로그인 상태 유지: 켜면 앱을 닫았다 열어도 로그인돼 있고, 끄면 브라우저를 닫을 때 로그아웃돼요.
+// (구글 로그인 창이 차단되지 않도록 로그인 버튼을 누르기 전에 미리 적용해 둡니다)
+const loginPrefs = {
+  keep: loadPref('keepLogin', true),
+  saveEmail: loadPref('saveEmail', true),
+};
+
+function applyPersistence() {
+  setPersistence(auth, loginPrefs.keep ? browserLocalPersistence : browserSessionPersistence).catch(() => {});
+}
+applyPersistence();
+
+function savedEmail() {
+  return loginPrefs.saveEmail ? loadPref('savedEmail', '') : '';
+}
+
+function rememberEmail(email) {
+  savePref('savedEmail', loginPrefs.saveEmail ? email : '');
+}
 
 function shell(content) {
   return html`
@@ -70,7 +91,7 @@ export function loginView() {
       <form class="space-y-3" data-submit="${signup ? 'email-signup' : 'email-login'}" novalidate>
         <div>
           <label class="label" for="login-email">이메일</label>
-          <input class="input" id="login-email" name="email" type="email" autocomplete="email" placeholder="example@naver.com" required />
+          <input class="input" id="login-email" name="email" type="email" autocomplete="email" placeholder="example@naver.com" value="${savedEmail()}" required />
         </div>
         <div>
           <label class="label" for="login-pw">비밀번호</label>
@@ -83,7 +104,16 @@ export function loginView() {
           </div>
           <p class="text-xs text-slate-500">비밀번호를 잊어버리면 이 이메일로 재설정 링크를 받을 수 있어요. 자주 쓰는 이메일로 가입하세요.</p>
         ` : ''}
+        <div class="flex items-center justify-between gap-2 text-sm text-slate-600">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" class="w-4 h-4 accent-indigo-600" data-change="pref-keep" ${loginPrefs.keep ? 'checked' : ''} />로그인 상태 유지
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" class="w-4 h-4 accent-indigo-600" data-change="pref-save-email" ${loginPrefs.saveEmail ? 'checked' : ''} />이메일 저장
+          </label>
+        </div>
         <button class="btn btn-primary w-full py-3" ${S.ui.busy ? 'disabled' : ''}>${signup ? '가입하기' : '로그인'}</button>
+        <p class="text-xs text-slate-400 text-center">학교·학원 공용 컴퓨터에서는 '로그인 상태 유지'를 꺼주세요.</p>
       </form>
 
       ${!signup ? html`<button type="button" class="block mx-auto text-sm text-slate-500 hover:text-indigo-600" data-action="reset-password">비밀번호를 잊으셨나요?</button>` : ''}
@@ -203,6 +233,7 @@ export const authActions = {
     const pw = String(data.get('password'));
     if (!email || !pw) return toast('이메일과 비밀번호를 입력해 주세요.', 'error');
     await signInWithEmailAndPassword(auth, email, pw);
+    rememberEmail(email);
   }),
   'email-signup': (form, e, data) => withBusy(async () => {
     const email = String(data.get('email')).trim();
@@ -211,7 +242,20 @@ export const authActions = {
     if (!validPassword(pw)) return toast('비밀번호는 8자 이상, 영문과 숫자를 섞어주세요.', 'error');
     if (pw !== String(data.get('password2'))) return toast('비밀번호 확인이 일치하지 않아요.', 'error');
     await createUserWithEmailAndPassword(auth, email, pw);
+    rememberEmail(email);
+    S.ui.loginMode = 'login';
   }),
+  'pref-keep': (el) => {
+    loginPrefs.keep = el.checked;
+    savePref('keepLogin', el.checked);
+    applyPersistence();
+  },
+  'pref-save-email': (el) => {
+    loginPrefs.saveEmail = el.checked;
+    savePref('saveEmail', el.checked);
+    if (!el.checked) savePref('savedEmail', '');
+    refresh();
+  },
   'reset-password': async () => {
     const email = document.getElementById('login-email')?.value.trim();
     if (!email) return toast('위 칸에 이메일을 먼저 입력해 주세요.', 'error');
@@ -234,6 +278,7 @@ export const authActions = {
     });
   }),
   logout: async () => {
+    S.ui.loginMode = 'login'; // 다시 들어올 때는 로그인 화면부터
     await signOut(auth);
   },
   'copy-uid': async () => {
