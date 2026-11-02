@@ -354,7 +354,7 @@ function quizList() {
     <section class="card space-y-3">
       <h2 class="card-title">등록된 문제 <span class="text-slate-400 font-medium">${list.length}</span></h2>
       ${contentFilter()}
-      <p class="text-xs text-slate-500"><span class="chip bg-sky-50 text-sky-700">자동</span> 표시는 Claude가 만든 문제 팩에서 자동으로 들어온 문제예요.</p>
+      <p class="text-xs text-slate-500"><span class="chip bg-sky-50 text-sky-700">자동</span> 표시는 앱에 기본으로 들어 있는 문제예요. 고치거나 지울 수 있어요.</p>
       ${list.length === 0 ? html`<div class="empty">문제가 없어요.</div>` : html`
         <ul class="divide-y divide-slate-100 max-h-[640px] overflow-y-auto pr-1">
           ${[...list].reverse().map((q) => html`
@@ -769,7 +769,7 @@ export const teacherActions = {
     if (!question) return toast('문제 지문을 입력해 주세요.', 'error');
     await addDoc(collection(db, 'quizzes'), {
       type: 'ox', unit: str(data, 'unit'), question, answer: str(data, 'answer') === 'X' ? 'X' : 'O',
-      explanation: str(data, 'explanation'), createdAt: Date.now(),
+      explanation: str(data, 'explanation'), custom: true, createdAt: Date.now(),
     });
     form.reset();
     toast('O/X 문제를 추가했어요.');
@@ -779,7 +779,7 @@ export const teacherActions = {
     const answer = str(data, 'answer');
     if (!question || !answer) return toast('지문과 정답을 입력해 주세요.', 'error');
     await addDoc(collection(db, 'quizzes'), {
-      type: 'blank', unit: str(data, 'unit'), question, answer, hint: str(data, 'hint'), createdAt: Date.now(),
+      type: 'blank', unit: str(data, 'unit'), question, answer, hint: str(data, 'hint'), custom: true, createdAt: Date.now(),
     });
     form.reset();
     toast('빈칸 문제를 추가했어요.');
@@ -792,7 +792,7 @@ export const teacherActions = {
     const title = str(data, 'title');
     const body = str(data, 'body');
     if (!title || !body) return toast('제목과 내용을 입력해 주세요.', 'error');
-    await addDoc(collection(db, 'cards'), { type: 'concept', title, tag: str(data, 'tag'), body, createdAt: Date.now() });
+    await addDoc(collection(db, 'cards'), { type: 'concept', title, tag: str(data, 'tag'), body, custom: true, createdAt: Date.now() });
     form.reset();
     toast('개념 카드를 추가했어요.');
   },
@@ -800,7 +800,7 @@ export const teacherActions = {
     const front = str(data, 'front');
     const back = str(data, 'back');
     if (!front || !back) return toast('앞면과 뒷면을 입력해 주세요.', 'error');
-    await addDoc(collection(db, 'cards'), { type: 'flash', unit: str(data, 'unit'), front, back, createdAt: Date.now() });
+    await addDoc(collection(db, 'cards'), { type: 'flash', unit: str(data, 'unit'), front, back, custom: true, createdAt: Date.now() });
     form.reset();
     toast('암기 카드를 추가했어요.');
   },
@@ -834,12 +834,12 @@ export const teacherActions = {
       const kind = (p[0] || '').toUpperCase();
       if (kind === 'OX' && p.length >= 4 && p[2] && /^[OX]$/i.test(p[3])) {
         batch.set(doc(collection(db, 'quizzes')), {
-          type: 'ox', unit: p[1], question: p[2], answer: p[3].toUpperCase(), explanation: p[4] || '', createdAt: t++,
+          type: 'ox', unit: p[1], question: p[2], answer: p[3].toUpperCase(), explanation: p[4] || '', custom: true, createdAt: t++,
         });
         added += 1;
       } else if (kind === 'BLANK' && p.length >= 4 && p[2] && p[3]) {
         batch.set(doc(collection(db, 'quizzes')), {
-          type: 'blank', unit: p[1], question: p[2], answer: p[3], hint: p[4] || '', createdAt: t++,
+          type: 'blank', unit: p[1], question: p[2], answer: p[3], hint: p[4] || '', custom: true, createdAt: t++,
         });
         added += 1;
       } else {

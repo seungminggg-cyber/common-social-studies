@@ -1,6 +1,7 @@
 // 문제 팩 형식 검사: node tests/check-packs.mjs
 import { readdirSync } from 'node:fs';
 const dir = new URL('../src/content/', import.meta.url);
+// index.js, build.js 는 팩이 아니라서 제외
 let bad = 0;
 for (const f of readdirSync(dir).filter((x) => /^t\d/.test(x))) {
   const p = (await import(new URL(f, dir))).default;

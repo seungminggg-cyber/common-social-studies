@@ -7,6 +7,7 @@ import { S, refresh } from '../store.js';
 import { html, highlightBrackets } from '../lib/html.js';
 import { unitList } from '../lib/daily.js';
 import { toast } from '../lib/util.js';
+import { PACK_BY_ID } from '../content/index.js';
 
 const TYPES = [
   ['all', '전체'],
@@ -212,7 +213,14 @@ export const reviewActions = {
       Object.assign(patch, { front: str(data, 'front'), back: str(data, 'back') });
       if (!patch.front || !patch.back) return toast('앞면과 뒷면을 입력해 주세요.', 'error');
     }
-    await updateDoc(doc(db, col, id), patch);
+    const base = PACK_BY_ID.get(id);
+    if (base) {
+      // 앱에 들어 있는 문제를 고친 경우: 고친 내용을 Firebase에 따로 저장
+      const { id: _id, ...fields } = base;
+      await setDoc(doc(db, col, id), { ...fields, ...patch }, { merge: true });
+    } else {
+      await updateDoc(doc(db, col, id), patch);
+    }
     S.ui.reviewEdit = null;
     refresh();
     toast('저장했어요.');
@@ -227,7 +235,7 @@ export const reviewActions = {
 export async function removeContent(col, id) {
   const item = [...S.quizzes, ...S.cards].find((x) => x.id === id);
   await deleteDoc(doc(db, col, id));
-  if (item?.pack) {
+  if (item?.pack || PACK_BY_ID.has(id)) {
     await setDoc(doc(db, 'config', 'app'), { deletedPackItems: arrayUnion(id) }, { merge: true });
   }
 }

@@ -6,6 +6,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from './firebase.js';
 import { todayKey, dateKey } from './lib/util.js';
+import { PACK_QUIZZES, PACK_CARDS } from './content/index.js';
 
 export function loadPref(key, fallback) {
   try {
@@ -118,7 +119,37 @@ const bySchoolOrder = (a, b) => (a.order ?? 99) - (b.order ?? 99) || String(a.na
 listen('config', doc(db, 'config', 'app'), (snap) => {
   S.config = snap.exists() ? snap.data() : null;
   S.configLoaded = true;
+  mergeContent();
 });
+
+// ---------- 문제·카드 합치기 ----------
+// 앱에 들어 있는 문제 팩 + 강사님이 고친 문제(edited) + 직접 만든 문제(custom) - 지운 문제
+const raw = { quizzes: {}, cards: {} };
+
+function mergeContent() {
+  if (S.role !== 'teacher' && S.role !== 'student') return;
+  const deleted = new Set(S.config?.deletedPackItems || []);
+  const build = (base, extra) => {
+    const map = new Map(base.filter((x) => !deleted.has(x.id)).map((x) => [x.id, x]));
+    Object.values(extra).forEach((group) => group.forEach((x) => {
+      if (deleted.has(x.id)) return;
+      map.set(x.id, { ...(map.get(x.id) || {}), ...x });
+    }));
+    return [...map.values()].sort(byCreated);
+  };
+  S.quizzes = build(PACK_QUIZZES, raw.quizzes);
+  S.cards = build(PACK_CARDS, raw.cards);
+}
+
+function listenContent(col) {
+  raw[col] = { edited: [], custom: [] };
+  ['edited', 'custom'].forEach((flag) => {
+    listen(`r:${col}-${flag}`, query(collection(db, col), where(flag, '==', true)), (snap) => {
+      raw[col][flag] = list(snap);
+      mergeContent();
+    });
+  });
+}
 
 // ---------- 로그인 상태 ----------
 onAuthStateChanged(auth, async (user) => {
@@ -179,12 +210,9 @@ function setRole(next) {
   });
 
   if (next === 'teacher' || next === 'student') {
-    listen('r:quizzes', collection(db, 'quizzes'), (snap) => {
-      S.quizzes = list(snap).sort(byCreated);
-    });
-    listen('r:cards', collection(db, 'cards'), (snap) => {
-      S.cards = list(snap).sort(byCreated);
-    });
+    listenContent('quizzes');
+    listenContent('cards');
+    mergeContent();
   }
 
   if (next === 'teacher') {
