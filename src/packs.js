@@ -12,8 +12,9 @@ import { toast } from './lib/util.js';
 import { LEGACY_SAMPLE_TEXTS } from './seed.js';
 import t1u12 from './content/t1-u12.js';
 import t1u3 from './content/t1-u3.js';
+import t1u4 from './content/t1-u4.js';
 
-export const PACKS = [t1u12, t1u3];
+export const PACKS = [t1u12, t1u3, t1u4];
 
 let running = false;
 let finishedThisSession = false;
