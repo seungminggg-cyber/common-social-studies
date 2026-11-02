@@ -37,3 +37,10 @@ npx firebase-tools emulators:exec --only firestore "npm run test:rules"   # 보�
 - `src/store.js` — Firebase 실시간 데이터 연결
 - `src/seed.js` — 샘플 데이터
 - `tests/rules.test.js` — 보안 규칙 자동 테스트
+
+## 문제 팩 (기본 문제)
+
+- `src/content/` 아래 파일들이 앱에 기본으로 들어 있는 문제·카드예요. (통합사회1 Ⅰ~Ⅴ, 통합사회2 Ⅰ~Ⅴ)
+- 이 문제들은 Firebase에서 읽지 않고 앱 안에서 바로 불러와서, 학생이 많아도 무료 사용량을 거의 쓰지 않아요.
+- 강사님이 앱에서 고치거나 지운 내용, 직접 만든 문제만 Firebase에 저장돼요.
+- 새 팩을 추가하면 `src/content/index.js`의 `PACKS` 목록에 넣고, `node tests/check-packs.mjs`로 형식을 검사하세요.
