@@ -62,7 +62,7 @@ function todoItem({ icon, color, title, detail, done, tab, sub }) {
 
 function todoCard() {
   const answers = S.today?.answers || {};
-  const daily = todaysQuizzes(S.quizzes);
+  const daily = todaysQuizzes(S.quizzes, S.config?.dailySubject);
   const total = daily.length;
   const solved = daily.filter((q) => answers[q.id] !== undefined).length;
   const videos = S.school.videos;

@@ -31,15 +31,32 @@ function rotate(items, count, salt = '') {
   return Array.from({ length: count }, (_, i) => pool[(start + i) % pool.length]);
 }
 
-export function todaysQuizzes(quizzes) {
+const inSubject = (subject) => (x) => !subject || !x.subject || x.subject === subject;
+
+export function todaysQuizzes(allQuizzes, subject = '') {
+  const quizzes = allQuizzes.filter(inSubject(subject));
   return [
     ...rotate(quizzes.filter((q) => q.type === 'ox'), DAILY_OX, 'ox'),
     ...rotate(quizzes.filter((q) => q.type === 'blank'), DAILY_BLANK, 'bl'),
   ];
 }
 
-export function todaysCards(cards, count) {
-  return rotate(cards, count, 'card');
+export function todaysCards(cards, count, subject = '') {
+  return rotate(cards.filter(inSubject(subject)), count, 'card');
+}
+
+// 단원을 과목별로 묶기: [['통합사회1', [단원...]], ['통합사회2', [...]], ['기타', [...]]]
+export function unitGroups(...lists) {
+  const groups = new Map();
+  lists.flat().forEach((x) => {
+    if (!x.unit) return;
+    const g = x.subject || '직접 추가한 문제';
+    if (!groups.has(g)) groups.set(g, new Set());
+    groups.get(g).add(x.unit);
+  });
+  return [...groups.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0], 'ko'))
+    .map(([g, set]) => [g, [...set].sort((a, b) => a.localeCompare(b, 'ko'))]);
 }
 
 // 등록된 문제·카드에 있는 단원 이름 목록 (Ⅰ-1, Ⅰ-2, Ⅱ-1 … 순서)

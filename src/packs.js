@@ -14,8 +14,9 @@ import t1u12 from './content/t1-u12.js';
 import t1u3 from './content/t1-u3.js';
 import t1u4 from './content/t1-u4.js';
 import t1u5 from './content/t1-u5.js';
+import t2u12 from './content/t2-u12.js';
 
-export const PACKS = [t1u12, t1u3, t1u4, t1u5];
+export const PACKS = [t1u12, t1u3, t1u4, t1u5, t2u12];
 
 let running = false;
 let finishedThisSession = false;

@@ -442,8 +442,18 @@ function settingsTab() {
       <label class="label" for="cfg-${key}">${label}</label>
       <input class="input" id="cfg-${key}" name="${key}" value="${c[key] || ''}" maxlength="120" placeholder="${placeholder}" />
     </div>`;
+  const subjects = [...new Set([...S.quizzes, ...S.cards].map((x) => x.subject).filter(Boolean))].sort();
+  const daily = c.dailySubject || '';
   return html`
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+      <section class="card space-y-3 lg:col-span-2 border-indigo-200">
+        <h2 class="card-title"><i class="fa-solid fa-calendar-day text-indigo-500"></i>오늘의 10문제 출제 범위</h2>
+        <p class="card-desc">지금 배우는 과목만 골라 두면, 학생들의 "오늘의 10문제"와 "오늘의 1분 개념"이 그 과목에서만 나와요. 단원별 풀기는 항상 모든 과목을 볼 수 있어요.</p>
+        <div class="seg max-w-lg">
+          <button type="button" class="seg-btn ${!daily ? 'active' : ''}" data-action="set-daily-subject" data-subject="">전체 과목</button>
+          ${subjects.map((sub) => html`<button type="button" class="seg-btn ${daily === sub ? 'active' : ''}" data-action="set-daily-subject" data-subject="${sub}">${sub}</button>`)}
+        </div>
+      </section>
       <section class="card space-y-4">
         <h2 class="card-title"><i class="fa-solid fa-robot text-indigo-500"></i>제미나이로 문제 한 번에 등록</h2>
         <ol class="text-sm text-slate-600 space-y-1 list-decimal pl-5">
@@ -800,6 +810,10 @@ export const teacherActions = {
   },
 
   // 설정
+  'set-daily-subject': async (el) => {
+    await setDoc(doc(db, 'config', 'app'), { dailySubject: el.dataset.subject }, { merge: true });
+    toast(el.dataset.subject ? `오늘의 문제를 ${el.dataset.subject}에서만 내요.` : '오늘의 문제를 모든 과목에서 내요.');
+  },
   'save-config': async (form, e, data) => {
     const keys = ['appTitle', 'appSubtitle', 'teacherName', 'noticeHeadline', 'noticeSubtext'];
     await setDoc(doc(db, 'config', 'app'), Object.fromEntries(keys.map((k) => [k, str(data, k)])), { merge: true });

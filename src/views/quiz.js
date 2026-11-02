@@ -3,7 +3,7 @@ import { doc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firest
 import { db } from '../firebase.js';
 import { S, refresh } from '../store.js';
 import { html, raw, highlightBrackets } from '../lib/html.js';
-import { todaysQuizzes, todaysCards, unitList, DAILY_OX, DAILY_BLANK } from '../lib/daily.js';
+import { todaysQuizzes, todaysCards, unitGroups, DAILY_OX, DAILY_BLANK } from '../lib/daily.js';
 import { isBlankCorrect, firstAnswer, toast } from '../lib/util.js';
 
 const isStudent = () => S.role === 'student';
@@ -14,18 +14,19 @@ const retryCards = () => (isStudent() ? S.profile?.retryCards || [] : S.ui.local
 const filterValue = () => S.ui.quizFilter || 'today';
 function currentQuizzes() {
   const f = filterValue();
-  return f === 'today' ? todaysQuizzes(S.quizzes) : S.quizzes.filter((q) => q.unit === f);
+  return f === 'today' ? todaysQuizzes(S.quizzes, S.config?.dailySubject) : S.quizzes.filter((q) => q.unit === f);
 }
 
 function filterSelect() {
-  const units = unitList(S.quizzes, S.cards);
+  const groups = unitGroups(S.quizzes, S.cards);
   const f = filterValue();
+  const daily = S.config?.dailySubject;
   return html`
     <select class="input !py-2 font-semibold" data-change="quiz-filter" aria-label="문제 범위">
-      <option value="today" ${f === 'today' ? 'selected' : ''}>오늘의 ${DAILY_OX + DAILY_BLANK}문제 (매일 바뀌어요)</option>
-      ${units.length ? html`<optgroup label="단원별로 전부 풀기">
+      <option value="today" ${f === 'today' ? 'selected' : ''}>오늘의 ${DAILY_OX + DAILY_BLANK}문제${daily ? ` · ${daily}` : ''} (매일 바뀌어요)</option>
+      ${groups.map(([g, units]) => html`<optgroup label="${g} 단원별로 전부 풀기">
         ${units.map((u) => html`<option value="${u}" ${f === u ? 'selected' : ''}>${u} (${S.quizzes.filter((q) => q.unit === u).length}문제)</option>`)}
-      </optgroup>` : ''}
+      </optgroup>`)}
     </select>`;
 }
 
@@ -142,7 +143,7 @@ function conceptCard() {
   const all = S.cards.filter((c) => c.type === 'concept');
   if (all.length === 0) return '';
   const today = filterValue() === 'today';
-  const cards = today ? todaysCards(all, 2) : all.filter((c) => c.unit === filterValue());
+  const cards = today ? todaysCards(all, 2, S.config?.dailySubject) : all.filter((c) => c.unit === filterValue());
   return html`
     <section class="card space-y-4">
       <div class="flex items-center justify-between gap-2">
