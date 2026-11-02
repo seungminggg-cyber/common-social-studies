@@ -5,7 +5,7 @@ import { S, refresh, savePref, schoolName, teacherName } from '../store.js';
 import { html } from '../lib/html.js';
 import { dateKey, todayKey, prettyDate, toast, copyText, newId, clampNumber } from '../lib/util.js';
 import { pomo, remainingMs, formatMs, toggle, reset, switchPhase, setDurations } from '../pomodoro.js';
-import { SOUNDS, sound, playSound, setRainDensity, setVolume } from '../audio.js';
+import { SOUNDS, sound, playSound, setRainDensity, setVolume, unlockAudio } from '../audio.js';
 
 const SUBJECTS = ['통합사회', '국어', '영어', '수학', '탐구', '수행평가', '기타'];
 
@@ -216,6 +216,7 @@ function timerSection() {
                 <button type="button" class="seg-btn !py-1 !text-xs ${sound.rain === id ? 'active' : ''}" data-action="rain-density" data-mode="${id}">${label}</button>`)}
             </div>` : ''}
         </div>
+        <p class="text-xs text-slate-500"><i class="fa-brands fa-apple mr-1"></i>아이폰에서 소리가 안 나면 옆면의 무음 스위치를 꺼주세요. 화면을 끄면 소리도 멈춰요.</p>
       </div>
     </section>
   `;
@@ -414,7 +415,10 @@ export const studyActions = {
     await copyText(msg);
     toast('카톡에 붙여넣을 수 있게 복사했어요.');
   },
-  'pomo-toggle': () => toggle(),
+  'pomo-toggle': () => {
+    unlockAudio(); // 타이머가 끝날 때 알림음이 울리도록 미리 허락받기
+    toggle();
+  },
   'pomo-reset': () => reset(),
   'pomo-switch': () => switchPhase(),
   'pomo-preset': (el) => setDurations(Number(el.dataset.focus), Number(el.dataset.break)),

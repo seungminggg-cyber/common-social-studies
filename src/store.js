@@ -56,7 +56,7 @@ export const S = {
     calY: now.getFullYear(),
     calM: now.getMonth() + 1,
     selDate: todayKey(),
-    adminTab: loadPref('adminTab', 'students'),
+    adminTab: loadPref('adminTab', 'dashboard'),
     adminFilter: '',
     printMode: '',
     loginMode: 'login',
@@ -190,6 +190,7 @@ function setRole(next) {
   if (next === 'teacher') {
     listen('r:users', collection(db, 'users'), (snap) => {
       S.t.users = list(snap).sort((a, b) => String(a.name).localeCompare(String(b.name), 'ko'));
+      S.t.usersLoaded = true;
     });
     listen('r:reports', collection(db, 'reports'), (snap) => {
       S.t.reports = Object.fromEntries(snap.docs.map((d) => [d.id, d.data()]));

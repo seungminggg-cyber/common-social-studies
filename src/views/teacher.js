@@ -7,6 +7,7 @@ import { S, refresh, savePref, schoolName, teacherName } from '../store.js';
 import { html } from '../lib/html.js';
 import { toast, copyText, safeUrl, youtubeId, clampNumber, ddayText, todayKey } from '../lib/util.js';
 import { seedSampleData } from '../seed.js';
+import { dashboardView } from './dashboard.js';
 
 const approved = () => S.t.users.filter((u) => u.status === 'approved');
 const pending = () => S.t.users.filter((u) => u.status !== 'approved');
@@ -471,11 +472,13 @@ export function teacherView() {
     <div class="space-y-5">
       ${seedBanner()}
       <div class="seg overflow-x-auto">
+        ${tabBtn('dashboard', '현황판')}
         ${tabBtn('students', '학생·성적', waiting ? String(waiting) : '')}
         ${tabBtn('schools', '학교·영상·자료')}
         ${tabBtn('content', '퀴즈·카드')}
         ${tabBtn('settings', '설정·백업')}
       </div>
+      ${tab === 'dashboard' ? dashboardView() : ''}
       ${tab === 'students' ? studentsTab() : ''}
       ${tab === 'schools' ? schoolsTab() : ''}
       ${tab === 'content' ? contentTab() : ''}

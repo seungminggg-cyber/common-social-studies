@@ -12,9 +12,11 @@ import { quizView, quizActions } from './views/quiz.js';
 import { schoolView, schoolActions } from './views/school.js';
 import { studyView, studyActions, printModal, addPomoCount } from './views/study.js';
 import { teacherView, teacherActions } from './views/teacher.js';
+import { dashboardActions } from './views/dashboard.js';
+import { installBanner, installActions, registerServiceWorker } from './install.js';
 
 const actions = {
-  ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions,
+  ...authActions, ...quizActions, ...schoolActions, ...studyActions, ...teacherActions, ...dashboardActions, ...installActions,
   tab: (el) => {
     S.ui.tab = el.dataset.tab;
     savePref('tab', S.ui.tab);
@@ -40,7 +42,7 @@ function appShell(content) {
     ? html`<span class="chip bg-rose-50 text-rose-700"><i class="fa-solid fa-chalkboard-user"></i>강사</span>`
     : html`<span class="chip bg-indigo-50 text-indigo-700">${schoolName(S.profile?.schoolId)} · ${S.profile?.name}</span>`;
   return html`
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200">
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200 pt-[env(safe-area-inset-top)]">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-9 h-9 shrink-0 rounded-xl bg-indigo-600 text-white flex items-center justify-center"><i class="fa-solid fa-earth-asia"></i></div>
@@ -59,7 +61,7 @@ function appShell(content) {
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-5 sm:py-6 pb-28 lg:pb-10">${content}</main>
+    <main class="max-w-6xl mx-auto px-4 py-5 sm:py-6 pb-28 lg:pb-10 space-y-5">${installBanner()}${content}</main>
 
     <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 pb-[env(safe-area-inset-bottom)]">
       <div class="grid" style="grid-template-columns: repeat(${tabs.length}, minmax(0, 1fr))">
@@ -212,5 +214,7 @@ initPomodoro({
 
 // 자정이 지나면 '오늘' 기록을 새 날짜로 바꾸기 위해 1분마다 확인
 setInterval(() => refresh(), 60 * 1000);
+
+registerServiceWorker();
 
 refresh();
