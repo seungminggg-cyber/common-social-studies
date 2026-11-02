@@ -1,0 +1,133 @@
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    word-break: keep-all;
+  }
+  /* 아이폰에서 입력칸을 누를 때 화면이 확대되지 않도록 */
+  @media (max-width: 640px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200 p-5 sm:p-6;
+  }
+  .card-title {
+    @apply text-base font-bold text-slate-900 flex items-center gap-2;
+  }
+  .card-desc {
+    @apply text-sm text-slate-500 mt-1;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs rounded-lg;
+  }
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-500 active:bg-indigo-700;
+  }
+  .btn-secondary {
+    @apply bg-white text-slate-700 border border-slate-300 hover:bg-slate-50;
+  }
+  .btn-ghost {
+    @apply text-slate-500 hover:text-slate-900 hover:bg-slate-100;
+  }
+  .btn-danger {
+    @apply text-rose-600 hover:bg-rose-50;
+  }
+  .input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition
+      placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100;
+  }
+  .label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .seg {
+    @apply flex gap-1 rounded-xl bg-slate-100 p-1;
+  }
+  .seg-btn {
+    @apply flex-1 rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 transition hover:text-slate-900;
+  }
+  .seg-btn.active {
+    @apply bg-white text-indigo-700 shadow-sm;
+  }
+  .empty {
+    @apply rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500;
+  }
+  mark.key {
+    @apply rounded bg-amber-100 px-1 font-semibold text-amber-900;
+  }
+  mark.key-hidden {
+    @apply rounded bg-amber-200 px-1 text-transparent cursor-pointer select-none;
+  }
+  mark.key-dark {
+    @apply rounded bg-amber-300/20 px-1 font-semibold text-amber-200;
+  }
+}
+
+/* 범위 슬라이더 */
+input[type='range'] {
+  accent-color: #4f46e5;
+}
+
+/* 플래시카드 뒤집기 */
+.flip {
+  perspective: 1000px;
+}
+.flip-inner {
+  display: grid;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+#toast[data-type='error'] {
+  @apply bg-rose-600;
+}
+
+/* 오답 시험지 인쇄: 시험지 부분만 인쇄 */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-sheet,
+  #print-sheet * {
+    visibility: visible;
+  }
+  #print-sheet {
+    position: absolute;
+    inset: 0;
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    background: white !important;
+  }
+}

@@ -1,0 +1,145 @@
+rules_version = '2';
+
+// 승민T 통합사회 클래스 - Firestore 보안 규칙
+// Firebase 콘솔 > Firestore > 규칙 탭에 이 파일 내용을 그대로 붙여넣고 [게시]하세요.
+//
+// 역할
+// - 강사(관리자): admins/{uid} 문서가 있는 계정. (콘솔에서 직접 만들어야 함)
+// - 학생: users/{uid} 문서가 있고 status 가 'approved' 인 계정.
+// - 승인 대기 학생: users/{uid} 문서는 있지만 아직 status 가 'pending'.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isTeacher() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function myProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isApproved() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && myProfile().status == 'approved';
+    }
+
+    function inSchool(schoolId) {
+      return isApproved() && myProfile().schoolId == schoolId;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function shortText(v, max) {
+      return v is string && v.size() > 0 && v.size() <= max;
+    }
+
+    // 강사 계정 목록: 본인 것만 확인 가능, 앱에서는 수정 불가 (콘솔에서만 추가)
+    match /admins/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // 앱 이름, 공지 문구 (로그인 화면에도 보여야 해서 누구나 읽기 가능)
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
+
+    // 학교 기본 정보 (가입할 때 학교 목록이 필요해서 로그인한 사람은 읽기 가능)
+    match /schools/{schoolId} {
+      allow read: if signedIn();
+      allow write: if isTeacher();
+
+      // 수업 영상: 강사와 그 학교 학생만
+      match /videos/{videoId} {
+        allow read: if isTeacher() || inSchool(schoolId);
+        allow write: if isTeacher();
+
+        // 1줄 요약 수강 인증: 학생은 본인 것만 쓰고 읽기, 강사는 전체 열람
+        match /summaries/{uid} {
+          allow read: if isTeacher() || (inSchool(schoolId) && isOwner(uid));
+          allow create, update: if inSchool(schoolId) && isOwner(uid)
+            && request.resource.data.keys().hasOnly(['text', 'name', 'updatedAt'])
+            && shortText(request.resource.data.text, 300)
+            && request.resource.data.name == myProfile().name;
+          allow delete: if isTeacher();
+        }
+      }
+
+      // 수행평가·기출 자료실
+      match /materials/{materialId} {
+        allow read: if isTeacher() || inSchool(schoolId);
+        allow write: if isTeacher();
+      }
+
+      // 선생님 강조 필기 제보함: 같은 학교 학생만 쓰고 읽기
+      match /intels/{intelId} {
+        allow read: if isTeacher() || inSchool(schoolId);
+        allow create: if inSchool(schoolId)
+          && request.resource.data.keys().hasOnly(['text', 'authorUid', 'authorName', 'createdAt'])
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.authorName == myProfile().name
+          && shortText(request.resource.data.text, 200);
+        allow update: if isTeacher();
+        allow delete: if isTeacher() || (inSchool(schoolId) && resource.data.authorUid == request.auth.uid);
+      }
+    }
+
+    // 공통 퀴즈(O/X, 빈칸)와 개념·플래시카드
+    match /quizzes/{quizId} {
+      allow read: if isTeacher() || isApproved();
+      allow write: if isTeacher();
+    }
+    match /cards/{cardId} {
+      allow read: if isTeacher() || isApproved();
+      allow write: if isTeacher();
+    }
+
+    // 학생 계정 정보
+    match /users/{uid} {
+      allow read: if isTeacher() || isOwner(uid);
+
+      // 학생은 '승인 대기' 상태로만 직접 가입 가능
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['name', 'schoolId', 'status', 'provider', 'email', 'createdAt'])
+        && request.resource.data.status == 'pending'
+        && shortText(request.resource.data.name, 20)
+        && request.resource.data.schoolId is string
+        && exists(/databases/$(database)/documents/schools/$(request.resource.data.schoolId));
+
+      // 학생은 '다시 볼 카드' 목록만 수정 가능. 이름·학교·승인 상태는 강사만 변경
+      allow update: if isTeacher()
+        || (isOwner(uid) && isApproved()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['retryCards'])
+            && request.resource.data.retryCards is list
+            && request.resource.data.retryCards.size() <= 500);
+
+      allow delete: if isTeacher();
+
+      // 날짜별 플래너, 퀴즈 기록, 뽀모도로 횟수
+      match /days/{dayId} {
+        allow read: if isTeacher() || isOwner(uid);
+        allow write: if isOwner(uid) && isApproved();
+      }
+
+      // 오답 노트
+      match /weak/{quizId} {
+        allow read: if isTeacher() || isOwner(uid);
+        allow write: if isOwner(uid) && isApproved();
+      }
+    }
+
+    // 성적·숙제율·강사 코멘트: 강사만 작성, 학생은 본인 것만 열람
+    match /reports/{uid} {
+      allow read: if isTeacher() || isOwner(uid);
+      allow write: if isTeacher();
+    }
+  }
+}
