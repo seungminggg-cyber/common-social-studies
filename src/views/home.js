@@ -205,7 +205,10 @@ function teacherHome() {
             </ul>
           </section>
           <section class="card space-y-3">
-            <h2 class="card-title"><i class="fa-regular fa-calendar text-rose-500"></i>다가오는 시험</h2>
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="card-title"><i class="fa-regular fa-calendar text-rose-500"></i>다가오는 시험</h2>
+              <button type="button" class="btn btn-secondary btn-sm" data-action="go" data-tab="admin" data-sub="schools"><i class="fa-solid fa-pen"></i>일정 수정</button>
+            </div>
             ${exams.length === 0 ? html`<div class="empty">등록된 시험 날짜가 없어요.</div>` : html`
               <ul class="space-y-2">
                 ${exams.map((s) => html`

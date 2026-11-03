@@ -292,9 +292,37 @@ function intelsAdminCard() {
   `;
 }
 
+// 모든 학교의 시험 일정을 한 번에 수정 (학생 홈 D-Day, 강사 홈 '다가오는 시험'에 바로 반영)
+function examCard() {
+  return html`
+    <section class="card space-y-3 border-rose-200">
+      <div>
+        <h2 class="card-title"><i class="fa-regular fa-calendar text-rose-500"></i>시험 일정</h2>
+        <p class="card-desc">고치면 바로 저장되고, 학생 홈의 D-Day와 강사 홈의 "다가오는 시험"에 반영돼요.</p>
+      </div>
+      ${S.schools.length === 0 ? html`<div class="empty">학교가 없어요.</div>` : html`
+        <ul class="divide-y divide-slate-100">
+          ${S.schools.map((s) => {
+            const d = ddayText(s.examDate);
+            return html`
+              <li class="py-2.5 grid grid-cols-2 sm:grid-cols-12 gap-2 items-center">
+                <p class="font-semibold col-span-2 sm:col-span-2">${s.name}</p>
+                <input class="input sm:col-span-3" id="exam-name-${s.id}" value="${s.examName || ''}" maxlength="20" placeholder="시험 이름 (예: 기말고사)" data-change="exam-name" data-id="${s.id}" aria-label="${s.name} 시험 이름" />
+                <input class="input sm:col-span-3" type="date" id="exam-date-${s.id}" value="${s.examDate || ''}" data-change="exam-date" data-id="${s.id}" aria-label="${s.name} 시험 날짜" />
+                <span class="sm:col-span-2 text-sm font-bold tabular-nums ${!d || d === '시험 종료' ? 'text-slate-400' : 'text-rose-600'}">${d || '날짜 없음'}</span>
+                <button type="button" class="btn btn-ghost btn-sm sm:col-span-2 justify-self-start" data-action="exam-clear" data-id="${s.id}" ${s.examDate ? '' : 'disabled'}><i class="fa-solid fa-eraser"></i>지우기</button>
+              </li>`;
+          })}
+        </ul>
+      `}
+    </section>
+  `;
+}
+
 function schoolsTab() {
   const sch = S.schools.find((s) => s.id === S.school.id);
   return html`
+    ${examCard()}
     ${schoolTabs()}
     ${!sch ? html`<div class="empty">학교를 선택하거나 추가해 주세요.</div>` : html`
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
@@ -694,6 +722,18 @@ export const teacherActions = {
     savePref('schoolId', ref.id);
     form.reset();
     toast(`${name}을(를) 추가했어요.`);
+  },
+  'exam-name': async (el) => {
+    await updateDoc(doc(db, 'schools', el.dataset.id), { examName: el.value.trim() });
+    toast('시험 이름을 저장했어요.');
+  },
+  'exam-date': async (el) => {
+    await updateDoc(doc(db, 'schools', el.dataset.id), { examDate: el.value });
+    toast(el.value ? `시험 날짜를 저장했어요. (${ddayText(el.value)})` : '시험 날짜를 지웠어요.');
+  },
+  'exam-clear': async (el) => {
+    await updateDoc(doc(db, 'schools', el.dataset.id), { examDate: '' });
+    toast('시험 날짜를 지웠어요.');
   },
   'save-school': async (form, e, data) => {
     const name = str(data, 'name');
