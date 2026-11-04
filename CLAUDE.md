@@ -68,6 +68,7 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 ## 개념서 만들기 (`textbook/`, 2026-11 시작)
 - 수능 대비 통합사회 개념서(A4, 컬러). 앱과 별개 폴더이며 앱 빌드·배포에 영향 없음. 자세한 내용은 `textbook/README.md`.
 - 내용(`textbook/content/*.js`)과 디자인(`textbook/themes/a|b|c.css`)을 나눠, `node build.mjs`로 HTML → 자동 쪽 나눔 → PDF(학생용/교사용).
-- 한글 파일은 `hwpx_test.py`(python-hwpx)로 .hwpx를 만드는 방식으로 시험 중. 강사는 결국 한글 파일도 필요하다고 함.
+- 한글 파일은 `hwpx_build.py`(python-hwpx 6.11.0)로 시안 B 모양의 .hwpx를 만든다. 강사 PC 한글에서 열리는 것 확인함(첫 시험판). 표 안에 표는 넣지 않는다.
 - 강사가 참고로 준 교재: 완자 기출PICK(날개 메모, 글자 칸 빈칸, 쪽 아래 정답 띠). 디자인은 참고만 하고 문장·이름은 새로 만든다.
-- 시안 A(날개형)·B(카드형)·C(2단 노트형)를 통합사회1 Ⅰ단원 두 중단원으로 만들어 강사의 선택을 기다리는 중.
+- 시안 A(날개형)·B(카드형)·C(2단 노트형) 중 **강사가 B(카드형)를 골랐다** (2026-11). 앞으로 B를 기준으로 다듬고 단원을 채운다.
+- 참고 문제집 PDF는 claude.ai 업로드 한도(30MB)를 넘는 경우가 많다. 이 환경에서는 drive.google.com이 막혀 있음(환경 네트워크 설정에서 허용 가능). 제미나이로 단원별 요약을 받아 글로 붙여넣는 방식을 안내함.

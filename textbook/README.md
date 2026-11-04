@@ -9,13 +9,13 @@
 |---|---|
 | `content/t1-1.js` | 통합사회1 Ⅰ단원 내용 (개념, 개념 확인, 수능형 문제, 해설) |
 | `themes/a.css` | 시안 A · 날개형 (본문 옆 날개 메모, 글자 칸 빈칸, 보라색) |
-| `themes/b.css` | 시안 B · 카드형 (넓은 한 단, 청록·남색, 밑줄 빈칸) |
+| `themes/b.css` | **시안 B · 카드형 (강사 선택)** — 넓은 한 단, 청록·남색, 밑줄 빈칸 |
 | `themes/c.css` | 시안 C · 2단 노트형 (칠판 머리, 2단, 주황색, 손글씨 한마디) |
 | `themes/base.css` | 세 시안이 함께 쓰는 A4 쪽 뼈대 |
 | `lib/render.js` | 내용 → HTML 변환 |
 | `lib/paginate.js` | 브라우저에서 A4 쪽 나누기, 빈칸 번호·쪽 아래 정답 띠 |
 | `build.mjs` | PDF·쪽 그림 만들기 |
-| `hwpx_test.py` | 한글 파일(.hwpx) 만들기 시험판 |
+| `hwpx_build.py` | 한글 파일(.hwpx) 만들기 — 시안 B 모양 |
 
 ## 만드는 법
 ```bash
@@ -43,11 +43,16 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 모든 문장은 교재를 옮기지 않고 새로 씁니다. (저작권)
 
 ## 한글 파일
-`hwpx_test.py`는 01 단원 개념 부분만 한글 파일로 만들어 보는 시험판입니다.
-표·색·빈칸 번호는 들어가지만, 날개 배치·칠판 머리 같은 디자인은 한글에서 단순하게 바뀝니다.
-디자인을 고른 뒤 그 시안에 맞춰 한글 변환을 다듬을 예정입니다.
+`hwpx_build.py`가 같은 내용으로 시안 B 모양의 한글 파일(.hwpx)을 만듭니다.
+색 띠·표·상자는 모두 한글 "표"라서 한글에서 바로 고칠 수 있습니다.
+PDF와 다른 점:
+- 한글이 쪽을 스스로 나누므로, 빈칸 정답은 쪽 아래가 아니라 개념 부분 끝에 모읍니다.
+- 둥근 모서리는 없고, 작은 이름표(A, 개념 더하기 등)는 형광펜으로 만듭니다.
+- 글꼴은 맑은 고딕(Windows 기본). Pretendard를 설치했다면 파일 위쪽 `FONT`를 바꿉니다.
+- 표 안에 표를 넣지 않습니다(한글에서 깨질 수 있어서).
 ```bash
 pip install python-hwpx==6.11.0
 node -e "import('./content/t1-1.js').then(m=>console.log(JSON.stringify(m.default)))" > out/t1-1.json
-python3 hwpx_test.py out/t1-1.json out/한글시험-01단원.hwpx
+python3 hwpx_build.py out/t1-1.json out/개념서-B-학생용.hwpx
+python3 hwpx_build.py out/t1-1.json out/개념서-B-교사용.hwpx teacher
 ```
