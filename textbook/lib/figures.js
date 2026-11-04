@@ -181,6 +181,8 @@ function line(b) {
     s += `<line x1="${r1(sx(vl.x))}" y1="${T}" x2="${r1(sx(vl.x))}" y2="${T + ph}" class="ref"/>`;
     if (vl.label) s += text(sx(vl.x), T - 6, vl.label, { size: 10.5, anchor: 'middle', cls: 'refl' });
   }
+  // 그래프 안 글씨 (구간 이름 등): notes: [{ x, y, text }]
+  for (const n of b.notes || []) s += text(sx(n.x), sy(n.y), n.text, { size: n.size || 12, anchor: 'middle', cls: 'refl', weight: 700 });
   // 축
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw + (schem ? 10 : 0)}" y2="${T + ph}" class="axis"${schem ? ' marker-end="url(#ah)"' : ''}/>`;
   s += `<line x1="${L}" y1="${T + ph}" x2="${L}" y2="${T - (schem ? 10 : 0)}" class="axis"${schem ? ' marker-end="url(#ah)"' : ''}/>`;

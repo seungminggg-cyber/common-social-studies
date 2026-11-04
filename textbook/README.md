@@ -13,6 +13,7 @@
 | `themes/c.css` | 시안 C · 2단 노트형 (칠판 머리, 2단, 주황색, 손글씨 한마디) |
 | `themes/base.css` | 세 시안이 함께 쓰는 A4 쪽 뼈대 |
 | `content/t1-2.js` | 통합사회1 Ⅱ단원 내용 |
+| `content/t1-3.js` ~ `t1-5.js` | 통합사회1 Ⅲ~Ⅴ단원. 길어서 중단원마다 `_t1-3/u05.js`처럼 나눠 두고 여기서 모은다 (밑줄로 시작하는 폴더는 단원 목록에 안 잡힘) |
 | `content/z-gallery.js` | 그림 기능 견본 (시험용, 기본 만들기에서 빠짐) |
 | `lib/render.js` | 내용 → HTML 변환 |
 | `lib/figures.js` | 그래프·지도·벤 다이어그램 그리기 (SVG) |
@@ -59,12 +60,13 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 | `{ t: 'chart', kind: 'bar' }` | 세로 막대 (여러 계열) |
 | `kind: 'hbar'` | 가로 막대, 순위 비교 (`highlight`로 강조) |
 | `kind: 'stack100'` | 100% 누적 막대 (응답 비율) |
-| `kind: 'line'` | 꺾은선, `schematic: true`면 숫자 없는 개념도 (`smooth`, `dash`, `end` 이름표, `vlines` 기준선) |
+| `kind: 'line'` | 꺾은선, `schematic: true`면 숫자 없는 개념도 (`smooth`, `dash`, `end` 이름표, `vlines` 기준선, `notes` 그래프 안 글씨) |
 | `kind: 'scatter'` | 산점도 (`trend: true` 추세선) |
 | `kind: 'pie'` | 원그래프 (`donut: true`) |
 | `kind: 'climate'` | 기후 그래프 (월평균 기온 + 월 강수량) |
 | `{ t: 'venn' }` | 벤 다이어그램 (A 왼쪽만, B 공통, C 오른쪽만) |
 | `{ t: 'map', view: 'world' }` | 세계 지도 / `view: [서경, 남위, 동경, 북위]` 지역 지도. 나라 색칠(`highlight`), 지점(`markers`), 화살표(`arrows`), 이름표(`labels`) |
+| `{ t: 'figrow', items: [그림, 그림] }` | 그림 나란히 놓기 (기후 그래프 비교 등). 기후 그래프는 `compact: true`. 한글 파일에는 줄 전체가 그림 한 장으로 들어감 |
 | `{ t: 'table' }` | 칸 합치기 `{ text, rs, cs }`, 여러 줄 머리, 열 정렬 `align`, 강조 칸 `cls: 'hl'`, 빗금 빈칸 `cls: 'hatch'` |
 
 공통: `title`(제목), `source`(출처), `note`(설명), `width`(폭 %), `h`(높이), `w`(좁은 단에서 글자를 키우려면 420 정도).
