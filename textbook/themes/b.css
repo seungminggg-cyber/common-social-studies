@@ -237,7 +237,7 @@ u { text-decoration-color: var(--ans); text-decoration-thickness: 1.2px; }
 /* 그림 */
 .fig-title { color: var(--navy); }
 .fig-title::before { content: ''; display: inline-block; width: 2mm; height: 2mm; border-radius: 50%; background: var(--c1); margin-right: 1.6mm; vertical-align: .5mm; }
-.row-chart .main, .row-map .main, .row-venn .main { background: #fff; border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm 2.6mm; }
+.row-chart .main, .row-map .main, .row-venn .main, .row-figrow .main { background: #fff; border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm 2.6mm; }
 .q-data .fig { margin: 0; }
 .tbl thead tr + tr th { border-top: 1px solid #cfe9e4; }
 .tbl thead th[colspan] { text-align: center; }
@@ -290,6 +290,7 @@ u { text-decoration-color: var(--ans); text-decoration-thickness: 1.2px; }
 .page.tight .tk-q p { line-height: 1.7; }
 .page.tight .tk-body, .page.tight .tk-quote, .page.tight .tk-ox { padding-top: 2.1mm; padding-bottom: 2.3mm; }
 .page.tight .tk-oxt td { padding: 1mm 0; }
+.page.tight .region-exam .slot > .row + .row { margin-top: 5mm; }
 
 /* 카드가 나뉘었을 때 이어지는 쪽 이름표 */
 .tk-cont { background: var(--navy); color: #fff; font-weight: 800; font-size: 9.6pt; padding: 1.6mm 4.5mm; border-radius: 3mm 3mm 0 0; }
@@ -302,3 +303,8 @@ u { text-decoration-color: var(--ans); text-decoration-thickness: 1.2px; }
 .memo-tag { color: #fff; background: var(--c1); border-radius: 99px; padding: 0 2.4mm; font-size: 7.6pt; }
 .memo-q { color: var(--gray); font-size: 8pt; }
 .memo-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), #d5ebe7 calc(7.6mm - 1px), #d5ebe7 7.6mm); }
+
+/* 나란한 그림 */
+.figrow { display: grid; gap: 5mm; }
+.figrow .fig { margin: 0; }
+.figrow-wrap > .fig-foot { margin-top: 1.4mm; }

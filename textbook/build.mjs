@@ -48,6 +48,7 @@ function numberFigures(book) {
     if (Array.isArray(x)) return x.forEach(walk);
     if (!x || typeof x !== 'object') return;
     if (FIGURE_TYPES.has(x.t)) x._fig = `f${String(++n).padStart(3, '0')}`;
+    if (x.t === 'figrow') x._fig = `r${String(++n).padStart(3, '0')}`; // 줄 전체 그림 (한글 파일용)
     Object.values(x).forEach(walk);
   };
   walk(book.units);
@@ -98,6 +99,9 @@ for (const bookName of books) {
           const id = await el.getAttribute('data-fig');
           const body = await el.$('.fig-body');
           await body.screenshot({ path: join(dir, `${id}.png`), omitBackground: false });
+        }
+        for (const el of await page.$$('.figrow[data-row]')) {
+          await el.screenshot({ path: join(dir, `${await el.getAttribute('data-row')}.png`), omitBackground: false });
         }
         figsSaved = true;
       }

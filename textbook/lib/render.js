@@ -100,6 +100,13 @@ function block(b) {
     case 'venn':
     case 'map':
       return figure(b);
+    case 'figrow': {
+      // 그림 여러 개를 가로로 나란히 (기후 그래프 비교 등). 한글 파일에는 줄 전체를 한 장의 그림으로 넣는다.
+      const foot = b.source || b.note
+        ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${inl(b.note)}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : '';
+      return `<div class="figrow-wrap">${b.title ? `<div class="tbl-title">${inl(b.title)}</div>` : ''}<div class="figrow"${
+        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:repeat(${b.items.length},1fr)">${b.items.map(figure).join('')}</div>${foot}</div>`;
+    }
     case 'hub':
       return `<div class="hub"><div class="hub-center"><span>${inl(b.center)}</span></div>${b.spokes
         .map((s, i) => `<div class="hub-spoke s${i + 1}"><b>${inl(s.title)}</b><span>${inl(s.text)}</span></div>`)

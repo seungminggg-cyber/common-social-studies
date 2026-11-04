@@ -368,14 +368,14 @@ def source(b):
 def example(b):
     """해석 연습: 머리 줄 + (문제 설명) + 자료 표 + STEP 을 한 표에 (표 안에 표를 넣지 않는다)"""
     d = b['data']
-    if d['t'] in FIGS:  # 자료가 그림이면: 머리 줄 → 그림 → STEP
+    if d['t'] in FIGS or d['t'] == 'figrow':  # 자료가 그림이면: 머리 줄 → 그림 → STEP
         t = table(1, 1, [100])
         p = cell(t, 0, 0, fill=TEAL_SOFT, pad=(4.5, 4.5, 2, 2))
         chip(p, '해석 연습', TEAL, size=8)
         run(p, '   ' + b['title'], size=10, color=NAVY, bold=True)
         if b.get('stem'):
             rich(para(before=2, after=1), b['stem'], size=9, color=GRAY)
-        figure(d)
+        figure(d) if d['t'] in FIGS else block(d)
         for i, st in enumerate(b['steps']):
             x = para(before=1.2, left=2)
             chip(x, f'STEP {i+1}', TEAL_SOFT, TEAL, size=7.5)
@@ -567,6 +567,14 @@ def block(b):
         chain(b)
     elif t in FIGS:
         figure(b)
+    elif t == 'figrow':  # 나란한 그림들: build.mjs가 줄 전체를 한 장으로 찍어 둔다
+        if b.get('title'):
+            run(para(after=1.5), b['title'], size=9.6, color=NAVY, bold=True)
+        path = os.path.join(FIG_DIR, f"{b['_fig']}.png")
+        pw, ph = png_size(path)
+        with open(path, 'rb') as f:
+            doc.add_picture(f.read(), 'png', width_mm=TEXT_W, height_mm=TEXT_W * ph / pw, align='CENTER')
+        foot(b)
     else:
         raise ValueError(f'모르는 블록: {t}')
     if b.get('side'):  # 표·그림 옆 메모도 아래 상자로
@@ -633,6 +641,12 @@ def data_box(items):
     for d in items:
         if d['t'] in FIGS:
             figure(d, width_mm=COL_W)
+            continue
+        if d['t'] == 'figrow':
+            path = os.path.join(FIG_DIR, f"{d['_fig']}.png")
+            pw, ph = png_size(path)
+            with open(path, 'rb') as f:
+                doc.add_picture(f.read(), 'png', width_mm=COL_W, height_mm=COL_W * ph / pw, align='CENTER')
             continue
         if d['t'] == 'table':
             if d.get('title'):
