@@ -402,10 +402,12 @@ def example(b):
         rich(q, h, size=8.8, bold=True)
     for i, row in enumerate(d['rows']):
         for c, v in enumerate(row):
-            q = cell(t, r + 1 + i, c, sides=('bottom',), pad=(4.5 if c == 0 else 1.5, 1.5, 1.4, 1.4))
-            if c and len(v) <= 4:
+            o = _cell_obj(v)
+            fill = {'hl': '#FFF4C2', 'hatch': '#F1F3F5'}.get(o.get('cls'))
+            q = cell(t, r + 1 + i, c, fill=fill, sides=('bottom',), pad=(4.5 if c == 0 else 1.5, 1.5, 1.4, 1.4))
+            if c and len(o.get('text', '')) <= 4:
                 q.para_pr_id_ref = pp(align='CENTER')
-            rich(q, v, size=8.8)
+            rich(q, o.get('text', ''), size=8.8)
     r += 1 + len(d['rows'])
     p = cell(t, r, 0, pad=(4.5, 4.5, 2.4, 2.8))
     t.merge_cells(r, 0, r, ncol - 1)
@@ -453,8 +455,70 @@ def chain(b):
         chip(p, s, TEAL, size=8.5)
 
 
+def thinker(b):
+    """사상가 카드: 머리(남색) → 핵심 주장 → 용어 → 원전 읽기 → 기출 선지 O·X → 헷갈리지 말자"""
+    t = table(1, 1, [100])
+    p = cell(t, 0, 0, fill=NAVY, pad=(4.5, 4.5, 2.4, 2.4))
+    run(p, b['name'], size=14, color=WHITE, bold=True)
+    if b.get('era'):
+        run(p, '    ' + b['era'], size=8.5, color=MINT)
+    if b.get('keywords'):
+        q = cell_para(t, 0, 0, before=1.5)
+        for k in b['keywords']:
+            chip(q, k, HL, NAVY, size=7.8)
+            run(q, ' ', size=7)
+    p = para(before=3, after=1)
+    run(p, '▌핵심 주장', size=8.5, color=TEAL, bold=True)
+    for i, c in enumerate(b['claims']):
+        q = para(after=1.2, left=2, spacing=165)
+        chip(q, str(i + 1), TEAL_SOFT, TEAL, size=7.5)
+        run(q, '  ')
+        rich(q, c, size=9.5)
+    if b.get('terms'):
+        tt = table(len(b['terms']), 2, [28, 72])
+        for r, (k, v) in enumerate(b['terms']):
+            rich(cell(tt, r, 0, fill=NOTE, pad=(3, 1, 1.2, 1.2)), k, size=8.6, color=NAVY, bold=True)
+            rich(cell(tt, r, 1, fill=NOTE, pad=(1, 3, 1.2, 1.2)), v, size=8.6)
+        gap(2)
+    for qt in b.get('quotes') or []:
+        tq = table(1, 2, [1.2, 98.8])
+        cell(tq, 0, 0, fill=NAVY, pad=(0, 0, 0, 0))
+        p = cell(tq, 0, 1, fill='#F6F7F9', pad=(3.5, 3.5, 2.2, 2.2))
+        run(p, '원전 읽기', size=7.8, color=TEAL, bold=True)
+        rich(cell_para(tq, 0, 1, before=1, spacing=170), qt['text'], size=9.2, font=SERIF)
+        x = cell_para(tq, 0, 1, align='RIGHT')
+        run(x, '— ' + qt['from'], size=7.6, color=GRAY)
+        if qt.get('note'):
+            y = cell_para(tq, 0, 1, before=1)
+            chip(y, '풀이', TEAL, size=7.2)
+            run(y, ' ')
+            rich(y, qt['note'], size=8.6)
+        gap(2)
+    if b.get('ox'):
+        p = para(before=2, after=1)
+        run(p, '▌기출 선지로 확인하기', size=8.5, color=TEAL, bold=True)
+        to = table(len(b['ox']), 3, [60, 7, 33])
+        for r, (st, a, why) in enumerate(b['ox']):
+            last = r == len(b['ox']) - 1
+            sides = () if last else ('bottom',)
+            rich(cell(to, r, 0, sides=sides, kind='DASH', pad=(1, 2, 1.2, 1.2)), st, size=8.8)
+            q = cell(to, r, 1, sides=sides, kind='DASH', pad=(0, 0, 1.2, 1.2))
+            q.para_pr_id_ref = pp(align='CENTER')
+            chip(q, a, TEAL if a == 'O' else ORANGE, size=8.5)
+            rich(cell(to, r, 2, sides=sides, kind='DASH', pad=(2, 1, 1.2, 1.2)), why or '', size=8.2, color=GRAY)
+    if b.get('vs'):
+        tv = table(1, 1, [100])
+        p = cell(tv, 0, 0, fill=WARM, pad=(3, 3, 1.8, 1.8))
+        run(p, '헷갈리지 말자  ', size=8.5, color=ORANGE, bold=True)
+        rich(p, b['vs'], size=8.8)
+    gap(8)
+
+
 def block(b):
     t = b['t']
+    if t == 'thinker':
+        thinker(b)
+        return
     if t == 'sec':
         p = para(before=10, after=4)
         chip(p, f" {b['mark']} ", TEAL, size=10)

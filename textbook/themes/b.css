@@ -241,3 +241,44 @@ u { text-decoration-color: var(--ans); text-decoration-thickness: 1.2px; }
 .q-data .fig { margin: 0; }
 .tbl thead tr + tr th { border-top: 1px solid #cfe9e4; }
 .tbl thead th[colspan] { text-align: center; }
+
+/* 사상가 카드 */
+.slot > .row-tk:not(.tk-first) { margin-top: 0 !important; }
+.row-tk .main { border-left: 1px solid var(--line); border-right: 1px solid var(--line); background: #fff; }
+.row-tk.tk-first .main { border-top: 0; border-radius: 3mm 3mm 0 0; overflow: hidden; }
+.row-tk.tk-last .main { border-bottom: 1px solid var(--line); border-radius: 0 0 3mm 3mm; }
+.row-tk.tk-first.tk-last .main { border-radius: 3mm; }
+.tk-head { background: var(--navy); color: #fff; padding: 2.6mm 4.5mm 2.8mm; }
+.tk-top { display: flex; align-items: baseline; gap: 3mm; }
+.tk-name { font-size: 13.5pt; font-weight: 800; letter-spacing: -.3px; }
+.tk-era { font-size: 8pt; color: #8fe0d3; }
+.tk-keys { display: flex; flex-wrap: wrap; gap: 1.4mm; margin-top: 1.4mm; }
+.tk-key { font-size: 7.6pt; font-weight: 700; color: var(--navy); background: var(--hl); border-radius: 99px; padding: .1mm 2.4mm; }
+.tk-body, .tk-quote, .tk-ox { padding: 2.6mm 4.5mm 3mm; }
+.tk-quote, .tk-ox { border-top: 1px dashed var(--line); }
+.tk-label { font-size: 8pt; font-weight: 800; color: var(--c1); margin-bottom: 1.4mm; letter-spacing: .2px; }
+.tk-label::before { content: ''; display: inline-block; width: 1.2mm; height: 3mm; background: var(--c1); border-radius: .5mm; margin-right: 1.6mm; vertical-align: -.4mm; }
+.tk-claims li { display: flex; gap: 2.2mm; align-items: flex-start; line-height: 1.72; }
+.tk-claims li + li { margin-top: 1mm; }
+.tk-n { flex: none; display: inline-grid; place-items: center; width: 4.4mm; height: 4.4mm; border-radius: 50%; background: var(--c1-soft); color: var(--c1); font-size: 7pt; font-weight: 800; margin-top: .8mm; }
+.tk-terms { margin: 2.2mm 0 0; display: grid; gap: 1mm; }
+.tk-terms > div { display: flex; gap: 2mm; font-size: 8.6pt; background: #f6f8f9; border-radius: 1.5mm; padding: 1.2mm 2.4mm; }
+.tk-terms dt { flex: none; font-weight: 800; color: var(--navy); }
+.tk-terms dd { margin: 0; }
+.tk-q { background: #f6f7f9; border-left: 3px solid var(--navy); border-radius: 0 2mm 2mm 0; padding: 2.2mm 3.4mm; }
+.tk-q + .tk-q { margin-top: 2mm; }
+.tk-q p { font-size: 8.9pt; line-height: 1.78; }
+.tk-from { font-size: 7.6pt; color: var(--gray); text-align: right; margin-top: .6mm; }
+.tk-qnote { font-size: 8.4pt; line-height: 1.65; margin-top: 1.2mm; color: #31414c; }
+.tk-qnote .tk-ql { color: #fff; background: var(--c1); border-radius: 1mm; padding: 0 1.4mm; font-size: 7.2pt; font-weight: 800; margin-right: 1mm; }
+.tk-qnote b { color: var(--navy); }
+.tk-oxt { font-size: 8.6pt; line-height: 1.6; }
+.tk-oxt tr + tr td { border-top: 1px dashed #e3e8eb; }
+.tk-oxt td { padding: 1.3mm 0; vertical-align: top; }
+.tk-s { width: 62%; padding-right: 3mm !important; }
+.tk-a { width: 7mm; text-align: center; }
+.tk-a span { display: inline-grid; place-items: center; width: 5mm; height: 5mm; border-radius: 50%; font-weight: 800; font-size: 8pt; color: #fff; }
+.tk-a .o { background: var(--c1); } .tk-a .x { background: var(--ans); }
+.tk-why { color: #5a6872; font-size: 8pt; padding-left: 2mm !important; }
+.tk-vs { margin-top: 2.2mm; background: var(--warm); border-radius: 2mm; padding: 1.8mm 3mm; font-size: 8.6pt; }
+.tk-vs b { color: var(--ans); margin-right: 1.4mm; }

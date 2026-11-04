@@ -144,8 +144,33 @@ function note(side) {
   return `<aside class="side"><div class="note"><div class="note-head"><span class="note-tag">개념 더하기</span><span class="note-title">${inl(side.title)}</span></div>${body}</div></aside>`;
 }
 
+// 사상가 카드 — 머리+핵심 주장 / 원전 읽기 / 기출 선지 를 따로 줄(row)로 만들어 쪽을 넘겨도 이어지게
+function thinkerRows(b) {
+  const parts = [];
+  const keys = (b.keywords || []).map((k) => `<span class="tk-key">${inl(k)}</span>`).join('');
+  const terms = b.terms
+    ? `<dl class="tk-terms">${b.terms.map(([k, v]) => `<div><dt>${inl(k)}</dt><dd>${inl(v)}</dd></div>`).join('')}</dl>` : '';
+  parts.push(`<div class="tk tk-head"><div class="tk-top"><span class="tk-name">${inl(b.name)}</span>${
+    b.era ? `<span class="tk-era">${esc(b.era)}</span>` : ''}</div>${keys ? `<div class="tk-keys">${keys}</div>` : ''}</div>`
+    + `<div class="tk tk-body"><div class="tk-label">핵심 주장</div><ol class="tk-claims">${b.claims
+      .map((c, i) => `<li><span class="tk-n">${i + 1}</span><span>${inl(c)}</span></li>`).join('')}</ol>${terms}</div>`);
+  if (b.quotes?.length)
+    parts.push(`<div class="tk tk-quote"><div class="tk-label">원전 읽기</div>${b.quotes
+      .map((q) => `<div class="tk-q"><p class="serif">${inl(q.text)}</p><div class="tk-from">— ${esc(q.from)}</div>${
+        q.note ? `<div class="tk-qnote"><span class="tk-ql">풀이</span> ${inl(q.note)}</div>` : ''}</div>`).join('')}</div>`);
+  if (b.ox?.length)
+    parts.push(`<div class="tk tk-ox"><div class="tk-label">기출 선지로 확인하기</div><table class="tk-oxt"><tbody>${b.ox
+      .map(([st, a, why]) => `<tr><td class="tk-s">${inl(st)}</td><td class="tk-a"><span class="${a === 'O' ? 'o' : 'x'}">${a}</span></td><td class="tk-why">${why ? inl(why) : ''}</td></tr>`)
+      .join('')}</tbody></table>${b.vs ? `<div class="tk-vs"><b>헷갈리지 말자</b> ${inl(b.vs)}</div>` : ''}</div>`);
+  return parts
+    .map((h, i) => `<div class="row row-tk${i === 0 ? ' tk-first' : ''}${i === parts.length - 1 ? ' tk-last' : ''}"${
+      i === 0 && parts.length > 1 ? '' : ''}><div class="main">${h}</div></div>`)
+    .join('');
+}
+
 // 쪽 나누기의 단위. 제목(sec)은 다음 블록과 같은 쪽에 붙어 다닌다(data-keep).
 function row(b) {
+  if (b.t === 'thinker') return thinkerRows(b);
   const keep = b.t === 'sec' ? ' data-keep="next"' : '';
   return `<div class="row row-${b.t}${b.side ? ' has-side' : ''}"${keep}><div class="main">${block(b)}</div>${note(b.side)}</div>`;
 }
