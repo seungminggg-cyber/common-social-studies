@@ -7,6 +7,7 @@
   --fs: 9.6pt; --lh: 1.78;
   --m-top: 12mm; --m-out: 17mm; --m-in: 19mm; --m-bottom: 10mm;
   --gap: 5mm; --col-gap: 8mm; --head-h: 9mm;
+  --fig-1: #0f766e; --fig-2: #0b2545; --fig-3: #e8590c; --fig-4: #f2b705; --fig-5: #94a3b8; --fig-hl: #e8590c;
 }
 
 /* 머리글·쪽번호 */
@@ -232,3 +233,11 @@ u { text-decoration-color: var(--ans); text-decoration-thickness: 1.2px; }
 .cv-sub { position: relative; z-index: 1; font-size: 11pt; color: #c9d6e3; margin-top: 5mm; }
 .cv-theme { position: absolute; z-index: 1; left: 22mm; bottom: 40mm; font-size: 20pt; font-weight: 800; color: #fff; }
 .cv-unit { position: absolute; z-index: 1; left: 22mm; bottom: 30mm; font-size: 11pt; color: #d3f1ec; }
+
+/* 그림 */
+.fig-title { color: var(--navy); }
+.fig-title::before { content: ''; display: inline-block; width: 2mm; height: 2mm; border-radius: 50%; background: var(--c1); margin-right: 1.6mm; vertical-align: .5mm; }
+.row-chart .main, .row-map .main, .row-venn .main { background: #fff; border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm 2.6mm; }
+.q-data .fig { margin: 0; }
+.tbl thead tr + tr th { border-top: 1px solid #cfe9e4; }
+.tbl thead th[colspan] { text-align: center; }

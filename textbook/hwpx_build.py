@@ -12,7 +12,9 @@ PDF와 똑같지는 않습니다. 한글은 쪽 나누기를 스스로 하기 �
   python3 hwpx_build.py out/t1-1.json out/개념서-B-교사용.hwpx teacher   # 교사용 (빈칸·정답 채움)
 """
 import json
+import os
 import re
+import struct
 import sys
 import warnings
 
@@ -40,6 +42,9 @@ COL_W = (TEXT_W - COL_GAP) / 2              # 2단일 때 한 단 폭(mm)
 src, out = sys.argv[1], sys.argv[2]
 TEACHER = len(sys.argv) > 3 and sys.argv[3] == 'teacher'
 book = json.load(open(src, encoding='utf-8'))
+# build.mjs가 찍어 둔 그래프·지도 그림 (out/fig/<단원>/<번호>.png)
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(src)), 'fig', os.path.splitext(os.path.basename(src))[0])
+FIGS = ('chart', 'venn', 'map')
 
 doc = document.HwpxDocument.new()
 doc.page.setup(paper_size='A4', margin_left_mm=M_LEFT, margin_right_mm=M_RIGHT, margin_top_mm=12, margin_bottom_mm=12)
@@ -195,26 +200,91 @@ def kv(rows):
         t.merge_cells(0, 0, len(rows) - 1, 0)
 
 
+def _cell_obj(c):
+    return c if isinstance(c, dict) else {'text': '' if c is None else str(c)}
+
+
+def _layout(rows):
+    """합친 칸을 고려해 [(행, 열, 칸)]과 전체 열 수를 돌려준다."""
+    taken, out, ncol = set(), [], 0
+    for r, row in enumerate(rows):
+        c = 0
+        for v in row:
+            while (r, c) in taken:
+                c += 1
+            o = _cell_obj(v)
+            for i in range(o.get('rs', 1)):
+                for j in range(o.get('cs', 1)):
+                    taken.add((r + i, c + j))
+            out.append((r, c, o))
+            c += o.get('cs', 1)
+            ncol = max(ncol, c)
+    return out, ncol
+
+
+def foot(b, width_mm=TEXT_W):
+    """그림·표 아래 설명과 출처"""
+    if b.get('note'):
+        rich(para(after=0.5), b['note'], size=8, color=GRAY)
+    if b.get('source'):
+        run(para(align='RIGHT', after=2), b['source'], size=7.8, color=GRAY)
+
+
 def plain_table(b, width_mm=TEXT_W, head_fill=TEAL_SOFT, head_color=TEAL_DARK, size=9.2, boxed=False):
     if b.get('title'):
         para(b['title'], size=9.5, color=NAVY, bold=True, after=2)
-    rows, cols = len(b['rows']) + 1, len(b['head'])
-    widths = b.get('widths') or [1] * cols
-    if width_mm < TEXT_W and cols >= 3:
-        widths = [52] + [48 / (cols - 1)] * (cols - 1)   # 좁은 단에서는 "아니요"가 꺾이지 않게
-    t = table(rows, cols, widths, width_mm=width_mm)
+    head = b.get('head') or []
+    head_rows = head if head and isinstance(head[0], list) else ([head] if head else [])
+    all_rows = head_rows + b['rows']
+    cells, ncol = _layout(all_rows)
+    nh = len(head_rows)
+    widths = b.get('widths') or [1] * ncol
+    if width_mm < TEXT_W and ncol >= 3:
+        widths = [52] + [48 / (ncol - 1)] * (ncol - 1)   # 좁은 단에서는 "아니요"가 꺾이지 않게
+    t = table(len(all_rows), ncol, widths, width_mm=width_mm)
     sides = ('left', 'right', 'top', 'bottom') if boxed else ('bottom',)
     bc = '#C3CCD1' if boxed else LINE
-    for c, h in enumerate(b['head']):
-        p = cell(t, 0, c, fill=head_fill, sides=sides, border=bc)
-        rich(p, h, size=size, color=head_color, bold=True)
-    for r, row in enumerate(b['rows']):
-        for c, v in enumerate(row):
-            p = cell(t, r + 1, c, sides=sides, border=bc)
-            if c and len(v) <= 4:
-                p.para_pr_id_ref = pp(align='CENTER')
-            rich(p, v, size=size, color=NAVY if c == 0 and not boxed else INK, bold=(c == 0 and not boxed))
+    aligns = b.get('align') or []
+    row_head = b.get('rowHeader', True)
+    for r, c, o in cells:
+        is_head = r < nh
+        fill = head_fill if is_head else {'hl': '#FFF4C2', 'hatch': '#F1F3F5'}.get(o.get('cls'))
+        p = cell(t, r, c, fill=fill, sides=sides, border=bc)
+        txt = o.get('text', '')
+        al = o.get('align') or (aligns[c] if c < len(aligns) else None)
+        if al == 'center' or (is_head and o.get('cs', 1) > 1) or (not is_head and c and len(txt) <= 4 and not al):
+            p.para_pr_id_ref = pp(align='CENTER')
+        elif al == 'right':
+            p.para_pr_id_ref = pp(align='RIGHT')
+        first = c == 0 and row_head and not boxed and not is_head
+        rich(p, txt, size=size, color=head_color if is_head else (NAVY if first else INK),
+             bold=is_head or first or o.get('cls') == 'em')
+    for r, c, o in cells:
+        if o.get('rs', 1) > 1 or o.get('cs', 1) > 1:
+            t.merge_cells(r, c, r + o.get('rs', 1) - 1, c + o.get('cs', 1) - 1)
+    if b.get('note') or b.get('source'):
+        foot(b, width_mm)
     return t
+
+
+def png_size(path):
+    with open(path, 'rb') as f:
+        head = f.read(24)
+    return struct.unpack('>II', head[16:24])
+
+
+def figure(b, width_mm=TEXT_W):
+    """그래프·지도: build.mjs가 찍은 PNG를 넣고, 제목·출처는 글자로"""
+    path = os.path.join(FIG_DIR, f"{b['_fig']}.png")
+    if b.get('title'):
+        p = para(align='CENTER', after=1.5)
+        run(p, '● ', size=7.5, color=TEAL)
+        run(p, b['title'], size=9.6, color=NAVY, bold=True)
+    w = width_mm * (b.get('width') or 100) / 100
+    pw, ph = png_size(path)
+    with open(path, 'rb') as f:
+        doc.add_picture(f.read(), 'png', width_mm=w, height_mm=w * ph / pw, align='CENTER')
+    foot(b, width_mm)
 
 
 def hub(b):
@@ -298,6 +368,20 @@ def source(b):
 def example(b):
     """해석 연습: 머리 줄 + (문제 설명) + 자료 표 + STEP 을 한 표에 (표 안에 표를 넣지 않는다)"""
     d = b['data']
+    if d['t'] in FIGS:  # 자료가 그림이면: 머리 줄 → 그림 → STEP
+        t = table(1, 1, [100])
+        p = cell(t, 0, 0, fill=TEAL_SOFT, pad=(4.5, 4.5, 2, 2))
+        chip(p, '해석 연습', TEAL, size=8)
+        run(p, '   ' + b['title'], size=10, color=NAVY, bold=True)
+        if b.get('stem'):
+            rich(para(before=2, after=1), b['stem'], size=9, color=GRAY)
+        figure(d)
+        for i, st in enumerate(b['steps']):
+            x = para(before=1.2, left=2)
+            chip(x, f'STEP {i+1}', TEAL_SOFT, TEAL, size=7.5)
+            run(x, '  ')
+            rich(x, st, size=9.2)
+        return
     ncol = len(d['head'])
     has_stem = bool(b.get('stem'))
     rows = 1 + has_stem + 1 + len(d['rows']) + 1
@@ -417,8 +501,13 @@ def block(b):
         flow(b)
     elif t == 'chain':
         chain(b)
+    elif t in FIGS:
+        figure(b)
     else:
         raise ValueError(f'모르는 블록: {t}')
+    if b.get('side'):  # 표·그림 옆 메모도 아래 상자로
+        gap(3)
+        side_note(b['side'])
     gap(6)
 
 
@@ -478,6 +567,9 @@ def check(u):
 def data_box(items):
     """문제 자료: 글·대화는 테두리 상자에, 표는 표 그대로 (표 안에 표를 넣지 않는다)"""
     for d in items:
+        if d['t'] in FIGS:
+            figure(d, width_mm=COL_W)
+            continue
         if d['t'] == 'table':
             if d.get('title'):
                 rich(para(align='CENTER', after=1.5), d['title'], size=8.8, bold=True)
@@ -551,18 +643,23 @@ for ui, u in enumerate(book['units']):
         p = para(before=4)
         run(p, '빈칸 정답   ', size=8.5, color=TEAL, bold=True)
         run(p, '   '.join(f'{i+1}) {a}' for i, a in enumerate(blanks)), size=8.5, color=GRAY)
-    check(u)
-    band('수능형 문제', f"{u['no']} {u['title']}")
-    columns(2)
+    if u['check']['ox'] or u['check']['blank']:
+        check(u)
     starts.append(q_no)
-    for q in u['exam']:
-        question(q, q_no)
-        q_no += 1
-    columns(1)
+    if u['exam']:
+        band('수능형 문제', f"{u['no']} {u['title']}")
+        columns(2)
+        for q in u['exam']:
+            question(q, q_no)
+            q_no += 1
+        columns(1)
 
-band('정답과 해설')
-columns(2)
+if any(u['exam'] for u in book['units']):
+    band('정답과 해설')
+    columns(2)
 for ui, u in enumerate(book['units']):
+    if not u['exam']:
+        continue
     p = para(before=4 if ui else 0, after=3)
     chip(p, u['no'], TEAL, size=9.5)
     run(p, '  ' + u['title'], size=10, color=NAVY, bold=True)

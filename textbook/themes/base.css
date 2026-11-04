@@ -83,3 +83,62 @@ th, td { padding: 0; vertical-align: middle; }
 .choices li { display: flex; gap: .35em; }
 .choices.short { display: grid; grid-template-columns: repeat(3, 1fr); }
 .mode-student .choices li.ok { color: inherit; font-weight: inherit; }
+
+/* ── 그래프 · 지도 · 벤 다이어그램 (lib/figures.js) ── */
+:root { --fig-1: #0f766e; --fig-2: #0b2545; --fig-3: #e8590c; --fig-4: #f2b705; --fig-5: #94a3b8; --fig-hl: #e8590c; --fig-ink: #2b333b; }
+.fig { margin: 0 auto; }
+.fig-title { font-weight: 700; font-size: .95em; text-align: center; margin-bottom: 1.4mm; }
+.fig-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.fig-svg text { font-family: 'Pretendard Variable', Pretendard, sans-serif; fill: var(--fig-ink); }
+.fig-foot { display: flex; gap: 4mm; font-size: 7.6pt; color: #6b7480; margin-top: 1.2mm; line-height: 1.5; }
+.fig-src { margin-left: auto; text-align: right; white-space: nowrap; }
+.fig-svg .grid { stroke: #e2e6ea; stroke-width: 1; }
+.fig-svg .axis { stroke: #4b5560; stroke-width: 1.3; fill: none; }
+.fig-svg .ref { stroke: #7c8792; stroke-width: 1.2; stroke-dasharray: 4 3; }
+.fig-svg .refl, .fig-svg .note { fill: #4b5560; }
+.fig-svg .tick, .fig-svg .axl { fill: #5b6570; }
+.fig-svg .ahd { fill: #4b5560; } .fig-svg .ahd2 { fill: var(--fig-3); }
+.fig-svg .fl.s1 { fill: var(--fig-1); } .fig-svg .fl.s2 { fill: var(--fig-2); } .fig-svg .fl.s3 { fill: var(--fig-3); }
+.fig-svg .fl.s4 { fill: var(--fig-4); } .fig-svg .fl.s5 { fill: var(--fig-5); }
+.fig-svg .fl.hl { fill: var(--fig-hl); }
+.fig-svg .fig-svg .prec { opacity: .85; }
+.fig-svg .ln { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.fig-svg .ln.s1 { stroke: var(--fig-1); } .fig-svg .ln.s2 { stroke: var(--fig-2); } .fig-svg .ln.s3 { stroke: var(--fig-3); }
+.fig-svg .ln.s4 { stroke: var(--fig-4); } .fig-svg .ln.s5 { stroke: var(--fig-5); }
+.fig-svg .ln.dash { stroke-dasharray: 7 5; stroke-width: 2.2; }
+.fig-svg .ln.trend { stroke: #7c8792; stroke-width: 1.6; }
+.fig-svg .dot.s1 { fill: var(--fig-1); } .fig-svg .dot.s2 { fill: var(--fig-2); } .fig-svg .dot.s3 { fill: var(--fig-3); }
+.fig-svg .dot.s4 { fill: var(--fig-4); } .fig-svg .dot.s5 { fill: var(--fig-5); }
+.fig-svg .dot { stroke: #fff; stroke-width: 1.2; }
+.fig-svg .endl.s1 { fill: var(--fig-1); } .fig-svg .endl.s2 { fill: var(--fig-2); } .fig-svg .endl.s3 { fill: var(--fig-3); }
+.fig-svg .endl { font-weight: 700; }
+.fig-svg .in { fill: #fff; font-weight: 700; } .fig-svg .in.s4, .fig-svg .in.s5 { fill: #222; }
+.fig-svg .val { fill: #39424b; } .fig-svg .val.hl, .fig-svg .cat.hl { fill: var(--fig-hl); font-weight: 800; }
+.fig-svg .pie { stroke: #fff; stroke-width: 2; }
+.fig-svg .venn { stroke-width: 2.2; }
+.fig-svg .venn.v1 { fill: var(--fig-1); fill-opacity: .13; stroke: var(--fig-1); }
+.fig-svg .venn.v2 { fill: var(--fig-3); fill-opacity: .13; stroke: var(--fig-3); }
+.fig-svg .vl { fill: #39424b; } .fig-svg .vi { fill: #2b333b; }
+.fig-svg .sea { fill: #eaf3f8; } .fig-map .fig-svg .sea { fill: #eaf3f8; }
+.fig-svg .sphere { fill: #eaf3f8; stroke: #b9cad6; stroke-width: 1; }
+.fig-svg .grat { fill: none; stroke: #d3e2ec; stroke-width: .6; }
+.fig-svg .land { fill: #f4f5f6; stroke: none; }
+.fig-svg .border { fill: none; stroke: #a9b4be; stroke-width: .6; }
+.fig-svg .hl.h1 { fill: var(--fig-1); fill-opacity: .55; } .fig-svg .hl.h2 { fill: var(--fig-3); fill-opacity: .55; }
+.fig-svg .hl.h3 { fill: var(--fig-4); fill-opacity: .65; } .fig-svg .hl.h4 { fill: var(--fig-2); fill-opacity: .45; }
+.fig-svg .eq { fill: none; stroke: #7f9aab; stroke-width: .9; stroke-dasharray: 5 4; }
+.fig-svg .pin { fill: var(--fig-3); stroke: #fff; stroke-width: 1.6; }
+.fig-svg .ring { fill: var(--fig-3); fill-opacity: .2; stroke: var(--fig-3); stroke-width: 2; stroke-dasharray: 5 3; }
+.fig-svg .mapl { fill: #1f2933; paint-order: stroke; stroke: rgba(255,255,255,.9); stroke-width: 3.2px; stroke-linejoin: round; }
+.fig-svg .mapl.soft { fill: #5b6570; font-weight: 500; }
+.fig-svg .arrow { fill: none; stroke: var(--fig-3); stroke-width: 2.4; }
+.fig-svg .lg { fill: #39424b; }
+
+/* 표: 정렬·강조·합친 칸 */
+.tbl .al-center { text-align: center; } .tbl .al-right { text-align: right; } .tbl .al-left { text-align: left; }
+.tbl td.hl, .tbl th.hl { background: #fff4c2 !important; }
+.tbl td.em { font-weight: 700; }
+.tbl td.hatch { background: repeating-linear-gradient(135deg, #fff 0 4px, #f3f4f6 4px 8px) !important; }
+.tbl.compact { font-size: .92em; }
+.fig-map .fig-body { overflow: hidden; border-radius: 1.5mm; }
+.fig-map .fig-svg { overflow: hidden; }

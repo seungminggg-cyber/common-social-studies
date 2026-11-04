@@ -3,6 +3,8 @@
 // 디자인과 상관없이 "무엇이 들어가는지"만 HTML로 만듭니다.
 // 색·배치·글꼴은 themes/*.css가 정하고, 쪽 나누기는 lib/paginate.js가 브라우저에서 합니다.
 
+import { figure, FIGURE_TYPES } from './figures.js';
+
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -46,24 +48,58 @@ function block(b) {
         .map(([k, v]) => `<tr><th><span>${inl(k)}</span></th><td>${inl(v)}</td></tr>`)
         .join('')}</tbody></table>`;
     case 'table': {
+      // 칸: 글자 또는 { text, rs(세로 합치기), cs(가로 합치기), cls: 'hl'(노랑) | 'em'(굵게) | 'hatch'(빗금 빈칸), align }
+      // head: ['a','b'] 한 줄 또는 [['a',{text:'b',cs:2}],['c','d']] 여러 줄
+      const cellHtml = (c, tag, align) => {
+        const o = c && typeof c === 'object' ? c : { text: c };
+        const at = [o.rs > 1 ? ` rowspan="${o.rs}"` : '', o.cs > 1 ? ` colspan="${o.cs}"` : ''].join('');
+        const cls = [o.cls, (o.align || align) ? `al-${o.align || align}` : ''].filter(Boolean).join(' ');
+        return `<${tag}${at}${cls ? ` class="${cls}"` : ''}>${inl(o.text ?? '')}</${tag}>`;
+      };
+      const grid = (rows) => {
+        // 합친 칸을 고려해 각 칸의 실제 열 번호를 계산
+        const taken = [];
+        return rows.map((row, r) => {
+          let c = 0;
+          return row.map((cell) => {
+            while (taken[r]?.[c]) c++;
+            const o = cell && typeof cell === 'object' ? cell : { text: cell };
+            for (let i = 0; i < (o.rs || 1); i++) for (let j = 0; j < (o.cs || 1); j++) ((taken[r + i] ||= [])[c + j] = true);
+            const at = c;
+            c += o.cs || 1;
+            return { cell, col: at };
+          });
+        });
+      };
+      const headRows = Array.isArray(b.head?.[0]) ? b.head : b.head ? [b.head] : [];
+      const al = b.align || [];
+      const rowHead = b.rowHeader !== false;
       const cols = (b.widths || []).map((w) => `<col style="width:${w}%">`).join('');
-      const table = `<table class="tbl">${cols ? `<colgroup>${cols}</colgroup>` : ''}<thead><tr>${b.head
-        .map((h) => `<th>${inl(h)}</th>`)
-        .join('')}</tr></thead><tbody>${b.rows
-        .map((r) => `<tr>${r.map((c, i) => (i === 0 ? `<th>${inl(c)}</th>` : `<td>${inl(c)}</td>`)).join('')}</tr>`)
-        .join('')}</tbody></table>`;
+      const thead = headRows.length
+        ? `<thead>${grid(headRows).map((row) => `<tr>${row.map(({ cell }) => cellHtml(cell, 'th')).join('')}</tr>`).join('')}</thead>` : '';
+      const tbody = `<tbody>${grid(b.rows).map((row) => `<tr>${row
+        .map(({ cell, col }) => cellHtml(cell, col === 0 && rowHead ? 'th' : 'td', al[col]))
+        .join('')}</tr>`).join('')}</tbody>`;
+      const table = `<table class="tbl${b.compact ? ' compact' : ''}">${cols ? `<colgroup>${cols}</colgroup>` : ''}${thead}${tbody}</table>`;
+      const simple = !b.rows.some((r) => r.some((c) => c && typeof c === 'object')) && headRows.length === 1;
       // 좁은 단(2단 디자인)에서 쓰는 "쌓은 표" — 테마 CSS가 둘 중 하나만 보여 준다.
-      const stack = b.stack
+      const stack = b.stack && simple
         ? `<div class="tbl-stack">${b.rows
             .map((r) => `<div class="ts-card"><div class="ts-h">${inl(r[0])}</div>${r
               .slice(1)
-              .map((c, i) => `<div class="ts-row"><span class="ts-k">${inl(b.head[i + 1])}</span><span class="ts-v">${inl(c)}</span></div>`)
+              .map((c, i) => `<div class="ts-row"><span class="ts-k">${inl(headRows[0][i + 1])}</span><span class="ts-v">${inl(c)}</span></div>`)
               .join('')}</div>`)
             .join('')}</div>`
         : '';
       const title = b.title ? `<div class="tbl-title">${inl(b.title)}</div>` : '';
-      return `<div class="tbl-wrap${b.stack ? ' stackable' : ''}">${title}${table}${stack}</div>`;
+      const foot = b.source || b.note
+        ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${inl(b.note)}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : '';
+      return `<div class="tbl-wrap${stack ? ' stackable' : ''}">${title}${table}${stack}${foot}</div>`;
     }
+    case 'chart':
+    case 'venn':
+    case 'map':
+      return figure(b);
     case 'hub':
       return `<div class="hub"><div class="hub-center"><span>${inl(b.center)}</span></div>${b.spokes
         .map((s, i) => `<div class="hub-spoke s${i + 1}"><b>${inl(s.title)}</b><span>${inl(s.text)}</span></div>`)
@@ -209,13 +245,15 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
     const headRight = `${esc(u.no)} ${esc(u.title)}`;
     const attrs = `data-tab="${esc(book.chapter.no)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(headRight)}"`;
     sections.push(`<section class="flow" data-kind="concept" ${attrs}>${opener(book, u)}${u.concept.map(row).join('\n')}</section>`);
-    sections.push(`<section class="flow" data-kind="check" ${attrs}>${bandTop('check', '개념 확인', u)}${checkRows(u)}</section>`);
+    if (u.check?.ox?.length || u.check?.blank?.length)
+      sections.push(`<section class="flow" data-kind="check" ${attrs}>${bandTop('check', '개념 확인', u)}${checkRows(u)}</section>`);
     qStart.push(qNo);
-    sections.push(`<section class="flow" data-kind="exam" ${attrs}>${bandTop('exam', '수능형 문제', u)}${u.exam
-      .map((q) => question(q, qNo++))
-      .join('\n')}</section>`);
+    if (u.exam?.length)
+      sections.push(`<section class="flow" data-kind="exam" ${attrs}>${bandTop('exam', '수능형 문제', u)}${u.exam
+        .map((q) => question(q, qNo++))
+        .join('\n')}</section>`);
   }
-  sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설">${bandTop('answers', '정답과 해설')}${book.units
+  if (book.units.some((u) => u.exam?.length)) sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설">${bandTop('answers', '정답과 해설')}${book.units
     .map((u, i) => answerRows(u, qStart[i]))
     .join('\n')}</section>`);
 

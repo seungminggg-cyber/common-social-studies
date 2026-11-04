@@ -12,7 +12,10 @@
 | `themes/b.css` | **시안 B · 카드형 (강사 선택)** — 넓은 한 단, 청록·남색, 밑줄 빈칸 |
 | `themes/c.css` | 시안 C · 2단 노트형 (칠판 머리, 2단, 주황색, 손글씨 한마디) |
 | `themes/base.css` | 세 시안이 함께 쓰는 A4 쪽 뼈대 |
+| `content/t1-2.js` | 통합사회1 Ⅱ단원 내용 |
+| `content/z-gallery.js` | 그림 기능 견본 (시험용, 기본 만들기에서 빠짐) |
 | `lib/render.js` | 내용 → HTML 변환 |
+| `lib/figures.js` | 그래프·지도·벤 다이어그램 그리기 (SVG) |
 | `lib/paginate.js` | 브라우저에서 A4 쪽 나누기, 빈칸 번호·쪽 아래 정답 띠 |
 | `build.mjs` | PDF·쪽 그림 만들기 |
 | `hwpx_build.py` | 한글 파일(.hwpx) 만들기 — 시안 B 모양 |
@@ -21,8 +24,9 @@
 ```bash
 cd textbook
 npm install
-node build.mjs                  # 시안 a·b·c 학생용 PDF → out/
-node build.mjs a both png       # 시안 a 학생용+교사용, 쪽 그림(PNG)까지
+node build.mjs                      # 모든 단원, 시안 b, 학생용 PDF → out/
+node build.mjs t1-2 b both png      # Ⅱ단원, 학생용+교사용, 쪽 그림(PNG)까지
+node build.mjs z-gallery b          # 그림 기능 견본
 ```
 Playwright(크롬)가 설치된 환경이 필요합니다.
 
@@ -42,6 +46,24 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 
 모든 문장은 교재를 옮기지 않고 새로 씁니다. (저작권)
 
+## 그림 자료 (그래프·지도·벤 다이어그램·표)
+숫자 데이터로 직접 그립니다. 예시는 `content/z-gallery.js`에 다 있습니다.
+| 블록 | 쓰임 |
+|---|---|
+| `{ t: 'chart', kind: 'bar' }` | 세로 막대 (여러 계열) |
+| `kind: 'hbar'` | 가로 막대, 순위 비교 (`highlight`로 강조) |
+| `kind: 'stack100'` | 100% 누적 막대 (응답 비율) |
+| `kind: 'line'` | 꺾은선, `schematic: true`면 숫자 없는 개념도 (`smooth`, `dash`, `end` 이름표, `vlines` 기준선) |
+| `kind: 'scatter'` | 산점도 (`trend: true` 추세선) |
+| `kind: 'pie'` | 원그래프 (`donut: true`) |
+| `kind: 'climate'` | 기후 그래프 (월평균 기온 + 월 강수량) |
+| `{ t: 'venn' }` | 벤 다이어그램 (A 왼쪽만, B 공통, C 오른쪽만) |
+| `{ t: 'map', view: 'world' }` | 세계 지도 / `view: [서경, 남위, 동경, 북위]` 지역 지도. 나라 색칠(`highlight`), 지점(`markers`), 화살표(`arrows`), 이름표(`labels`) |
+| `{ t: 'table' }` | 칸 합치기 `{ text, rs, cs }`, 여러 줄 머리, 열 정렬 `align`, 강조 칸 `cls: 'hl'`, 빗금 빈칸 `cls: 'hatch'` |
+
+공통: `title`(제목), `source`(출처), `note`(설명), `width`(폭 %), `h`(높이), `w`(좁은 단에서 글자를 키우려면 420 정도).
+출처를 확인한 숫자만 실제 자료로 쓰고, 나머지는 "개념도"나 "가상 자료"라고 적습니다.
+
 ## 한글 파일
 `hwpx_build.py`가 같은 내용으로 시안 B 모양의 한글 파일(.hwpx)을 만듭니다.
 색 띠·표·상자는 모두 한글 "표"라서 한글에서 바로 고칠 수 있습니다.
@@ -50,9 +72,10 @@ PDF와 다른 점:
 - 둥근 모서리는 없고, 작은 이름표(A, 개념 더하기 등)는 형광펜으로 만듭니다.
 - 글꼴은 맑은 고딕(Windows 기본). Pretendard를 설치했다면 파일 위쪽 `FONT`를 바꿉니다.
 - 표 안에 표를 넣지 않습니다(한글에서 깨질 수 있어서).
+- 그래프·지도는 PDF와 같은 그림을 PNG로 찍어 넣습니다(제목·출처는 글자로).
 ```bash
 pip install python-hwpx==6.11.0
-node -e "import('./content/t1-1.js').then(m=>console.log(JSON.stringify(m.default)))" > out/t1-1.json
-python3 hwpx_build.py out/t1-1.json out/개념서-B-학생용.hwpx
-python3 hwpx_build.py out/t1-1.json out/개념서-B-교사용.hwpx teacher
+node build.mjs t1-2 b        # out/t1-2.json 과 그림(out/fig/t1-2/*.png)을 먼저 만든다
+python3 hwpx_build.py out/t1-2.json out/t1-2-B-학생용.hwpx
+python3 hwpx_build.py out/t1-2.json out/t1-2-B-교사용.hwpx teacher
 ```
