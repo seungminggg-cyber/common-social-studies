@@ -14,6 +14,8 @@ const firebaseConfig = {
   appId: '1:947075209071:web:1168d1d3b726df3d437a9a',
 };
 
+export const useEmulator = import.meta.env.VITE_USE_EMULATOR === '1';
+
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

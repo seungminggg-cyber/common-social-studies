@@ -6,7 +6,7 @@ import { toast } from './lib/util.js';
 import { drafts } from './lib/drafts.js';
 import { initPomodoro, remainingMs, formatMs, pomo } from './pomodoro.js';
 import {
-  loadingView, loginView, profileSetupView, pendingView, authActions, authErrorMessage,
+  loadingView, loginView, profileSetupView, pendingView, authActions, authErrorMessage, afterAuthRender,
 } from './views/auth.js';
 import { quizView, quizActions } from './views/quiz.js';
 import { homeView, homeActions } from './views/home.js';
@@ -111,6 +111,8 @@ function render() {
   morphdom(root, markup, {
     onBeforeElUpdated(fromEl, toEl) {
       if (fromEl.isEqualNode(toEl)) return false;
+      // 다른 곳(구글 로그인 버튼 등)이 안을 채운 칸은 그대로 둠
+      if (fromEl.hasAttribute('data-keep') && toEl.hasAttribute('data-keep')) return false;
       if (isField(fromEl)) {
         // 지금 입력 중인 칸은 건드리지 않음
         if (fromEl === document.activeElement && fromEl.type !== 'range') return false;
@@ -127,6 +129,7 @@ function render() {
       return true;
     },
   });
+  if (!S.user) afterAuthRender();
 }
 
 onRender(render);

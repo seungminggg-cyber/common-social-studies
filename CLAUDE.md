@@ -60,3 +60,7 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - 통합사회2 Ⅲ~Ⅴ는 개념 교재 없이 해설지와 교육과정 지식으로 만들어 대단원·중단원 이름이 교과서와 다를 수 있다.
 - 집중 사운드(빗소리·모닥불·도서관)는 강사 피드백을 기다리는 중.
 - 다음 후보 기능: 학교별 시험 범위 단원에 맞춘 오늘의 문제, 오답 반복 복습(1·3·7일), 단원 모의고사, 연속 학습·랭킹, 폰 알림.
+
+## 구글 로그인 (2026-11)
+- 배포 사이트는 `src/googleSignIn.js`(Google Identity Services 버튼 → `signInWithCredential`)를 쓴다. 예전 `signInWithPopup`은 firebaseapp.com 로그인 도우미를 거쳐서 아이폰 사파리에서 "missing initial state" 오류가 났음.
+- OAuth 웹 클라이언트(`947075209071-8f8o…`)의 '승인된 자바스크립트 원본'에 `https://seungminggg-cyber.github.io`가 있어야 한다. 에뮬레이터·스크립트를 못 불러올 때는 예전 팝업 방식. 버튼 칸은 `data-keep`(morphdom이 안을 건드리지 않음).
