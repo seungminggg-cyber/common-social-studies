@@ -1,0 +1,14 @@
+{
+  "name": "seungmin-t-textbook",
+  "private": true,
+  "type": "module",
+  "description": "승민T 통합사회 개념서 — 내용(content)과 디자인(themes)을 나눠 PDF로 만드는 도구",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "pretendard": "1.3.9",
+    "@fontsource/noto-serif-kr": "5.1.1",
+    "@fontsource/nanum-pen-script": "5.1.1"
+  }
+}

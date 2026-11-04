@@ -1,0 +1,85 @@
+/* 모든 시안이 함께 쓰는 뼈대: A4 쪽 크기, 단 나누기, 빈칸, 교사용/학생용 */
+
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e7e7ec;
+  font-family: 'Pretendard Variable', Pretendard, sans-serif;
+  font-size: var(--fs, 9.5pt);
+  line-height: var(--lh, 1.7);
+  color: var(--ink, #222);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+#source { display: none; }
+@media print {
+  body { background: none; }
+  .page { margin: 0 !important; box-shadow: none !important; }
+}
+
+/* ── 쪽 ── */
+.page {
+  width: 210mm; height: 297mm; margin: 8mm auto; background: #fff;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: var(--m-top, 14mm) var(--m-out, 15mm) var(--m-bottom, 10mm) var(--m-in, 17mm);
+  break-after: page;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
+}
+.page.even { padding-left: var(--m-out, 15mm); padding-right: var(--m-in, 17mm); }
+.page-head { flex: none; display: flex; justify-content: space-between; align-items: center; gap: 6mm; height: var(--head-h, 7mm); }
+.page.even .page-head { flex-direction: row-reverse; }
+.page-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.region { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.region + .region { margin-top: var(--region-gap, 6mm); }
+.region-top { flex: none; }
+.region-slots { flex: 1 1 auto; min-height: 0; display: flex; gap: var(--col-gap, 8mm); }
+.slot { flex: 1 1 0; min-width: 0; overflow: hidden; }
+.slot > .row + .row { margin-top: var(--gap, 4.5mm); }
+.page-foot { flex: none; display: flex; align-items: center; gap: 4mm; margin-top: 3mm; min-height: 7mm; }
+.page.even .page-foot { flex-direction: row-reverse; }
+.strip { flex: 1; min-width: 0; }
+.strip.empty { visibility: hidden; }
+.folio { flex: none; }
+.edge-tab { display: none; }
+.page-cover .page-head, .page-cover .page-foot, .page-cover .edge-tab { display: none; }
+.page-cover .page-body, .region-cover, .region-cover .region-top, .region-cover .top { flex: 1; display: flex; }
+.region-cover .region-slots { display: none; }
+.cover { flex: 1; }
+
+/* ── 한 줄(row) = 본문 + 날개 메모 ── */
+.row .side.empty { display: none; }
+.op-sub { display: none; }
+
+/* ── 글 ── */
+b { font-weight: 700; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+.serif, .serif * { font-family: 'Noto Serif KR', serif; }
+mark { background: none; color: inherit; }
+u { text-underline-offset: .22em; }
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: 0; vertical-align: middle; }
+.tbl-stack { display: none; }
+
+/* ── 빈칸 ── */
+.blank { display: inline-flex; align-items: center; gap: .1em; vertical-align: -.2em; margin: 0 .12em; white-space: nowrap; line-height: 1; }
+.blank .bc { display: inline-block; text-align: center; font-weight: 700; color: transparent; }
+.blank .bsp { display: inline-block; width: .3em; }
+.blank .bn { font-style: normal; }
+.mode-teacher .blank .bc { color: var(--ans, #1f6feb); }
+
+/* ── 문제 ── */
+.q-explain { display: none; }
+.mode-teacher .q-explain { display: block; }
+.fill > span { visibility: hidden; }
+.mode-teacher .fill > span { visibility: visible; }
+.ox-a i:not(.ok) { }
+.mode-student .ox-a i.ok { background: none; color: inherit; border-color: currentColor; }
+.choices { display: flex; flex-direction: column; }
+.choices li { display: flex; gap: .35em; }
+.choices.short { display: grid; grid-template-columns: repeat(3, 1fr); }
+.mode-student .choices li.ok { color: inherit; font-weight: inherit; }

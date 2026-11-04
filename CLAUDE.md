@@ -64,3 +64,10 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 ## 구글 로그인 (2026-11)
 - 배포 사이트는 `src/googleSignIn.js`(Google Identity Services 버튼 → `signInWithCredential`)를 쓴다. 예전 `signInWithPopup`은 firebaseapp.com 로그인 도우미를 거쳐서 아이폰 사파리에서 "missing initial state" 오류가 났음.
 - OAuth 웹 클라이언트(`947075209071-8f8o…`)의 '승인된 자바스크립트 원본'에 `https://seungminggg-cyber.github.io`가 있어야 한다. 에뮬레이터·스크립트를 못 불러올 때는 예전 팝업 방식. 버튼 칸은 `data-keep`(morphdom이 안을 건드리지 않음).
+
+## 개념서 만들기 (`textbook/`, 2026-11 시작)
+- 수능 대비 통합사회 개념서(A4, 컬러). 앱과 별개 폴더이며 앱 빌드·배포에 영향 없음. 자세한 내용은 `textbook/README.md`.
+- 내용(`textbook/content/*.js`)과 디자인(`textbook/themes/a|b|c.css`)을 나눠, `node build.mjs`로 HTML → 자동 쪽 나눔 → PDF(학생용/교사용).
+- 한글 파일은 `hwpx_test.py`(python-hwpx)로 .hwpx를 만드는 방식으로 시험 중. 강사는 결국 한글 파일도 필요하다고 함.
+- 강사가 참고로 준 교재: 완자 기출PICK(날개 메모, 글자 칸 빈칸, 쪽 아래 정답 띠). 디자인은 참고만 하고 문장·이름은 새로 만든다.
+- 시안 A(날개형)·B(카드형)·C(2단 노트형)를 통합사회1 Ⅰ단원 두 중단원으로 만들어 강사의 선택을 기다리는 중.
