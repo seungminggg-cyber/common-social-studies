@@ -262,7 +262,18 @@ def dialog_rows(t, start, rows, serif=True, size=9.5):
 
 
 def source(b):
-    n = len(b['dialog'])
+    n = len(b.get('dialog') or [])
+    if not n:  # 대화 없이 글만 있는 자료
+        t = table(3, 1, [100])
+        p = cell(t, 0, 0, fill=NAVY, pad=(4.5, 4.5, 2, 2))
+        chip(p, '자료 읽기', HL, NAVY, size=8)
+        run(p, '   ' + b['title'], size=10, color=WHITE, bold=True)
+        rich(cell(t, 1, 0, pad=(4.5, 4.5, 2.4, 2.4)), b['text'], size=9.5, font=SERIF)
+        p = cell(t, 2, 0, fill=TEAL_SOFT, pad=(4.5, 4.5, 2.4, 2.8))
+        chip(p, '해석', TEAL, size=7.5)
+        run(p, ' ')
+        rich(p, b['interp'], size=9.2)
+        return
     has_cap = bool(b.get('caption'))
     rows = 1 + has_cap + n + 1
     t = table(rows, 2, [10, 90])
