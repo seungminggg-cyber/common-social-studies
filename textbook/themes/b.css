@@ -282,3 +282,23 @@ u { text-decoration-color: var(--ans); text-decoration-thickness: 1.2px; }
 .tk-why { color: #5a6872; font-size: 8pt; padding-left: 2mm !important; }
 .tk-vs { margin-top: 2.2mm; background: var(--warm); border-radius: 2mm; padding: 1.8mm 3mm; font-size: 8.6pt; }
 .tk-vs b { color: var(--ans); margin-right: 1.4mm; }
+
+/* 조금 넘칠 때 간격을 줄여 한 쪽에 맞춘 쪽 */
+.page.tight { --gap: 3.2mm; }
+.page.tight .page-body { line-height: 1.7; }
+.page.tight .tk-claims li { line-height: 1.64; }
+.page.tight .tk-q p { line-height: 1.7; }
+.page.tight .tk-body, .page.tight .tk-quote, .page.tight .tk-ox { padding-top: 2.1mm; padding-bottom: 2.3mm; }
+.page.tight .tk-oxt td { padding: 1mm 0; }
+
+/* 카드가 나뉘었을 때 이어지는 쪽 이름표 */
+.tk-cont { background: var(--navy); color: #fff; font-weight: 800; font-size: 9.6pt; padding: 1.6mm 4.5mm; border-radius: 3mm 3mm 0 0; }
+.tk-cont span { color: #8fe0d3; font-weight: 600; font-size: 8pt; }
+.slot > .row-tk:first-child .main { border-top: 0; }
+.slot > .row-tk:first-child:not(.tk-first) .main > .tk:first-of-type { border-top: 0; }
+
+/* 정리 노트 */
+.memo { border: 1px solid var(--c1-line); background: #fbfefd; border-radius: 3mm; }
+.memo-tag { color: #fff; background: var(--c1); border-radius: 99px; padding: 0 2.4mm; font-size: 7.6pt; }
+.memo-q { color: var(--gray); font-size: 8pt; }
+.memo-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), #d5ebe7 calc(7.6mm - 1px), #d5ebe7 7.6mm); }

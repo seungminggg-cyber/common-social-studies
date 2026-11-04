@@ -162,9 +162,12 @@ function thinkerRows(b) {
     parts.push(`<div class="tk tk-ox"><div class="tk-label">기출 선지로 확인하기</div><table class="tk-oxt"><tbody>${b.ox
       .map(([st, a, why]) => `<tr><td class="tk-s">${inl(st)}</td><td class="tk-a"><span class="${a === 'O' ? 'o' : 'x'}">${a}</span></td><td class="tk-why">${why ? inl(why) : ''}</td></tr>`)
       .join('')}</tbody></table>${b.vs ? `<div class="tk-vs"><b>헷갈리지 말자</b> ${inl(b.vs)}</div>` : ''}</div>`);
+  // 카드 조각은 data-keep="card"로 묶여 한 쪽에 통째로 들어간다(쪽보다 클 때만 조각 경계에서 나뉨).
+  // 나뉜 경우 다음 쪽 맨 위 조각에 "(이어서)" 이름표가 보인다.
+  const cont = `<div class="tk-cont">${inl(b.name)} <span>(이어서)</span></div>`;
   return parts
     .map((h, i) => `<div class="row row-tk${i === 0 ? ' tk-first' : ''}${i === parts.length - 1 ? ' tk-last' : ''}"${
-      i === 0 && parts.length > 1 ? '' : ''}><div class="main">${h}</div></div>`)
+      i < parts.length - 1 ? ' data-keep="card"' : ''} data-tk="${esc(b.name)}"><div class="main">${i ? cont : ''}${h}</div></div>`)
     .join('');
 }
 

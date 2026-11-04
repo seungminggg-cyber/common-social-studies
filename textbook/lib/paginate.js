@@ -3,13 +3,24 @@
 // #source 안의 블록(.row)을 하나씩 A4 쪽(.page)에 옮겨 담는다.
 //   쪽(.page) 안에는 위에서 아래로 "영역(.region)"이 쌓이고, 영역마다 단(.slot) 수가 다를 수 있다.
 //   (예: 개념 확인은 1단, 바로 아래 이어지는 수능형 문제는 2단)
-// 단이 넘치면 다음 단 → 다음 쪽으로 넘긴다. 빈칸 번호와 쪽 아래 정답 띠도 여기서 채운다.
+//
+// 묶음 규칙
+//   data-keep="next"  제목·안내문: 다음 블록과 늘 같은 쪽에 놓는다.
+//   data-keep="card"  사상가 카드 조각: 카드 전체를 한 쪽에 통째로 놓는다.
+//                     카드가 한 쪽보다 클 때만 조각(핵심 주장 / 원전 읽기 / 기출 선지) 경계에서 나눈다.
+// 넘칠 때 순서
+//   1) 간격을 조금 줄여(.tight) 들어가면 그대로 둔다.
+//   2) 아니면 묶음째 다음 단(또는 다음 쪽)으로 넘긴다.
+// 다 나눈 뒤(마무리)
+//   - 쪽 아래 남는 공간이 작으면 블록 사이 간격을 고르게 늘리고, 크면 '정리 노트' 칸으로 채운다.
+//   - 2단 부분(수능형 문제·정답)의 마지막 쪽은 두 단 높이를 비슷하게 맞춘다.
 // 끝나면 window.PAGINATED = true, 문제가 있으면 window.WARN 에 기록한다.
 (function () {
   const L = window.LAYOUT || {};
   const book = document.getElementById('book');
   const src = document.getElementById('source');
   const WARN = (window.WARN = []);
+  const MM = 96 / 25.4; // 1mm = 3.78px
   let pageNo = 0;
 
   function newPage(sec) {
@@ -81,8 +92,70 @@
   }
 
   const overflow = (pg) => pg.slots.some((s) => s.scrollHeight > s.clientHeight + 1);
+  // 쪽 하나를 통째로 쓸 때의 단 높이 (머리 없는 새 쪽 기준)
+  const fullHeight = (pg) => pg.body.clientHeight;
+  const groupHeight = (g) => g[g.length - 1].getBoundingClientRect().bottom - g[0].getBoundingClientRect().top;
+
+  // 묶음 나누기: keep="next"(제목)와 keep="card"(카드 조각)로 이어진 줄을 한 묶음으로
+  function makeGroups(rows, keeps) {
+    const groups = [];
+    for (let k = 0; k < rows.length; k++) {
+      const g = [rows[k]];
+      while (keeps.includes(g[g.length - 1].dataset.keep) && k + 1 < rows.length) g.push(rows[++k]);
+      groups.push(g);
+    }
+    return groups;
+  }
 
   let pg = null;
+
+  // 다음 단으로, 단이 없으면 새 쪽으로
+  function advance(sec) {
+    const kind = sec.dataset.kind;
+    pg.i += 1;
+    if (pg.i < pg.slots.length) return;
+    let carryTop = null;
+    if (pg.region.dataset.soft && pg.slots.every((s) => !s.children.length)) carryTop = undoSoftRegion(pg);
+    const next = pg.blankStart + refreshStrip(pg);
+    pg = newPage(sec);
+    pg.blankStart = kind === 'concept' ? next : 0; // 빈칸 번호는 개념 부분 안에서 이어진다
+    addRegion(pg, sec, carryTop, false);
+  }
+
+  // 간격을 조금 줄여서 들어가는지 본다. 안 들어가면 원래대로.
+  function tryTight() {
+    if (pg.el.classList.contains('tight')) return false;
+    pg.el.classList.add('tight');
+    if (!overflow(pg)) return true;
+    pg.el.classList.remove('tight');
+    return false;
+  }
+
+  function place(g, sec, canSplit) {
+    for (;;) {
+      const slot = pg.slots[pg.i];
+      const wasEmpty = slot.children.length === 0;
+      g.forEach((r) => slot.appendChild(r));
+      refreshStrip(pg);
+      if (!overflow(pg)) return;
+      if (tryTight()) return;
+
+      // 카드가 한 쪽보다 크면 조각 경계에서 나눈다 (지금 단에 들어가는 조각부터 채운다)
+      if (canSplit && g.length > 1 && (wasEmpty || groupHeight(g) > fullHeight(pg))) {
+        g.forEach((r) => r.remove());
+        refreshStrip(pg);
+        for (const sg of makeGroups(g, ['next'])) place(sg, sec, false);
+        return;
+      }
+      if (wasEmpty && !pg.region.dataset.soft) {
+        WARN.push(`${sec.dataset.kind} ${pageNo}쪽: 블록이 한 단보다 큽니다 (${g[0].className})`);
+        return;
+      }
+      g.forEach((r) => r.remove());
+      refreshStrip(pg);
+      advance(sec);
+    }
+  }
 
   function run() {
     for (const sec of [...src.children]) {
@@ -119,45 +192,114 @@
         addRegion(pg, sec, top, false);
       }
 
-      // data-keep="next" 인 블록(제목)은 다음 블록과 한 묶음
       const rows = [...sec.children].filter((x) => x.classList.contains('row'));
-      const groups = [];
-      for (let k = 0; k < rows.length; k++) {
-        const g = [rows[k]];
-        while (g[g.length - 1].dataset.keep === 'next' && k + 1 < rows.length) g.push(rows[++k]);
-        groups.push(g);
-      }
-
-      for (const g of groups) {
-        g.forEach((r) => pg.slots[pg.i].appendChild(r));
-        refreshStrip(pg);
-        // 넘치면 꺼내서 다음 단(또는 다음 쪽)으로. 자리가 날 때까지 반복한다.
-        while (overflow(pg)) {
-          const slot = pg.slots[pg.i];
-          const wasEmpty = slot.children.length === g.length;
-          if (wasEmpty && !pg.region.dataset.soft) {
-            WARN.push(`${kind} ${pageNo}쪽: 블록이 한 단보다 큽니다 (${g[0].className})`);
-            break;
-          }
-          g.forEach((r) => r.remove());
-          refreshStrip(pg);
-          pg.i += 1;
-          if (pg.i >= pg.slots.length) {
-            let carryTop = null;
-            if (pg.region.dataset.soft && pg.slots.every((s) => !s.children.length)) carryTop = undoSoftRegion(pg);
-            const next = pg.blankStart + refreshStrip(pg);
-            pg = newPage(sec);
-            pg.blankStart = kind === 'concept' ? next : 0; // 빈칸 번호는 개념 부분 안에서 이어진다
-            addRegion(pg, sec, carryTop, false);
-          }
-          g.forEach((r) => pg.slots[pg.i].appendChild(r));
-          refreshStrip(pg);
-        }
-      }
+      for (const g of makeGroups(rows, ['next', 'card'])) place(g, sec, true);
+      pg.region.dataset.end = '1'; // 이 부분이 끝난 영역 (마무리에서 단 높이 맞추기)
     }
     src.remove();
+    finish();
     window.PAGES = pageNo;
     window.PAGINATED = true;
+  }
+
+  // ── 마무리 ─────────────────────────────────────
+  const slotRoom = (s) => {
+    const last = s.lastElementChild;
+    return s.getBoundingClientRect().bottom - (last ? last.getBoundingClientRect().bottom : s.getBoundingClientRect().top);
+  };
+
+  // 2단 영역의 마지막 쪽: 줄 순서는 그대로 두고 두 단의 높이가 비슷해지도록 나눈다.
+  function balance(region) {
+    const slots = [...region.querySelectorAll('.slot')];
+    if (slots.length !== 2) return;
+    const rows = slots.flatMap((s) => [...s.children]);
+    if (rows.length < 2 || !slots[1].children.length && rows.length < 2) return;
+    const top = slots[0].getBoundingClientRect().top;
+    const height = (s) => (s.lastElementChild ? s.lastElementChild.getBoundingClientRect().bottom - top : 0);
+    const fits = () => slots.every((s) => s.scrollHeight <= s.clientHeight + 1);
+    const putAt = (k) => rows.forEach((r, i) => slots[i < k ? 0 : 1].appendChild(r));
+    const original = rows.findIndex((r) => r.parentElement === slots[1]);
+    let best = null;
+    for (let k = 1; k < rows.length; k++) {
+      if (rows[k - 1].dataset.keep === 'next') continue; // 제목만 왼쪽 단 아래에 남지 않게
+      putAt(k);
+      if (!fits()) continue;
+      const score = Math.max(height(slots[0]), height(slots[1]));
+      if (!best || score < best.score - 1) best = { k, score };
+    }
+    putAt(best ? best.k : original < 0 ? rows.length : original);
+  }
+
+  const PROMPTS = {
+    concept: ['이 쪽의 핵심 개념을 키워드로 다시 적어 보자.', '헷갈린 내용과 다시 볼 쪽수를 적어 두자.', '수능 자료로 나오면 무엇부터 볼지 적어 보자.'],
+    check: ['틀린 문항 번호와 헷갈린 이유를 적어 두자.'],
+    exam: ['틀린 문제 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'],
+    answers: ['틀린 문제 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'],
+  };
+  const memoHtml = (label, prompt) =>
+    `<div class="memo"><div class="memo-head"><span class="memo-tag">${label}</span><span class="memo-q">${prompt}</span></div><div class="memo-lines"></div></div>`;
+
+  // 2단 영역이 쪽 아래를 많이 남기고 끝나면, 두 단 아래에 쪽 너비의 '오답 노트' 칸을 넣는다.
+  function fillWide(page) {
+    const regions = [...page.querySelectorAll('.page-body > .region')];
+    const region = regions[regions.length - 1];
+    if (!region || !region.dataset.end) return;
+    const slots = [...region.querySelectorAll('.slot')];
+    if (slots.length < 2) return;
+    const kind = (region.className.match(/region-(\w+)/) || [])[1];
+    if (!PROMPTS[kind]) return;
+    const H = page.querySelector('.page-body').clientHeight;
+    const room = Math.min(...slots.map(slotRoom));
+    if (room < H * (L.memoMin || 0.1)) return;
+    const box = region.querySelector('.region-slots');
+    const used = box.clientHeight - room;
+    box.style.flex = 'none';
+    box.style.height = `${Math.ceil(used)}px`;
+    const memo = document.createElement('div');
+    memo.className = 'region-memo';
+    memo.innerHTML = memoHtml('오답 노트', PROMPTS[kind][0]);
+    region.appendChild(memo);
+  }
+
+  // 1단 영역의 남는 공간: 작으면 블록 사이를 고르게 벌리고, 크면 '정리 노트' 칸을 넣는다.
+  function fillPage(page, k) {
+    const regions = [...page.querySelectorAll('.page-body > .region')];
+    const region = regions[regions.length - 1];
+    if (!region || region.classList.contains('region-cover')) return;
+    const slots = [...region.querySelectorAll('.slot')];
+    if (slots.length !== 1) return;
+    const slot = slots[0];
+    const rows = [...slot.children];
+    if (!rows.length) return;
+    const H = page.querySelector('.page-body').clientHeight;
+    const room = slotRoom(slot);
+    const kind = (region.className.match(/region-(\w+)/) || [])[1];
+
+    if (room >= H * (L.memoMin || 0.1) && PROMPTS[kind]) {
+      const tk = [...slot.querySelectorAll('.row-tk[data-tk]')].pop();
+      const prompt = tk && kind === 'concept'
+        ? `${tk.dataset.tk} — 핵심 주장을 내 말로 한두 줄 정리해 보자.`
+        : PROMPTS[kind][k % PROMPTS[kind].length];
+      const memo = document.createElement('div');
+      memo.className = 'row row-memo';
+      memo.innerHTML = `<div class="main">${memoHtml('정리 노트', prompt)}</div>`;
+      slot.appendChild(memo);
+      const gap = memo.getBoundingClientRect().top - rows[rows.length - 1].getBoundingClientRect().bottom;
+      memo.style.height = `${Math.floor(room - gap - 1)}px`;
+      return;
+    }
+    // 묶음이 시작되는 줄 앞 간격만 늘린다 (제목과 본문, 카드 조각 사이는 그대로)
+    const starts = rows.filter((r, i) => i > 0 && !rows[i - 1].dataset.keep);
+    if (!starts.length || room < 2 * MM) return;
+    const extra = Math.min(room / starts.length, (L.spreadMax || 6) * MM) - 0.5;
+    for (const r of starts) r.style.marginTop = `${parseFloat(getComputedStyle(r).marginTop) + extra}px`;
+  }
+
+  function finish() {
+    document.querySelectorAll('.region[data-end]').forEach((r) => {
+      if (r === r.parentElement.lastElementChild) balance(r);
+    });
+    [...document.querySelectorAll('.page')].forEach((p, k) => { fillPage(p, k); fillWide(p); });
   }
 
   // 글꼴을 먼저 모두 불러와야 높이를 정확히 잴 수 있다.

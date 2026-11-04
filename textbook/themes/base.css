@@ -77,8 +77,6 @@ th, td { padding: 0; vertical-align: middle; }
 .mode-teacher .q-explain { display: block; }
 .fill > span { visibility: hidden; }
 .mode-teacher .fill > span { visibility: visible; }
-.ox-a i:not(.ok) { }
-.mode-student .ox-a i.ok { background: none; color: inherit; border-color: currentColor; }
 .choices { display: flex; flex-direction: column; }
 .choices li { display: flex; gap: .35em; }
 .choices.short { display: grid; grid-template-columns: repeat(3, 1fr); }
@@ -142,3 +140,17 @@ th, td { padding: 0; vertical-align: middle; }
 .tbl.compact { font-size: .92em; }
 .fig-map .fig-body { overflow: hidden; border-radius: 1.5mm; }
 .fig-map .fig-svg { overflow: hidden; }
+
+/* ── 쪽 나눔 도우미 ── */
+/* 사상가 카드가 쪽을 넘겨 나뉜 경우에만 다음 쪽 맨 위에 "(이어서)" 이름표 */
+.tk-cont { display: none; }
+.slot > .row-tk:first-child .tk-cont { display: block; }
+/* 쪽 아래 남는 공간을 채우는 정리 노트 */
+.row-memo .main, .row-memo .memo { height: 100%; }
+.memo { display: flex; flex-direction: column; border: 1px solid #d9dee2; border-radius: 2.5mm; padding: 2.4mm 4mm 3mm; }
+.memo-head { display: flex; align-items: baseline; gap: 2.4mm; font-size: 8pt; }
+.memo-tag { font-weight: 800; }
+.memo-q { color: #7a868f; }
+.memo-lines { flex: 1; margin-top: 1.4mm; background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), #dfe4e7 calc(7.6mm - 1px), #dfe4e7 7.6mm); }
+.region-memo { flex: 1 1 auto; min-height: 0; display: flex; margin-top: var(--gap, 4.5mm); }
+.region-memo .memo { flex: 1; }
