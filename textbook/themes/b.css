@@ -135,7 +135,7 @@
 .tip-text { font-size: 9pt; line-height: 1.72; padding-top: .4mm; }
 
 /* 탐구 과정 */
-.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5mm; counter-reset: fl; }
+.flow { display: grid; grid-template-columns: repeat(var(--n, 4), 1fr); gap: 5mm; counter-reset: fl; } /* 단계 수만큼 한 줄에(최대 5) */
 .flow li { position: relative; background: #f7fbfa; border-radius: 2.5mm; padding: 3mm 3mm 3.2mm; border-top: 3px solid var(--c1); }
 .flow li + li::before { content: '→'; position: absolute; left: -4.4mm; top: 50%; transform: translateY(-50%); color: var(--c1); font-weight: 800; font-size: 10pt; }
 .fl-no { font-size: 7pt; font-weight: 800; color: var(--c1); }

@@ -155,7 +155,7 @@ function block(b) {
         .map((x) => (typeof x === 'object' ? `<span class="ch-step">${x.icon ? icon(x.icon, { size: 14, cls: 'ic ch-ic' }) : ''}${inl(x.text)}</span>` : `<span class="ch-step">${inl(x)}</span>`))
         .join('<span class="ch-arrow">→</span>')}</div></div>`;
     case 'flow':
-      return `<ol class="flow">${b.steps
+      return `<ol class="flow" style="--n:${Math.min(b.steps.length, 5)}">${b.steps
         .map((s, i) => `<li${s.icon ? ' class="has-ic"' : ''}><span class="fl-no">${i + 1}</span>${s.icon ? `<span class="fl-ic">${icon(s.icon, { size: 18 })}</span>` : ''}<div class="fl-title">${inl(s.title)}</div><div class="fl-text">${inl(s.text)}</div></li>`)
         .join('')}</ol>`;
     default:
