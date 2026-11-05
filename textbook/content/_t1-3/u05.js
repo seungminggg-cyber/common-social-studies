@@ -683,7 +683,7 @@ export default {
         labels: [
           { x: -7.2, y: 370, text: '서울', pos: 'right' }, { x: 21.3, y: 108, text: '싱가포르', pos: 'top' }, { x: 8.8, y: -45, text: '카이로', pos: 'right' },
           { x: -11.4, y: 39, text: '모스크바', pos: 'left' }, { x: 19.3, y: 96, text: '퍼스', pos: 'bottom' }, { x: -22.8, y: 110, text: '하얼빈', pos: 'top' },
-          { x: 2.3, y: -26, text: '로마', pos: 'left' },
+          { x: 2.3, y: -26, text: '로마', pos: 'right' },
         ],
         source: APPROX,
       },
@@ -896,10 +896,10 @@ export default {
     {
       level: '중',
       stem: '그래프는 (가), (나) 지역의 기후를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
-      data: [{ t: 'figrow', items: [
+      data: [
         CL('(가)', CITY.양곤.temp, CITY.양곤.precip, { tMin: 0, tMax: 40, pMax: 800, h: 135 }),
         CL('(나)', CITY.방콕.temp, CITY.방콕.precip, { tMin: 0, tMax: 40, pMax: 800, h: 135 }),
-      ] }],
+      ],
       choices: [
         '(가)는 최한월 평균 기온이 18℃ 미만이다.',
         '(나)는 건기가 없다.',
@@ -913,10 +913,10 @@ export default {
     {
       level: '상',
       stem: '그래프는 오스트레일리아의 (가), (나) 지역의 기후를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
-      data: [{ t: 'figrow', items: [
+      data: [
         CL('(가)', CITY.퍼스.temp, CITY.퍼스.precip, { tMin: -10, tMax: 40, pMax: 250, h: 135 }),
         CL('(나)', CITY.다윈.temp, CITY.다윈.precip, { tMin: -10, tMax: 40, pMax: 500, h: 135 }),
-      ] }],
+      ],
       choices: [
         '(가)는 여름에 비가 많다.',
         '(가)에서는 여름 가뭄에 강한 올리브·포도를 재배하기에 유리하다.',
@@ -930,10 +930,10 @@ export default {
     {
       level: '상',
       stem: '그래프는 (가), (나) 지역의 월 기온 편차와 월 강수 편차를 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (월 기온 편차 = 월평균 기온 − 연평균 기온, 월 강수 편차 = 월 강수량 − 연 강수량 ÷ 12)',
-      data: [{ t: 'figrow', items: [
-        { t: 'chart', kind: 'climdev', label: '(가)', temp: CITY.로마.temp, precip: CITY.로마.precip, tRange: 30, pRange: 300, h: 140 },
-        { t: 'chart', kind: 'climdev', label: '(나)', temp: CITY.하얼빈.temp, precip: CITY.하얼빈.precip, tRange: 30, pRange: 300, h: 140 },
-      ] }],
+      data: [
+        { t: 'chart', kind: 'climdev', label: '(가)', temp: CITY.로마.temp, precip: CITY.로마.precip, tRange: 30, pRange: 300, h: 150 },
+        { t: 'chart', kind: 'climdev', label: '(나)', temp: CITY.하얼빈.temp, precip: CITY.하얼빈.precip, tRange: 30, pRange: 300, h: 150 },
+      ],
       choices: [
         '(가)는 남반구에 위치한다.',
         '(가)는 여름철 강수량이 연평균보다 많다.',

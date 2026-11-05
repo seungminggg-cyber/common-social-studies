@@ -100,7 +100,7 @@ export default {
     },
     {
       t: 'map', view: 'world', title: '바다의 5대 쓰레기 지대와 해류 (개념도)', h: 300, style: 'terrain', center: -150, rivers: false,
-      seas: [['태 평 양', -175, 5, 14], ['대 서 양', -32, 8, 12], ['인 도 양', 70, -8, 12]],
+      seas: [['태 평 양', -165, -6, 14], ['대 서 양', -32, 8, 12], ['인 도 양', 70, -8, 12]],
       legend: [{ line: 'warm', label: '난류' }, { line: 'cold', label: '한류' }],
       markers: [
         { lon: -145, lat: 32, ring: 20, label: '북태평양 거대 쓰레기 섬', pos: 'bottom' },
@@ -112,7 +112,7 @@ export default {
       arrows: [
         { from: [140, 25], to: [-132, 45], bend: -0.2, cls: 'warm' },
         { from: [-128, 43], to: [-118, 24], bend: 0.12, cls: 'cold' },
-        { from: [-122, 15], to: [140, 13], bend: -0.08, cls: 'warm' },
+        { from: [-122, 9], to: [140, 8], bend: -0.08, cls: 'warm' },
       ],
       equator: true,
       note: '큰 바다에서는 해류가 큰 원을 그리며 돈다(환류). 그 가운데에 물에 뜬 쓰레기가 모인다. 북태평양에는 태평양 연안 여러 나라에서 흘러온 플라스틱이 모여 세계 최대의 쓰레기 섬을 이룬다.',
