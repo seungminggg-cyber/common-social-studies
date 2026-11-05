@@ -948,7 +948,7 @@ export default {
       level: '중',
       stem: '지도에 표시된 A, B 지역에 대한 설명으로 옳은 것은?',
       data: [{
-        t: 'map', view: [124.4, 33.0, 131.2, 38.7], h: 260, style: 'terrain', palette: 'soft', krRivers: false, rivers: false, scale: false,
+        t: 'map', view: [124.4, 32.6, 131.2, 38.7], h: 270, style: 'terrain', palette: 'soft', krRivers: false, rivers: false, scale: false,
         markers: [{ lon: 128.37, lat: 36.98, ring: 12, label: 'A', pos: 'left' }, { lon: 126.53, lat: 33.36, ring: 12, label: 'B', pos: 'right' }],
       }],
       choices: [

@@ -178,17 +178,6 @@ export default {
         [{ text: '불교', cls: 'em' }, '불상을 모신 법당, 부처나 승려의 사리를 모신 탑', '승려의 탁발(동남아시아), 살생을 삼가고 대체로 육식을 금함, 연등회'],
       ],
     },
-    {
-      t: 'map', view: [-12, 8, 100, 52], title: '세계 주요 종교의 발상지와 성지', h: 300, style: 'terrain', rivers: 4,
-      markers: [
-        { lon: 35.2, lat: 31.8, label: '예루살렘(크리스트교·유대교·이슬람교)', pos: 'left' },
-        { lon: 39.8, lat: 21.4, label: '메카(이슬람교)', pos: 'right' },
-        { lon: 12.45, lat: 41.9, label: '바티칸(가톨릭교)', pos: 'top' },
-        { lon: 83, lat: 25.3, label: '바라나시(힌두교)', pos: 'top' },
-        { lon: 85, lat: 24.7, label: '부다가야(불교)', pos: 'bottom' },
-      ],
-      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
-    },
 
     // ── C ──
     { t: 'sec', mark: 'C', title: '세계의 주요 종교' },
@@ -304,6 +293,17 @@ export default {
         ['돼지고기와 술을 율법으로 금지한다.', 'X', '이슬람교의 특징이다.'],
       ],
       vs: '**유일신교**: 크리스트교, 이슬람교(그리고 유대교) / **다신교**: 힌두교. 불교는 신을 믿는 것보다 스스로의 수행과 깨달음을 중시한다. 크리스트교·이슬람교·유대교의 성지는 모두 **예루살렘**이다.',
+    },
+    {
+      t: 'map', view: [-12, 8, 100, 52], title: '세계 주요 종교의 발상지와 성지', h: 300, style: 'terrain', rivers: 4,
+      markers: [
+        { lon: 35.2, lat: 31.8, label: '예루살렘(크리스트교·유대교·이슬람교)', pos: 'left' },
+        { lon: 39.8, lat: 21.4, label: '메카(이슬람교)', pos: 'right' },
+        { lon: 12.45, lat: 41.9, label: '바티칸(가톨릭교)', pos: 'top' },
+        { lon: 83, lat: 25.3, label: '바라나시(힌두교)', pos: 'top' },
+        { lon: 85, lat: 24.7, label: '부다가야(불교)', pos: 'bottom' },
+      ],
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
 
     // ── D ──
