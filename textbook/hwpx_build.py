@@ -572,8 +572,10 @@ def block(b):
         return
     if t == 'item':
         p = para(before=6, after=3)
-        chip(p, b['no'], TEAL_SOFT, TEAL, size=9.5)
-        run(p, '  ' + b['title'], size=11.5, color=NAVY, bold=True)
+        if b.get('no'):  # 개념 안 소항목은 번호 없이
+            chip(p, b['no'], TEAL_SOFT, TEAL, size=9.5)
+            run(p, '  ')
+        run(p, b['title'], size=11.5, color=NAVY, bold=True)
         for x in b.get('body', []):
             block(x)
         if b.get('side'):

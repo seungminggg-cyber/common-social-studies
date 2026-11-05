@@ -282,3 +282,7 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .q-lv.lv-상 { color: var(--red); }
 /* 한 장 정리 띠의 네모도 대단원 색(시안 F의 노란색 덮어쓰기) */
 .band-summary .band-title::before { background: var(--c1); }
+
+/* 개념 안 소항목: 번호 없는 소제목 */
+.item-no:empty { display: none; }
+.item:has(.item-no:empty) { gap: 0; }

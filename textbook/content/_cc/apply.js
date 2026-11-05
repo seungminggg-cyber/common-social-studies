@@ -62,6 +62,8 @@ export function applyCC(u, spec) {
       if (keepRe.test(b.title)) { close(); out.push({ ...b, mark: '' }); }
       return; // 나머지 큰 묶음 제목은 뺀다
     }
+    // 개념 안의 소항목은 번호 없이(개념 번호 하나로만 나누기)
+    if (b.t === 'item' && open) { out.push({ ...b, no: '' }); return; }
     out.push(b);
   });
   close();
