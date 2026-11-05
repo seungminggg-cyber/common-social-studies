@@ -488,7 +488,30 @@ function radar(b) {
   return { W, H, s };
 }
 
-const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev, radar };
+// ── 인구 피라미드 ──
+// { kind:'pyramid', ages:['0~9',...(아래→위)], male:[%...], female:[%...], max: 12 }
+function pyramid(b) {
+  const W = b.w || 300, H = b.h || 260;
+  const n = b.ages.length, max = b.max || Math.max(...b.male, ...b.female);
+  const T = 26, B = 24, mid = W / 2, lab = 34, half = (W - lab) / 2 - 10;
+  const rowH = (H - T - B) / n;
+  let s = '';
+  s += text(mid - lab / 2 - half / 2, T - 10, '남', { size: 11.5, anchor: 'middle', cls: 'cat', weight: 700 });
+  s += text(mid + lab / 2 + half / 2, T - 10, '여', { size: 11.5, anchor: 'middle', cls: 'cat', weight: 700 });
+  b.ages.forEach((a, i) => {
+    const y = H - B - (i + 1) * rowH;
+    const wm = (b.male[i] / max) * half, wf = (b.female[i] / max) * half;
+    s += `<rect x="${r1(mid - lab / 2 - wm)}" y="${r1(y + rowH * 0.1)}" width="${r1(wm)}" height="${r1(rowH * 0.8)}" class="fl s1"/>`;
+    s += `<rect x="${r1(mid + lab / 2)}" y="${r1(y + rowH * 0.1)}" width="${r1(wf)}" height="${r1(rowH * 0.8)}" class="fl s3"/>`;
+    if (b.ageLabels !== false && (i % (b.labelEvery || 1) === 0)) s += text(mid, y + rowH * 0.5 + 4, a, { size: 9.5, anchor: 'middle', cls: 'tick' });
+  });
+  s += `<line x1="${r1(mid - lab / 2)}" y1="${H - B}" x2="${r1(mid - lab / 2 - half)}" y2="${H - B}" class="axis"/>`;
+  s += `<line x1="${r1(mid + lab / 2)}" y1="${H - B}" x2="${r1(mid + lab / 2 + half)}" y2="${H - B}" class="axis"/>`;
+  if (b.unit) s += text(W - 4, H - 6, b.unit, { size: 10, anchor: 'end', cls: 'tick' });
+  return { W, H, s };
+}
+
+const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev, radar, pyramid };
 
 // 그림 블록 → HTML (<figure>)
 export function figure(b) {
@@ -500,7 +523,7 @@ export function figure(b) {
   const width = b.width ? ` style="width:${b.width}%"` : '';
   return `<figure class="fig fig-${b.t === 'chart' ? b.kind : b.t}"${width}${b._fig ? ` data-fig="${b._fig}"` : ''}>${
     b.title ? `<figcaption class="fig-title">${esc(b.title)}</figcaption>` : ''}<div class="fig-body">${svg}</div>${
-    b.source || b.note ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${esc(b.note)}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : ''}</figure>`;
+    b.source || b.note ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${esc(b.note).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : ''}</figure>`;
 }
 
 export const FIGURE_TYPES = new Set(['chart', 'venn', 'map']);
