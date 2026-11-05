@@ -221,7 +221,16 @@ function summaryHtml(u) {
   const S = u.summary;
   const C = Object.fromEntries(u.concept.filter((b) => b.t === 'concept').map((b) => [b.no, b]));
   const star = (n) => `${'★'.repeat(n)}<s>${'★'.repeat(3 - n)}</s>`;
-  const br = S.branches.map((x) => `<div class="sm-br"><div class="sm-bh"><span>${esc(x.mark)}</span>${inl(x.title)}</div>${x.concepts
+  if (S.concepts) {
+    const cards = S.concepts.map((c) => {
+      const cc = C[c.no] || {};
+      const st = Math.max(1, Math.min(3, cc.stars || 1));
+      return `<div class="sm-c st${st}"><div class="sm-ch"><b>개념 ${esc(c.no)}</b><span>${inl(c.title || cc.title || '')}</span><i>${star(st)}</i></div><ul>${c.lines
+        .map((l) => `<li>${inl(l)}</li>`).join('')}</ul></div>`;
+    }).join('');
+    S._grid = `<div class="sm-grid">${cards}</div>`;
+  }
+  const br = (S.branches || []).map((x) => `<div class="sm-br"><div class="sm-bh"><span>${esc(x.mark)}</span>${inl(x.title)}</div>${x.concepts
     .map((c) => {
       const cc = C[c.no] || {};
       const st = Math.max(1, Math.min(3, cc.stars || 1));
@@ -232,7 +241,7 @@ function summaryHtml(u) {
     .map(([a, b2]) => `<tr><th>${inl(a)}</th><td>${inl(b2)}</td></tr>`).join('')}</tbody></table></div>` : '';
   const checks = S.checks ? `<div class="sm-checks"><div class="sm-kh">시험 전 체크 — 말로 설명할 수 있으면 칸에 표시</div><ul>${S.checks
     .map((x) => `<li><i></i><span>${inl(x)}</span></li>`).join('')}</ul></div>` : '';
-  return `<div class="sm"><div class="sm-core"><span>한 줄 요약</span>${inl(S.core)}</div><div class="sm-tree" style="--n:${S.branches.length}">${br}</div>${traps}${checks}`
+  return `<div class="sm"><div class="sm-core"><span>한 줄 요약</span>${inl(S.core)}</div>${S._grid || `<div class="sm-tree" style="--n:${S.branches.length}">${br}</div>`}${traps}${checks}`
     + `<div class="sm-legend">별점은 최근 기출 9회(2028 수능 예시문항, 2025~2026 고1·고2 학력평가 8회)에서 그 개념을 직접 물은 횟수입니다. ★★★ 3번 이상, ★★ 1~2번, ★ 직접 나온 적은 없지만 다른 문항의 바탕이 되는 개념.</div></div>`;
 }
 
@@ -273,7 +282,9 @@ function conceptIndex(u) {
 
 function bandTop(kind, title, u) {
   const id = u && (kind === 'check' || kind === 'exam') ? ` id="${kind[0]}${esc(u.no)}"` : '';
-  return `<div class="top"${id}><div class="band band-${kind}"><span class="band-title">${esc(title)}</span>${
+  const lv = (x) => (u?.exam || []).filter((q) => q.level === x).length;
+  const sub = kind === 'exam' && u?.exam?.length ? `<span class="band-sub">${u.exam.length}문항 · 상 ${lv('상')} · 중 ${lv('중')} · 하 ${lv('하')}</span>` : '';
+  return `<div class="top"${id}><div class="band band-${kind}"><span class="band-title">${esc(title)}</span>${sub}${
     u ? `<span class="band-unit"><b>${esc(u.no)}</b> ${esc(u.title)}</span>` : ''}</div></div>`;
 }
 
@@ -294,7 +305,7 @@ function checkRows(u) {
 }
 
 // ── 수능형 문제 ──
-function question(q, n) {
+function question(q, n, u) {
   const short = q.choices.every((c) => c.length <= 9);
   const data = (q.data || []).map((d) => (d.t === 'table' ? block(d) : block(d))).join('');
   const bogi = q.bogi
@@ -306,12 +317,21 @@ function question(q, n) {
     .map((c, i) => `<li class="${q.answer === i + 1 ? 'ok' : ''}"><span class="cn">${CIRCLED[i]}</span><span>${inl(c)}</span></li>`)
     .join('')}</ol>`;
   return `<div class="row row-q"><div class="main"><div class="q">
-    <div class="q-head"><span class="q-no">${two(n)}</span><span class="q-lv lv-${q.level}" title="난이도">${esc(q.level)}</span></div>
+    <div class="q-head"><span class="q-no">${two(n)}</span><span class="q-lv lv-${q.level}" title="난이도">${esc(q.level)}</span>${qMeta(q, u)}</div>
     <div class="q-stem">${inl(q.stem)}</div>
     ${data ? `<div class="q-data">${data}</div>` : ''}
     ${bogi}${choices}
     <div class="q-explain"><b>정답 ${CIRCLED[q.answer - 1]}</b> ${inl(q.explain)}</div>
   </div></div></div>`;
+}
+
+// 문제 머리의 덧붙임: 난이도 막대(●●○), 관련 개념, 문제 유형 (시안 H에서 보임)
+function qMeta(q, u) {
+  const lv = { 하: 1, 중: 2, 상: 3 }[q.level] || 2;
+  const dots = `<span class="q-dots" title="난이도 ${esc(q.level)}">${[1, 2, 3].map((i) => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>`;
+  const cc = q.concept && u ? u.concept.find((b) => b.t === 'concept' && b.no === q.concept) : null;
+  const tags = `${q.concept ? `<span class="q-cc">개념 ${esc(q.concept)}${cc ? `<em>${inl(String(cc.title).split(' — ')[0])}</em>` : ''}</span>` : ''}${q.type ? `<span class="q-type">${esc(q.type)}</span>` : ''}`;
+  return `${dots}${tags ? `<span class="q-meta">${tags}</span>` : ''}`;
 }
 
 // ── 정답과 해설 ──
@@ -378,7 +398,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
     qStart.push(qNo);
     if (u.exam?.length)
       sections.push(`<section class="flow" data-kind="exam" ${attrs}>${bandTop('exam', '수능형 문제', u)}${u.exam
-        .map((q) => question(q, qNo++))
+        .map((q) => question(q, qNo++, u))
         .join('\n')}</section>`);
   }
   if (book.units.some((u) => u.exam?.length)) sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설">${bandTop('answers', '정답과 해설')}${book.units
@@ -529,7 +549,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         add('concept', attrs, `${opener(ch, u)}${conceptHtml(u.concept)}`);
         if (u.summary) add('summary', attrs, `${bandTop('summary', '한 장 정리', u)}<div class="row row-summary"><div class="main">${summaryHtml(u)}</div></div>`);
         if (u.check?.ox?.length || u.check?.blank?.length) add('check', attrs, `${bandTop('check', '개념 확인', u)}${checkRows(u)}`);
-        if (u.exam?.length) add('exam', attrs, `${bandTop('exam', '수능형 문제', u)}${u.exam.map((q) => question(q, qNo++)).join('\n')}`);
+        if (u.exam?.length) add('exam', attrs, `${bandTop('exam', '수능형 문제', u)}${u.exam.map((q) => question(q, qNo++, u)).join('\n')}`);
       }
     });
     // 사진 출처

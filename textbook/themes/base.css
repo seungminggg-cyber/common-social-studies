@@ -333,3 +333,7 @@ th, td { padding: 0; vertical-align: middle; }
 .side-ph img { display: block; width: 100%; height: 40mm; object-fit: cover; }
 .side-ph figcaption { margin-top: 1mm; font-size: 7pt; line-height: 1.45; color: #4a4744; }
 .side-cr { display: block; font-size: 6pt; color: #8a857f; margin-top: .3mm; }
+
+/* 시안 H에서만 보이는 문제 머리 덧붙임·문항 수 요약 */
+.q-dots, .q-meta, .band-sub { display: none; }
+.sec-mark:empty { display: none; }

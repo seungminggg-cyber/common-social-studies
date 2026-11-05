@@ -238,3 +238,32 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .sm-kh { background: none; color: var(--ink); padding: 1.4mm 0; }
 .sm-checks ul { padding: .6mm 0 0; }
 .sm-checks li i { border-radius: 0; border-color: var(--ink-2); border-width: .7pt; }
+
+/* ── 2차 수정(강사 의견): 회독 칸·개념 옆 기출 연도 빼기 ── */
+.cc-hits, .cc-rev { display: none !important; }
+.cc { align-items: center; }
+
+/* ── 한 장 정리: 묶음 없이 개념만 두 단으로 ── */
+.sm-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 9mm; margin-top: 5mm; border-top: .9pt solid var(--ink); }
+.sm-grid .sm-c { margin-top: 0; padding: 2mm 0 2.2mm; }
+.sm-grid .sm-ch { font-size: 9.6pt; }
+.sm-grid .sm-c li { font-size: 8.6pt; line-height: 1.6; }
+
+/* ── 수능형 문제: 포인트 ── */
+.band-sub { display: inline; margin: 0 auto 0 3.4mm; font-size: 8.6pt; font-weight: 700; color: var(--c1-dark); }
+.region-exam .row-q .main { border-top: 1.2pt solid var(--c1); padding-top: 2mm; }
+.region-exam .slot > .row + .row { margin-top: 7mm; }
+.q-head { gap: 2.2mm; align-items: center; margin-bottom: 1.6mm; }
+.q-no { background: var(--c1); font-size: 12pt; min-width: 9.5mm; height: 7.2mm; }
+.q-lv { display: none; }
+.q-dots { display: inline-flex; gap: .7mm; align-items: center; }
+.q-dots i { width: 2.4mm; height: 2.4mm; background: var(--rule-soft); }
+.q-dots i.on { background: var(--c1); }
+.lv-상 + .q-dots i.on { background: var(--red); }
+.q-meta { display: inline-flex; align-items: baseline; gap: 2mm; margin-left: auto; font-family: var(--sans-h); font-size: 7.4pt; line-height: 1.3; text-align: right; }
+.q-cc { color: var(--c1-dark); font-weight: 700; white-space: nowrap; }
+.q-cc em { font-style: normal; font-weight: 400; color: var(--ink-2); margin-left: 1mm; }
+.q-type { color: var(--gray); white-space: nowrap; }
+.q-type::before { content: '·'; color: var(--rule); margin-right: 2mm; }
+.q-stem { font-weight: 700; }
+.choices .cn { color: var(--c1-dark); }
