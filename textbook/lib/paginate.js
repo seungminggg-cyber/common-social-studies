@@ -320,6 +320,18 @@
       if (!p) WARN.push(`쪽 번호를 찾지 못함: ${el.dataset.pg}`);
       el.textContent = p ? p.querySelector('.folio span').textContent : '';
     });
+    // 쪽 범위: data-pgr="시작id|끝id" → 시작 쪽 ~ (끝 id가 있는 쪽 - 1)
+    document.querySelectorAll('[data-pgr]').forEach((el) => {
+      const [a, b] = el.dataset.pgr.split('|').map((id) => {
+        const p = document.getElementById(id)?.closest('.page');
+        return p ? +p.querySelector('.folio span').textContent : null;
+      });
+      if (!a || !b) WARN.push(`쪽 범위를 찾지 못함: ${el.dataset.pgr}`);
+      let end = b - 1; // 끝에 끼워 넣은 메모 쪽은 범위에서 뺀다
+      const all = document.querySelectorAll('.page');
+      while (end > a && all[end - 1].classList.contains('page-filler')) end -= 1;
+      el.textContent = a && b ? `${a}~${end}` : '';
+    });
   }
 
   // 글꼴을 먼저 모두 불러와야 높이를 정확히 잴 수 있다.

@@ -349,8 +349,24 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book' }) {
       ${mode === 'teacher' ? '<div class="cv-badge">교사용</div>' : ''}
       <ul class="cv-chapters">${chapterList}</ul>
     </div></div>`);
-    // 표지 뒤: 이 책의 주인
-    add('owner', '', `<div class="top"><div class="owner">
+    // 표지 뒤: 이 책의 주인 (+ 특강 진도표가 있으면 함께)
+    const sc = full.schedule;
+    if (sc) add('owner', '', `<div class="top"><div class="owner owner-plan">
+      <div class="ow-box ow-compact"><div class="ow-title">이 책의 주인</div><div class="ow-grid">
+        <div class="ow-line"><span>학교</span><i></i></div><div class="ow-line"><span>학년 · 반</span><i></i></div>
+        <div class="ow-line"><span>이름</span><i></i></div><div class="ow-line"><span>연락처</span><i></i></div></div>
+      </div>
+      <div class="sch"><div class="sch-head"><span class="sch-title">${esc(sc.title)}</span><span class="sch-sub">한 주에 한 번 · 3시간</span></div>
+        <table class="sch-t"><thead><tr><th>주차</th><th>날짜</th><th>교재</th><th>범위</th><th>쪽</th><th>숙제</th><th>쪽지 시험</th></tr></thead><tbody>${sc.weeks
+          .map((w, i) => `<tr class="${w.book === subject ? 'this' : 'other'}"><td class="sc-no">${i + 1}주</td><td class="sc-date">월 &nbsp;&nbsp; 일</td><td class="sc-book">${esc(w.book)}</td><td class="sc-range">${esc(w.range)}</td><td class="sc-pg">${
+            w.pages ? `<span data-pgr="${w.pages.join('|')}"></span>` : w.book === subject ? '' : '2권'}</td><td class="sc-chk"><i></i></td><td class="sc-score">&nbsp;&nbsp;&nbsp;점</td></tr>`).join('')}</tbody></table>
+        <div class="sch-flow">${sc.flow.map(([t, m, d]) => `<div><b>${esc(t)}</b><span class="sf-m">${esc(m)}</span><span class="sf-d">${esc(d)}</span></div>`).join('<i>→</i>')}</div>
+        <div class="sch-hw">${inl(sc.homework)}</div>
+      </div>
+      <div class="ow-note">이 책의 설명·자료·문제는 승민T 통합사회 수업을 위해 새로 쓴 것입니다. 사상가의 글은 원전을 새로 옮기거나 요지만 정리했고,
+      그래프와 지도의 출처는 각 그림 아래에 적었습니다. "개념도"는 원리를 보여 주려고 단순하게 그린 그림, "가상 자료"는 실제 값이 아닌 연습용 자료입니다.</div>
+    </div></div>`);
+    else add('owner', '', `<div class="top"><div class="owner">
       <div class="ow-box"><div class="ow-title">이 책의 주인</div>
         <div class="ow-line"><span>학교</span><i></i></div>
         <div class="ow-line"><span>학년 · 반</span><i></i></div>
@@ -421,7 +437,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book' }) {
       }
     });
     // 뒤표지 (양면 인쇄에서 늘 왼쪽 쪽 = 마지막 쪽)
-    add('backcover', `data-even="1"`, `<div class="top"><div class="cover cover-back">
+    add('backcover', `data-even="1"`, `<div class="top" id="back"><div class="cover cover-back">
       <div class="cv-brand">승민T 통합사회</div>
       <div class="bk-title">${esc(subject)} 개념서</div>
       <ul class="bk-points">

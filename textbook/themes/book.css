@@ -121,3 +121,32 @@
 .cover-back .cv-chapters { left: auto; right: 24mm; }
 .page-backcover .edge-tab { display: none; }
 .page.even .cover-back { margin: -12mm -19mm -10mm -17mm; } /* 왼쪽 쪽은 안쪽·바깥 여백이 반대 */
+
+/* ── 표지 뒷면: 이 책의 주인 + 특강 진도표 ── */
+.owner-plan { justify-content: flex-start; gap: 9mm; padding-top: 4mm; }
+.ow-compact { width: 100%; padding: 5mm 8mm 4mm; }
+.ow-compact .ow-title { font-size: 12pt; margin-bottom: 1mm; text-align: left; }
+.ow-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10mm; }
+.ow-compact .ow-line { height: 10mm; }
+.ow-compact .ow-line span { width: 20mm; }
+.sch { width: 100%; }
+.sch-head { display: flex; align-items: baseline; gap: 3mm; border-bottom: 2px solid var(--navy); padding-bottom: 2mm; margin-bottom: 3mm; }
+.sch-title { font-size: 15pt; font-weight: 900; color: var(--navy); }
+.sch-sub { font-size: 8.6pt; color: var(--gray); }
+.sch-t { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+.sch-t th { background: var(--c1-soft); color: var(--navy); font-weight: 800; padding: 1.8mm 1.5mm; border-bottom: 1.5px solid var(--c1); white-space: nowrap; }
+.sch-t td { padding: 3.3mm 1.5mm; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; color: var(--gray); }
+.sch-t td.sc-no { font-weight: 800; color: var(--c1); }
+.sch-t td.sc-book { font-size: 8pt; }
+.sch-t td.sc-range { text-align: left; color: var(--ink); white-space: normal; }
+.sch-t td.sc-pg { font-weight: 800; color: var(--navy); }
+.sch-t tr.other td.sc-no { color: var(--ans); }
+.sch-t td.sc-chk i { display: inline-block; width: 4mm; height: 4mm; border: 1px solid #9aa8b2; border-radius: .8mm; vertical-align: middle; }
+.sch-flow { display: flex; align-items: stretch; gap: 1.5mm; margin-top: 4mm; }
+.sch-flow > div { flex: 1; background: #f6f9fa; border: 1px solid var(--line); border-radius: 2mm; padding: 2mm 2.5mm; display: flex; flex-direction: column; gap: .4mm; }
+.sch-flow > i { align-self: center; font-style: normal; color: var(--c1); font-weight: 800; }
+.sch-flow b { color: var(--navy); font-size: 9pt; }
+.sf-m { font-size: 8pt; font-weight: 800; color: var(--ans); }
+.sf-d { font-size: 7.6pt; color: #3d4852; line-height: 1.5; }
+.sch-hw { margin-top: 3mm; background: var(--warm); border-radius: 2mm; padding: 2.4mm 4mm; font-size: 8.6pt; }
+.owner-plan .ow-note { width: 100%; margin-top: auto; text-align: left; }
