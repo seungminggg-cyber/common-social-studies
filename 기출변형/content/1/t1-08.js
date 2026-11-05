@@ -366,7 +366,7 @@ export default [
           { lon: 22, lat: 0, ring: 9, label: 'B', pos: 'right', size: 14 },
           { lon: 103, lat: 15, ring: 9, label: 'C', pos: 'right', size: 14 },
           { lon: 134, lat: -25, ring: 9, label: 'D', pos: 'right', size: 14 },
-          { lon: -42, lat: 72, ring: 9, label: 'E', pos: 'right', size: 14 },
+          { lon: -95, lat: 65, ring: 9, label: 'E', pos: 'right', size: 14 },
         ],
         source: '지도 자료: Natural Earth',
       },
