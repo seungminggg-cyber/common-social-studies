@@ -6,7 +6,7 @@
 // 기후 그래프 하나 (꺾은선: 월평균 기온, 막대: 월 강수량)
 const CL = (label, temp, precip, o = {}) => ({
   t: 'chart', kind: 'climate', compact: true, label, temp, precip, h: o.h ?? 175, w: o.w,
-  tMin: o.tMin ?? -30, tMax: o.tMax ?? 30, tStep: o.tStep ?? 10, pMax: o.pMax ?? 150, source: o.source, note: o.note,
+  tMin: o.tMin ?? -30, tMax: o.tMax ?? 30, tStep: o.tStep ?? 10, pMax: o.pMax ?? 120, source: o.source, note: o.note,
 });
 // 지도에 찍는 A, B, C …
 const PIN = (label, lon, lat, pos = 'right', ring = 12) => ({ lon, lat, ring, label, pos, size: 15 });
@@ -373,9 +373,13 @@ export default [
     id: 't1-08-2-019', level: '중상', concept: [5, 4], type: '그래프 해석', src: '2026.6 고1 22번 동남아시아 문화권 유형',
     stem: '그래프는 동남아시아에 있는 갑국, 을국의 종교별 신자 비율을 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'figrow', items: [
-        { t: 'chart', kind: 'pie', w: 300, title: '갑국', slices: [{ label: '불교', value: 88 }, { label: '크리스트교', value: 6 }, { label: '이슬람교', value: 4 }, { label: '기타', value: 2 }] },
-        { t: 'chart', kind: 'pie', w: 300, title: '을국', slices: [{ label: '이슬람교', value: 63 }, { label: '불교', value: 19 }, { label: '크리스트교', value: 9 }, { label: '기타', value: 9 }] },
+      t: 'chart', kind: 'stack100', h: 120, w: 420,
+      categories: ['갑국', '을국'],
+      series: [
+        { name: '불교', values: [88, 19] },
+        { name: '이슬람교', values: [4, 63] },
+        { name: '크리스트교', values: [6, 9] },
+        { name: '기타', values: [2, 9] },
       ],
       source: '가상 자료',
     }],
@@ -416,14 +420,12 @@ export default [
   {
     id: 't1-08-2-021', level: '상', concept: [2, 5], type: '지도 해석', src: '2025.10 고1 13번·2026.3 고2 7번 기후와 문화 유형',
     stem: '(가)는 지도에 표시된 A~C 중 한 지역의 기후 그래프이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은?',
-    data: [{
-      t: 'figrow', items: [
-        CL('(가)', [-39, -35, -22, -7, 6, 15, 19, 15, 6, -8, -28, -37], [9, 8, 8, 10, 20, 35, 42, 40, 25, 18, 14, 10], { tMin: -40, tMax: 30, w: 200 }),
-        { t: 'map', view: 'world', w: 420, h: 200, rivers: false, seas: false,
-          markers: [PIN('A', 15, 40, 'top', 10), PIN('B', 130, 62, 'right', 11), PIN('C', -60, -3, 'right', 12)] },
-      ],
-      source: '가상 자료, 지도 자료: Natural Earth',
-    }],
+    data: [
+      CL('(가)', [-39, -35, -22, -7, 6, 15, 19, 15, 6, -8, -28, -37], [9, 8, 8, 10, 20, 35, 42, 40, 25, 18, 14, 10], { tMin: -40, tMax: 30, pMax: 140, w: 300, source: '가상 자료' }),
+      { t: 'map', view: 'world', h: 210, rivers: false, seas: false,
+        markers: [PIN('A', 15, 40, 'top', 10), PIN('B', 130, 62, 'right', 11), PIN('C', -60, -3, 'right', 12)],
+        source: '지도 자료: Natural Earth' },
+    ],
     bogi: [
       '(가)는 B의 기후 그래프이다.',
       '(가) 지역은 C보다 기온의 연교차가 작다.',

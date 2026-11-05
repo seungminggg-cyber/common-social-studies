@@ -143,7 +143,7 @@ export default [
   {
     id: 't2-11-2-009', level: '중상', concept: [4], type: '지도 해석', src: '2026.9 고2 다국적 기업 공장 이전 유형',
     stem: '지도는 다국적 기업 ○○사의 생산 공장 이전 계획을 나타낸 것이다. 이에 대한 설명으로 가장 적절한 것은?',
-    data: [{ t: 'map', view: [-130, -15, 150, 55], h: 230, w: 420,
+    data: [{ t: 'map', view: 'world', h: 230, w: 420,
       markers: [
         { lon: 113.3, lat: 23.1, label: 'A', pos: 'top', cls: 'k1' },
         { lon: 106.8, lat: -6.2, label: 'B', pos: 'bottom', cls: 'k3' },
