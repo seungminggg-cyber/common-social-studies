@@ -1,0 +1,206 @@
+/* 시안 E · 시험지와 판서 — 시안 D(교과서형)를 다듬은 디자인
+ *
+ *  원칙
+ *  1. 두 가지 목소리: 원문·자료·수능형 문제·제목은 수능 시험지처럼 명조(Hahmlet),
+ *     선생님 설명은 고딕(Pretendard). 학생 눈이 시험지 글꼴에 익숙해지도록.
+ *  2. 상자보다 선: 둥근 카드·그림자를 줄이고 괘선과 여백으로 나눈다(눈 피로·잉크 줄이기).
+ *  3. 색은 대단원 색 하나만 옅게: 넓은 면은 아주 옅은 바탕, 진한 색은 글자와 선에만.
+ *  4. 굵은 핵심어에는 대단원 색 형광펜 밑줄.
+ *  5. 크게 꾸미는 곳은 단원 첫 쪽 하나. 나머지 쪽은 조용하게.
+ *  본문 글자는 완전한 검정 대신 부드러운 먹색(#2a3037), 줄 간격 넉넉하게.
+ */
+@import url('d.css');
+
+:root {
+  --serif-e: 'Hahmlet Variable', 'Noto Serif KR', serif;
+  --ink: #2a3037; --pencil: #69727b; --rule: #dadfe4; --rule-soft: #e9edf0;
+  --red: #cf3a3a; --ans: #cf3a3a; --navy: #2a3037; --gray: #69727b; --line: #dadfe4;
+  --note-y: #fff7d1;
+  --fs: 9.6pt; --lh: 1.82;
+  /* 기본 = Ⅰ */
+  --c1: #176f79; --c1-dark: #10535b; --c1-soft: #e3f0f1; --c1-line: #b9d8db; --c1-pale: #f3f8f9; --c1-hl: #cfe6e8;
+}
+.page[data-ch="Ⅰ"] { --c1: #176f79; --c1-dark: #10535b; --c1-soft: #e3f0f1; --c1-line: #b9d8db; --c1-pale: #f3f8f9; --c1-hl: #cfe6e8; }
+.page[data-ch="Ⅱ"] { --c1: #5a47a0; --c1-dark: #42347a; --c1-soft: #ece9f6; --c1-line: #d0c9ea; --c1-pale: #f7f6fc; --c1-hl: #ded8f2; }
+.page[data-ch="Ⅲ"] { --c1: #2b7a4b; --c1-dark: #1f5c38; --c1-soft: #e5f1e9; --c1-line: #bfdcc9; --c1-pale: #f4f9f5; --c1-hl: #d2e8da; }
+.page[data-ch="Ⅳ"] { --c1: #b05216; --c1-dark: #873c0e; --c1-soft: #f8ece3; --c1-line: #ecceb8; --c1-pale: #fdf8f4; --c1-hl: #f4dccb; }
+.page[data-ch="Ⅴ"] { --c1: #255aa6; --c1-dark: #1b437d; --c1-soft: #e6eef8; --c1-line: #c2d4ee; --c1-pale: #f5f8fc; --c1-hl: #d5e2f4; }
+
+body { color: var(--ink); }
+.page-body { letter-spacing: -.005em; }
+.serif, .serif * { font-family: var(--serif-e); }
+
+/* ── 형광펜: 본문 굵은 글씨(핵심어)에만 ── */
+.row-p b, .row-ul b, .row-item b, .row-ol b, .kv td b, .note b, .tip-text b, .src-interp b {
+  font-weight: 700; color: #20262c;
+  background: linear-gradient(transparent 60%, var(--c1-hl) 60%, var(--c1-hl) 92%, transparent 92%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .08em;
+}
+
+/* ── 머리글·쪽 번호·엄지 색인 ── */
+.page-head { font-size: 7.2pt; color: var(--pencil); border-bottom: .6px solid var(--rule); margin-bottom: 1.5mm; }
+.ph-left::before { width: 1.6mm; height: 1.6mm; }
+.ph-left b { color: var(--c1-dark); font-weight: 600; }
+.folio span { background: none; color: var(--c1-dark); font-family: var(--serif-e); font-size: 11pt; font-weight: 600; min-width: 0; padding: 0; height: auto; border-radius: 0; }
+.page.odd .folio span::before, .page.even .folio span::after { content: ''; display: inline-block; width: 6mm; height: .8px; background: var(--c1-line); vertical-align: .25em; }
+.page.odd .folio span::before { margin-right: 2mm; }
+.page.even .folio span::after { margin-left: 2mm; }
+.strip { border-top: .6px solid var(--rule); }
+.edge-tab { width: 6mm; height: 24mm; font-family: var(--serif-e); font-weight: 700; font-size: 10.5pt; }
+.page.odd .edge-tab { border-radius: 1.4mm 0 0 1.4mm; }
+.page.even .edge-tab { border-radius: 0 1.4mm 1.4mm 0; }
+
+/* ── 단원 첫 쪽 (이 디자인에서 유일하게 크게 꾸미는 곳) ── */
+.opener { background: var(--c1-pale); color: var(--ink); align-items: flex-end; gap: 6mm; padding-top: 16mm; padding-bottom: 7mm; border-bottom: 1.6pt solid var(--c1); }
+.opener::after, .opener::before { display: none; }
+.op-no { font-family: var(--serif-e); font-weight: 300; font-size: 84pt; line-height: .74; letter-spacing: -2px; color: var(--c1); border: 0; padding: 0; }
+.op-text { padding-bottom: 1.2mm; }
+.op-chapter { color: var(--c1-dark); font-weight: 600; font-size: 8.8pt; margin-bottom: 2mm; letter-spacing: 0; }
+.op-title { font-family: var(--serif-e); font-weight: 650; font-size: 22pt; line-height: 1.3; letter-spacing: -.6px; color: #20262c; }
+.goal { margin: 6mm 0 6mm; gap: 7mm; }
+.goal-box { background: none; border: 0; border-top: 1.2pt solid var(--c1); border-radius: 0; box-shadow: none; padding: 2.4mm 0 0; font-size: 8.9pt; line-height: 1.72; }
+.goal-p { background: none; border-top-color: var(--rule); }
+.goal-label, .goal-p .goal-label { color: var(--c1-dark); font-size: 8.4pt; font-weight: 700; margin-bottom: 1.6mm; }
+.goal-label::before { content: none; }
+.gq-n { width: auto; height: auto; background: none; border-radius: 0; color: var(--c1); font-family: var(--serif-e); font-weight: 700; font-size: 9pt; min-width: 6mm; }
+
+/* ── 제목 ── */
+.sec { gap: 0; align-items: baseline; margin-top: 3mm; font-family: var(--serif-e); font-weight: 650; font-size: 15pt; color: #20262c; letter-spacing: -.4px; padding-bottom: 1.8mm; border-bottom: .8pt solid var(--c1-line); }
+.sec::after { display: none; }
+/* 대단원 안의 큰 묶음(A, B …): 대단원 색 명조 글자 + 가는 세로선 */
+.sec-mark { background: none; color: var(--c1); padding: 0 3.2mm 0 0; margin-right: 3.2mm; border-right: .8pt solid var(--c1-line); border-radius: 0; font-family: var(--serif-e); font-weight: 500; font-size: 16pt; line-height: 1; letter-spacing: 0; }
+.item { gap: 2.6mm; font-size: 11pt; font-weight: 700; color: #20262c; margin-bottom: 2.4mm; }
+.item-no { width: auto; height: auto; background: none; border-radius: 0; color: var(--c1); font-family: var(--serif-e); font-weight: 700; font-size: 12.5pt; }
+
+/* ── 목록 ── */
+.ul li { padding-left: 4.2mm; }
+.ul li::before { width: 1.4mm; height: 1.4mm; top: .72em; border: 0; background: var(--c1-line); border-radius: 50%; }
+
+/* ── 용어 정리(kv): 카드 → 괘선 사전 ── */
+.kv { background: none; border: 0; border-top: 1.2pt solid var(--c1); border-bottom: .6pt solid var(--c1-line); border-radius: 0; }
+.kv th { padding: 2mm 3.5mm 2mm 0; }
+.kv th span { background: none; padding: 0; border-radius: 0; color: var(--c1-dark); font-size: 8.8pt; font-weight: 700; }
+.kv td { padding: 2mm 0; }
+.kv tr + tr > * { border-top: .6pt dotted var(--c1-line); }
+
+/* ── 표 ── */
+.tbl { border: 0; border-top: 1.2pt solid var(--c1); border-bottom: .6pt solid var(--c1-line); border-radius: 0; }
+.tbl thead th { background: var(--c1-pale); color: var(--c1-dark); border-bottom: .6pt solid var(--c1-line); font-weight: 700; }
+.tbl tbody tr > * { border-bottom: .6pt solid var(--rule-soft); }
+.tbl tbody th { color: #20262c; font-weight: 700; }
+.tbl-title { font-size: 9.2pt; font-weight: 700; }
+.tbl-title::before { width: 3.2mm; height: .9mm; border-radius: 0; vertical-align: .6mm; }
+
+/* ── 개념 더하기 ── */
+.note { background: var(--c1-pale); border: 0; border-left: 2pt solid var(--c1-line); border-radius: 0; padding: 2.4mm 4mm; }
+.note-tag { background: none; color: var(--c1); padding: 0; font-size: 7.6pt; border-radius: 0; }
+.note-title { color: #20262c; font-size: 8.8pt; }
+
+/* ── 헷갈리는 개념(비교) ── */
+.cmp-col { background: none; border: 0; border-top: 1.2pt solid var(--c1); border-radius: 0; padding: 2.4mm 1mm 0; }
+.cmp-col + .cmp-vs + .cmp-col { border-top-color: var(--red); }
+.cmp-vs span { background: #fff; color: var(--pencil); border: .8pt solid var(--rule); font-family: var(--serif-e); }
+
+/* ── 자료 읽기: 수능 자료 상자처럼 ── */
+.source { border: .8pt solid #9aa3ab; border-radius: 0; overflow: visible; margin-top: 2.4mm; }
+.src-tab { background: none; border: 0; padding: 0 4.5mm; margin-top: -2.4mm; gap: 2.4mm; }
+.src-label { background: #fff; color: var(--c1-dark); font-size: 7.8pt; padding: 0 1.6mm; border-radius: 0; }
+.src-title { background: #fff; color: #20262c; font-family: var(--serif-e); font-weight: 650; font-size: 9.8pt; padding-right: 1.6mm; }
+.src-body { padding: 2.4mm 5mm 3mm; }
+.src-body .p, .src-body .dialog, .src-body .dialog * { font-family: var(--serif-e); font-size: 9.2pt; line-height: 1.86; }
+.src-interp { background: var(--c1-pale); border-top: .6pt solid var(--rule); padding: 2.4mm 5mm 2.8mm; }
+.interp-label { background: none; color: var(--c1); padding: 0; font-size: 8pt; border-radius: 0; }
+
+/* ── 수능 자료 해석 연습 ── */
+.example { border: .8pt solid #9aa3ab; border-radius: 0; }
+.ex-tab { background: var(--c1-pale); border-bottom: .6pt solid var(--rule); }
+.ex-label { background: none; color: var(--c1); padding: 0; border-radius: 0; }
+.ex-title { color: #20262c; font-family: var(--serif-e); font-weight: 650; }
+.ex-n { background: none; color: var(--c1); padding: 0; font-size: 7.6pt; }
+
+/* ── 승민T 한마디: 포스트잇 ── */
+.tip { background: var(--note-y); border: 0; border-radius: 0; padding: 3mm 4.5mm; box-shadow: none; }
+.tip-avatar { width: 8mm; height: 8mm; background: var(--c1); color: #fff; font-family: var(--serif-e); font-size: 11pt; }
+.tip-name { color: var(--c1-dark); font-weight: 700; }
+
+/* ── 흐름·사슬 ── */
+.flow li { background: none; border-top: 1.2pt solid var(--c1); border-radius: 0; padding: 2.4mm 1mm 0; }
+.fl-no { font-family: var(--serif-e); }
+.chain { border: 0; border-top: .6pt solid var(--c1-line); border-bottom: .6pt solid var(--c1-line); border-radius: 0; background: none; padding: 2.4mm 0; }
+.ch-step { background: var(--c1-soft); color: var(--c1-dark); border-radius: 1mm; }
+
+/* ── 빈칸 ── */
+.blank { border-bottom: 1pt solid var(--c1-dark); }
+
+/* ── 띠 제목(개념 확인·수능형 문제·정답): 칠한 띠 → 큰 명조 제목 + 굵은 선 ── */
+.band { background: none; color: #20262c; border-radius: 0; padding: 0 0 2.2mm; border-bottom: 2pt solid var(--c1); margin-bottom: 5mm; align-items: flex-end; }
+.band-check { background: none; }
+.band-title { font-family: var(--serif-e); font-weight: 650; font-size: 18pt; letter-spacing: -.5px; }
+.band-title::before { content: none; }
+.band-unit, .band-check .band-unit { color: var(--pencil); font-size: 8.4pt; }
+.band-unit b { color: var(--c1); font-family: var(--serif-e); }
+
+/* ── 개념 확인 ── */
+.ins::before { width: 3.2mm; height: .9mm; border-radius: 0; vertical-align: .6mm; }
+.ck-no { font-family: var(--serif-e); }
+.ox-a i { border-color: var(--rule); color: #a3acb4; }
+
+/* ── 수능형 문제: 시험지처럼 ── */
+.q { font-family: var(--serif-e); font-size: 9.2pt; line-height: 1.78; }
+.q-head { margin-bottom: .8mm; }
+.q-no { display: inline-block; background: none; color: #20262c; min-width: 0; height: auto; border-radius: 0; font-family: var(--serif-e); font-weight: 700; font-size: 14pt; line-height: 1.1; }
+.q-lv { font-family: 'Pretendard Variable', sans-serif; border-color: var(--rule); color: var(--pencil); font-weight: 600; }
+.lv-상 { color: var(--red); border-color: currentColor; }
+.q-stem { font-weight: 500; }
+.q-data, .bogi { border-color: #8f99a2; border-width: .8pt; border-radius: 0; }
+.q-data .tbl { border: 0; }
+.q-data .tbl thead th { background: none; }
+.choices { font-size: 9pt; }
+.q-explain { font-family: 'Pretendard Variable', sans-serif; }
+.region-exam .slot + .slot { border-left: .6pt solid var(--rule); }
+
+/* ── 그림 상자 ── */
+.row-chart .main, .row-map .main, .row-venn .main, .row-figrow .main { border: .6pt solid var(--rule); border-radius: 1.2mm; box-shadow: none; }
+.fig-title { font-family: var(--serif-e); font-weight: 650; color: #20262c; }
+
+/* ── 사상가 카드: 진한 띠 → 옅은 바탕 + 명조 이름 ── */
+.row-tk .main { border-color: var(--c1-line); }
+.row-tk.tk-first .main { border-radius: 1.6mm 1.6mm 0 0; }
+.row-tk.tk-last .main { border-radius: 0 0 1.6mm 1.6mm; border-bottom-color: var(--c1-line); }
+.row-tk.tk-first.tk-last .main { border-radius: 1.6mm; }
+.tk-head { background: var(--c1-pale); color: var(--ink); border-bottom: .8pt solid var(--c1-line); padding: 3mm 4.5mm 3mm; }
+.tk-head::after { background: var(--c1-soft); border-color: var(--c1-line); color: var(--c1); font-family: var(--serif-e); }
+.tk-name { font-family: var(--serif-e); font-weight: 700; font-size: 16pt; color: #20262c; letter-spacing: -.4px; }
+.tk-era { color: var(--pencil); font-size: 8pt; }
+.tk-key { background: #fff; color: var(--c1-dark); border: .6pt solid var(--c1-line); font-weight: 600; }
+.tk-photo { border: 1.2pt solid #fff; box-shadow: 0 0 0 .6pt var(--c1-line); width: 15mm; height: 15mm; }
+.tk-label { color: var(--c1-dark); font-weight: 700; }
+.tk-label::before { width: 3.2mm; height: .9mm; border-radius: 0; vertical-align: .6mm; }
+.tk-n { background: none; color: var(--c1); font-family: var(--serif-e); font-weight: 700; font-size: 9pt; width: auto; height: auto; margin-top: 0; min-width: 4mm; }
+.tk-terms > div { background: var(--c1-pale); border-radius: 0; }
+.tk-q { background: none; border-left: 2pt solid var(--c1-line); border-radius: 0; padding: .6mm 0 .6mm 4mm; }
+.tk-q p { font-family: var(--serif-e); font-size: 9.2pt; line-height: 1.88; }
+.tk-qnote .tk-ql { background: none; color: var(--c1); padding: 0; }
+.tk-a span { width: 5mm; height: 5mm; font-family: var(--serif-e); }
+.tk-a .o { background: none; color: var(--c1); border: 1pt solid var(--c1); }
+.tk-a .x { background: none; color: var(--red); border: 1pt solid var(--red); }
+.tk-vs { background: var(--note-y); border-radius: 0; }
+.tk-vs b { color: var(--red); }
+.tk-cont { background: var(--c1-pale); color: #20262c; border: .8pt solid var(--c1-line); border-bottom: 0; font-family: var(--serif-e); border-radius: 1.6mm 1.6mm 0 0; }
+.tk-cont span { color: var(--pencil); }
+
+/* ── 정리 노트 ── */
+.memo { border: 0; border-top: 1.2pt solid var(--c1-line); border-radius: 0; background: none; }
+.memo-tag { background: none; color: var(--c1-dark); padding: 0; font-size: 8pt; }
+.memo-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), var(--rule-soft) calc(7.6mm - 1px), var(--rule-soft) 7.6mm); }
+
+/* ── 도식(인포그래픽) 글자도 제목만 명조 ── */
+.dg-rlab, .dg-rlist li b, .dg-tnode b, .dg-cnode b { font-family: inherit; }
+
+/* 영어 대문자 이름표(STEP) 대신 "1단계" */
+.ex-steps { counter-reset: st; }
+.ex-steps li { counter-increment: st; }
+.ex-n { font-size: 0; }
+.ex-n::before { content: counter(st) '단계'; font-size: 7.8pt; font-weight: 700; }
+.fl-no::before { content: none; }
+.fl-no::after { content: '단계'; }

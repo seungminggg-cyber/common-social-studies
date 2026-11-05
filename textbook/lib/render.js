@@ -330,6 +330,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/400.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/600.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/nanum-pen-script/400.css">
+${theme === 'e' ? '<link rel="stylesheet" href="../node_modules/@fontsource-variable/hahmlet/index.css">' : ''}
 <style>
 @font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: block;
   src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
@@ -337,7 +338,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme} mode-${mode}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
