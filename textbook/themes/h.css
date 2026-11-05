@@ -267,3 +267,16 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .q-type::before { content: '·'; color: var(--rule); margin-right: 2mm; }
 .q-stem { font-weight: 700; }
 .choices .cn { color: var(--c1-dark); }
+
+/* ── 3차 수정: 출제 빈도 이름표(기본 개념·빈출·최다 빈출), 문제는 난이도 글자 ── */
+.cc-stks { display: none !important; }
+.cc.st3 .cc-freq em { display: inline; }
+.cc-freq em, .cc-index li em, .sm-ch em { font-style: normal; font-size: 7.4pt; font-weight: 700; color: var(--gray); white-space: nowrap; }
+.cc.st2 .cc-freq em, .cc-index li.st2 em, .sm-c.st2 .sm-ch em { color: var(--c1-dark); }
+.cc.st3 .cc-freq em, .cc-index li.st3 em, .sm-c.st3 .sm-ch em { color: var(--red); }
+.cc-index li em { flex: none; min-width: 12mm; text-align: right; }
+.sm-ch em { flex: none; margin-left: 1mm; }
+.q-dots { display: none !important; }
+.q-lv { display: inline; font-size: 7.6pt; font-weight: 700; color: var(--gray); }
+.q-lv.lv-중 { color: var(--c1-dark); }
+.q-lv.lv-상 { color: var(--red); }

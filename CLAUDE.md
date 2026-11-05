@@ -97,6 +97,7 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - 2026-11-05 강사: "F는 눈에 띄고 D는 베이직, 더 세련되고 학생 모두 좋아할 안?" → 시안 G 견본(`themes/g.css` = f.css 위에 덮어씀): F의 구조(개념 번호·별점·기출 표시·이렇게 나온다·한 장 정리·시험지형 문제) + D처럼 차분한 겉모습(진한 색은 개념 번호 칸만) + 회독 체크 칸 + 스티커(`concept.tags`: 헷갈림 주의·자료 해석·계산, ★★★면 '자주 나옴' 자동). 학생 투표용 비교 한 장(가=G, 나=D, 다=F)도 전달. **강사 확인 대기**.
 - 2026-11-05 강사: "AI가 만든 느낌을 지우고 전문 디자이너 느낌" → 시안 H 견본(`themes/h.css` = g.css 위): KoPub World 돋움·바탕(npm `font-kopubworld@1.0.3`, 한국출판인회의 약관: 출판물 사용 무료, 서체 판매만 금지), 본문+바깥 날개 단 격자(날개에 개념 더하기·날개 사진 `side.photo`), 모서리 잘린 네모 상징, 인쇄용 색(Ⅱ는 보라 대신 자주), 알약·아이콘·그라데이션 없음, 정리 노트는 쪽의 40% 이상 빌 때만(`memoMin`). 2차 투표지(1=D, 2=H, 3=G). **강사 확인 대기**.
 - 2026-11-05 강사 H 의견: 회독 칸·개념 옆 기출 연도 빼기, 나누기는 한 가지로(A·B·C 빼고 개념 01~07만), 문제 쪽에 포인트 → `content/z-sample-h.js`(A·B·C 제목 빼고 한 장 정리도 개념만 나열 `summary.concepts`, 문제에 `concept`·`type`), 문제 머리에 단원 색 번호·난이도 막대·관련 개념·유형, 수능형 문제 띠에 문항 수·난이도 나눔. **강사 확인 대기**.
+- 2026-11-05 강사: 판형은 **국배판(A4) 유지**(4×6배판 188×257보다 큼, 학원 인쇄 편의). 출제 빈도 이름표 = 1칸 기본 개념 / 2칸 빈출 / 3칸 최다 빈출(FREQ), 문제 쪽은 빈출 대신 '난이도 상·중·하' 글자(칸 없음). **강사 확인 대기**.
 - 위키미디어 사진 받기: upload.wikimedia.org는 429(요청 제한)가 심하고 thumb.wikimedia.org는 막힘 → `https://commons.wikimedia.org/w/thumb.php?f=파일이름&w=960`으로 받으면 잘 됨(URL 끝 `?utm_…` 떼기, User-Agent에 프로젝트 주소).
 - 그림 기능 추가: 방사형(radar, 순위형은 reverse), 인구 피라미드(pyramid). 그림 설명(note)에서 **굵게** 지원.
 - 실제 통계: Our World in Data의 GitHub 공개 자료(owid/energy-data, owid/co2-data)를 raw.githubusercontent.com으로 받을 수 있음. datahub.io, fred, ourworldindata.org 직접 접속은 막힘.

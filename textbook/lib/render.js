@@ -204,7 +204,7 @@ function thinkerRows(b) {
 }
 
 // 개념 부분 전체 → 줄(row)들. 개념 머리(concept) 뒤부터 다음 개념·큰 제목(sec) 전까지는 카드 안(in-cc)
-const FREQ = { 3: '자주 나옴', 2: '나옴', 1: '기본 개념' };
+const FREQ = { 3: '최다 빈출', 2: '빈출', 1: '기본 개념' }; // 최근 기출 9회: 3번 이상 / 1~2번 / 직접 출제 없음
 // 개념 머리 스티커: 이름 → [색 종류, 아이콘]
 const STICKER = { '자주 나옴': ['hot', 'flame'], '헷갈림 주의': ['warn', 'alert-triangle'], '자료 해석': ['data', 'chart-bar'], '계산': ['calc', 'calculator'] };
 function conceptHtml(list) {
@@ -225,7 +225,7 @@ function summaryHtml(u) {
     const cards = S.concepts.map((c) => {
       const cc = C[c.no] || {};
       const st = Math.max(1, Math.min(3, cc.stars || 1));
-      return `<div class="sm-c st${st}"><div class="sm-ch"><b>개념 ${esc(c.no)}</b><span>${inl(c.title || cc.title || '')}</span><i>${star(st)}</i></div><ul>${c.lines
+      return `<div class="sm-c st${st}"><div class="sm-ch"><b>개념 ${esc(c.no)}</b><span>${inl(c.title || cc.title || '')}</span><i>${star(st)}</i><em>${FREQ[st]}</em></div><ul>${c.lines
         .map((l) => `<li>${inl(l)}</li>`).join('')}</ul></div>`;
     }).join('');
     S._grid = `<div class="sm-grid">${cards}</div>`;
@@ -242,7 +242,7 @@ function summaryHtml(u) {
   const checks = S.checks ? `<div class="sm-checks"><div class="sm-kh">시험 전 체크 — 말로 설명할 수 있으면 칸에 표시</div><ul>${S.checks
     .map((x) => `<li><i></i><span>${inl(x)}</span></li>`).join('')}</ul></div>` : '';
   return `<div class="sm"><div class="sm-core"><span>한 줄 요약</span>${inl(S.core)}</div>${S._grid || `<div class="sm-tree" style="--n:${S.branches.length}">${br}</div>`}${traps}${checks}`
-    + `<div class="sm-legend">별점은 최근 기출 9회(2028 수능 예시문항, 2025~2026 고1·고2 학력평가 8회)에서 그 개념을 직접 물은 횟수입니다. ★★★ 3번 이상, ★★ 1~2번, ★ 직접 나온 적은 없지만 다른 문항의 바탕이 되는 개념.</div></div>`;
+    + `<div class="sm-legend">출제 빈도는 최근 기출 9회(2028 수능 예시문항, 2025~2026 고1·고2 학력평가 8회)에서 그 개념을 직접 물은 횟수입니다. ★★★ 최다 빈출(3번 이상), ★★ 빈출(1~2번), ★ 기본 개념(직접 나온 적은 없지만 다른 문항의 바탕이 되는 개념).</div></div>`;
 }
 
 // 쪽 나누기의 단위. 제목(sec)은 다음 블록과 같은 쪽에 붙어 다닌다(data-keep).
@@ -275,8 +275,8 @@ function opener(book, u) {
 function conceptIndex(u) {
   const cs = u.concept.filter((b) => b.t === 'concept');
   if (!cs.length) return '';
-  return `<div class="cc-index"><div class="cc-index-h">이 단원의 개념 <span>★ 많을수록 자주 나온 개념</span></div><ol>${cs
-    .map((c) => { const st = Math.max(1, Math.min(3, c.stars || 1)); return `<li class="st${st}"><b>개념 ${esc(c.no)}</b><span>${inl(c.title)}</span><i>${'★'.repeat(st)}<s>${'★'.repeat(3 - st)}</s></i></li>`; })
+  return `<div class="cc-index"><div class="cc-index-h">이 단원의 개념 <span>최근 기출 9회 기준 출제 빈도</span></div><ol>${cs
+    .map((c) => { const st = Math.max(1, Math.min(3, c.stars || 1)); return `<li class="st${st}"><b>개념 ${esc(c.no)}</b><span>${inl(c.title)}</span><i>${'★'.repeat(st)}<s>${'★'.repeat(3 - st)}</s></i><em>${FREQ[st]}</em></li>`; })
     .join('')}</ol></div>`;
 }
 
