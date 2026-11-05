@@ -43,7 +43,7 @@ export default [
       x: { min: 0, max: 90, label: '위도(북위)', ticks: [{ v: 30, label: '30°' }, { v: 60, label: '60°' }, { v: 90, label: '90°' }] },
       y: { min: 0, max: 100, label: '연 강수량' },
       series: [{ name: '연 강수량', smooth: true, points: [[0, 90], [8, 80], [18, 40], [28, 14], [35, 22], [45, 55], [55, 64], [62, 60], [72, 30], [82, 14], [90, 8]] }],
-      notes: [{ x: 4, y: 98, text: 'A' }, { x: 28, y: 24, text: 'B' }, { x: 57, y: 74, text: 'C' }],
+      notes: [{ x: 7, y: 90, text: 'A' }, { x: 28, y: 24, text: 'B' }, { x: 57, y: 74, text: 'C' }],
       note: 'A는 적도 부근, B는 위도 30° 부근, C는 위도 60° 부근이다.', source: '개념도',
     }],
     choices: [
