@@ -3,8 +3,9 @@
 //   node build-book.mjs            학생용 개념서, 교사용 개념서, 정답과 해설 (PDF 3개)
 //   node build-book.mjs png        쪽 그림(PNG)도 저장 (out/png/book-*.png)
 //   node build-book.mjs student    학생용만 (teacher, answers 도 따로 고를 수 있음)
+//   node build-book.mjs t2         통합사회2 (기본은 통합사회1)
 //
-// 결과: out/통합사회1-개념서-학생용.pdf, out/통합사회1-개념서-교사용.pdf, out/통합사회1-정답과해설.pdf
+// 결과: out/통합사회1-개념서-학생용.pdf, out/통합사회1-개념서-교사용.pdf, out/통합사회1-정답과해설.pdf (t2 면 통합사회2-…)
 // 양면 인쇄용: 간지는 늘 오른쪽(홀수) 쪽에 오고, 필요하면 앞에 메모 쪽이 들어간다.
 // 교사용은 빈칸과 정답이 채워져 있고, 쪽 번호가 학생용과 같다(해설은 별책에만 있음).
 import { createRequire } from 'node:module';
@@ -12,7 +13,6 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync } from 
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { renderFull } from './lib/render.js';
-import full from './content/_book/t1.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => {
@@ -22,6 +22,8 @@ const { chromium } = (() => {
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = join(ROOT, 'out');
 const args = process.argv.slice(2);
+// 어느 책을 만들지: 기본은 통합사회1, t2 를 주면 통합사회2
+const { default: full } = await import(args.includes('t2') ? './content/_book/t2.js' : './content/_book/t1.js');
 const wantPng = args.includes('png');
 const theme = args.includes('b') ? 'b' : 'd'; // 디자인: 기본은 시안 D(교과서형), b를 주면 예전 시안 B
 const picked = ['student', 'teacher', 'answers'].filter((k) => args.includes(k));

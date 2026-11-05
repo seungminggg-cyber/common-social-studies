@@ -93,6 +93,7 @@ python3 hwpx_build.py out/t1-2.json out/t1-2-B-교사용.hwpx teacher
 ```bash
 node build-book.mjs          # 학생용 개념서 + 교사용 개념서 + 별책 정답과 해설 (PDF 3개)
 node build-book.mjs png      # 쪽 그림(out/png/book-*.png)도 저장
+node build-book.mjs t2       # 통합사회2 통합본 (content/_book/t2.js, 기본은 통합사회1)
 ```
 
 - 묶을 대단원과 간지 문구는 `content/_book/t1.js`에 있다. 디자인은 `themes/book.css`.

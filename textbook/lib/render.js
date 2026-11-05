@@ -359,7 +359,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <div class="sch"><div class="sch-head"><span class="sch-title">${esc(sc.title)}</span><span class="sch-sub">한 주에 한 번 · 3시간</span></div>
         <table class="sch-t"><thead><tr><th>주차</th><th>날짜</th><th>교재</th><th>범위</th><th>쪽</th><th>숙제</th><th>쪽지 시험</th></tr></thead><tbody>${sc.weeks
           .map((w, i) => `<tr class="${w.book === subject ? 'this' : 'other'}"><td class="sc-no">${i + 1}주</td><td class="sc-date">월 &nbsp;&nbsp; 일</td><td class="sc-book">${esc(w.book)}</td><td class="sc-range">${esc(w.range)}</td><td class="sc-pg">${
-            w.pages ? `<span data-pgr="${w.pages.join('|')}"></span>` : w.book === subject ? '' : '2권'}</td><td class="sc-chk"><i></i></td><td class="sc-score">&nbsp;&nbsp;&nbsp;점</td></tr>`).join('')}</tbody></table>
+            w.pages ? `<span data-pgr="${w.pages.join('|')}"></span>` : w.book === subject ? '' : esc(w.vol || '2권')}</td><td class="sc-chk"><i></i></td><td class="sc-score">&nbsp;&nbsp;&nbsp;점</td></tr>`).join('')}</tbody></table>
         <div class="sch-flow">${sc.flow.map(([t, m, d]) => `<div><b>${esc(t)}</b><span class="sf-m">${esc(m)}</span><span class="sf-d">${esc(d)}</span></div>`).join('<i>→</i>')}</div>
         <div class="sch-hw">${inl(sc.homework)}</div>
       </div>
@@ -387,7 +387,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     const GUIDE = [
       ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
       ['단원 첫머리', '핵심 질문 두 개와 수능 포인트. 시험에 어떤 자료와 선지로 나오는지 먼저 보고 시작한다.'],
-      ['개념 정리', '교과서 9종의 공통 내용을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어, <mark>형광펜</mark>은 시험에 그대로 나오는 문장이다.'],
+      ['개념 정리', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어, <mark>형광펜</mark>은 시험에 그대로 나오는 문장이다.`],
       ['빈칸과 빈칸 정답 띠', '본문의 번호 빈칸을 직접 채운다. 정답은 그 쪽 맨 아래 띠에 있으니 채운 뒤에 확인한다.'],
       ['개념 더하기', '본문 아래 회색 상자. 용어 뜻, 헷갈리는 개념, 교과서마다 다른 표현을 정리했다.'],
       ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
@@ -441,7 +441,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <div class="cv-brand">승민T 통합사회</div>
       <div class="bk-title">${esc(subject)} 개념서</div>
       <ul class="bk-points">
-        <li>교과서 9종의 공통 내용을 수능에 맞게 정리한 개념 정리</li>
+        <li>${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리한 개념 정리</li>
         <li>2028 수능 예시문항과 학력평가를 분석한 수능 포인트·자료 해석 연습</li>
         <li>사상가 카드, 기후 그래프와 지도, 실제 통계로 그린 그래프</li>
         <li>개념 확인 O/X·빈칸과 수능형 문제, 별책 정답과 해설</li>
