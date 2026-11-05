@@ -29,7 +29,9 @@
   "author": "Martin Thurnherr",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3AAlpabzug_2011_in_Freiburg_03.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3AAlpabzug_2011_in_Freiburg_03.jpg",
+  "attribution": "© Martin Thurnherr / cc-by-sa-4.0 / Commons.wikimedia.org",
+  "authorUrl": "https://commons.wikimedia.org/wiki/User:Matutinho"
  },
  "ph-aral": {
   "caption": "아랄해의 변화(왼쪽 1989년, 오른쪽 2014년) — 강물을 관개용수로 끌어 쓰면서 크게 줄었다",
@@ -45,7 +47,9 @@
   "author": "CEphoto, Uwe Aranas",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3ABanaue_Philippines_Batad-Rice-Terraces-02.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3ABanaue_Philippines_Batad-Rice-Terraces-02.jpg",
+  "attribution": "Photo by CEphoto, Uwe Aranas",
+  "authorUrl": "https://commons.wikimedia.org/wiki/User:Cccefalon"
  },
  "ph-busanport": {
   "caption": "부산항 컨테이너 터미널 — 우리나라 수출입 화물의 관문",
@@ -117,15 +121,9 @@
   "author": "Diego Delso",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3AFiordo_de_Geiranger_desde_Flydalsjuvet%2C_Noruega%2C_2019-09-07%2C_DD_59.jpg"
- },
- "ph-gardens": {
-  "caption": "싱가포르 가든스 바이 더 베이의 수퍼트리 — '정원 속의 도시'",
-  "title": "File:Supertree Grove, Gardens by the Bay, Singapore1.jpg",
-  "author": "Mustang Joe",
-  "license": "CC0",
-  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "page": "https://commons.wikimedia.org/wiki/File%3ASupertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore1.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3AFiordo_de_Geiranger_desde_Flydalsjuvet%2C_Noruega%2C_2019-09-07%2C_DD_59.jpg",
+  "attribution": "Diego Delso, delso.photo, License CC-BY-SA",
+  "authorUrl": "https://www.wikidata.org/wiki/Q28147777"
  },
  "ph-ger": {
   "caption": "몽골의 게르 — 유목민이 쉽게 조립하고 옮기는 이동식 가옥",
@@ -165,15 +163,17 @@
   "author": "Paul Colin Hennig firstdorsal.eu",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3AFountain_of_Justice_%28Gerechtigkeitsbrunnen%29_on_the_Roemerberg%2C_Frankfurt_%282025%29.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3AFountain_of_Justice_%28Gerechtigkeitsbrunnen%29_on_the_Roemerberg%2C_Frankfurt_%282025%29.jpg",
+  "attribution": "Paul Colin Hennig firstdorsal.eu",
+  "authorUrl": "https://firstdorsal.eu"
  },
  "ph-kangnido": {
-  "caption": "「혼일강리역대국도지도」(조선, 규장각 소장본) — 중국을 가운데에 크게, 조선을 실제보다 크게 그렸다",
-  "title": "File:혼일강리역대국도지도 (규장각 소장본).jpg",
-  "author": "Original: 權近 外 이찬 교수 채색모사.",
+  "caption": "「혼일강리역대국도지도」(1402년 조선 제작, 일본 혼코지 소장본) — 중국을 가운데에 크게, 조선을 실제보다 크게 그렸다",
+  "title": "File:GeneralMapOfDistancesAndHistoricCapitals.jpg",
+  "author": "Kim Sahyung, Lee Moo, Lee Hui",
   "license": "Public domain",
   "licenseUrl": "",
-  "page": "https://commons.wikimedia.org/wiki/File%3A%ED%98%BC%EC%9D%BC%EA%B0%95%EB%A6%AC%EC%97%AD%EB%8C%80%EA%B5%AD%EB%8F%84%EC%A7%80%EB%8F%84_%28%EA%B7%9C%EC%9E%A5%EA%B0%81_%EC%86%8C%EC%9E%A5%EB%B3%B8%29.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File:GeneralMapOfDistancesAndHistoricCapitals.jpg"
  },
  "ph-ktx": {
   "caption": "고속 철도 KTX — 이동 시간을 크게 줄여 생활권을 넓혔다",
@@ -189,7 +189,8 @@
   "author": "Pavel Špindler",
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3ALa_Paz_-_El_Alto_-_panoramio.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3ALa_Paz_-_El_Alto_-_panoramio.jpg",
+  "attribution": "Pavel Špindler"
  },
  "ph-lehman": {
   "caption": "2008년 9월 파산한 리먼 브러더스 본사 — 세계 금융 위기의 신호탄",
@@ -237,7 +238,9 @@
   "author": "Luca Galuzzi (Lucag)",
   "license": "CC BY-SA 2.5",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
-  "page": "https://commons.wikimedia.org/wiki/File%3APerito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG"
+  "page": "https://commons.wikimedia.org/wiki/File%3APerito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG",
+  "attribution": "Luca Galuzzi",
+  "authorUrl": "https://commons.wikimedia.org/wiki/User:Lucag"
  },
  "ph-pfand": {
   "caption": "독일 슈퍼마켓의 빈 병 회수기 — 병을 넣으면 보증금을 돌려준다",
@@ -277,7 +280,9 @@
   "author": "Rocky Masum",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3ARohingya_Refugee_Camp_26.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3ARohingya_Refugee_Camp_26.jpg",
+  "attribution": "© Masum-al-hasan Rocky / Wikimedia Commons / \"Rohingya Refugee Camp 26\"",
+  "authorUrl": "https://commons.wikimedia.org/wiki/User:RockyMasum"
  },
  "ph-santorini": {
   "caption": "그리스 산토리니섬 — 여름 햇볕을 반사하려고 벽을 하얗게 칠한 지중해의 집",
@@ -309,7 +314,9 @@
   "author": "Mark D",
   "license": "CC BY-SA 2.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3AShibuya_Crossing%2C_Tokyo%3B_December_2017.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3AShibuya_Crossing%2C_Tokyo%3B_December_2017.jpg",
+  "attribution": "Mark D",
+  "authorUrl": "https://www.flickr.com/people/79446517@N00"
  },
  "ph-solar": {
   "caption": "인도 텔랑가나주의 태양광 발전소",
@@ -357,7 +364,9 @@
   "author": "Vyacheslav Argenberg",
   "license": "CC BY 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3ABog_lake_in_taiga_forest%2C_Ergaki%2C_Sayan_Mountains%2C_Siberia%2C_Russia.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3ABog_lake_in_taiga_forest%2C_Ergaki%2C_Sayan_Mountains%2C_Siberia%2C_Russia.jpg",
+  "attribution": "© Vyacheslav Argenberg",
+  "authorUrl": "https://commons.wikimedia.org/wiki/User:Argenberg"
  },
  "ph-typhoon": {
   "caption": "2022년 9월 우리나라를 향해 북상한 태풍 힌남노의 위성 사진",
@@ -482,7 +491,7 @@
  "pt-hayek": {
   "caption": "하이에크",
   "title": "File:Friedrich Hayek portrait (cropped).jpg",
-  "author": "DickClarkMises (English Wikipedia)",
+  "author": "Ludwig von Mises Institute 제공 (위키미디어 VRT 허락 #2011021010016583)",
   "license": "CC BY-SA 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "page": "https://commons.wikimedia.org/wiki/File%3AFriedrich_Hayek_portrait_%28cropped%29.jpg"
@@ -498,7 +507,7 @@
  "pt-islam": {
   "caption": "메카의 카바 신전",
   "title": "File:The Kaaba during Hajj - edited.jpg",
-  "author": "Adli Wahid",
+  "author": "Adli Wahid (수정: Basile Morin)",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File%3AThe_Kaaba_during_Hajj_-_edited.jpg"
@@ -506,10 +515,11 @@
  "pt-jonas": {
   "caption": "요나스(1983년)",
   "title": "File:Hans Jonas an der Universität St. Gallen (1983) HSGH 022-001945 (cropped).jpg",
-  "author": "",
+  "author": "Regina Kühne (Universitätsarchiv St.Gallen)",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3AHans_Jonas_an_der_Universit%C3%A4t_St._Gallen_%281983%29_HSGH_022-001945_%28cropped%29.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File%3AHans_Jonas_an_der_Universit%C3%A4t_St._Gallen_%281983%29_HSGH_022-001945_%28cropped%29.jpg",
+  "attribution": "Universitätsarchiv St.Gallen | Regina Kühne | HSGH 022/001945 | CC-BY-SA 4.0"
  },
  "pt-kant": {
   "caption": "칸트 초상화",
@@ -534,14 +544,6 @@
   "license": "CC0",
   "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
   "page": "https://commons.wikimedia.org/wiki/File%3AQing_Laozi_Statue_%289974198566%29.jpg"
- },
- "pt-leopold": {
-  "caption": "레오폴드(1944년)",
-  "title": "File:Aldo Leopold Studio portrait, 1944.jpg",
-  "author": "Zhagen2024",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File%3AAldo_Leopold_Studio_portrait%2C_1944.jpg"
  },
  "pt-macintyre": {
   "caption": "매킨타이어",
@@ -624,12 +626,12 @@
   "page": "https://commons.wikimedia.org/wiki/File%3A2023-08-07_Michael_Sandel_no_Fronteiras_do_Pensamento_2023_em_S%C3%A3o_Paulo_%2853103557626%29.jpg"
  },
  "pt-schumpeter": {
-  "caption": "슘페터",
-  "title": "File:Joseph Schumpeter Colorized.png",
-  "author": "Vladimír Krupa 81",
-  "license": "CC0",
-  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "page": "https://commons.wikimedia.org/wiki/File%3AJoseph_Schumpeter_Colorized.png"
+  "caption": "슘페터(1945년)",
+  "title": "File:Joseph Schumpeter 1945 Bachrach portrait.png",
+  "author": "Louis Fabian Bachrach",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Joseph_Schumpeter_1945_Bachrach_portrait.png"
  },
  "pt-schweitzer": {
   "caption": "슈바이처",

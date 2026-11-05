@@ -1,0 +1,29 @@
+{
+ "_설명": "책 끝 '사진·자료 출처' 쪽에 들어가는 글 (render.js, hwpx_build.py 가 함께 씀). 사진별 출처는 assets/photos/credits.json",
+ "photoIntro": "이 책의 사진은 위키미디어 공용(Wikimedia Commons)에서 자유 이용 허락(CC BY, CC BY-SA, CC0, 퍼블릭 도메인)을 한 장씩 확인한 것입니다. 사진은 크기를 줄이거나 잘라 내고 일부는 밝기를 조정해 실었습니다. 고쳐 실은 사진도 원래 사진과 같은 라이선스를 따르며(CC BY-SA 사진은 CC BY-SA), 저작자가 이 책을 지지하거나 보증한다는 뜻은 아닙니다. 각 라이선스의 전문은 함께 적은 주소에서 볼 수 있습니다.",
+ "dataTitle": "지도·통계·아이콘 자료",
+ "data": [
+  ["지도 바탕(나라·바다·강·호수)", "Natural Earth(퍼블릭 도메인, naturalearthdata.com). 국경은 우리나라 정부 시각에 맞춘 Natural Earth 'KOR' 판을 썼다."],
+  ["지형 음영·바다 깊이(고도)", "AWS Terrain Tiles(Tilezen/Mapzen). 아래 원문 출처 표시를 따른다."],
+  ["판의 경계", "Hugo Ahlenius, Nordpil and Peter Bird(2003), 「An updated digital model of plate boundaries」 — Open Data Commons Attribution License 1.0 (https://opendatacommons.org/licenses/by/1-0/)"],
+  ["우리나라 시·도 경계", "통계청 센서스용 행정구역경계(2013, southkorea-maps 공개본). 2023년 군위군의 대구광역시 편입은 직접 반영했다."],
+  ["우리나라 하천", "위 고도 자료로 물길을 계산해 그렸다(작은 지류는 실제와 조금 다를 수 있음)."],
+  ["통계", "Our World in Data(CC BY 4.0), 세계은행 세계 개발 지표(CC BY 4.0), 미국 해양대기청(NOAA, 퍼블릭 도메인). 그 밖의 통계 출처는 각 그래프 아래에 적었다. 숫자는 그대로 두고 그래프는 새로 그렸다."],
+  ["글꼴", "Pretendard(SIL Open Font License 1.1)"],
+  ["아이콘", "Tabler Icons — Copyright (c) 2020-2024 Paweł Kuna, MIT License(아래 전문)"]
+ ],
+ "terrain": [
+  "ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc., imagery and funded under National Science Foundation awards 1043681, 1559691, and 1542736;",
+  "Australia terrain data © Commonwealth of Australia (Geoscience Australia) 2017;",
+  "Austria terrain data © offene Daten Österreichs – Digitales Geländemodell (DGM) Österreich;",
+  "Canada terrain data contains information licensed under the Open Government Licence – Canada;",
+  "Europe terrain data produced using Copernicus data and information funded by the European Union - EU-DEM layers;",
+  "Global ETOPO1 terrain data U.S. National Oceanic and Atmospheric Administration;",
+  "Mexico terrain data source: INEGI, Continental relief, 2016;",
+  "New Zealand terrain data Copyright 2011 Crown copyright (c) Land Information New Zealand and the New Zealand Government (All rights reserved);",
+  "Norway terrain data © Kartverket;",
+  "United Kingdom terrain data © Environment Agency copyright and/or database right 2015. All rights reserved;",
+  "United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey."
+ ],
+ "mit": "Tabler Icons — MIT License. Copyright (c) 2020-2024 Paweł Kuna. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+}

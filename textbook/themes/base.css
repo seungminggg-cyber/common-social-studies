@@ -321,3 +321,9 @@ th, td { padding: 0; vertical-align: middle; }
 /* 그래프 다듬기: 선 아래 옅은 칠, 값 글씨 굵게 */
 .fig-svg .area { stroke: none; fill-opacity: .1; } .fig-svg .area.s1 { fill: var(--fig-1); } .fig-svg .area.s2 { fill: var(--fig-2); } .fig-svg .area.s3 { fill: var(--fig-3); }
 .fig-svg .val { font-weight: 600; }
+/* 사진·자료 출처 쪽: 지도·통계·아이콘 자료 */
+.cr-h { margin: 3mm 0 1.2mm; font-size: 8.6pt; font-weight: 800; color: var(--c1-dark, #134e57); }
+.cr-data { margin: 0; display: grid; grid-template-columns: 24mm 1fr; gap: .8mm 2mm; font-size: 7.4pt; line-height: 1.5; color: #3f4851; }
+.cr-data dt { font-weight: 700; color: #2b333b; }
+.cr-data dd { margin: 0; word-break: break-all; }
+.cr-small { margin: 1.5mm 0 0; font-size: 6.4pt; line-height: 1.45; color: #6b7480; word-break: break-word; }

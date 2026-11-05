@@ -10,6 +10,11 @@ export function credits() {
   if (!CREDITS) CREDITS = existsSync(DIR + 'credits.json') ? JSON.parse(readFileSync(DIR + 'credits.json', 'utf8')) : {};
   return CREDITS;
 }
+// 지도·통계·아이콘 자료 출처 (assets/credits-data.json)
+let DATA = null;
+export function creditsData() {
+  return (DATA ||= JSON.parse(readFileSync(new URL('../assets/credits-data.json', import.meta.url), 'utf8')));
+}
 export function hasPhoto(id) {
   return !!id && existsSync(`${DIR}${id}.jpg`) && !!credits()[id];
 }
@@ -18,6 +23,8 @@ export const photoUrl = (id) => pathToFileURL(`${DIR}${id}.jpg`).href;
 export function shortCredit(id) {
   const c = credits()[id];
   if (!c) return '';
+  // 저작자가 정해 둔 표기 문구가 있으면 그대로 쓴다 (라이선스가 이미 들어 있으면 덧붙이지 않음)
+  if (c.attribution) return /cc-?by|cc0|public domain/i.test(c.attribution) ? c.attribution : `${c.attribution} / ${c.license}`;
   const who = (c.author || '').replace(/\s*\(.*?\)\s*/g, ' ').trim() || '작자 미상';
   if (/^CC0/i.test(c.license)) return `${who} / CC0`;
   return /public domain|^PD/i.test(c.license) ? `${who} / 퍼블릭 도메인` : `${who} / ${c.license}`;

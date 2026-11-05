@@ -1,0 +1,566 @@
+[
+ {
+  "id": "pt-socrates",
+  "kind": "portrait",
+  "q": "Socrates bust marble Roman copy",
+  "must": "Socrates"
+ },
+ {
+  "id": "pt-aristotle",
+  "kind": "portrait",
+  "q": "Aristotle bust Altemps Lysippos",
+  "must": "Aristotle"
+ },
+ {
+  "id": "pt-epicurus",
+  "kind": "portrait",
+  "q": "Epicurus bust",
+  "must": "Epicur"
+ },
+ {
+  "id": "pt-zeno",
+  "kind": "portrait",
+  "q": "Zeno of Citium bust",
+  "must": "Zeno"
+ },
+ {
+  "id": "pt-aquinas",
+  "kind": "portrait",
+  "q": "Saint Thomas Aquinas painting",
+  "must": "Aquinas"
+ },
+ {
+  "id": "pt-kant",
+  "kind": "portrait",
+  "q": "Immanuel Kant portrait painting",
+  "must": "Kant"
+ },
+ {
+  "id": "pt-bentham",
+  "kind": "portrait",
+  "q": "Jeremy Bentham",
+  "must": "Bentham"
+ },
+ {
+  "id": "pt-mill",
+  "kind": "portrait",
+  "q": "John Stuart Mill portrait photograph",
+  "must": "Mill"
+ },
+ {
+  "id": "pt-confucius",
+  "kind": "portrait",
+  "q": "Confucius portrait Wu Daozi",
+  "must": "Confucius"
+ },
+ {
+  "id": "pt-mencius",
+  "kind": "portrait",
+  "q": "Mencius portrait",
+  "must": "Menci"
+ },
+ {
+  "id": "pt-buddha",
+  "kind": "portrait",
+  "q": "Gandhara Buddha statue Tokyo National Museum",
+  "must": "Buddha"
+ },
+ {
+  "id": "pt-laozi",
+  "kind": "portrait",
+  "q": "Laozi",
+  "must": "Lao"
+ },
+ {
+  "id": "pt-bacon",
+  "kind": "portrait",
+  "q": "Francis Bacon portrait Paul van Somer",
+  "must": "Bacon"
+ },
+ {
+  "id": "pt-descartes",
+  "kind": "portrait",
+  "q": "Descartes",
+  "must": "Descartes"
+ },
+ {
+  "id": "pt-singer",
+  "kind": "portrait",
+  "q": "Peter Singer philosopher",
+  "must": "Singer"
+ },
+ {
+  "id": "pt-regan",
+  "kind": "portrait",
+  "q": "Tom Regan philosopher",
+  "must": "Regan"
+ },
+ {
+  "id": "pt-schweitzer",
+  "kind": "portrait",
+  "q": "Albert Schweitzer",
+  "must": "Schweitzer"
+ },
+ {
+  "id": "pt-leopold",
+  "kind": "portrait",
+  "q": "Aldo Leopold portrait",
+  "must": "Leopold"
+ },
+ {
+  "id": "pt-thoreau",
+  "kind": "portrait",
+  "q": "Henry David Thoreau daguerreotype",
+  "must": "Thoreau"
+ },
+ {
+  "id": "pt-rawls",
+  "kind": "portrait",
+  "q": "John Rawls",
+  "must": "Rawls"
+ },
+ {
+  "id": "pt-mlk",
+  "kind": "portrait",
+  "q": "Martin Luther King Jr 1964 portrait",
+  "must": "King"
+ },
+ {
+  "id": "pt-beccaria",
+  "kind": "portrait",
+  "q": "Cesare Beccaria portrait",
+  "must": "Beccaria"
+ },
+ {
+  "id": "pt-nozick",
+  "kind": "portrait",
+  "q": "Robert Nozick",
+  "must": "Nozick"
+ },
+ {
+  "id": "pt-macintyre",
+  "kind": "portrait",
+  "q": "Alasdair MacIntyre",
+  "must": "MacIntyre"
+ },
+ {
+  "id": "pt-sandel",
+  "kind": "portrait",
+  "q": "Michael J. Sandel",
+  "must": "Sandel"
+ },
+ {
+  "id": "pt-walzer",
+  "kind": "portrait",
+  "q": "Michael Walzer philosopher",
+  "must": "Walzer"
+ },
+ {
+  "id": "pt-smith",
+  "kind": "portrait",
+  "q": "Adam Smith portrait",
+  "must": "Smith"
+ },
+ {
+  "id": "pt-keynes",
+  "kind": "portrait",
+  "q": "John Maynard Keynes",
+  "must": "Keynes"
+ },
+ {
+  "id": "pt-hayek",
+  "kind": "portrait",
+  "q": "Friedrich Hayek portrait",
+  "must": "Hayek"
+ },
+ {
+  "id": "pt-schumpeter",
+  "kind": "portrait",
+  "q": "Joseph Schumpeter",
+  "must": "Schumpeter"
+ },
+ {
+  "id": "pt-ricardo",
+  "kind": "portrait",
+  "q": "David Ricardo portrait Thomas Phillips",
+  "must": "Ricardo"
+ },
+ {
+  "id": "pt-galtung",
+  "kind": "portrait",
+  "q": "Johan Galtung",
+  "must": "Galtung"
+ },
+ {
+  "id": "pt-morgenthau",
+  "kind": "portrait",
+  "q": "Hans J. Morgenthau",
+  "must": "Morgenthau"
+ },
+ {
+  "id": "pt-jonas",
+  "kind": "portrait",
+  "q": "Hans Jonas philosopher",
+  "must": "Jonas"
+ },
+ {
+  "id": "pt-christianity",
+  "kind": "portrait",
+  "q": "St. Peter's Basilica facade Vatican",
+  "must": "Peter"
+ },
+ {
+  "id": "pt-islam",
+  "kind": "portrait",
+  "q": "Kaaba Masjid al-Haram",
+  "must": "Kaaba"
+ },
+ {
+  "id": "pt-hinduism",
+  "kind": "portrait",
+  "q": "Varanasi ghats Ganges",
+  "must": "Varanasi"
+ },
+ {
+  "id": "pt-buddhism",
+  "kind": "portrait",
+  "q": "Mahabodhi Temple Bodh Gaya",
+  "must": "Mahabodhi"
+ },
+ {
+  "id": "ph-fjord",
+  "kind": "photo",
+  "q": "Geirangerfjord",
+  "must": "Geiranger"
+ },
+ {
+  "id": "ph-guilin",
+  "kind": "photo",
+  "q": "Guilin karst Li River Yangshuo",
+  "must": "Li"
+ },
+ {
+  "id": "ph-halong",
+  "kind": "photo",
+  "q": "Ha Long Bay karst islands",
+  "must": "Ha Long"
+ },
+ {
+  "id": "ph-seongsan",
+  "kind": "photo",
+  "q": "Seongsan Ilchulbong",
+  "must": "Seongsan"
+ },
+ {
+  "id": "ph-cave",
+  "kind": "photo",
+  "q": "Gosu Cave Danyang",
+  "must": "Gosu"
+ },
+ {
+  "id": "ph-suncheon",
+  "kind": "photo",
+  "q": "Suncheon Bay wetland",
+  "must": "Suncheon"
+ },
+ {
+  "id": "ph-banaue",
+  "kind": "photo",
+  "q": "Banaue rice terraces",
+  "must": "Banaue"
+ },
+ {
+  "id": "ph-perito",
+  "kind": "photo",
+  "q": "Perito Moreno Glacier",
+  "must": "Perito"
+ },
+ {
+  "id": "ph-pamukkale",
+  "kind": "photo",
+  "q": "Pamukkale",
+  "must": "Pamukkale"
+ },
+ {
+  "id": "ph-stilt",
+  "kind": "photo",
+  "q": "stilt houses village water Cambodia",
+  "must": "stilt"
+ },
+ {
+  "id": "ph-mudbrick",
+  "kind": "photo",
+  "q": "Ait Benhaddou",
+  "must": "Benhaddou"
+ },
+ {
+  "id": "ph-ger",
+  "kind": "photo",
+  "q": "Mongolian ger yurt steppe",
+  "must": "ger"
+ },
+ {
+  "id": "ph-santorini",
+  "kind": "photo",
+  "q": "Oia Santorini white houses",
+  "must": "Oia"
+ },
+ {
+  "id": "ph-taiga",
+  "kind": "photo",
+  "q": "taiga forest Siberia",
+  "must": "taiga"
+ },
+ {
+  "id": "ph-tundra",
+  "kind": "photo",
+  "q": "tundra",
+  "must": "tundra"
+ },
+ {
+  "id": "ph-lapaz",
+  "kind": "photo",
+  "q": "La Paz Bolivia city view El Alto",
+  "must": "La Paz"
+ },
+ {
+  "id": "ph-lakechad",
+  "kind": "photo",
+  "q": "Lake Chad",
+  "must": "Chad"
+ },
+ {
+  "id": "ph-aral",
+  "kind": "photo",
+  "q": "Aral Sea 1989 2014 comparison",
+  "must": "Aral"
+ },
+ {
+  "id": "ph-deforest",
+  "kind": "photo",
+  "q": "Amazon deforestation aerial Rondonia",
+  "must": "deforest"
+ },
+ {
+  "id": "ph-typhoon",
+  "kind": "photo",
+  "q": "Typhoon Hinnamnor satellite",
+  "must": "Hinnamnor"
+ },
+ {
+  "id": "ph-cheonggye",
+  "kind": "photo",
+  "q": "Cheonggyecheon stream Seoul",
+  "must": "Cheonggye"
+ },
+ {
+  "id": "ph-plastic",
+  "kind": "photo",
+  "q": "plastic waste beach marine debris",
+  "must": "plastic"
+ },
+ {
+  "id": "ph-hani",
+  "kind": "photo",
+  "q": "Yuanyang Hani rice terraces",
+  "must": "Yuanyang"
+ },
+ {
+  "id": "ph-alpine",
+  "kind": "photo",
+  "q": "Alpine cattle transhumance Switzerland",
+  "must": "cattle"
+ },
+ {
+  "id": "ph-kangnido",
+  "kind": "photo",
+  "q": "Kangnido map 1402",
+  "must": "Kangnido"
+ },
+ {
+  "id": "ph-udhr",
+  "kind": "photo",
+  "q": "Eleanor Roosevelt Universal Declaration of Human Rights poster",
+  "must": "Roosevelt"
+ },
+ {
+  "id": "ph-kimjang",
+  "kind": "photo",
+  "q": "kimchi making kimjang",
+  "must": "kimchi"
+ },
+ {
+  "id": "ph-seoul",
+  "kind": "photo",
+  "q": "Seoul skyline Namsan",
+  "must": "Seoul"
+ },
+ {
+  "id": "ph-newtown",
+  "kind": "photo",
+  "q": "Bundang apartments Seongnam",
+  "must": "Bundang"
+ },
+ {
+  "id": "ph-superblock",
+  "kind": "photo",
+  "q": "Superilla Barcelona superblock",
+  "must": "Super"
+ },
+ {
+  "id": "ph-gardens",
+  "kind": "photo",
+  "q": "Gardens by the Bay Supertree Grove",
+  "must": "Supertree"
+ },
+ {
+  "id": "ph-ktx",
+  "kind": "photo",
+  "q": "KTX-Sancheon train",
+  "must": "KTX"
+ },
+ {
+  "id": "ph-uam",
+  "kind": "photo",
+  "q": "Volocopter VoloCity",
+  "must": "Volo"
+ },
+ {
+  "id": "ph-magna",
+  "kind": "photo",
+  "q": "Magna Carta British Library Cotton",
+  "must": "Magna"
+ },
+ {
+  "id": "ph-dhrc",
+  "kind": "photo",
+  "q": "Declaration of the Rights of Man and of the Citizen Le Barbier",
+  "must": "Declaration"
+ },
+ {
+  "id": "ph-usdecl",
+  "kind": "photo",
+  "q": "Declaration of Independence Trumbull painting",
+  "must": "Trumbull"
+ },
+ {
+  "id": "ph-suffrage",
+  "kind": "photo",
+  "q": "suffragettes parade 1913",
+  "must": "uffrag"
+ },
+ {
+  "id": "ph-rohingya",
+  "kind": "photo",
+  "q": "Rohingya refugee camp Cox Bazar",
+  "must": "Rohingya"
+ },
+ {
+  "id": "ph-climatestrike",
+  "kind": "photo",
+  "q": "Fridays for Future climate strike students",
+  "must": "climate"
+ },
+ {
+  "id": "ph-justitia",
+  "kind": "photo",
+  "q": "Justitia statue Frankfurt Römerberg",
+  "must": "Justitia"
+ },
+ {
+  "id": "ph-industrial",
+  "kind": "photo",
+  "q": "Industrial Revolution factory",
+  "must": "factory"
+ },
+ {
+  "id": "ph-depression",
+  "kind": "photo",
+  "q": "Great Depression unemployed soup kitchen",
+  "must": "Depression"
+ },
+ {
+  "id": "ph-smog",
+  "kind": "photo",
+  "q": "Great Smog of London",
+  "must": "Smog"
+ },
+ {
+  "id": "ph-lehman",
+  "kind": "photo",
+  "q": "Lehman Brothers headquarters 2008",
+  "must": "Lehman"
+ },
+ {
+  "id": "ph-pfand",
+  "kind": "photo",
+  "q": "Pfandautomat reverse vending machine",
+  "must": "Pfand"
+ },
+ {
+  "id": "ph-cocoa",
+  "kind": "photo",
+  "q": "cacao harvest",
+  "must": "cacao"
+ },
+ {
+  "id": "ph-busanport",
+  "kind": "photo",
+  "q": "Port of Busan container terminal",
+  "must": "Busan"
+ },
+ {
+  "id": "ph-manhattan",
+  "kind": "photo",
+  "q": "Lower Manhattan skyline",
+  "must": "Manhattan"
+ },
+ {
+  "id": "ph-un",
+  "kind": "photo",
+  "q": "United Nations Headquarters building New York",
+  "must": "United Nations"
+ },
+ {
+  "id": "ph-jsa",
+  "kind": "photo",
+  "q": "Panmunjom",
+  "must": "Panmunjom"
+ },
+ {
+  "id": "ph-dokdo",
+  "kind": "photo",
+  "q": "Dokdo islands",
+  "must": "Dokdo"
+ },
+ {
+  "id": "ph-wind",
+  "kind": "photo",
+  "q": "offshore wind farm",
+  "must": "wind"
+ },
+ {
+  "id": "ph-solar",
+  "kind": "photo",
+  "q": "solar power plant photovoltaic",
+  "must": "solar"
+ },
+ {
+  "id": "ph-rareearth",
+  "kind": "photo",
+  "q": "Mountain Pass rare earth mine",
+  "must": "Mountain Pass"
+ },
+ {
+  "id": "ph-shibuya",
+  "kind": "photo",
+  "q": "Shibuya crossing crowd",
+  "must": "Shibuya"
+ },
+ {
+  "id": "ph-robot",
+  "kind": "photo",
+  "q": "KUKA robots",
+  "must": "robot"
+ }
+]

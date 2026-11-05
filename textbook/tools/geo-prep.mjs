@@ -6,7 +6,7 @@
 //   우리나라 시·도 경계: southkorea/southkorea-maps (통계청 2013, kostat/2013/json/skorea_provinces_geo_simple.json → kr_provinces.json)
 //   우리나라 하천: tools/terrain/rivers.mjs 로 고도 자료에서 계산한 kr-rivers.json
 //   판의 경계: Bird(2003) PB2002, Hugo Ahlenius 정리 (fraxen/tectonicplates, GeoJSON/PB2002_boundaries.json → pb2002.json)
-//              ODC 저작자 표시 라이선스 → 그림 출처에 "판의 경계: Bird(2003)" 를 적는다
+//              ODC 저작자 표시 라이선스 → 그림 출처와 책 끝 출처 쪽에 Ahlenius(Nordpil)·Bird(2003)를 적는다
 // 사용: node tools/geo-prep.mjs <원자료 폴더> [kr-rivers.json]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';

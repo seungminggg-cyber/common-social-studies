@@ -5,7 +5,7 @@
 
 import { figure, FIGURE_TYPES } from './figures.js';
 import { icon } from './icons.js';
-import { hasPhoto, photoUrl, collectPhotos, credits } from './photos.js';
+import { hasPhoto, photoUrl, collectPhotos, credits, creditsData } from './photos.js';
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -272,16 +272,23 @@ function answerRows(u, startNo) {
 // 책 끝 '사진 출처' 쪽 (위키미디어 공용 사진의 저작자·라이선스·주소)
 function creditsSection(root, attrs) {
   const ids = collectPhotos(root);
-  if (!ids.length) return '';
-  const C = credits();
+  const C = credits(), D = creditsData();
   const item = (id) => {
     const c = C[id];
-    return `<li><b>${esc(c.caption || '')}</b> — ${esc(c.author || '작자 미상')}, ${esc(c.license)}${c.licenseUrl ? ` (${esc(c.licenseUrl)})` : ''}, 위키미디어 공용 「${esc((c.title || '').replace(/^File:/, ''))}」 ${esc(c.page || '')}</li>`;
+    const who = c.attribution || c.author || '작자 미상';
+    return `<li><b>${esc(c.caption || '')}</b> — ${esc(who)}${c.authorUrl ? ` (${esc(c.authorUrl)})` : ''}, ${esc(c.license)}${c.licenseUrl ? ` (${esc(c.licenseUrl)})` : ''}, 위키미디어 공용 「${esc((c.title || '').replace(/^File:/, ''))}」 ${esc(c.page || '')}</li>`;
   };
   // 쪽 나눔(paginate.js)은 .row 단위로 옮기므로, 목록을 몇 줄씩 .row로 나눠 담는다
   const rows = [];
-  for (let i = 0; i < ids.length; i += 4) rows.push(`<div class="row"><ol class="cr-list" start="${i + 1}">${ids.slice(i, i + 4).map(item).join('')}</ol></div>`);
-  return `<section class="flow" data-kind="credits" ${attrs}>${bandTop('answers', '사진 출처')}<div class="row"><p class="credits">이 책의 사진은 위키미디어 공용(Wikimedia Commons)에서 자유 이용 허락(CC BY, CC BY-SA, CC0, 퍼블릭 도메인)을 확인한 것입니다. 사진은 크기를 줄이거나 잘라서 실었으며, 각 사진의 저작자와 라이선스는 다음과 같습니다. 아이콘: Tabler Icons(MIT 라이선스).</p></div>${rows.join('')}</section>`;
+  if (ids.length) {
+    rows.push(`<div class="row"><p class="credits">${esc(D.photoIntro)}</p></div>`);
+    for (let i = 0; i < ids.length; i += 4) rows.push(`<div class="row"><ol class="cr-list" start="${i + 1}">${ids.slice(i, i + 4).map(item).join('')}</ol></div>`);
+  }
+  rows.push(`<div class="row" data-keep="next"><h4 class="cr-h">${esc(D.dataTitle)}</h4></div>`);
+  for (let i = 0; i < D.data.length; i += 3) rows.push(`<div class="row"><dl class="cr-data">${D.data.slice(i, i + 3).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>`);
+  rows.push(`<div class="row"><p class="cr-small"><b>AWS Terrain Tiles 원문 출처</b> ${D.terrain.map(esc).join(' ')}</p></div>`);
+  rows.push(`<div class="row"><p class="cr-small">${esc(D.mit)}</p></div>`);
+  return `<section class="flow" data-kind="credits" ${attrs}>${bandTop('answers', '사진·자료 출처')}${rows.join('')}</section>`;
 }
 
 export function renderBook(book, { theme, themeName, mode, layout, paginateJs }) {
@@ -314,7 +321,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
   if (book.units.some((u) => u.exam?.length)) sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설">${bandTop('answers', '정답과 해설')}${book.units
     .map((u, i) => answerRows(u, qStart[i]))
     .join('\n')}</section>`);
-  sections.push(creditsSection(book.units, `data-tab="출처" data-head-left="${esc(headLeft)}" data-head-right="사진 출처"`));
+  sections.push(creditsSection(book.units, `data-tab="출처" data-head-left="${esc(headLeft)}" data-head-right="사진·자료 출처"`));
 
   return `<!doctype html>
 <html lang="ko"><head>
@@ -460,8 +467,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       }
     });
     // 사진 출처
-    const cr = creditsSection(full.chapters, `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진 출처"`);
-    if (cr) add('credits', `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진 출처"`, cr.replace(/^<section[^>]*>|<\/section>$/g, ''));
+    const cr = creditsSection(full.chapters, `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진·자료 출처"`);
+    if (cr) add('credits', `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진·자료 출처"`, cr.replace(/^<section[^>]*>|<\/section>$/g, ''));
     // 뒤표지 (양면 인쇄에서 늘 왼쪽 쪽 = 마지막 쪽)
     add('backcover', `data-even="1"`, `<div class="top" id="back"><div class="cover cover-back">
       <div class="cv-brand">승민T 통합사회</div>

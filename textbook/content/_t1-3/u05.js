@@ -573,7 +573,7 @@ export default {
       ],
       equator: true,
       note: '태평양을 둘러싼 환태평양 조산대와 유럽 남부에서 히말라야로 이어지는 알프스-히말라야 조산대는 지각이 불안정해 지진과 화산 활동이 잦다. 2023년 튀르키예·시리아 대지진(규모 7.8)도 이곳에서 일어났다.',
-      source: '지도 자료: Natural Earth, 판의 경계 Bird(2003), 고도 AWS Terrain Tiles',
+      source: '지도 자료: Natural Earth, 판의 경계 Ahlenius·Bird(2003, ODC-By), 고도 AWS Terrain Tiles',
     },
     {
       t: 'table', title: '우리나라의 계절별 자연재해',

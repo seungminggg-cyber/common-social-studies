@@ -398,10 +398,9 @@ export default {
     },
 
     {
-      t: 'photo', h: 42,
+      t: 'photo', h: 58, width: 64,
       items: [
-        { src: 'ph-superblock', caption: '바르셀로나의 슈퍼 블록' },
-        { src: 'ph-gardens', caption: '싱가포르 가든스 바이 더 베이' },
+        { src: 'ph-superblock', caption: '바르셀로나의 슈퍼 블록 — 차가 다니던 교차로를 나무와 쉼터가 있는 광장으로 바꿨다' },
       ],
     },
     {

@@ -779,17 +779,31 @@ def used_photos(x, acc):
 cred_path = os.path.join(PHOTO_DIR, 'credits.json')
 CRED = json.load(open(cred_path, encoding='utf-8')) if os.path.exists(cred_path) else {}
 ids = [i for i in dict.fromkeys(used_photos(book['units'], [])) if i in CRED and os.path.exists(os.path.join(PHOTO_DIR, f'{i}.jpg'))]
+DATA = json.load(open(os.path.join(os.path.dirname(PHOTO_DIR), 'credits-data.json'), encoding='utf-8'))
+columns(1)
+band('사진·자료 출처')
 if ids:
-    columns(1)
-    band('사진 출처')
-    rich(para(after=3, spacing=160), '이 책의 사진은 위키미디어 공용(Wikimedia Commons)에서 자유 이용 허락(CC BY, CC BY-SA, CC0, 퍼블릭 도메인)을 확인한 것입니다. 사진은 크기를 줄이거나 잘라서 실었으며, 각 사진의 저작자와 라이선스는 다음과 같습니다. 아이콘: Tabler Icons(MIT 라이선스).', size=8.6)
+    rich(para(after=3, spacing=160), DATA['photoIntro'], size=8.6)
     for n, i in enumerate(ids):
         c = CRED[i]
         p = para(after=1.5, spacing=150)
         run(p, f'{n + 1}. ', size=8, color=TEAL, bold=True)
         run(p, c.get('caption', ''), size=8, color=NAVY, bold=True)
+        who = c.get('attribution') or c.get('author') or '작자 미상'
+        if c.get('authorUrl'):
+            who += f" ({c['authorUrl']})"
         lic = c.get('license', '') + (f" ({c['licenseUrl']})" if c.get('licenseUrl') else '')
-        run(p, f" — {c.get('author') or '작자 미상'}, {lic}, 위키미디어 공용 「{c.get('title', '').replace('File:', '')}」 {c.get('page', '')}", size=8)
+        run(p, f" — {who}, {lic}, 위키미디어 공용 「{c.get('title', '').replace('File:', '')}」 {c.get('page', '')}", size=8)
+p = para(before=4, after=2)
+run(p, DATA['dataTitle'], size=9.5, color=NAVY, bold=True)
+for k, v in DATA['data']:
+    p = para(after=1.2, spacing=150)
+    run(p, k + '  ', size=8, color=TEAL, bold=True)
+    run(p, v, size=8)
+p = para(before=2, after=1, spacing=140)
+run(p, 'AWS Terrain Tiles 원문 출처  ', size=7, color=GRAY, bold=True)
+run(p, ' '.join(DATA['terrain']), size=7, color=GRAY)
+run(para(before=2, spacing=140), DATA['mit'], size=7, color=GRAY)
 
 report = doc.validate()
 print('형식 검사:', '통과' if getattr(report, 'ok', False) else report)
