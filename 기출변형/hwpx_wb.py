@@ -26,6 +26,24 @@ CH_COLOR = {'Ⅰ': '#1D6C74', 'Ⅱ': '#7D3566', 'Ⅲ': '#3C7A37', 'Ⅳ': '#B5651
 out = sys.argv[2]
 
 
+_data_box = data_box
+
+
+def data_box(items):
+    """개념서 data_box에 목록(ul) 자료를 더한다: 테두리 상자 안에 한 줄씩"""
+    for d in items:
+        if d['t'] != 'ul':
+            _data_box([d])
+            continue
+        t = table(1, 1, [100], width_mm=COL_W)
+        first = cell(t, 0, 0, sides=('left', 'right', 'top', 'bottom'), border='#C3CCD1', pad=(3, 3, 2.2, 2.2))
+        for i, x in enumerate(d['items']):
+            p = first if i == 0 else t.cell(0, 0).add_paragraph('', para_pr_id_ref=pp(spacing=165, before=0.6))
+            run(p, '· ', size=9)
+            rich(p, x, size=9)
+        gap(3)
+
+
 def concept_text(q):
     c = q.get('concept')
     c = c if isinstance(c, list) else [c] if c else []

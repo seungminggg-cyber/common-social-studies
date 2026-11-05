@@ -43,3 +43,6 @@
 .aq-lv.lv-상 { color: var(--red); }
 .aq-lv.lv-중상 { color: #a0522d; }
 .aq-meta { margin-left: auto; font-size: 7pt; color: var(--gray); }
+
+/* 표지: 제목이 길어 장식 원과 겹치지 않게 */
+.wb-cover .cv-title { font-size: 40pt; line-height: 1.15; max-width: 105mm; }
