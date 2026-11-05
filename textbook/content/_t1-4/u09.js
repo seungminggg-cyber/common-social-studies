@@ -61,7 +61,7 @@ export default {
         { from: [132, 33.5], to: [127.5, 36.5], bend: 0.3, cls: 'k1' },
       ],
       markers: [{ lon: -75, lat: 0, label: '원산지 아메리카', pos: 'bottom' }, { lon: 127, lat: 37.5, label: '조선', pos: 'top' }],
-      labels: [{ at: [152, 30], text: '16세기 말 무렵', size: 11 }],
+      labels: [{ at: [156, 22], text: '16세기 말 무렵', size: 11 }],
       note: '아메리카가 원산지인 고추는 유럽 상인을 통해 아시아로 퍼졌고, 일본을 거쳐 조선에 들어온 것으로 알려져 있다(여러 설이 있음). 전해진 뒤 김치에 쓰이며 우리 음식 문화가 크게 바뀌었다.',
       source: '지도 자료: Natural Earth (경로는 개념도)',
     },

@@ -10,7 +10,7 @@ const RISK_RETURN = {
   x: { min: 0, max: 10, label: '안전성 →' }, y: { min: 0, max: 10, label: '수익성' },
   groups: [{ name: '금융 상품', points: [[9, 1.2], [8, 2.6], [5.6, 4.6], [3.6, 6.6], [1.6, 8.6]] }],
   labels: [
-    { x: 9, y: 1.2, text: '요구불 예금', pos: 'top' },
+    { x: 9, y: 1.2, text: '요구불 예금', pos: 'left' },
     { x: 8, y: 2.6, text: '정기 예금', pos: 'top' },
     { x: 5.6, y: 4.6, text: '채권', pos: 'right' },
     { x: 3.6, y: 6.6, text: '펀드', pos: 'right' },

@@ -197,8 +197,8 @@ export default {
       ] }],
       side: { title: '우리나라 도시화율은 몇 %?', text: '유엔·세계은행 자료(국제 비교용)로는 약 81%이다. 국토교통부가 용도 지역을 기준으로 집계한 "도시 지역 인구 비율"로는 90%를 넘는다. 어느 쪽이든 국민 대부분이 도시에 산다.' },
     },
-    KOR_INDUSTRY,
     KOR_INDUSTRY_MAP,
+    KOR_INDUSTRY,
     URBAN_CURVE(),
     {
       t: 'table', title: '도시화의 세 단계',
