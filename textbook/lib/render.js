@@ -128,6 +128,19 @@ function block(b) {
         <div class="src-body">${b.caption ? `<div class="src-cap">${inl(b.caption)}</div>` : ''}${
           b.dialog ? block({ t: 'dialog', rows: b.dialog }) : ''}${b.text ? `<p class="p serif">${inl(b.text)}</p>` : ''}</div>
         <div class="src-interp"><span class="interp-label">해석</span>${inl(b.interp)}</div></div>`;
+    case 'concept': {
+      // 개념 카드 머리: 번호 + 제목 + 출제 빈도 별점 + 기출 표시
+      const st = Math.max(1, Math.min(3, b.stars || 1));
+      const hits = (b.hits || []).map((h) => `<span class="cc-hit">${esc(h)}</span>`).join('');
+      return `<div class="cc-head"><span class="cc-no"><small>개념</small>${esc(b.no)}</span><span class="cc-title">${inl(b.title)}</span>`
+        + `<span class="cc-freq"><i>${'★'.repeat(st)}<s>${'★'.repeat(3 - st)}</s></i><em>${esc(FREQ[st])}</em></span></div>`
+        + (hits ? `<div class="cc-hits"><span class="cc-hl">기출</span>${hits}</div>` : '');
+    }
+    case 'pattern':
+      // 이렇게 나온다: 기출 선지 모양의 문장 O/X (문장은 새로 씀)
+      return `<div class="pat"><div class="pat-h">이렇게 나온다</div><ul>${b.items
+        .map(([st, a, why]) => `<li><span class="pat-s">${inl(st)}</span><span class="pat-a"><i class="${a === 'O' ? 'o' : 'x'}">${a}</i></span>${why ? `<span class="pat-why">${inl(why)}</span>` : ''}</li>`)
+        .join('')}</ul></div>`;
     case 'tip':
       return `<div class="tip"><div class="tip-who"><span class="tip-avatar">T</span><span class="tip-name">승민T 한마디</span></div><div class="tip-text">${inl(b.text)}</div></div>`;
     case 'example':
@@ -178,17 +191,48 @@ function thinkerRows(b) {
   // 나뉜 경우 다음 쪽 맨 위 조각에 "(이어서)" 이름표가 보인다.
   const cont = `<div class="tk-cont">${inl(b.name)} <span>(이어서)</span></div>`;
   return parts
-    .map((h, i) => `<div class="row row-tk${i === 0 ? ' tk-first' : ''}${i === parts.length - 1 ? ' tk-last' : ''}"${
+    .map((h, i) => `<div class="row row-tk${i === 0 ? ' tk-first' : ''}${i === parts.length - 1 ? ' tk-last' : ''}${b._inc ? ' in-cc' : ''}"${
       i < parts.length - 1 ? ' data-keep="card"' : ''} data-tk="${esc(b.name)}"><div class="main">${i ? cont : ''}${h}</div></div>`)
     .join('');
+}
+
+// 개념 부분 전체 → 줄(row)들. 개념 머리(concept) 뒤부터 다음 개념·큰 제목(sec) 전까지는 카드 안(in-cc)
+const FREQ = { 3: '자주 나옴', 2: '나옴', 1: '기본 개념' };
+function conceptHtml(list) {
+  let inC = false;
+  return list.map((b) => {
+    if (b.t === 'concept') inC = true;
+    else if (b.t === 'sec') inC = false;
+    return row({ ...b, _inc: inC && b.t !== 'concept' });
+  }).join('\n');
+}
+
+// 중단원 끝 '한 장 정리' 구조도
+function summaryHtml(u) {
+  const S = u.summary;
+  const C = Object.fromEntries(u.concept.filter((b) => b.t === 'concept').map((b) => [b.no, b]));
+  const star = (n) => `${'★'.repeat(n)}<s>${'★'.repeat(3 - n)}</s>`;
+  const br = S.branches.map((x) => `<div class="sm-br"><div class="sm-bh"><span>${esc(x.mark)}</span>${inl(x.title)}</div>${x.concepts
+    .map((c) => {
+      const cc = C[c.no] || {};
+      const st = Math.max(1, Math.min(3, cc.stars || 1));
+      return `<div class="sm-c st${st}"><div class="sm-ch"><b>개념 ${esc(c.no)}</b><span>${inl(c.title || cc.title || '')}</span><i>${star(st)}</i></div><ul>${c.lines
+        .map((l) => `<li>${inl(l)}</li>`).join('')}</ul></div>`;
+    }).join('')}</div>`).join('');
+  const traps = S.traps ? `<div class="sm-traps"><div class="sm-th">헷갈리지 말자</div><table><tbody>${S.traps
+    .map(([a, b2]) => `<tr><th>${inl(a)}</th><td>${inl(b2)}</td></tr>`).join('')}</tbody></table></div>` : '';
+  const checks = S.checks ? `<div class="sm-checks"><div class="sm-kh">시험 전 체크 — 말로 설명할 수 있으면 ☑</div><ul>${S.checks
+    .map((x) => `<li><i></i><span>${inl(x)}</span></li>`).join('')}</ul></div>` : '';
+  return `<div class="sm"><div class="sm-core"><span>한 줄 요약</span>${inl(S.core)}</div><div class="sm-tree" style="--n:${S.branches.length}">${br}</div>${traps}${checks}`
+    + `<div class="sm-legend">별점은 최근 기출 9회(2028 수능 예시문항, 2025~2026 고1·고2 학력평가 8회)에서 그 개념을 직접 물은 횟수입니다. ★★★ 3번 이상, ★★ 1~2번, ★ 직접 나온 적은 없지만 다른 문항의 바탕이 되는 개념.</div></div>`;
 }
 
 // 쪽 나누기의 단위. 제목(sec)은 다음 블록과 같은 쪽에 붙어 다닌다(data-keep).
 function row(b) {
   if (b.t === 'thinker') return thinkerRows(b);
   if (b.t === 'photo' && !b.items.some((it) => hasPhoto(it.src))) return ''; // 사진을 아직 못 받았으면 건너뜀
-  const keep = b.t === 'sec' ? ' data-keep="next"' : '';
-  return `<div class="row row-${b.t}${b.side ? ' has-side' : ''}"${keep}><div class="main">${block(b)}</div>${note(b.side)}</div>`;
+  const keep = b.t === 'sec' || b.t === 'concept' ? ' data-keep="next"' : '';
+  return `<div class="row row-${b.t}${b.side ? ' has-side' : ''}${b._inc ? ' in-cc' : ''}"${keep}><div class="main">${block(b)}</div>${note(b.side)}</div>`;
 }
 
 // ── 단원 첫머리 (큰 번호 + 제목 + 핵심 질문 + 수능 포인트) ──
@@ -205,8 +249,17 @@ function opener(book, u) {
         .map((q, i) => `<li><span class="gq-n">Q${i + 1}</span><span>${inl(q)}</span></li>`)
         .join('')}</ul></div>
       <div class="goal-box goal-p"><div class="goal-label">수능 포인트</div><p>${inl(u.point)}</p></div>
-    </div>
+    </div>${conceptIndex(u)}
   </div>`;
+}
+
+// 단원 첫 쪽: 이 단원에서 배울 개념과 출제 빈도
+function conceptIndex(u) {
+  const cs = u.concept.filter((b) => b.t === 'concept');
+  if (!cs.length) return '';
+  return `<div class="cc-index"><div class="cc-index-h">이 단원의 개념 <span>★ 많을수록 자주 나온 개념</span></div><ol>${cs
+    .map((c) => { const st = Math.max(1, Math.min(3, c.stars || 1)); return `<li class="st${st}"><b>개념 ${esc(c.no)}</b><span>${inl(c.title)}</span><i>${'★'.repeat(st)}<s>${'★'.repeat(3 - st)}</s></i></li>`; })
+    .join('')}</ol></div>`;
 }
 
 function bandTop(kind, title, u) {
@@ -309,7 +362,8 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
   for (const u of book.units) {
     const headRight = `${esc(u.no)} ${esc(u.title)}`;
     const attrs = `data-tab="${esc(book.chapter.no)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(headRight)}"`;
-    sections.push(`<section class="flow" data-kind="concept" ${attrs}>${opener(book, u)}${u.concept.map(row).join('\n')}</section>`);
+    sections.push(`<section class="flow" data-kind="concept" ${attrs}>${opener(book, u)}${conceptHtml(u.concept)}</section>`);
+    if (u.summary) sections.push(`<section class="flow" data-kind="summary" ${attrs}>${bandTop('summary', '한 장 정리', u)}<div class="row row-summary"><div class="main">${summaryHtml(u)}</div></div></section>`);
     if (u.check?.ox?.length || u.check?.blank?.length)
       sections.push(`<section class="flow" data-kind="check" ${attrs}>${bandTop('check', '개념 확인', u)}${checkRows(u)}</section>`);
     qStart.push(qNo);
@@ -330,7 +384,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/400.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/600.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/nanum-pen-script/400.css">
-${theme === 'e' ? '<link rel="stylesheet" href="../node_modules/@fontsource-variable/hahmlet/index.css">' : ''}
+${theme === 'e' || theme === 'f' ? '<link rel="stylesheet" href="../node_modules/@fontsource-variable/hahmlet/index.css">' : ''}
 <style>
 @font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: block;
   src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
@@ -338,7 +392,7 @@ ${theme === 'e' ? '<link rel="stylesheet" href="../node_modules/@fontsource-vari
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme} mode-${mode}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
@@ -462,7 +516,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       let qNo = 1;
       for (const u of ch.units) {
         const attrs = `data-tab="${esc(ch.chapter.no)}" data-head-left="${headLeft}" data-head-right="${esc(u.no)} ${esc(u.title)}"`;
-        add('concept', attrs, `${opener(ch, u)}${u.concept.map(row).join('\n')}`);
+        add('concept', attrs, `${opener(ch, u)}${conceptHtml(u.concept)}`);
+        if (u.summary) add('summary', attrs, `${bandTop('summary', '한 장 정리', u)}<div class="row row-summary"><div class="main">${summaryHtml(u)}</div></div>`);
         if (u.check?.ox?.length || u.check?.blank?.length) add('check', attrs, `${bandTop('check', '개념 확인', u)}${checkRows(u)}`);
         if (u.exam?.length) add('exam', attrs, `${bandTop('exam', '수능형 문제', u)}${u.exam.map((q) => question(q, qNo++)).join('\n')}`);
       }
