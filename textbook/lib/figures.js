@@ -253,7 +253,11 @@ function scatter(b) {
 
 // ── 원그래프 ──
 function pie(b) {
-  const W = 600, H = b.h || 260, cx = 170, cy = H / 2, r = Math.min(110, H / 2 - 16), ri = b.donut ? r * 0.55 : 0;
+  // 좁은 폭(w < 400)이면 원을 위에, 범례를 아래 두 줄로 놓는다 (그림 나란히 놓기용)
+  const narrow = b.w && b.w < 400, n = b.slices.length;
+  const W = b.w || 600, r = narrow ? Math.min(78, W / 2 - 30) : Math.min(110, (b.h || 260) / 2 - 16);
+  const H = narrow ? 2 * r + 24 + Math.ceil(n / 2) * 21 + 6 : b.h || 260;
+  const cx = narrow ? W / 2 : 170, cy = narrow ? r + 12 : H / 2, ri = b.donut ? r * 0.55 : 0;
   const total = b.slices.reduce((t, x) => t + x.value, 0);
   let a0 = -Math.PI / 2, s = '';
   b.slices.forEach((sl, i) => {
@@ -266,6 +270,13 @@ function pie(b) {
     a0 = a1;
   });
   if (b.center) s += text(cx, cy, b.center, { size: 12, anchor: 'middle', cls: 'cat', weight: 700, baseline: 'middle' });
+  if (narrow) {
+    b.slices.forEach((sl, i) => {
+      const lx = i % 2 ? W / 2 + 4 : 8, ly2 = 2 * r + 24 + Math.floor(i / 2) * 21 + 12;
+      s += `<rect x="${r1(lx)}" y="${r1(ly2 - 10)}" width="12" height="12" rx="2" class="fl s${i + 1}"/>` + text(lx + 17, ly2, sl.label, { size: 11.5, cls: 'lg' });
+    });
+    return { W, H, s };
+  }
   let ly = cy - (b.slices.length * 26) / 2 + 12;
   b.slices.forEach((sl, i) => {
     s += `<rect x="330" y="${r1(ly - 11)}" width="14" height="14" rx="2" class="fl s${i + 1}"/>` + text(352, ly, sl.label, { size: 12.5, cls: 'lg' });
