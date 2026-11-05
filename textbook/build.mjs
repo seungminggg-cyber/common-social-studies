@@ -34,13 +34,15 @@ export const THEMES = {
   e: { name: '시안 E · 시험지와 판서', layout: { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
   f: { name: '시안 F · 기출 데이터형', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
   g: { name: '시안 G · 기출 데이터형(차분한 판)', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
+  // 시안 H: 큰 빈 곳(쪽의 40% 이상)만 정리 노트로 채우고, 나머지는 여백으로 고르게 나눈다
+  h: { name: '시안 H · 편집 디자인형', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'], memoMin: 0.4, spreadMax: 9 } },
 };
 
 const args = process.argv.slice(2);
 const allBooks = readdirSync(join(ROOT, 'content')).filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort();
 const bookArg = args.find((a) => allBooks.includes(a) || a.split(',').every((x) => allBooks.includes(x)));
 const books = bookArg ? bookArg.split(',') : allBooks.filter((b) => !b.startsWith('z-'));
-const themeArg = args.find((a) => /^(all|[a-g](,[a-g])*)$/.test(a)) || 'd'; // 기본 디자인: 시안 D(강사 확정, 2026-11)
+const themeArg = args.find((a) => /^(all|[a-h](,[a-h])*)$/.test(a)) || 'd'; // 기본 디자인: 시안 D(강사 확정, 2026-11)
 const themes = themeArg === 'all' ? Object.keys(THEMES) : themeArg.split(',');
 const modeArg = args.find((a) => ['student', 'teacher', 'both'].includes(a)) || 'student';
 const modes = modeArg === 'both' ? ['student', 'teacher'] : [modeArg];

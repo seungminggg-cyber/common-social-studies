@@ -25,8 +25,8 @@ const photo = { ...find((b) => b.t === 'photo'), width: 34, h: 50 }; // 견본: 
 const concept = [
   sec('A'),
   { t: 'concept', no: '01', title: '정의의 의미', stars: 1 },
-  ...unwrap('1'),
-  photo,
+  // 사진은 본문 옆 날개에 (시안 H 격자)
+  ...unwrap('1').map((b, i, arr) => (i === arr.length - 1 ? { ...b, side: { photo: photo.items[0].src } } : b)),
   byTitle('table', '동서양 사상가가 본 정의'),
   { t: 'pattern', items: [
     ['정의는 사회 구성원 모두가 받아들일 수 있는 공정한 기준과 관련된다.', 'O'],

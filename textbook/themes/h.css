@@ -1,0 +1,240 @@
+/* 시안 H · 편집 디자인형 — 시안 G의 구조(개념 번호·기출 표시·이렇게 나온다·한 장 정리)를 인쇄물의 문법으로
+ *
+ *  1. 격자: 본문 단 + 바깥쪽 날개 단(개념 더하기·용어). 글 줄의 길이가 늘 같고, 빈 날개는 의도한 여백이다.
+ *     표·그림·비교·자료처럼 넓은 것은 두 단을 걸쳐 놓는다.
+ *  2. 상징 모양 하나: 모서리 하나를 잘라 낸 네모(개념 번호, 큰 묶음, 쪽 번호, 엄지 색인, 띠 제목, 초상).
+ *     그 밖에는 둥근 모서리·알약 이름표·그림자·그라데이션을 쓰지 않는다. 구분은 선과 글자 굵기로.
+ *  3. 글꼴: 출판용 KoPub World(한국출판인회의). 설명은 돋움, 원문·자료·수능형 문제는 바탕(명조).
+ *  4. 색: 인쇄 잉크 기준의 차분한 대단원 색 하나 + 먹색 + 강조 빨강 하나.
+ *  5. 장식 줄이기: 그림 제목 아이콘·스티커 아이콘 없음, 별은 단원 색 한 가지, 굵은 글씨는 핵심어에만.
+ */
+@import url('g.css');
+
+:root {
+  --sans-h: 'KoPubWorld Dotum', 'Pretendard Variable', sans-serif;
+  --serif-h: 'KoPubWorld Batang', 'Noto Serif KR', serif;
+  --ink: #1f1d1b; --ink-2: #4a4744; --gray: #7a7570; --rule: #cfcac4; --rule-soft: #e6e2dd;
+  --red: #c8102e; --ans: #c8102e; --navy: #1f1d1b;
+  --cut: 2.4mm; /* 잘라 낸 모서리 크기 */
+  --wing: 34mm; --wing-gap: 6mm;
+  --fs: 9.3pt; --lh: 1.78;
+}
+/* 대단원 색: 인쇄 잉크 기준의 깊고 차분한 톤 (Ⅱ는 보라 대신 자주) */
+.page[data-ch="Ⅰ"] { --c1: #1d6c74; --c1-dark: #134a50; --c1-soft: #e3eeef; --c1-line: #a9c9cc; --c1-pale: #f2f7f7; }
+.page[data-ch="Ⅱ"] { --c1: #7d3566; --c1-dark: #5a2449; --c1-soft: #f2e5ee; --c1-line: #d6b3cb; --c1-pale: #faf4f8; }
+.page[data-ch="Ⅲ"] { --c1: #3c7a37; --c1-dark: #295626; --c1-soft: #e7f0e5; --c1-line: #b5d0b1; --c1-pale: #f4f8f3; }
+.page[data-ch="Ⅳ"] { --c1: #b5651d; --c1-dark: #844812; --c1-soft: #f6ebe0; --c1-line: #e2c3a4; --c1-pale: #fcf7f2; }
+.page[data-ch="Ⅴ"] { --c1: #234e8a; --c1-dark: #173562; --c1-soft: #e3e9f3; --c1-line: #aebfdb; --c1-pale: #f3f6fa; }
+
+body { font-family: var(--sans-h); color: var(--ink); }
+.page-body { font-variant-numeric: tabular-nums; }
+.serif, .serif *, .tk-q p, .src-body .p, .src-body .dialog, .src-body .dialog * { font-family: var(--serif-h); }
+b { font-weight: 700; }
+.cut, .cc-no, .sec-mark, .edge-tab, .folio span, .band-title::before, .tk-photo, .q-no {
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+/* ── 격자: 본문 단 + 바깥쪽 날개 단 ── */
+.region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv, .has-side) {
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--wing); column-gap: var(--wing-gap);
+}
+.page.even .region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv, .has-side) { grid-template-columns: var(--wing) minmax(0, 1fr); }
+.page.even .region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv, .has-side) > .side { order: -1; }
+.region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv, .has-side) > .side { margin: 0; }
+.region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv) > .side.empty { display: block; }
+.row.in-cc { padding-left: 0; }
+.row.in-cc::before { display: none; }
+
+/* 날개의 '개념 더하기' */
+.note { display: block; background: none; border: 0; border-top: 1.2pt solid var(--c1); border-radius: 0; padding: 1.4mm 0 0; font-size: 7.8pt; line-height: 1.6; color: var(--ink-2); }
+.note-head { width: auto; flex-direction: column; gap: .2mm; margin-bottom: 1mm; }
+.note-tag { background: none; color: var(--c1); padding: 0; border-radius: 0; font-size: 7pt; font-weight: 700; }
+.note-title { color: var(--ink); font-size: 8.4pt; font-weight: 700; line-height: 1.35; }
+
+/* ── 쪽 머리·쪽 번호·엄지 색인 ── */
+.page-head, .page.even .page-head { border-bottom: .5pt solid var(--rule); color: var(--gray); font-size: 7.2pt; }
+.ph-left::before { width: 1.4mm; height: 1.4mm; border-radius: 0; background: var(--c1); }
+.ph-left b { color: var(--ink); font-weight: 700; }
+.folio span { background: var(--c1); border-radius: 0; min-width: 8.5mm; height: 6mm; font-size: 8.4pt; font-weight: 700; }
+.edge-tab { border-radius: 0 !important; width: 6.5mm; font-size: 10pt; }
+.strip { border-top: .5pt solid var(--rule); }
+.strip-label, .sa i { color: var(--c1); }
+
+/* ── 단원 첫 쪽: 평평한 대단원 색 띠, 장식 원·그라데이션 없음 ── */
+.opener { background: var(--c1); padding-top: 15mm; padding-bottom: 10mm; gap: 6mm; }
+.opener::after, .opener::before { display: none; }
+.op-no { font-size: 50pt; font-weight: 700; color: #fff; border: 0; padding: 0 5mm 0 0; border-right: .8pt solid rgba(255,255,255,.55); line-height: .85; }
+.op-chapter { color: rgba(255,255,255,.8); font-weight: 400; font-size: 8.6pt; }
+.op-title { font-size: 21pt; font-weight: 700; letter-spacing: -.6px; }
+.goal { margin: 5mm 0 5mm; gap: 8mm; }
+.goal-box, .goal-p { background: none; border: 0; border-top: 1.2pt solid var(--ink); border-radius: 0; box-shadow: none; padding: 1.8mm 0 0; font-size: 8.7pt; }
+.goal-label, .goal-p .goal-label { color: var(--ink); font-size: 8.2pt; font-weight: 700; }
+.goal-label::before { content: none; }
+.gq-n { width: auto; height: auto; background: none; border-radius: 0; color: var(--c1); font-weight: 700; font-size: 8.4pt; min-width: 6mm; }
+.cc-index { border: 0; border-top: .5pt solid var(--rule); border-radius: 0; margin: 0 0 6mm; }
+.cc-index-h { background: none; color: var(--ink); padding: 1.6mm 0 1mm; font-size: 8.2pt; }
+.cc-index-h span { color: var(--gray); font-weight: 400; }
+.cc-index ol { padding: 0; column-gap: 8mm; }
+.cc-index li { border-bottom: .5pt solid var(--rule-soft); font-size: 8.4pt; padding: 1mm 0; }
+.cc-index li b { color: var(--c1); font-weight: 700; }
+.cc-index li i, .sm-ch i, .cc-freq i { color: var(--c1); }
+.cc-index li i s, .sm-ch i s, .cc-freq i s { color: var(--rule-soft); }
+
+/* ── 큰 묶음(A·B·C) ── */
+.sec { font-size: 15.5pt; font-weight: 700; color: var(--ink); gap: 3mm; margin-top: 4mm; letter-spacing: -.5px; }
+.sec-mark { width: 9mm; height: 9mm; border-radius: 0; background: var(--ink); font-size: 12pt; font-weight: 700; }
+.sec::after { height: .5pt; background: var(--ink); }
+.item { font-size: 10.8pt; font-weight: 700; color: var(--ink); }
+.item-no { width: auto; height: auto; background: none; border-radius: 0; color: var(--c1); font-size: 11pt; }
+
+/* ── 본문 ── */
+.region-concept .row-p .main, .region-concept .row-ul .main, .region-concept .row-item .main { text-align: justify; }
+.ul li { padding-left: 3.6mm; }
+.ul li::before { width: 1.3mm; height: 1.3mm; top: .68em; border: 0; border-radius: 0; background: var(--c1); }
+.blank { border-bottom: .9pt solid var(--ink); }
+mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
+
+/* ── 개념 머리 ── */
+.slot > .row-concept { margin-top: 7mm; }
+.row-concept .main { background: none; border: 0; border-bottom: 1.6pt solid var(--c1); padding: 0 0 2mm; }
+.cc { gap: 3.6mm; align-items: flex-end; }
+.cc-no { background: var(--c1); color: #fff; border-radius: 0; box-shadow: none; min-width: 12.5mm; padding: 1.2mm 2.6mm 1.4mm; font-size: 15pt; font-weight: 700; }
+.cc-no small { color: rgba(255,255,255,.8); font-weight: 400; }
+.cc-title { font-size: 13.2pt; font-weight: 700; color: var(--ink); letter-spacing: -.4px; }
+.cc-hits { gap: 0; margin-top: .8mm; font-size: 7.3pt; color: var(--gray); }
+.cc-hl { color: var(--ink); font-weight: 700; padding: 0 1.6mm 0 0; background: none; }
+.cc-hit { background: none; border: 0; color: var(--ink-2); padding: 0; font-weight: 400; border-radius: 0; }
+.cc-hit + .cc-hit::before { content: '/'; color: var(--rule); margin: 0 1.4mm; }
+.cc-side { column-gap: 2mm; }
+.cc-freq i { font-size: 10pt; letter-spacing: .5px; }
+.cc-freq em { color: var(--gray); font-size: 7pt; font-weight: 400; }
+.stk { background: none !important; color: var(--red); padding: 0; font-size: 7.2pt; font-weight: 700; border-radius: 0; }
+.stk-ic { display: none; }
+.stk:not(.stk-hot) { display: none; }
+.cc-rev { color: var(--gray); font-weight: 400; }
+.cc-rev i { border: .7pt solid var(--ink-2); border-radius: 0; width: 3.2mm; height: 3.2mm; }
+
+/* ── 이렇게 나온다 ── */
+.pat { border: 0; border-top: .9pt solid var(--ink); border-bottom: .5pt solid var(--rule); border-radius: 0; background: none; }
+.pat-h { background: none; color: var(--ink); padding: 1.2mm 0 .6mm; font-size: 8.4pt; font-weight: 700; }
+.pat-h::before { content: '기출 선지 모양'; order: 2; background: none; color: var(--gray); font-weight: 400; padding: 0; font-size: 7.2pt; }
+.pat li { padding: 1.3mm 0; font-size: 8.8pt; }
+.pat li + li { border-top: .5pt dotted var(--rule); }
+.pat-a i { width: 5mm; height: 5mm; background: none !important; border: .9pt solid var(--c1); color: var(--c1); font-weight: 700; }
+.pat-a i.x { border-color: var(--red); color: var(--red); }
+.pat-why { color: var(--gray); }
+.pat-why::before { color: var(--red); }
+
+/* ── 용어 정리 ── */
+.kv { background: none; border: 0; border-top: .9pt solid var(--ink); border-bottom: .5pt solid var(--rule); border-radius: 0; }
+.kv th span { background: none !important; color: var(--c1-dark); padding: 0; font-size: 8.8pt; font-weight: 700; border-radius: 0; }
+.kv tr + tr > * { border-top: .5pt dotted var(--rule); }
+
+/* ── 표: 위 굵은 선 + 가는 가로선, 세로선·둥근 모서리 없음 ── */
+.tbl { border: 0; border-top: 1.2pt solid var(--ink); border-bottom: .9pt solid var(--ink); border-radius: 0; }
+.tbl thead th { background: var(--c1-pale); color: var(--ink); border-bottom: .5pt solid var(--ink); font-weight: 700; }
+.tbl tbody tr > * { border-bottom: .5pt solid var(--rule-soft); background: none !important; }
+.tbl td.em, .tbl th.em, .tbl .em { color: var(--c1-dark); }
+.tbl-title { font-size: 9pt; font-weight: 700; color: var(--ink); }
+.tbl-title::before { width: 1.6mm; height: 1.6mm; border-radius: 0; background: var(--c1); vertical-align: .3mm; }
+
+/* ── 비교 ── */
+.cmp-title { color: var(--ink); }
+.cmp-title span::before { border-radius: 0; background: var(--red); }
+.cmp-col, .cmp-col + .cmp-vs + .cmp-col { background: none; border: 0; border-top: 1.6pt solid var(--c1); border-radius: 0; padding: 1.6mm 1mm 0; }
+.cmp-col + .cmp-vs + .cmp-col { border-top-color: var(--red); }
+.cmp-h, .cmp-col + .cmp-vs + .cmp-col .cmp-h { background: none; border: 0; margin: 0 0 1mm; padding: 0; color: var(--ink); }
+.cmp-vs span { background: #fff; color: var(--gray); border: .5pt solid var(--rule); font-weight: 700; }
+
+/* ── 자료 읽기·해석 연습: 시험지 자료 상자처럼 ── */
+.source, .example { border: .6pt solid var(--ink); border-radius: 0; }
+.src-tab, .ex-tab { background: none; border-bottom: .5pt solid var(--rule); padding: 1.4mm 4.5mm; }
+.src-label, .ex-label { background: none; color: var(--c1); padding: 0; border-radius: 0; font-weight: 700; }
+.src-title, .ex-title { color: var(--ink); font-weight: 700; }
+.src-interp { background: var(--c1-pale); border-top: .5pt solid var(--rule); }
+.interp-label { background: none; color: var(--c1); padding: 0; border-radius: 0; }
+.ex-n { background: none; color: var(--c1); padding: 0; border-radius: 0; }
+
+/* ── 승민T 한마디 ── */
+.tip { background: none; border: 0; border-top: .9pt solid var(--ink); border-bottom: .5pt solid var(--rule); border-radius: 0; padding: 2.4mm 0; }
+.tip-avatar { border-radius: 0; background: var(--ink); color: #fff; width: 8mm; height: 8mm; clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); }
+.tip-name { color: var(--ink); }
+
+/* ── 흐름·사슬 ── */
+.flow li { background: none; border-top: 1.2pt solid var(--c1); border-radius: 0; }
+.chain { background: none; border: 0; border-top: .5pt solid var(--rule); border-bottom: .5pt solid var(--rule); border-radius: 0; }
+.ch-step { background: none; color: var(--ink); border: .6pt solid var(--c1); border-radius: 0; }
+
+/* ── 그림·사진: 테두리 없이, 제목 아이콘 없이 ── */
+.row-chart .main, .row-map .main, .row-venn .main, .row-figrow .main, .row-diagram .main { border: 0; border-radius: 0; box-shadow: none; padding: 0; background: none; }
+.fig-ic { display: none; }
+.fig-title { color: var(--ink); font-weight: 700; }
+.fig-title::before { width: 1.6mm; height: 1.6mm; border-radius: 0; }
+.ph-item img { border-radius: 0 !important; filter: saturate(.9) contrast(1.02); outline: .5pt solid var(--rule); }
+
+/* ── 사상가 카드: 진한 띠 → 이름 크게 + 선 ── */
+.row-tk .main, .row-tk.tk-first .main, .row-tk.tk-last .main, .row-tk.tk-first.tk-last .main { border-color: var(--rule); border-radius: 0; }
+.tk-head { background: var(--c1-pale); color: var(--ink); border-top: 1.6pt solid var(--c1); border-bottom: .5pt solid var(--rule); }
+.tk-head::after { border-radius: 0; background: #fff; border: .6pt solid var(--c1-line); color: var(--c1); }
+.tk-name { font-size: 15pt; font-weight: 700; color: var(--ink); }
+.tk-era { color: var(--gray); }
+.tk-key { background: none; border: 0; color: var(--c1-dark); padding: 0; border-radius: 0; font-weight: 700; }
+.tk-key + .tk-key::before { content: '·'; color: var(--rule); margin-right: 1.4mm; }
+.tk-keys { gap: 1.4mm; }
+.tk-photo { border-radius: 0 !important; border: 0; box-shadow: none; }
+.tk-label { color: var(--c1-dark); }
+.tk-label::before { border-radius: 0; width: 1.4mm; height: 1.4mm; vertical-align: .3mm; }
+.tk-n { background: none; color: var(--c1); border-radius: 0; font-weight: 700; }
+.tk-q { background: none; border-left: 1.2pt solid var(--c1-line); border-radius: 0; }
+.tk-qnote .tk-ql { background: none; color: var(--c1); padding: 0; }
+.tk-terms > div { background: none; border-bottom: .5pt dotted var(--rule); border-radius: 0; }
+.tk-a span { background: none !important; border: .9pt solid var(--c1); color: var(--c1); }
+.tk-a .x { border-color: var(--red); color: var(--red); }
+.tk-vs { background: none; border-top: .9pt solid var(--red); border-radius: 0; padding: 1.6mm 0 0; }
+.tk-cont { background: var(--c1-pale); color: var(--ink); border-radius: 0; border-top: 1.6pt solid var(--c1); }
+
+/* ── 띠 제목(개념 확인·수능형 문제·정답·한 장 정리): 칠한 띠 → 제목 + 굵은 선 ── */
+.band, .band-check, .band-summary { background: none; color: var(--ink); border-radius: 0; padding: 0 0 2mm; border-bottom: 2pt solid var(--c1); }
+.band-title { font-size: 16pt; font-weight: 700; letter-spacing: -.5px; }
+.band-title::before { content: ''; display: inline-block; width: 5mm; height: 5mm; border-radius: 0; background: var(--c1); margin-right: 2.4mm; vertical-align: -.4mm; }
+.band-unit, .band-check .band-unit { color: var(--gray); }
+.band-unit b { color: var(--c1); }
+.ins::before { border-radius: 0; }
+
+/* ── 수능형 문제: 시험지처럼 바탕체 ── */
+.q { font-family: var(--serif-h); font-size: 9.1pt; line-height: 1.76; }
+.q-no { background: var(--ink); font-family: var(--sans-h); border-radius: 0; font-size: 10.5pt; min-width: 8mm; height: 6.4mm; }
+.q-lv { font-family: var(--sans-h); border: 0; padding: 0; color: var(--gray); font-weight: 400; }
+.q-lv::before { content: '난이도 '; }
+.q-lv::after { content: ''; }
+.q-explain { font-family: var(--sans-h); }
+.q-data, .bogi { border: .6pt solid var(--ink); border-radius: 0; }
+
+/* ── 정리 노트(큰 빈 곳에만) ── */
+.memo { border: 0; border-top: .9pt solid var(--ink); border-radius: 0; background: none; }
+.memo-tag { background: none; color: var(--ink); padding: 0; border-radius: 0; font-weight: 700; }
+.memo-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), var(--rule-soft) calc(7.6mm - 1px), var(--rule-soft) 7.6mm); }
+
+/* ── 한 장 정리 ── */
+.sm-core { background: none; color: var(--ink); border-radius: 0; border-top: 1.6pt solid var(--c1); border-bottom: .5pt solid var(--c1); max-width: 92%; font-size: 11.5pt; font-weight: 400; padding: 2.6mm 4mm; }
+.sm-core b { color: var(--c1-dark); font-weight: 700; }
+.sm-core span { color: var(--c1); font-weight: 700; }
+.sm-tree::before, .sm-tree::after, .sm-br::before { background: var(--ink); width: auto; }
+.sm-tree::before { height: .6pt; }
+.sm-tree::after, .sm-br::before { width: .6pt; }
+.sm-bh { background: var(--ink); color: #fff; border: 0; border-radius: 0; }
+.sm-bh span { background: #fff; color: var(--ink); border-radius: 0; }
+.sm-c, .sm-c.st3 { background: none; border: 0; border-bottom: .5pt solid var(--rule); border-left: 0; border-radius: 0; padding: 1.6mm 0 1.8mm; }
+.sm-c.st3 .sm-ch span { color: var(--c1-dark); }
+.sm-ch b { color: var(--c1); }
+.sm-c li::before { border-radius: 0; background: var(--c1); width: 1.1mm; height: 1.1mm; }
+.sm-c li b { color: var(--ink); }
+.sm-traps { border: 0; border-top: 1.2pt solid var(--red); border-radius: 0; }
+.sm-th { background: none; color: var(--red); border: 0; padding: 1.4mm 0; }
+.sm-traps th { color: var(--ink); padding-left: 0; }
+.sm-traps td b { color: var(--red); }
+.sm-traps tr + tr > * { border-top: .5pt dotted var(--rule); }
+.sm-checks { border: 0; border-top: .9pt solid var(--ink); border-radius: 0; }
+.sm-kh { background: none; color: var(--ink); padding: 1.4mm 0; }
+.sm-checks ul { padding: .6mm 0 0; }
+.sm-checks li i { border-radius: 0; border-color: var(--ink-2); border-width: .7pt; }

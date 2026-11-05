@@ -36,7 +36,7 @@ export function collectPhotos(root) {
     if (Array.isArray(x)) return x.forEach(walk);
     if (!x || typeof x !== 'object') return;
     if (x.t === 'photo') for (const it of x.items || []) if (hasPhoto(it.src)) used.add(it.src);
-    if (x.t === 'thinker' && hasPhoto(x.photo)) used.add(x.photo);
+    if (typeof x.photo === 'string' && hasPhoto(x.photo)) used.add(x.photo); // 사상가 초상·날개 사진
     Object.values(x).forEach(walk);
   };
   walk(root);

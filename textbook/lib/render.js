@@ -5,7 +5,7 @@
 
 import { figure, FIGURE_TYPES } from './figures.js';
 import { icon } from './icons.js';
-import { hasPhoto, photoUrl, collectPhotos, credits, creditsData } from './photos.js';
+import { hasPhoto, photoUrl, collectPhotos, credits, creditsData, shortCredit } from './photos.js';
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -165,10 +165,14 @@ function block(b) {
 
 function note(side) {
   if (!side) return '<aside class="side empty"></aside>';
+  // 날개 사진: side.photo (+ caption). 설명 글이 없으면 사진만 날개에 놓는다
+  const ph = side.photo && hasPhoto(side.photo)
+    ? `<figure class="side-ph"><img src="${photoUrl(side.photo)}" alt=""><figcaption>${inl(side.caption || credits()[side.photo]?.caption || '')}<span class="side-cr">사진: ${esc(shortCredit(side.photo))}</span></figcaption></figure>` : '';
+  if (!side.title && !side.text && !side.items) return ph ? `<aside class="side">${ph}</aside>` : '<aside class="side empty"></aside>';
   const body = side.items
     ? `<ul>${side.items.map((x) => `<li>${inl(x)}</li>`).join('')}</ul>`
     : `<p>${inl(side.text)}</p>`;
-  return `<aside class="side"><div class="note"><div class="note-head"><span class="note-tag">개념 더하기</span><span class="note-title">${inl(side.title)}</span></div>${body}</div></aside>`;
+  return `<aside class="side">${ph}<div class="note"><div class="note-head"><span class="note-tag">개념 더하기</span><span class="note-title">${inl(side.title)}</span></div>${body}</div></aside>`;
 }
 
 // 사상가 카드 — 머리+핵심 주장 / 원전 읽기 / 기출 선지 를 따로 줄(row)로 만들어 쪽을 넘겨도 이어지게
@@ -226,7 +230,7 @@ function summaryHtml(u) {
     }).join('')}</div>`).join('');
   const traps = S.traps ? `<div class="sm-traps"><div class="sm-th">헷갈리지 말자</div><table><tbody>${S.traps
     .map(([a, b2]) => `<tr><th>${inl(a)}</th><td>${inl(b2)}</td></tr>`).join('')}</tbody></table></div>` : '';
-  const checks = S.checks ? `<div class="sm-checks"><div class="sm-kh">시험 전 체크 — 말로 설명할 수 있으면 ☑</div><ul>${S.checks
+  const checks = S.checks ? `<div class="sm-checks"><div class="sm-kh">시험 전 체크 — 말로 설명할 수 있으면 칸에 표시</div><ul>${S.checks
     .map((x) => `<li><i></i><span>${inl(x)}</span></li>`).join('')}</ul></div>` : '';
   return `<div class="sm"><div class="sm-core"><span>한 줄 요약</span>${inl(S.core)}</div><div class="sm-tree" style="--n:${S.branches.length}">${br}</div>${traps}${checks}`
     + `<div class="sm-legend">별점은 최근 기출 9회(2028 수능 예시문항, 2025~2026 고1·고2 학력평가 8회)에서 그 개념을 직접 물은 횟수입니다. ★★★ 3번 이상, ★★ 1~2번, ★ 직접 나온 적은 없지만 다른 문항의 바탕이 되는 개념.</div></div>`;
@@ -390,6 +394,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/600.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/nanum-pen-script/400.css">
 ${['e', 'f', 'g'].includes(theme) ? '<link rel="stylesheet" href="../node_modules/@fontsource-variable/hahmlet/index.css">' : ''}
+${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/css.local/all.css">' : ''}
 <style>
 @font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: block;
   src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
@@ -397,7 +402,7 @@ ${['e', 'f', 'g'].includes(theme) ? '<link rel="stylesheet" href="../node_module
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>

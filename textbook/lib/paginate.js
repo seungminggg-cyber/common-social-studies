@@ -341,6 +341,7 @@
     '400 10pt "Pretendard Variable"', '700 10pt "Pretendard Variable"',
     '400 10pt "Noto Serif KR"', '600 10pt "Noto Serif KR"', '400 10pt "Nanum Pen Script"',
     '400 10pt "Hahmlet Variable"', '600 10pt "Hahmlet Variable"', // 시안 E (없으면 건너뜀)
+    '400 10pt "KoPubWorld Dotum"', '700 10pt "KoPubWorld Dotum"', '400 10pt "KoPubWorld Batang"', '700 10pt "KoPubWorld Batang"', // 시안 H
   ];
   Promise.all(fonts.map((f) => document.fonts.load(f, text).catch(() => null)))
     .then(() => document.fonts.ready)
