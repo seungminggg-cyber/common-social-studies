@@ -178,10 +178,20 @@ def opener(u):
 
 
 def side_note(s):
+    # 날개 사진: 한글 파일에서는 본문 아래에 작게
+    ph = os.path.join(PHOTO_DIR, f"{s.get('photo', '')}.jpg")
+    if s.get('photo') and os.path.exists(ph):
+        with open(ph, 'rb') as f:
+            doc.add_picture(f.read(), 'jpg', width_mm=40, height_mm=30, align='LEFT')
+        cap = s.get('caption') or CREDIT_CAPTION(s['photo'])
+        if cap:
+            run(para(after=2), cap, size=7.5, color=GRAY)
+    if not (s.get('title') or s.get('text') or s.get('items')):
+        return
     t = table(1, 2, [22, 78])
     p = cell(t, 0, 0, fill=NOTE, pad=(3.5, 1, 2.2, 2.2))
     chip(p, '개념 더하기', NAVY, size=7)
-    run(cell_para(t, 0, 0, before=1), s['title'], size=9, color=NAVY, bold=True)
+    run(cell_para(t, 0, 0, before=1), s.get('title', ''), size=9, color=NAVY, bold=True)
     p = cell(t, 0, 1, fill=NOTE, pad=(2, 3.5, 2.2, 2.2))
     items = s.get('items') or [s['text']]
     for i, x in enumerate(items):
@@ -536,6 +546,30 @@ def block(b):
         chip(p, f" {b['mark']} ", TEAL, size=10)
         run(p, '  ' + b['title'], size=14.5, color=NAVY, bold=True)
         return
+    if t == 'concept':
+        st = max(1, min(3, b.get('stars') or 1))
+        p = para(before=10, after=3)
+        chip(p, f" 개념 {b['no']} ", TEAL, size=10)
+        run(p, '  ' + b['title'], size=13, color=NAVY, bold=True)
+        run(p, '    ' + '★' * st + '☆' * (3 - st) + ' ' + FREQ[st], size=8.5, color=(ORANGE if st == 3 else TEAL if st == 2 else GRAY), bold=True)
+        return
+    if t == 'pattern':
+        t2 = table(len(b['items']) + 1, 2, [88, 12])
+        p = cell(t2, 0, 0, fill=TEAL_SOFT, pad=(3, 1, 1.4, 1.4))
+        run(p, '이렇게 나온다', size=8.6, color=NAVY, bold=True)
+        run(p, '   기출 선지 모양', size=7.5, color=GRAY)
+        cell(t2, 0, 1, fill=TEAL_SOFT)
+        for i, it in enumerate(b['items']):
+            st, a = it[0], it[1]
+            q = cell(t2, i + 1, 0, pad=(3, 1, 1.4, 1.4))
+            rich(q, st, size=9)
+            if len(it) > 2 and it[2]:
+                run(cell_para(t2, i + 1, 0), '→ ' + it[2], size=7.8, color=GRAY)
+            q2 = cell(t2, i + 1, 1, pad=(1, 1, 1.4, 1.4))
+            q2.para_pr_id_ref = pp(align='CENTER')
+            run(q2, a, size=10, color=(TEAL if a == 'O' else ORANGE), bold=True)
+        gap(6)
+        return
     if t == 'item':
         p = para(before=6, after=3)
         chip(p, b['no'], TEAL_SOFT, TEAL, size=9.5)
@@ -681,7 +715,9 @@ def question(q, n):
     p = para(before=2, after=2)
     chip(p, f'{n:02d}', TEAL, size=10.5)
     run(p, '   ')
-    run(p, f"{q['level']} 난이도", size=8, color=LEVEL_COLOR[q['level']], bold=True)
+    run(p, f"난이도 {q['level']}", size=8, color=LEVEL_COLOR[q['level']], bold=True)
+    if q.get('concept'):
+        run(p, f"   개념 {q['concept']}" + (f" · {q['type']}" if q.get('type') else ''), size=7.8, color=GRAY)
     rich(para(after=3, spacing=165), q['stem'], size=9.6, bold=True)
     if q.get('data'):
         data_box(q['data'])
@@ -715,6 +751,52 @@ def question(q, n):
     gap(12)
 
 
+# ── 한 장 정리 (중단원 끝) ─────────────────────────
+FREQ = {3: '최다 빈출', 2: '빈출', 1: '기본 개념'}
+
+
+def CREDIT_CAPTION(pid):
+    try:
+        return json.load(open(os.path.join(PHOTO_DIR, 'credits.json'), encoding='utf-8')).get(pid, {}).get('caption', '')
+    except Exception:
+        return ''
+
+
+def summary_page(u):
+    S = u['summary']
+    C = {b['no']: b for b in u['concept'] if b['t'] == 'concept'}
+    band('한 장 정리', f"{u['no']} {u['title']}", color=TEAL)
+    p = para(after=4, align='CENTER', spacing=170)
+    run(p, '한 줄 요약  ', size=8, color=TEAL, bold=True)
+    rich(p, S['core'], size=10.5)
+    rows = S.get('concepts') or [c for br in S.get('branches', []) for c in br['concepts']]
+    t = table(len(rows), 2, [30, 70])
+    for i, c in enumerate(rows):
+        cc = C.get(c['no'], {})
+        st = max(1, min(3, cc.get('stars') or 1))
+        q = cell(t, i, 0, fill=NOTE, pad=(3, 1, 1.6, 1.6))
+        run(q, f"개념 {c['no']}", size=8, color=TEAL, bold=True)
+        run(cell_para(t, i, 0), c.get('title') or cc.get('title', ''), size=9, color=NAVY, bold=True)
+        run(cell_para(t, i, 0), '★' * st + '☆' * (3 - st) + ' ' + FREQ[st], size=7.6, color=(ORANGE if st == 3 else GRAY))
+        q = cell(t, i, 1, pad=(2, 3, 1.6, 1.6))
+        for k, line in enumerate(c['lines']):
+            rich(q if k == 0 else cell_para(t, i, 1), '· ' + line, size=8.8)
+    gap(6)
+    if S.get('traps'):
+        run(para(after=2), '헷갈리지 말자', size=9.5, color=ORANGE, bold=True)
+        t = table(len(S['traps']), 2, [30, 70])
+        for i, (a, b2) in enumerate(S['traps']):
+            rich(cell(t, i, 0, pad=(3, 1, 1.4, 1.4)), a, size=8.6, bold=True)
+            rich(cell(t, i, 1, pad=(2, 3, 1.4, 1.4)), b2, size=8.6)
+        gap(6)
+    if S.get('checks'):
+        run(para(after=2), '시험 전 체크 — 말로 설명할 수 있으면 칸에 표시', size=9.5, color=NAVY, bold=True)
+        for x in S['checks']:
+            p = para(after=1.2)
+            run(p, '□  ', size=10, color=NAVY)
+            rich(p, x, size=9)
+
+
 # ── 문서 만들기 ───────────────────────────────────
 doc.paragraphs[0].text = ''
 doc.page.set_header(text=f"{book['subject']}   {book['chapter']['no']}. {book['chapter']['title']}")
@@ -733,6 +815,8 @@ for ui, u in enumerate(book['units']):
         p = para(before=4)
         run(p, '빈칸 정답   ', size=8.5, color=TEAL, bold=True)
         run(p, '   '.join(f'{i+1}) {a}' for i, a in enumerate(blanks)), size=8.5, color=GRAY)
+    if u.get('summary'):
+        summary_page(u)
     if u['check']['ox'] or u['check']['blank']:
         check(u)
     starts.append(q_no)

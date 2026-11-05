@@ -9,9 +9,13 @@
 import u05 from './_t1-3/u05.js';
 import u06 from './_t1-3/u06.js';
 import u07 from './_t1-3/u07.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t1-3.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회1',
   chapter: { no: 'Ⅲ', title: '자연환경과 인간' },
   units: [u05, u06, u07],
 };
+
+export default withCC(book, cc);

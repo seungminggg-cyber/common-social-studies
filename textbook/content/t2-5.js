@@ -9,9 +9,13 @@
 import u14 from './_t2-5/u14.js';
 import u15 from './_t2-5/u15.js';
 import u16 from './_t2-5/u16.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t2-5.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회2',
   chapter: { no: 'Ⅴ', title: '미래와 지속가능한 삶' },
   units: [u14, u15, u16],
 };
+
+export default withCC(book, cc);

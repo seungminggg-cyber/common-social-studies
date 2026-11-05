@@ -27,12 +27,12 @@ const args = process.argv.slice(2);
 const { default: full } = await import(args.includes('t2') ? './content/_book/t2.js' : './content/_book/t1.js');
 const wantPng = args.includes('png');
 ensureTerrain(full); // 지형도 바탕 그림이 없으면 만든다
-const theme = args.includes('b') ? 'b' : 'd'; // 디자인: 기본은 시안 D(교과서형), b를 주면 예전 시안 B
+const theme = args.includes('b') ? 'b' : args.includes('d') ? 'd' : 'h'; // 디자인: 기본은 시안 H(편집 디자인형, 2026-11 강사 확정), d·b를 주면 예전 시안
 const picked = ['student', 'teacher', 'answers'].filter((k) => args.includes(k));
 const jobs = picked.length ? picked : ['student', 'teacher', 'answers'];
 
 // 시안 B 배치 (개념 1단, 개념 확인 1단, 수능형 문제·정답 2단)
-const layout = { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] };
+const layout = { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'], ...(theme === 'h' ? { memoMin: 0.4, spreadMax: 9 } : {}) };
 const NAMES = { student: '개념서-학생용', teacher: '개념서-교사용', answers: '정답과해설' };
 const paginateJs = readFileSync(join(ROOT, 'lib/paginate.js'), 'utf8');
 

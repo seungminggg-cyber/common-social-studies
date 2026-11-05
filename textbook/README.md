@@ -28,7 +28,7 @@
 ```bash
 cd textbook
 npm install
-node build.mjs                      # 모든 단원, 시안 b, 학생용 PDF → out/
+node build.mjs                      # 모든 단원, 시안 H(기본), 학생용 PDF → out/
 node build.mjs t1-2 b both png      # Ⅱ단원, 학생용+교사용, 쪽 그림(PNG)까지
 node build.mjs z-gallery b          # 그림 기능 견본
 ```
@@ -94,6 +94,18 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 - 나라 이름은 ISO3 코드(`KOR`, `JPN` …)로 쓴다. 예전 이름('South Korea' 등)은 `lib/maps.js`의 `ALIAS`로 바꿔 준다.
 - 지형도 바탕 그림은 `assets/terrain/<번호>.jpg`. 지도 설정(범위·크기)을 바꾸면 빌드할 때 `lib/terrain.js`가 고도 타일(AWS Terrain Tiles)을 내려받아 새로 만든다(인터넷 필요, 타일은 `~/.cache/terrain-tiles`).
 - 우리나라 하천은 `tools/terrain/mosaic.py` + `tools/terrain/rivers.mjs`로 고도 자료에서 물길을 계산한 것(작은 지류는 실제와 조금 다를 수 있음).
+
+## 시안 H와 개념 계획 (2026-11 강사 확정)
+기본 디자인은 **시안 H(편집 디자인형, `themes/h.css`)**입니다. 중단원은 '개념 01, 02 …' 한 가지로만 나눕니다.
+- 내용 파일(`content/_t2-2/u04.js` 등)은 그대로 두고, 책마다 **개념 계획** `content/_cc/<책>.js`를 따로 적습니다. 책 파일이 `withCC(book, cc)`로 빌드할 때 붙입니다(`content/_cc/apply.js`).
+  - `concepts`: 개념이 시작하는 블록(`at`), 제목, 출제 빈도(`stars` 1 기본 개념 · 2 빈출 · 3 최다 빈출, 근거 `hits`), 개념 끝 '이렇게 나온다' O/X(`pattern`)
+  - `summary`: 중단원 끝 '한 장 정리'(한 줄 요약, 개념별 핵심, 헷갈리지 말자, 시험 전 체크) — 한 쪽에 들어가야 함
+  - `exam`: 수능형 문제마다 [관련 개념 번호, 문제 유형]
+  - A·B·C 큰 묶음 제목은 빠지고, '수능 자료 해석 연습' 묶음만 글자 없이 남습니다.
+- 출제 빈도는 `참고/기출분류.json`(2028 수능 예시문항 + 2025~2026 고1·고2 학평 8회)에서 그 개념을 직접 물은 문항 수입니다.
+- 계획을 짤 때: `node tools/cc-outline.mjs t2-2 04` (원래 블록 순서, 개념 나누기 결과, 문제, 그 대단원의 기출 분류)
+- 글꼴: KoPub World 돋움·바탕(npm `font-kopubworld`, 한국출판인회의 약관: 출판물 사용 무료, 서체 판매 금지). 본문 + 바깥쪽 날개 단 격자, 모서리 잘린 네모가 상징 모양입니다.
+- 예전 디자인으로 만들려면 `node build.mjs t2-2 d`, `node build-book.mjs d`.
 
 ## 인포그래픽 도식 (`lib/diagrams.js`, 2026-11)
 `{ t: 'diagram', kind, title, width, note }` — 아이콘(Tabler Icons, MIT)과 대단원 색으로 그리는 개념 도식. 견본은 `content/z-diagrams.js`.

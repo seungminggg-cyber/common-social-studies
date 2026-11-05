@@ -1,0 +1,54 @@
+/* 시안 H 통합본: 표지·차례·간지·이 책의 구성·학습 계획표를 편집 디자인형으로
+ *  - 장식 원·그라데이션·알약 대신 평평한 면, 선, 모서리 잘린 네모
+ *  - 표지 오른쪽의 다섯 색 띠 = 대단원 엄지 색인 색(Ⅰ~Ⅴ)
+ */
+:root { --cut: 2.4mm; }
+
+/* ── 표지·뒤표지 ── */
+.cover, .cover-back { background: #1f1d1b; }
+.cover::before, .cover-back::before { content: ''; position: absolute; left: auto; right: 0; top: 46mm; bottom: auto; width: 8mm; height: 150mm; border-radius: 0; opacity: 1;
+  background: linear-gradient(#1d6c74 0 20%, #7d3566 20% 40%, #3c7a37 40% 60%, #b5651d 60% 80%, #234e8a 80% 100%); }
+.cover::after, .cover-back::after { display: none; }
+.page.even .cover-back::before { right: auto; left: 0; }
+.cv-brand { color: #cfcac4; font-weight: 400; letter-spacing: 0; }
+.cv-title { font-weight: 700; letter-spacing: -2px; }
+.cv-sub { color: #a9a39c; }
+.cv-badge { background: #c8102e; border-radius: 0; clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); font-weight: 700; }
+.cv-chapters li { color: #e6e2dd; }
+.cv-chapters b { color: #fff; font-weight: 700; }
+.bk-title { font-weight: 700; }
+.bk-points li::before { border-radius: 0; background: #c8102e; }
+
+/* ── 이 책의 주인 ── */
+.ow-box { border-radius: 0; border: 0; border-top: 1.6pt solid var(--ink); border-bottom: .5pt solid var(--rule); }
+
+/* ── 차례 ── */
+.toc-head { border-bottom: 1.6pt solid var(--ink); }
+.toc-en { display: none; } /* 영어 대문자 이름표(CONTENTS) 빼기 */
+.toc-ch { background: none; color: var(--ink); border-radius: 0; border-top: 1.2pt solid var(--ink); border-bottom: .5pt solid var(--rule); padding: 2mm 0; font-weight: 700; }
+.toc-chno { color: var(--c1, #1f1d1b); }
+.toc-ch .toc-dots { border-color: var(--rule); }
+.toc-ch .toc-pg { color: var(--ink); }
+
+/* ── 이 책의 구성 ── */
+.guide-list li { background: none; border: 0; border-top: .9pt solid var(--ink); border-radius: 0; padding: 2.4mm 0; }
+.gd-n { border-radius: 0; background: var(--ink); clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); }
+.guide-list b { color: var(--ink); }
+.guide-flow { background: none; border-top: 1.2pt solid var(--ink); border-bottom: .5pt solid var(--rule); border-radius: 0; padding: 3mm 0; }
+
+/* ── 간지: 평평한 대단원 색, 장식 원 없음 ── */
+.page-divider .divider { background: var(--c1); }
+.divider::before, .divider::after { display: none; }
+.page-divider .divider::before { display: none; }
+.dv-no { font-weight: 700; }
+.dv-bg { color: rgba(255, 255, 255, .07); font-weight: 700; }
+.dv-keys { background: none; border-top: 1pt solid rgba(255, 255, 255, .6); border-radius: 0; padding: 4mm 0 0; }
+.page-divider .dv-keys { background: none; }
+.dv-keys li::before { border-radius: 0; background: #fff; }
+
+/* ── 학습 계획표·진도표 ── */
+.page-plan .plan-t th, .plan-t th { background: var(--c1-pale, #f2f2f0); color: var(--ink); border-bottom: .9pt solid var(--ink); }
+.sch-head { border-bottom: 1.6pt solid var(--ink); }
+.sch-flow > div { background: none; border: 0; border-top: .9pt solid var(--ink); border-radius: 0; }
+.sch-hw { background: none; border-top: .9pt solid var(--ink); border-bottom: .5pt solid var(--rule); border-radius: 0; }
+.sch-t td.sc-chk i { border-radius: 0; }

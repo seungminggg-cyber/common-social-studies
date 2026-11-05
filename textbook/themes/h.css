@@ -280,3 +280,5 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .q-lv { display: inline; font-size: 7.6pt; font-weight: 700; color: var(--gray); }
 .q-lv.lv-중 { color: var(--c1-dark); }
 .q-lv.lv-상 { color: var(--red); }
+/* 한 장 정리 띠의 네모도 대단원 색(시안 F의 노란색 덮어쓰기) */
+.band-summary .band-title::before { background: var(--c1); }

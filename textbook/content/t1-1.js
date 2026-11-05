@@ -10,7 +10,10 @@
 //
 // 모든 문장은 교재를 옮기지 않고 새로 썼습니다. (저작권)
 
-export default {
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t1-1.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
+
+const book = {
   subject: '통합사회1',
   chapter: { no: 'Ⅰ', title: '통합적 관점' },
   units: [
@@ -565,3 +568,5 @@ export default {
     },
   ],
 };
+
+export default withCC(book, cc);

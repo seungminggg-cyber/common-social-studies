@@ -8,9 +8,13 @@
 import u04 from './_t2-2/u04.js';
 import u05 from './_t2-2/u05.js';
 import u06 from './_t2-2/u06.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t2-2.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회2',
   chapter: { no: 'Ⅱ', title: '사회 정의와 불평등' },
   units: [u04, u05, u06],
 };
+
+export default withCC(book, cc);

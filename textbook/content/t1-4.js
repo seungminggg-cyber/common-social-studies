@@ -8,9 +8,13 @@ import u08 from './_t1-4/u08.js';
 import u09 from './_t1-4/u09.js';
 import u10 from './_t1-4/u10.js';
 import u11 from './_t1-4/u11.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t1-4.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회1',
   chapter: { no: 'Ⅳ', title: '문화와 다양성' },
   units: [u08, u09, u10, u11],
 };
+
+export default withCC(book, cc);

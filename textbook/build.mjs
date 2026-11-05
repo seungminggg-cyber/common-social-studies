@@ -42,7 +42,7 @@ const args = process.argv.slice(2);
 const allBooks = readdirSync(join(ROOT, 'content')).filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort();
 const bookArg = args.find((a) => allBooks.includes(a) || a.split(',').every((x) => allBooks.includes(x)));
 const books = bookArg ? bookArg.split(',') : allBooks.filter((b) => !b.startsWith('z-'));
-const themeArg = args.find((a) => /^(all|[a-h](,[a-h])*)$/.test(a)) || 'd'; // 기본 디자인: 시안 D(강사 확정, 2026-11)
+const themeArg = args.find((a) => /^(all|[a-h](,[a-h])*)$/.test(a)) || 'h'; // 기본 디자인: 시안 H(편집 디자인형, 강사 확정 2026-11), 예전은 d
 const themes = themeArg === 'all' ? Object.keys(THEMES) : themeArg.split(',');
 const modeArg = args.find((a) => ['student', 'teacher', 'both'].includes(a)) || 'student';
 const modes = modeArg === 'both' ? ['student', 'teacher'] : [modeArg];

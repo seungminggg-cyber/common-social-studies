@@ -8,9 +8,13 @@
 import u01 from './_t2-1/u01.js';
 import u02 from './_t2-1/u02.js';
 import u03 from './_t2-1/u03.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t2-1.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회2',
   chapter: { no: 'Ⅰ', title: '인권 보장과 헌법' },
   units: [u01, u02, u03],
 };
+
+export default withCC(book, cc);

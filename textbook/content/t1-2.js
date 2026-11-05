@@ -40,7 +40,10 @@ const INCOME_CURVE = (ticks, w) => ({
   source: '미국 퍼듀대 연구팀(2018)의 분석을 바탕으로 그린 개념도',
 });
 
-export default {
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t1-2.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
+
+const book = {
   subject: '통합사회1',
   chapter: { no: 'Ⅱ', title: '인간, 사회, 환경과 행복' },
   units: [
@@ -1407,3 +1410,5 @@ export default {
     },
   ],
 };
+
+export default withCC(book, cc);

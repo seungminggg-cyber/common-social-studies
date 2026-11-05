@@ -281,7 +281,7 @@ function conceptIndex(u) {
 }
 
 function bandTop(kind, title, u) {
-  const id = u && (kind === 'check' || kind === 'exam') ? ` id="${kind[0]}${esc(u.no)}"` : '';
+  const id = u && (kind === 'check' || kind === 'exam' || kind === 'summary') ? ` id="${kind[0]}${esc(u.no)}"` : '';
   const lv = (x) => (u?.exam || []).filter((q) => q.level === x).length;
   const sub = kind === 'exam' && u?.exam?.length ? `<span class="band-sub">${u.exam.length}문항 · 상 ${lv('상')} · 중 ${lv('중')} · 하 ${lv('하')}</span>` : '';
   return `<div class="top"${id}><div class="band band-${kind}"><span class="band-title">${esc(title)}</span>${sub}${
@@ -493,7 +493,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     </div></div>`);
     // 차례
     const tocUnits = (ch) => unitsOf(ch).map((u) => `<li class="toc-u"><span class="toc-no">${esc(u.no)}</span><span class="toc-t">${esc(u.title)}</span>
-        <span class="toc-sub">개념 확인 <i data-pg="c${esc(u.no)}"></i> · 수능형 문제 <i data-pg="e${esc(u.no)}"></i></span><span class="toc-dots"></span><span class="toc-pg" data-pg="u${esc(u.no)}"></span></li>`).join('');
+        <span class="toc-sub">${u.summary ? `한 장 정리 <i data-pg="s${esc(u.no)}"></i> · ` : ''}개념 확인 <i data-pg="c${esc(u.no)}"></i> · 수능형 문제 <i data-pg="e${esc(u.no)}"></i></span><span class="toc-dots"></span><span class="toc-pg" data-pg="u${esc(u.no)}"></span></li>`).join('');
     add('toc', '', `<div class="top"><div class="toc"><div class="toc-head"><span class="toc-title">차례</span><span class="toc-en">CONTENTS</span></div>
       <ul class="toc-list"><li class="toc-guide"><span class="toc-t">이 책의 구성</span><span class="toc-dots"></span><span class="toc-pg" data-pg="guide"></span></li>
       ${chapters.map((ch, i) => `<li class="toc-ch"><span class="toc-chno">${esc(ch.chapter.no)}</span><span class="toc-t">${esc(ch.chapter.title)}</span><span class="toc-dots"></span><span class="toc-pg" data-pg="ch${i}"></span></li>${tocUnits(ch)}`).join('')}
@@ -501,21 +501,21 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     // 이 책의 구성
     const GUIDE = [
       ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
-      ['단원 첫머리', '핵심 질문 두 개와 수능 포인트. 시험에 어떤 자료와 선지로 나오는지 먼저 보고 시작한다.'],
-      ['개념 정리', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어, <mark>형광펜</mark>은 시험에 그대로 나오는 문장이다.`],
-      ['빈칸과 빈칸 정답 띠', '본문의 번호 빈칸을 직접 채운다. 정답은 그 쪽 맨 아래 띠에 있으니 채운 뒤에 확인한다.'],
-      ['개념 더하기', '본문 아래 회색 상자. 용어 뜻, 헷갈리는 개념, 교과서마다 다른 표현을 정리했다.'],
+      ['단원 첫머리', '핵심 질문, 수능 포인트, 이 단원에서 배울 개념과 출제 빈도를 먼저 보고 시작한다.'],
+      ['개념 번호와 출제 빈도', `중단원을 개념 01, 02 …로 나눴다. 별은 최근 기출 9회에서 그 개념이 나온 정도: ★ 기본 개념, ★★ 빈출, ★★★ 최다 빈출.`],
+      ['개념 정리 · 빈칸', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어. 번호 빈칸의 정답은 그 쪽 맨 아래 띠에 있다.`],
+      ['날개 · 개념 더하기', '본문 옆 날개에 용어 뜻, 헷갈리는 개념, 사진을 두었다. 본문을 읽고 날개로 한 번 더 확인한다.'],
+      ['이렇게 나온다', '개념이 끝날 때마다 기출 선지 모양의 문장을 O/X로 판단한다. 틀린 문장에는 이유를 적어 두었다.'],
       ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
-      ['그래프 · 지도 · 표', '수능 자료와 같은 모양으로 그렸다. 그림 아래의 설명과 출처, "개념도·가상 자료" 표시를 꼭 함께 읽는다.'],
-      ['자료 읽기 · 해석 연습', '제시문과 자료를 읽는 법을 단계(STEP)별로 연습한다. 함정 선지가 어디서 나오는지 표시했다.'],
-      ['승민T 한마디', '그 중단원에서 시험 직전에 다시 볼 한 줄 정리.'],
-      ['정리 노트 · 오답 노트', '쪽 아래 남는 칸. 핵심어를 다시 쓰거나 틀린 문제와 다시 볼 쪽을 적는다.'],
+      ['그래프 · 지도 · 자료 읽기', '수능 자료와 같은 모양으로 그렸다. 그림 아래의 설명과 출처, "개념도·가상 자료" 표시를 함께 읽는다.'],
+      ['한 장 정리', '중단원 끝 한 쪽에 개념별 핵심, 헷갈리지 말자, 시험 전 체크를 모았다. 시험 직전에 이 쪽만 다시 본다.'],
       ['개념 확인', 'O/X와 빈칸 채우기로 개념을 점검한다. 맞힌 개수를 학습 계획표에 적는다.'],
-      ['수능형 문제', '학력평가·수능 예시문항과 같은 형식의 새 문제. 정답과 해설은 별책에 있다.'],
+      ['수능형 문제', '문제마다 관련 개념 번호와 문제 유형, 난이도를 적었다. 틀리면 그 개념으로 돌아가 다시 읽는다. 해설은 별책.'],
+      ['정리 노트 · 승민T 한마디', '남는 칸에 핵심어를 다시 쓰거나 틀린 문제를 적는다. 승민T 한마디는 시험 직전에 다시 볼 한 줄 정리.'],
     ];
     add('guide', '', `<div class="top" id="guide"><div class="guide"><div class="band band-guide"><span class="band-title">이 책의 구성</span><span class="band-unit">이렇게 공부하세요</span></div>
       <ol class="guide-list">${GUIDE.map(([t, d], i) => `<li><span class="gd-n">${two(i + 1)}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
-      <div class="guide-flow"><span>1회독</span> 개념 정리를 읽으며 빈칸 채우기 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 승민T 한마디·오답 노트 다시 보기</div>
+      <div class="guide-flow"><span>1회독</span> 개념을 읽으며 빈칸 채우기와 이렇게 나온다 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 한 장 정리·오답 노트 다시 보기</div>
     </div></div>`);
 
     chapters.forEach((ch, ci) => {
@@ -562,6 +562,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <ul class="bk-points">
         <li>${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리한 개념 정리</li>
         <li>2028 수능 예시문항과 학력평가를 분석한 수능 포인트·자료 해석 연습</li>
+        <li>개념마다 최근 기출 기준 출제 빈도, 기출 선지 모양 O/X, 중단원 끝 한 장 정리</li>
         <li>사상가 카드와 초상, 실제 지형을 살린 지도, 실제 통계 그래프와 개념 인포그래픽, 현장 사진</li>
         <li>개념 확인 O/X·빈칸과 수능형 문제, 별책 정답과 해설</li>
       </ul>
@@ -577,6 +578,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/400.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/600.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/nanum-pen-script/400.css">
+${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/css.local/all.css">' : ''}
 <style>
 @font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: block;
   src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
@@ -584,9 +586,10 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 <link rel="stylesheet" href="../themes/book.css">
-${theme === 'd' ? '<link rel="stylesheet" href="../themes/d-book.css">' : ''}
+${theme === 'd' || theme === 'h' ? '<link rel="stylesheet" href="../themes/d-book.css">' : ''}
+${theme === 'h' ? '<link rel="stylesheet" href="../themes/h-book.css">' : ''}
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme} mode-${mode} full-book part-${part}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>

@@ -9,9 +9,13 @@ import u07 from './_t2-3/u07.js';
 import u08 from './_t2-3/u08.js';
 import u09 from './_t2-3/u09.js';
 import u10 from './_t2-3/u10.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t2-3.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회2',
   chapter: { no: 'Ⅲ', title: '시장경제와 지속가능발전' },
   units: [u07, u08, u09, u10],
 };
+
+export default withCC(book, cc);

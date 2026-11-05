@@ -7,9 +7,13 @@
 import u12 from './_t1-5/u12.js';
 import u13 from './_t1-5/u13.js';
 import u14 from './_t1-5/u14.js';
+import { withCC } from './_cc/apply.js';
+import cc from './_cc/t1-5.js'; // 개념 번호·출제 빈도·이렇게 나온다·한 장 정리(시안 H)
 
-export default {
+const book = {
   subject: '통합사회1',
   chapter: { no: 'Ⅴ', title: '생활공간과 사회' },
   units: [u12, u13, u14],
 };
+
+export default withCC(book, cc);
