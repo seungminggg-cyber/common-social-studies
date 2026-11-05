@@ -9,11 +9,12 @@ export const HL = (groups) =>
 
 const EUROPE_W = ['United Kingdom', 'Ireland', 'France', 'Belgium', 'Netherlands', 'Luxembourg', 'Germany', 'Switzerland', 'Austria', 'Denmark', 'Norway', 'Sweden', 'Finland', 'Iceland'];
 const EUROPE_S = ['Spain', 'Portugal', 'Italy', 'Greece', 'Slovenia', 'Croatia', 'Bosnia and Herz.', 'Montenegro', 'Albania', 'Macedonia', 'Kosovo', 'Cyprus', 'N. Cyprus'];
-const EUROPE_E = ['Poland', 'Czechia', 'Slovakia', 'Hungary', 'Romania', 'Bulgaria', 'Serbia', 'Moldova', 'Ukraine', 'Belarus', 'Lithuania', 'Latvia', 'Estonia', 'Russia'];
+// 조지아·아르메니아(캅카스)는 크리스트교 나라라서 유럽 문화권에 넣는다(화폐 자료의 아르메니아 = 유럽 문화권과 맞춤)
+const EUROPE_E = ['Poland', 'Czechia', 'Slovakia', 'Hungary', 'Romania', 'Bulgaria', 'Serbia', 'Moldova', 'Ukraine', 'Belarus', 'Lithuania', 'Latvia', 'Estonia', 'Russia', 'Georgia', 'Armenia'];
 export const EUROPE = [...EUROPE_W, ...EUROPE_S, ...EUROPE_E];
 const N_AFRICA = ['Morocco', 'W. Sahara', 'Algeria', 'Tunisia', 'Libya', 'Egypt', 'Mauritania', 'Mali', 'Niger', 'Chad', 'Sudan'];
 const SW_ASIA = ['Saudi Arabia', 'Yemen', 'Oman', 'United Arab Emirates', 'Qatar', 'Kuwait', 'Iraq', 'Syria', 'Jordan', 'Lebanon', 'Israel', 'Palestine', 'Iran', 'Turkey'];
-const C_ASIA = ['Kazakhstan', 'Uzbekistan', 'Turkmenistan', 'Kyrgyzstan', 'Tajikistan', 'Afghanistan', 'Azerbaijan', 'Georgia', 'Armenia'];
+const C_ASIA = ['Kazakhstan', 'Uzbekistan', 'Turkmenistan', 'Kyrgyzstan', 'Tajikistan', 'Afghanistan', 'Azerbaijan'];
 export const DRY = [...N_AFRICA, ...SW_ASIA, ...C_ASIA];
 export const AFRICA = ['Senegal', 'Gambia', 'Guinea-Bissau', 'Guinea', 'Sierra Leone', 'Liberia', "Côte d'Ivoire", 'Burkina Faso', 'Ghana', 'Togo', 'Benin', 'Nigeria', 'Cameroon', 'Central African Rep.', 'S. Sudan', 'Ethiopia', 'Eritrea', 'Djibouti', 'Somalia', 'Somaliland', 'Kenya', 'Uganda', 'Rwanda', 'Burundi', 'Tanzania', 'Dem. Rep. Congo', 'Congo', 'Gabon', 'Eq. Guinea', 'Angola', 'Zambia', 'Malawi', 'Mozambique', 'Zimbabwe', 'Botswana', 'Namibia', 'South Africa', 'Lesotho', 'eSwatini', 'Madagascar'];
 export const E_ASIA = ['China', 'Taiwan', 'South Korea', 'North Korea', 'Japan'];

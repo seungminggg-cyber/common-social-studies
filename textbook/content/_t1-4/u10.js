@@ -113,7 +113,7 @@ export default {
     },
     {
       t: 'table', title: '세 가지 태도 비교',
-      head: ['구분', '문화 다양성에 이바지', '자문화 우수성 인정', '타문화 수용'], widths: [28, 24, 24, 24], align: [null, 'center', 'center', 'center'],
+      head: ['구분', '문화 다양성에 이바지', '자기 문화의 가치 인정', '타문화 수용'], widths: [28, 24, 24, 24], align: [null, 'center', 'center', 'center'],
       rows: [
         [{ text: '자문화 중심주의', cls: 'em' }, '하지 않음', { text: '인정함', cls: 'hl' }, '하지 않음'],
         [{ text: '문화 사대주의', cls: 'em' }, '하지 않음', '하지 않음', { text: '수용함', cls: 'hl' }],

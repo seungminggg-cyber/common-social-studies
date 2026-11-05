@@ -57,7 +57,6 @@ export default {
       ] }],
       side: { title: '생산 수단', text: '물건을 만드는 데 쓰이는 토지·건물·기계·원료 등. 생산 수단 자체를 "자본"이라고 부르기도 한다.' },
     },
-    SD_ROW,
     {
       t: 'item', no: '2', title: '자본주의의 의의와 한계',
       body: [
@@ -70,6 +69,7 @@ export default {
         ] },
       ],
     },
+    SD_ROW,
 
     // ── B ──
     { t: 'sec', mark: 'B', title: '자본주의의 역사적 전개' },
