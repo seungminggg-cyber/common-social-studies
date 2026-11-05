@@ -99,10 +99,11 @@ for (const bookName of books) {
           await els[i].screenshot({ path: join(OUT, 'png', `${name}-${String(i + 1).padStart(2, '0')}.png`) });
         }
       }
-      // 한글 파일용 그림: 시안 b 또는 d로 만들 때 한 번만 저장 (그래프 색은 두 시안이 같다)
-      if (nFig && (theme === 'b' || theme === 'd') && !figsSaved) {
+      // 한글 파일용 그림: 시안 b·d·h로 만들 때 한 번만 저장 (그래프 색은 세 시안이 같다)
+      if (nFig && ['b', 'd', 'h'].includes(theme) && !figsSaved) {
         const dir = join(OUT, 'fig', bookName);
         mkdirSync(dir, { recursive: true });
+        for (const f of readdirSync(dir)) if (f.endsWith('.png')) unlinkSync(join(dir, f)); // 예전 번호의 그림이 남지 않게
         for (const el of await page.$$('figure[data-fig]')) {
           const id = await el.getAttribute('data-fig');
           const body = await el.$('.fig-body');

@@ -883,6 +883,8 @@ if ids:
 p = para(before=4, after=2)
 run(p, DATA['dataTitle'], size=9.5, color=NAVY, bold=True)
 for k, v in DATA['data']:
+    if k == '글꼴':
+        continue  # 한글 파일은 맑은 고딕을 쓰므로 PDF용 글꼴 표기는 뺀다
     p = para(after=1.2, spacing=150)
     run(p, k + '  ', size=8, color=TEAL, bold=True)
     run(p, v, size=8)

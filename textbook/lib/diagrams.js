@@ -68,7 +68,7 @@ export function diagram(b, inl) {
       // 왼쪽 → 오른쪽으로 한 칸씩 높아지는 계단. 칸 높이는 글자에 맞추고, 위쪽 여백으로 계단 모양을 만든다
       const n = b.steps.length, rise = b.rise || 7;
       const steps = b.steps.map((s, i) => `<div class="dg-step" style="--t:${tone(i)};margin-top:${(n - 1 - i) * rise}mm"><div class="dg-sh"><span class="dg-sn">${i + 1}</span>${icon(s.icon, { size: 18 })}</div><b>${T(s.title)}</b>${s.text ? `<span>${T(s.text)}</span>` : ''}</div>`).join('');
-      return `<div class="dg dg-stairs">${steps}${b.arrow ? `<div class="dg-sarrow">${T(b.arrow)} ➜</div>` : ''}</div>`;
+      return `<div class="dg dg-stairs">${steps}${b.arrow ? `<div class="dg-sarrow">${T(b.arrow)} →</div>` : ''}</div>`;
     }
     case 'timeline': {
       const ev = b.events.map((e, i) => `<div class="dg-ev" style="--t:${tone(b.mono ? 0 : i)}"><div class="dg-year">${T(e.year)}</div><div class="dg-pin">${icon(e.icon || 'point', { size: 14 })}</div><b>${T(e.title)}</b>${e.text ? `<span>${T(e.text)}</span>` : ''}</div>`).join('');
