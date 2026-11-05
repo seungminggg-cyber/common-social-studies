@@ -382,9 +382,12 @@ def example(b):
             run(x, '  ')
             rich(x, st, size=9.2)
         return
-    ncol = len(d['head'])
+    if d['t'] == 'dialog':  # 대화 자료: 머리 줄 없는 2칸 표로
+        d = {'t': 'table', 'head': None, 'widths': [12, 88], 'rows': d['rows']}
+    head = d.get('head')
+    ncol = len(head) if head else len(d['rows'][0])
     has_stem = bool(b.get('stem'))
-    rows = 1 + has_stem + 1 + len(d['rows']) + 1
+    rows = 1 + has_stem + (1 if head else 0) + len(d['rows']) + 1
     t = table(rows, ncol, d.get('widths') or [1] * ncol)
     p = cell(t, 0, 0, fill=TEAL_SOFT, pad=(4.5, 4.5, 2, 2))
     chip(p, '해석 연습', TEAL, size=8)
@@ -395,11 +398,13 @@ def example(b):
         rich(cell(t, r, 0, pad=(4.5, 4.5, 2.4, 1.2)), b['stem'], size=9, color=GRAY)
         t.merge_cells(r, 0, r, ncol - 1)
         r += 1
-    for c, h in enumerate(d['head']):
+    for c, h in enumerate(head or []):
         q = cell(t, r, c, fill='#EEF2F4', sides=('bottom',), pad=(4.5 if c == 0 else 1.5, 1.5, 1.4, 1.4))
         if c:
             q.para_pr_id_ref = pp(align='CENTER')
         rich(q, h, size=8.8, bold=True)
+    if not head:
+        r -= 1  # 머리 줄이 없으면 자료 줄을 한 칸 위로
     for i, row in enumerate(d['rows']):
         for c, v in enumerate(row):
             o = _cell_obj(v)

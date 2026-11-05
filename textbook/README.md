@@ -60,7 +60,7 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 | `{ t: 'chart', kind: 'bar' }` | 세로 막대 (여러 계열) |
 | `kind: 'hbar'` | 가로 막대, 순위 비교 (`highlight`로 강조) |
 | `kind: 'stack100'` | 100% 누적 막대 (응답 비율) |
-| `kind: 'line'` | 꺾은선, `schematic: true`면 숫자 없는 개념도 (`smooth`, `dash`, `end` 이름표, `vlines` 기준선, `notes` 그래프 안 글씨) |
+| `kind: 'line'` | 꺾은선, `schematic: true`면 숫자 없는 개념도 (`smooth`, `dash`, `end` 이름표(겹치면 `endDy`로 위아래 이동), `vlines` 기준선, `notes` 그래프 안 글씨) |
 | `kind: 'scatter'` | 산점도 (`trend: true` 추세선) |
 | `kind: 'pie'` | 원그래프 (`donut: true`) |
 | `kind: 'climate'` | 기후 그래프 (월평균 기온 + 월 강수량) |

@@ -182,7 +182,7 @@ function line(b) {
     if (vl.label) s += text(sx(vl.x), T - 6, vl.label, { size: 10.5, anchor: 'middle', cls: 'refl' });
   }
   // 그래프 안 글씨 (구간 이름 등): notes: [{ x, y, text }]
-  for (const n of b.notes || []) s += text(sx(n.x), sy(n.y), n.text, { size: n.size || 12, anchor: 'middle', cls: 'refl', weight: 700 });
+  for (const n of b.notes || []) s += text(sx(n.x), sy(n.y), n.text, { size: n.size || 12, anchor: n.anchor || 'middle', cls: 'refl', weight: n.weight ?? 700 });
   // 축
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw + (schem ? 10 : 0)}" y2="${T + ph}" class="axis"${schem ? ' marker-end="url(#ah)"' : ''}/>`;
   s += `<line x1="${L}" y1="${T + ph}" x2="${L}" y2="${T - (schem ? 10 : 0)}" class="axis"${schem ? ' marker-end="url(#ah)"' : ''}/>`;
@@ -204,10 +204,9 @@ function line(b) {
     if (ser.marker) pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="3.4" class="dot s${ser.color || j + 1}"/>`));
     if (ser.end) {
       const p = pts[pts.length - 1];
-      s += text(p[0] + 6, p[1] + 4, ser.end, { size: 11, cls: `endl s${ser.color || j + 1}` });
+      s += text(p[0] + 6, p[1] + 4 + (ser.endDy || 0), ser.end, { size: 11, cls: `endl s${ser.color || j + 1}` }); // endDy: 이름표가 겹칠 때 위아래로 옮김
     }
   });
-  for (const a of b.notes || []) s += text(sx(a.x), sy(a.y), a.text, { size: 10.5, anchor: a.anchor || 'middle', cls: 'note' });
   if (hasLegend) s += legend(b.series.map((x, j) => ({ ...x, cls: `s${x.color || j + 1}` })), W - R - legendWidth(b.series, 11, 'line'), 16, { kind: 'line' });
   return { W, H, s };
 }
