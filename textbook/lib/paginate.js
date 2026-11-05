@@ -27,6 +27,7 @@
     pageNo += 1;
     const el = document.createElement('div');
     el.className = `page page-${sec.dataset.kind} ${pageNo % 2 ? 'odd' : 'even'}`;
+    if (sec.dataset.tab) el.dataset.ch = sec.dataset.tab; // 대단원 번호 → 대단원 색(시안 D)
     el.innerHTML = `
       <div class="edge-tab"><span>${sec.dataset.tab || ''}</span></div>
       <header class="page-head"><span class="ph-left">${sec.dataset.headLeft || ''}</span><span class="ph-right">${sec.dataset.headRight || ''}</span></header>

@@ -23,6 +23,7 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = join(ROOT, 'out');
 const args = process.argv.slice(2);
 const wantPng = args.includes('png');
+const theme = args.includes('b') ? 'b' : 'd'; // 디자인: 기본은 시안 D(교과서형), b를 주면 예전 시안 B
 const picked = ['student', 'teacher', 'answers'].filter((k) => args.includes(k));
 const jobs = picked.length ? picked : ['student', 'teacher', 'answers'];
 
@@ -41,7 +42,7 @@ for (const job of jobs) {
   const part = job === 'answers' ? 'answers' : 'book';
   const mode = job === 'teacher' ? 'teacher' : job === 'answers' ? 'teacher' : 'student';
   // 별책은 대단원을 새 쪽에서 시작하지 않고 이어 붙인다 (자리가 넉넉할 때)
-  const html = renderFull(full, { mode, layout: part === 'answers' ? { ...layout, soft: ['answers'] } : layout, paginateJs, part });
+  const html = renderFull(full, { mode, layout: part === 'answers' ? { ...layout, soft: ['answers'] } : layout, paginateJs, part, theme });
   const base = `book-${job}`;
   const htmlPath = join(OUT, `${base}.html`);
   writeFileSync(htmlPath, html);

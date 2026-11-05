@@ -1,0 +1,4 @@
+/* 시안 D 통합본 보조: 표지·뒤표지 색을 새 색감에 맞춤 */
+.cover { background: linear-gradient(160deg, #1f2b3d 0%, #24384f 100%); }
+.cover::before { background: #1b7f8c; }
+.cover::after { background: #ffe066; }

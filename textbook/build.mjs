@@ -29,13 +29,14 @@ export const THEMES = {
   a: { name: '시안 A · 날개형', layout: { concept: 1, check: 2, exam: 2, answers: 2, soft: ['check'] } },
   b: { name: '시안 B · 카드형', layout: { concept: 1, check: 1, exam: 2, answers: 2, soft: ['check', 'exam'] } },
   c: { name: '시안 C · 2단 노트형', layout: { concept: 2, check: 2, exam: 2, answers: 2, soft: ['check', 'exam'] } },
+  d: { name: '시안 D · 교과서형', layout: { concept: 1, check: 1, exam: 2, answers: 2, soft: ['check', 'exam'] } },
 };
 
 const args = process.argv.slice(2);
 const allBooks = readdirSync(join(ROOT, 'content')).filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort();
 const bookArg = args.find((a) => allBooks.includes(a) || a.split(',').every((x) => allBooks.includes(x)));
 const books = bookArg ? bookArg.split(',') : allBooks.filter((b) => !b.startsWith('z-'));
-const themeArg = args.find((a) => /^(all|[abc](,[abc])*)$/.test(a)) || 'b';
+const themeArg = args.find((a) => /^(all|[abcd](,[abcd])*)$/.test(a)) || 'b';
 const themes = themeArg === 'all' ? Object.keys(THEMES) : themeArg.split(',');
 const modeArg = args.find((a) => ['student', 'teacher', 'both'].includes(a)) || 'student';
 const modes = modeArg === 'both' ? ['student', 'teacher'] : [modeArg];

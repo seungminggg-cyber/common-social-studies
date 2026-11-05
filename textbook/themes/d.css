@@ -1,0 +1,179 @@
+/* 시안 D · 교과서형 — 시안 B(카드형)를 바탕으로 다듬은 실제 교재용 디자인
+ *
+ *  1. 대단원마다 고유 색: 쪽(.page)의 data-ch(Ⅰ~Ⅴ)에 따라 --c1 계열 색이 바뀐다.
+ *  2. 쪽 바깥 가장자리에 대단원 색 인덱스 탭(엄지 색인)
+ *  3. 무거운 남색 덩어리를 줄이고, 대단원 색의 옅은 바탕으로 화사하게
+ *  4. 그래프 색은 대단원과 관계없이 그대로(자료 색이 쪽마다 바뀌지 않게)
+ */
+@import url('b.css');
+
+:root {
+  --navy: #1f2b3d; --ink: #27313c; --gray: #66727c; --line: #e2e7eb;
+  --hl: #ffe066; --warm: #fff8db; --warm-line: #f5b700;
+  --ans: #d6336c;
+  /* 기본(대단원 정보가 없을 때) = Ⅰ 색 */
+  --c1: #1b7f8c; --c1-dark: #135e68; --c1-soft: #e6f3f4; --c1-line: #b5dbe0; --c1-pale: #f4fafb;
+  --fs: 9.6pt; --lh: 1.8;
+}
+
+/* ── 1. 대단원 색 ── */
+.page[data-ch="Ⅰ"] { --c1: #1b7f8c; --c1-dark: #135e68; --c1-soft: #e6f3f4; --c1-line: #b5dbe0; --c1-pale: #f4fafb; }
+.page[data-ch="Ⅱ"] { --c1: #6a4bb4; --c1-dark: #4f378a; --c1-soft: #efeafa; --c1-line: #d2c6ee; --c1-pale: #f8f6fd; }
+.page[data-ch="Ⅲ"] { --c1: #2e8a4c; --c1-dark: #20683a; --c1-soft: #e7f4eb; --c1-line: #bce0c7; --c1-pale: #f4faf6; }
+.page[data-ch="Ⅳ"] { --c1: #c4510f; --c1-dark: #96390a; --c1-soft: #fcefe6; --c1-line: #f1cdb5; --c1-pale: #fef8f3; }
+.page[data-ch="Ⅴ"] { --c1: #2563b8; --c1-dark: #1a4a8c; --c1-soft: #e8f0fb; --c1-line: #bfd3f1; --c1-pale: #f5f8fd; }
+
+body { color: var(--ink); }
+
+/* ── 2. 엄지 색인(대단원 탭) ── */
+.edge-tab { display: block; position: absolute; width: 7mm; height: 26mm; background: var(--c1); color: #fff; z-index: 3;
+  display: grid; place-items: center; font-weight: 900; font-size: 11pt; }
+.page.odd .edge-tab { right: 0; border-radius: 2.5mm 0 0 2.5mm; }
+.page.even .edge-tab { left: 0; border-radius: 0 2.5mm 2.5mm 0; }
+.edge-tab span:empty { display: none; }
+.page[data-ch="Ⅰ"] .edge-tab { top: 38mm; }
+.page[data-ch="Ⅱ"] .edge-tab { top: 68mm; }
+.page[data-ch="Ⅲ"] .edge-tab { top: 98mm; }
+.page[data-ch="Ⅳ"] .edge-tab { top: 128mm; }
+.page[data-ch="Ⅴ"] .edge-tab { top: 158mm; }
+.page[data-ch="답"] .edge-tab, .page:not([data-ch]) .edge-tab, .page[data-ch=""] .edge-tab,
+.page-cover .edge-tab, .page-divider .edge-tab, .page-owner .edge-tab, .page-toc .edge-tab, .page-guide .edge-tab,
+.page-filler .edge-tab, .page-backcover .edge-tab { display: none; }
+
+/* ── 3. 머리글·쪽 번호 ── */
+.page-head { color: var(--gray); }
+.ph-left::before { background: var(--c1); border-radius: 50%; }
+.ph-left b { color: var(--c1-dark); }
+.folio span { background: var(--c1); }
+.strip { border-top-color: var(--c1-line); }
+.strip-label, .sa i { color: var(--c1); }
+
+/* ── 4. 단원 첫머리 ── */
+.opener { background: linear-gradient(120deg, var(--c1-dark) 0%, var(--c1) 100%); }
+.opener::after { border-color: rgba(255,255,255,.10); }
+.opener::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2.2mm; background: rgba(255,255,255,.18); }
+.op-no { border-bottom-color: var(--hl); }
+.op-chapter { color: rgba(255,255,255,.82); }
+.goal-box { border-color: var(--c1-line); box-shadow: 0 1.5mm 4mm rgba(20,40,60,.08); }
+.goal-label { color: var(--c1); }
+.goal-p { background: var(--warm); border-color: #f4e2a1; }
+.goal-p .goal-label { color: #b7791f; }
+
+/* ── 5. 제목 ── */
+.sec { color: var(--navy); }
+.sec::after { background: var(--c1-line); height: 1.5px; }
+.sec-mark { background: var(--c1); border-radius: 1.6mm; padding: .2mm 2.8mm; }
+.item { color: var(--navy); }
+.item-no { background: var(--c1); color: #fff; }
+
+/* ── 6. 목록·카드 ── */
+.ul li::before { border-color: var(--c1); background: var(--c1-soft); }
+.ol-n { color: var(--c1); }
+.kv { border-left-color: var(--c1); background: var(--c1-pale); }
+.kv th span { color: var(--c1-dark); background: var(--c1-soft); }
+.kv tr + tr > * { border-top-color: var(--c1-soft); }
+
+/* 개념 더하기 */
+.note { background: var(--c1-pale); border: 1px solid var(--c1-soft); border-left: 3px solid var(--c1); }
+.note-tag { background: var(--c1); }
+.note-title { color: var(--c1-dark); }
+
+/* 표 */
+.tbl { border: 1px solid var(--c1-line); }
+.tbl thead th { background: var(--c1-soft); color: var(--c1-dark); border-bottom: 1.5px solid var(--c1-line); }
+.tbl tbody tr > * { border-bottom-color: #edf0f2; }
+.tbl tbody tr:last-child > * { border-bottom: 0; }
+.tbl td.em, .tbl th.em, .tbl .em { color: var(--c1-dark); }
+.tbl-title { color: var(--navy); }
+.tbl-title::before { content: ''; display: inline-block; width: 1.3mm; height: 3.4mm; background: var(--c1); border-radius: .6mm; margin-right: 1.8mm; vertical-align: -.5mm; }
+.q-data .tbl-title::before, .ex-body .tbl-title::before { display: none; }
+.q-data .tbl { border: 0; }
+
+/* 비교 */
+.cmp-col { background: var(--c1-pale); border-color: var(--c1-soft); }
+.cmp-h { color: var(--c1-dark); }
+
+/* 자료 읽기: 남색 띠 → 대단원 색의 옅은 띠 */
+.source { border-color: var(--c1-line); }
+.src-tab { background: var(--c1-soft); color: var(--c1-dark); border-bottom: 1px solid var(--c1-line); }
+.src-label { background: var(--c1); color: #fff; }
+.src-title { color: var(--navy); font-weight: 800; }
+.src-interp { background: var(--c1-pale); border-top: 1px dashed var(--c1-line); }
+.interp-label { background: var(--c1); }
+
+/* 해석 연습 */
+.example { border-color: var(--c1); border-width: 1.4px; }
+.ex-tab { background: var(--c1); border-bottom: 0; }
+.ex-label { background: #fff; color: var(--c1-dark); }
+.ex-title { color: #fff; }
+.ex-n { color: #fff; background: var(--c1); }
+.ex-stem { color: #4d5a64; }
+
+/* 승민T 한마디 */
+.tip { border-left-color: var(--warm-line); background: var(--warm); }
+.tip-avatar { background: var(--c1); color: #fff; }
+.tip-name { color: var(--c1-dark); }
+
+/* 흐름 */
+.flow li { background: var(--c1-pale); border-top-color: var(--c1); }
+.flow li + li::before, .fl-no { color: var(--c1); }
+.chain { border-color: var(--c1-line); background: var(--c1-pale); }
+.ch-step { background: var(--c1); }
+.ch-arrow { color: var(--c1); }
+
+/* 빈칸 */
+.blank { border-bottom-color: var(--c1-dark); }
+.blank .bn { color: var(--c1); }
+mark { background: linear-gradient(transparent 56%, var(--hl) 56%); }
+
+/* 띠 제목 (개념 확인 / 수능형 문제 / 정답) */
+.band { background: var(--c1-dark); }
+.band-check { background: var(--c1); }
+.band-unit { color: rgba(255,255,255,.75); }
+.band-check .band-unit { color: rgba(255,255,255,.85); }
+.ins::before { background: var(--c1); }
+.ck-no { color: var(--c1); }
+.ox, .fillq { border-bottom-color: #e8ecef; }
+
+/* 수능형 문제 */
+.q-no { background: var(--c1); }
+.lv-중 { color: var(--c1); }
+.ans-unit { background: var(--c1-soft); }
+.ans-unit b, .ans-label, .ans-list b { color: var(--c1); }
+.aq-no { background: var(--c1); }
+
+/* 그림 상자 */
+.fig-title { color: var(--navy); }
+.fig-title::before { background: var(--c1); }
+.row-chart .main, .row-map .main, .row-venn .main, .row-figrow .main { border-color: #e3e8ec; box-shadow: 0 .8mm 2.4mm rgba(20,40,60,.04); }
+
+/* ── 7. 사상가 카드: 대단원 색 머리 + 이름 첫 글자 동그라미 ── */
+.tk-head { background: linear-gradient(110deg, var(--c1-dark), var(--c1)); position: relative; padding-right: 20mm; }
+.tk-head::after { content: attr(data-initial); position: absolute; right: 4.5mm; top: 50%; transform: translateY(-50%); width: 12mm; height: 12mm; border-radius: 50%;
+  background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.45); display: grid; place-items: center; font-size: 13pt; font-weight: 900; color: #fff; }
+.tk-era { color: rgba(255,255,255,.8); }
+.tk-key { background: rgba(255,255,255,.95); color: var(--c1-dark); }
+.tk-label { color: var(--c1); }
+.tk-label::before { background: var(--c1); }
+.tk-n { background: var(--c1); color: #fff; }
+.tk-q { border-left-color: var(--c1); background: var(--c1-pale); }
+.tk-qnote .tk-ql { background: var(--c1); }
+.tk-qnote b { color: var(--c1-dark); }
+.tk-a .o { background: var(--c1); }
+.tk-cont { background: var(--c1); }
+.tk-cont span { color: rgba(255,255,255,.8); }
+.row-tk .main { border-color: var(--c1-line); }
+.row-tk.tk-last .main { border-bottom-color: var(--c1-line); }
+
+/* 정리 노트 */
+.memo { border-color: var(--c1-line); background: #fff; }
+.memo-tag { background: var(--c1); }
+.memo-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), var(--c1-soft) calc(7.6mm - 1px), var(--c1-soft) 7.6mm); }
+
+/* ── 8. 간지: 대단원 색 ── */
+.page-divider .divider { background: linear-gradient(150deg, var(--c1-dark) 0%, var(--c1) 70%); }
+.page-divider .divider::before { background: rgba(255,255,255,.12); opacity: 1; }
+.page-divider .dv-label, .page-divider .dv-units i { color: rgba(255,255,255,.8); }
+.page-divider .dv-keys { background: rgba(0,0,0,.14); }
+.page-plan .plan-t th { background: var(--c1-soft); color: var(--c1-dark); border-bottom-color: var(--c1); }
+.page-plan .plan-t td.pl-u b, .page-plan .plan-how b { color: var(--c1); }

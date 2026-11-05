@@ -157,7 +157,7 @@ function thinkerRows(b) {
   const keys = (b.keywords || []).map((k) => `<span class="tk-key">${inl(k)}</span>`).join('');
   const terms = b.terms
     ? `<dl class="tk-terms">${b.terms.map(([k, v]) => `<div><dt>${inl(k)}</dt><dd>${inl(v)}</dd></div>`).join('')}</dl>` : '';
-  parts.push(`<div class="tk tk-head"><div class="tk-top"><span class="tk-name">${inl(b.name)}</span>${
+  parts.push(`<div class="tk tk-head" data-initial="${esc([...String(b.name)][0])}"><div class="tk-top"><span class="tk-name">${inl(b.name)}</span>${
     b.era ? `<span class="tk-era">${esc(b.era)}</span>` : ''}</div>${keys ? `<div class="tk-keys">${keys}</div>` : ''}</div>`
     + `<div class="tk tk-body"><div class="tk-label">핵심 주장</div><ol class="tk-claims">${b.claims
       .map((c, i) => `<li><span class="tk-n">${i + 1}</span><span>${inl(c)}</span></li>`).join('')}</ol>${terms}</div>`);
@@ -307,7 +307,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme} mode-${mode}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
@@ -320,7 +320,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 // part 'answers' : 별책 정답과 해설 (표지 → 대단원별 정답과 해설)
 // 간지(data-odd)는 양면 인쇄에서 늘 오른쪽(홀수) 쪽에 오도록 paginate.js가 필요할 때 메모 쪽을 끼운다.
 // 쪽 번호가 필요한 곳은 data-pg="찾을 id" 를 달아 두면 쪽 나누기가 끝난 뒤 채워진다.
-export function renderFull(full, { mode, layout, paginateJs, part = 'book' }) {
+export function renderFull(full, { mode, layout, paginateJs, part = 'book', theme = 'b' }) {
   const { subject, chapters } = full;
   const sections = [];
   const add = (kind, attrs, inner) => sections.push(`<section class="flow" data-kind="${kind}" ${attrs || ''}>${inner}</section>`);
@@ -407,7 +407,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book' }) {
       const d = full.dividers?.[ch.chapter.no] || {};
       const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
       // 간지 (오른쪽 쪽)
-      add('divider', `data-odd="1"`, `<div class="top" id="ch${ci}"><div class="divider">
+      add('divider', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}"><div class="divider">
         <div class="dv-bg">${esc(ch.chapter.no)}</div>
         <div class="dv-label">대단원 ${ci + 1}</div>
         <div class="dv-no">${esc(ch.chapter.no)}</div>
@@ -463,10 +463,11 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book' }) {
   src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
 </style>
 <link rel="stylesheet" href="../themes/base.css">
-<link rel="stylesheet" href="../themes/b.css">
+<link rel="stylesheet" href="../themes/${theme}.css">
 <link rel="stylesheet" href="../themes/book.css">
+${theme === 'd' ? '<link rel="stylesheet" href="../themes/d-book.css">' : ''}
 </head>
-<body class="theme-b mode-${mode} full-book part-${part}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme} mode-${mode} full-book part-${part}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
