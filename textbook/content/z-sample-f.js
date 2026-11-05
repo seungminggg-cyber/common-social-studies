@@ -1,4 +1,4 @@
-// 시안 F 견본 — 통합사회2 04 '정의의 의미와 실질적 기준'에 개념 카드를 붙인 것
+// 시안 F·G 견본 — 통합사회2 04 '정의의 의미와 실질적 기준'에 개념 카드를 붙인 것
 // 본문(_t2-2/u04.js)은 그대로 두고, 여기서 개념 번호·출제 빈도·기출 표시·이렇게 나온다·한 장 정리를 덧붙인다.
 //
 // 출제 빈도(별점)는 참고/기출분류.json(2028 수능 예시문항 + 2025~2026 고1·고2 학평 8회)에서
@@ -20,7 +20,7 @@ function unwrap(no) {
   if (it.side) body[body.length - 1].side = it.side;
   return body;
 }
-const photo = find((b) => b.t === 'photo');
+const photo = { ...find((b) => b.t === 'photo'), width: 34, h: 50 }; // 견본: 첫 쪽에 들어가게 조금 작게
 
 const concept = [
   sec('A'),
@@ -33,7 +33,7 @@ const concept = [
     ['정의의 구체적 내용은 시대와 사회가 달라져도 변하지 않는다.', 'X', '구체적 내용은 달라질 수 있다. 변하지 않는 것은 정의가 보편적 가치라는 점이다.'],
   ] },
 
-  { t: 'concept', no: '02', title: '정의의 종류 — 분배적·교정적·교환적 정의', stars: 1 },
+  { t: 'concept', no: '02', title: '정의의 종류 — 분배적·교정적·교환적 정의', stars: 1, tags: ['헷갈림 주의'] },
   ...unwrap('2'),
   byName('아리스토텔레스'),
   { t: 'pattern', items: [
@@ -58,7 +58,7 @@ const concept = [
     ['공리주의는 형벌의 근거를 오직 과거의 범죄 행위에서 찾는다.', 'X', '공리주의는 범죄 예방이라는 미래의 이익에서 근거를 찾는다.'],
   ] },
 
-  { t: 'concept', no: '05', title: '형벌 사상가 — 칸트·벤담·베카리아', stars: 2, hits: ['2028 수능 예시', '2026.3 고2'] },
+  { t: 'concept', no: '05', title: '형벌 사상가 — 칸트·벤담·베카리아', stars: 2, hits: ['2028 수능 예시', '2026.3 고2'], tags: ['헷갈림 주의'] },
   byName('칸트'),
   byName('벤담'),
   byName('베카리아'),
@@ -70,7 +70,7 @@ const concept = [
   ] },
 
   sec('C'),
-  { t: 'concept', no: '06', title: '분배의 세 기준 — 업적·능력·필요', stars: 2, hits: ['2026.6 고2', '2026.9 고2'] },
+  { t: 'concept', no: '06', title: '분배의 세 기준 — 업적·능력·필요', stars: 2, hits: ['2026.6 고2', '2026.9 고2'], tags: ['자료 해석'] },
   byTitle('table', '분배의 세 가지 기준'),
   byTitle('source', '능력에 따른 선발은 언제나 공정할까'),
   { t: 'pattern', items: [

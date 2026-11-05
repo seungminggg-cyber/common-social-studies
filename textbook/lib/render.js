@@ -129,12 +129,15 @@ function block(b) {
           b.dialog ? block({ t: 'dialog', rows: b.dialog }) : ''}${b.text ? `<p class="p serif">${inl(b.text)}</p>` : ''}</div>
         <div class="src-interp"><span class="interp-label">해석</span>${inl(b.interp)}</div></div>`;
     case 'concept': {
-      // 개념 카드 머리: 번호 + 제목 + 출제 빈도 별점 + 기출 표시
+      // 개념 카드 머리: 번호 + 제목(+기출 표시) + 출제 빈도 별점·스티커 + 회독 체크
       const st = Math.max(1, Math.min(3, b.stars || 1));
       const hits = (b.hits || []).map((h) => `<span class="cc-hit">${esc(h)}</span>`).join('');
-      return `<div class="cc-head"><span class="cc-no"><small>개념</small>${esc(b.no)}</span><span class="cc-title">${inl(b.title)}</span>`
-        + `<span class="cc-freq"><i>${'★'.repeat(st)}<s>${'★'.repeat(3 - st)}</s></i><em>${esc(FREQ[st])}</em></span></div>`
-        + (hits ? `<div class="cc-hits"><span class="cc-hl">기출</span>${hits}</div>` : '');
+      const tags = [...(st === 3 ? ['자주 나옴'] : []), ...(b.tags || [])]
+        .map((t) => `<span class="stk stk-${STICKER[t]?.[0] || 'etc'}">${icon(STICKER[t]?.[1] || 'tag', { size: 11, cls: 'ic stk-ic', stroke: 2.2 })}${esc(t)}</span>`).join('');
+      return `<div class="cc st${st}"><span class="cc-no"><small>개념</small>${esc(b.no)}</span>`
+        + `<div class="cc-mid"><div class="cc-title">${inl(b.title)}</div>${hits ? `<div class="cc-hits"><span class="cc-hl">기출</span>${hits}</div>` : ''}</div>`
+        + `<div class="cc-side"><span class="cc-freq"><i>${'★'.repeat(st)}<s>${'★'.repeat(3 - st)}</s></i><em>${esc(FREQ[st])}</em></span>${tags ? `<span class="cc-stks">${tags}</span>` : ''}`
+        + `<span class="cc-rev">회독<i></i><i></i><i></i></span></div></div>`;
     }
     case 'pattern':
       // 이렇게 나온다: 기출 선지 모양의 문장 O/X (문장은 새로 씀)
@@ -198,6 +201,8 @@ function thinkerRows(b) {
 
 // 개념 부분 전체 → 줄(row)들. 개념 머리(concept) 뒤부터 다음 개념·큰 제목(sec) 전까지는 카드 안(in-cc)
 const FREQ = { 3: '자주 나옴', 2: '나옴', 1: '기본 개념' };
+// 개념 머리 스티커: 이름 → [색 종류, 아이콘]
+const STICKER = { '자주 나옴': ['hot', 'flame'], '헷갈림 주의': ['warn', 'alert-triangle'], '자료 해석': ['data', 'chart-bar'], '계산': ['calc', 'calculator'] };
 function conceptHtml(list) {
   let inC = false;
   return list.map((b) => {
@@ -384,7 +389,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/400.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/600.css">
 <link rel="stylesheet" href="../node_modules/@fontsource/nanum-pen-script/400.css">
-${theme === 'e' || theme === 'f' ? '<link rel="stylesheet" href="../node_modules/@fontsource-variable/hahmlet/index.css">' : ''}
+${['e', 'f', 'g'].includes(theme) ? '<link rel="stylesheet" href="../node_modules/@fontsource-variable/hahmlet/index.css">' : ''}
 <style>
 @font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: block;
   src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
@@ -392,7 +397,7 @@ ${theme === 'e' || theme === 'f' ? '<link rel="stylesheet" href="../node_modules
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme} mode-${mode}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>

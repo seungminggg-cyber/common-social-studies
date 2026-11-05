@@ -33,13 +33,14 @@ export const THEMES = {
   d: { name: '시안 D · 교과서형', layout: { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
   e: { name: '시안 E · 시험지와 판서', layout: { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
   f: { name: '시안 F · 기출 데이터형', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
+  g: { name: '시안 G · 기출 데이터형(차분한 판)', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
 };
 
 const args = process.argv.slice(2);
 const allBooks = readdirSync(join(ROOT, 'content')).filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort();
 const bookArg = args.find((a) => allBooks.includes(a) || a.split(',').every((x) => allBooks.includes(x)));
 const books = bookArg ? bookArg.split(',') : allBooks.filter((b) => !b.startsWith('z-'));
-const themeArg = args.find((a) => /^(all|[a-f](,[a-f])*)$/.test(a)) || 'd'; // 기본 디자인: 시안 D(강사 확정, 2026-11)
+const themeArg = args.find((a) => /^(all|[a-g](,[a-g])*)$/.test(a)) || 'd'; // 기본 디자인: 시안 D(강사 확정, 2026-11)
 const themes = themeArg === 'all' ? Object.keys(THEMES) : themeArg.split(',');
 const modeArg = args.find((a) => ['student', 'teacher', 'both'].includes(a)) || 'student';
 const modes = modeArg === 'both' ? ['student', 'teacher'] : [modeArg];

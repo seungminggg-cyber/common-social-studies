@@ -53,16 +53,19 @@
 .slot > .row-concept { margin-top: 6mm; }
 .slot > .row-concept:first-child { margin-top: 0; }
 .row-concept .main { background: var(--c1); color: #fff; border-radius: 2.4mm 2.4mm 2.4mm 0; padding: 2.4mm 4mm 2.2mm 3mm; }
-.cc-head { display: flex; align-items: center; gap: 3mm; }
+.cc { display: flex; align-items: center; gap: 3mm; }
+.cc-mid { flex: 1; min-width: 0; }
+.cc-side { flex: none; text-align: right; }
+.cc-stks, .cc-rev { display: none; }
 .cc-no { flex: none; display: flex; flex-direction: column; align-items: center; line-height: 1; background: #fff; color: var(--c1-dark);
   border-radius: 1.6mm; padding: 1.1mm 2.2mm 1.3mm; font-weight: 900; font-size: 14pt; }
 .cc-no small { font-size: 6.4pt; font-weight: 800; margin-bottom: .5mm; color: var(--c1); }
-.cc-title { flex: 1; min-width: 0; font-size: 12.5pt; font-weight: 800; letter-spacing: -.3px; line-height: 1.35; }
+.cc-title { font-size: 12.5pt; font-weight: 800; letter-spacing: -.3px; line-height: 1.35; }
 .cc-freq { flex: none; text-align: right; line-height: 1.1; }
 .cc-freq i { font-style: normal; color: var(--star); font-size: 12.5pt; letter-spacing: 1px; }
 .cc-freq i s { text-decoration: none; color: var(--star-off); }
 .cc-freq em { display: block; font-style: normal; font-size: 7pt; font-weight: 700; color: rgba(255,255,255,.88); margin-top: .5mm; }
-.cc-hits { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2mm; margin: 1.8mm 0 0 0; font-size: 7.4pt; line-height: 1.5; }
+.cc-hits { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2mm; margin: 1.2mm 0 0 0; font-size: 7.4pt; line-height: 1.5; }
 .cc-hl { font-weight: 800; color: var(--c1-deep); background: var(--star); border-radius: 99px; padding: 0 2.2mm; }
 .cc-hit { border: 1px solid rgba(255,255,255,.65); border-radius: 99px; padding: 0 2.2mm; color: #fff; font-weight: 600; }
 .cc-basic { color: rgba(255,255,255,.88); }

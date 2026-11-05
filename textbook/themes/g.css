@@ -1,0 +1,104 @@
+/* 시안 G · 기출 데이터형(차분한 판) — 시안 F의 구조 + 시안 D의 차분한 겉모습
+ *
+ *  1. F에서 가져온 것: 개념 번호, 출제 빈도 별점, 기출 표시, '이렇게 나온다', 한 장 정리, 시험지형 문제
+ *  2. 진한 색은 한 곳만: 개념 번호 칸. 쪽 위 띠·표 머리·비교·자료 읽기는 옅은 색으로 되돌림
+ *  3. 학생이 손이 가는 장치: 개념마다 '회독 ☐☐☐' 체크, 스티커 표시(자주 나옴·헷갈림 주의·자료 해석)
+ *  4. 단원 색은 탁하지 않고 산뜻하게, 넓은 바탕은 아주 옅게
+ */
+@import url('f.css');
+
+/* 대단원 색: 맑은 톤 */
+.page[data-ch="Ⅰ"] { --c1: #0e8a8d; --c1-dark: #0a6466; --c1-deep: #084c4e; --c1-soft: #e2f3f3; --c1-line: #b2dcdd; --c1-pale: #f3fafa; }
+.page[data-ch="Ⅱ"] { --c1: #6650cf; --c1-dark: #4a389f; --c1-deep: #382a7c; --c1-soft: #eeeafb; --c1-line: #d3cbf4; --c1-pale: #f8f7fe; }
+.page[data-ch="Ⅲ"] { --c1: #22925a; --c1-dark: #176e42; --c1-deep: #115532; --c1-soft: #e3f4ea; --c1-line: #b4e0c6; --c1-pale: #f3faf6; }
+.page[data-ch="Ⅳ"] { --c1: #dc6519; --c1-dark: #a5480c; --c1-deep: #7e3708; --c1-soft: #fdeee3; --c1-line: #f5ceb2; --c1-pale: #fff8f3; }
+.page[data-ch="Ⅴ"] { --c1: #2a6dd4; --c1-dark: #1c4f9e; --c1-deep: #153c79; --c1-soft: #e7effc; --c1-line: #bfd2f3; --c1-pale: #f5f8fe; }
+:root { --ink: #27313c; --hot: #e8590c; --warn: #d6336c; --data: #1c7ed6; --calc: #2f9e44; }
+
+/* ── 쪽 위: 진한 띠 → D처럼 가는 머리글 + 아래 선 ── */
+.page-head, .page.even .page-head { margin: 0; padding: 0; height: var(--head-h, 9mm); background: none; color: var(--gray); font-size: 7.4pt; border-bottom: 1px solid var(--c1-line); margin-bottom: 3mm; }
+.ph-left b { color: var(--c1-dark); }
+.ph-left::before { background: var(--c1); }
+.ph-right { color: var(--gray); font-weight: 500; }
+.edge-tab { box-shadow: none; }
+.folio span { background: var(--c1); }
+
+/* ── 단원 첫 쪽: D의 띠 + 개념 목록은 옅게 ── */
+.opener { background: linear-gradient(120deg, var(--c1-dark) 0%, var(--c1) 100%); }
+.op-no { border-bottom-color: #ffd43b; }
+.cc-index { border: 1px solid var(--c1-line); background: #fff; }
+.cc-index-h { background: var(--c1-soft); color: var(--c1-dark); }
+.cc-index-h span { color: var(--gray); }
+.cc-index li b { color: var(--c1); }
+
+/* ── 큰 묶음(A·B) ── */
+.sec-mark { background: var(--c1); border-radius: 2.2mm; }
+.sec::after { height: 1.5px; background: var(--c1-line); }
+
+/* ── 개념 머리: 진한 색은 번호 칸 하나, 나머지는 흰 바탕 ── */
+.row-concept .main { background: #fff; color: var(--ink); border-radius: 0; padding: 0 0 2.2mm; border-bottom: 1.6px solid var(--c1); }
+.cc { display: flex; align-items: center; gap: 3.4mm; }
+.cc-no { background: var(--c1); color: #fff; border-radius: 2.2mm; padding: 1.4mm 2.6mm 1.6mm; font-size: 15pt; min-width: 12mm; box-shadow: 0 1mm 2.4mm color-mix(in srgb, var(--c1) 28%, transparent); }
+.cc-no small { color: rgba(255,255,255,.85); }
+.cc-mid { flex: 1; min-width: 0; }
+.cc-title { font-size: 13.5pt; font-weight: 800; color: #1c2530; letter-spacing: -.4px; line-height: 1.32; }
+.cc-hits { margin-top: 1mm; gap: 1mm; font-size: 7.3pt; }
+.cc-hl { background: none; color: var(--gray); padding: 0 .6mm 0 0; font-weight: 700; }
+.cc-hit { border: 0; background: var(--c1-soft); color: var(--c1-dark); border-radius: 1.2mm; padding: 0 1.8mm; font-weight: 700; }
+.cc-side { flex: none; display: grid; grid-template-columns: auto auto; justify-items: end; align-items: center; column-gap: 1.6mm; row-gap: 1.2mm; }
+.cc-side > :only-child, .cc-rev { grid-column: 1 / -1; }
+.cc.st3 .cc-freq em { display: none; } /* '자주 나옴' 스티커와 겹치지 않게 */
+.cc-freq { display: flex; align-items: baseline; gap: 1.4mm; }
+.cc-freq i { color: #f5a300; font-size: 12pt; }
+.cc-freq i s { color: #e4e8ec; }
+.cc-freq em { display: inline; margin: 0; color: var(--gray); font-size: 7.2pt; }
+/* 스티커 */
+.cc-stks { display: flex; gap: 1mm; flex-wrap: wrap; justify-content: flex-end; }
+.stk { display: inline-flex; align-items: center; gap: .7mm; font-size: 7pt; font-weight: 800; border-radius: 99px; padding: .1mm 2mm .1mm 1.5mm; color: #fff; line-height: 1.6; }
+.stk-ic { flex: none; }
+.stk-hot { background: var(--hot); } .stk-warn { background: var(--warn); } .stk-data { background: var(--data); } .stk-calc { background: var(--calc); } .stk-etc { background: var(--gray); }
+/* 회독 체크 */
+.cc-rev { display: inline-flex; align-items: center; gap: .9mm; font-size: 6.8pt; font-weight: 700; color: var(--gray); }
+.cc-rev i { width: 3.4mm; height: 3.4mm; border: 1.2px solid var(--c1-line); border-radius: .8mm; background: #fff; }
+.cc-rev::before { content: ''; }
+
+/* 카드 안 내용: 왼쪽 띠를 가늘고 옅게 */
+.row.in-cc { padding-left: 4.2mm; }
+.row.in-cc::before { width: 1mm; background: var(--c1-soft); border-radius: 1mm; }
+.row-concept + .row.in-cc::before { top: calc(-1 * var(--gap) + 1.2mm); }
+
+/* ── 이렇게 나온다 ── */
+.pat { border: 1px solid var(--c1-line); border-radius: 2.4mm; }
+.pat-h { background: var(--c1-pale); }
+.pat-h::before { background: var(--hot); }
+.pat li + li { border-top-color: var(--c1-soft); }
+
+/* ── 표·용어·비교·자료: D처럼 옅게 ── */
+.tbl { border: 1px solid var(--c1-line); }
+.tbl thead th { background: var(--c1-soft); color: var(--c1-dark); border-bottom: 1.5px solid var(--c1-line); }
+.tbl tbody tr:nth-child(even) > * { background: none; }
+.kv th span { background: var(--c1-soft); color: var(--c1-dark); }
+.cmp-col { border: 1px solid var(--c1-line); background: var(--c1-pale); padding-top: 0; }
+.cmp-h { background: none; color: var(--c1-dark); border-bottom: 1px solid var(--c1-line); margin: 0 -4mm 1.6mm; }
+.cmp-col + .cmp-vs + .cmp-col { border-color: #f3c4d4; background: #fff7fa; }
+.cmp-col + .cmp-vs + .cmp-col .cmp-h { background: none; color: var(--warn); border-bottom-color: #f3c4d4; }
+.source { border: 1px solid var(--c1-line); }
+.src-tab { background: var(--c1-soft); border-bottom: 1px solid var(--c1-line); }
+.src-label { background: var(--c1); color: #fff; }
+.src-title { color: var(--navy); }
+.note { border-left-width: 3px; }
+.note-tag { background: var(--c1); }
+
+/* ── 한 장 정리: 핵심 상자만 진하게 ── */
+.band-summary { background: var(--c1-dark); }
+.sm-bh { background: var(--c1-soft); color: var(--c1-dark); border: 1px solid var(--c1-line); }
+.sm-bh span { background: var(--c1); color: #fff; }
+.sm-c { border-left-color: var(--c1-line); }
+.sm-c.st3 { border-left-color: #f5a300; }
+.sm-traps { border-color: #f3c4d4; }
+.sm-th { background: #fff0f5; color: var(--warn); border-bottom: 1px solid #f3c4d4; }
+.sm-checks { border-color: var(--c1-line); }
+.sm-kh { background: var(--c1-pale); }
+
+/* ── 수능형 문제: 번호를 단원 색 네모로(시험지형 명조는 F와 같음) ── */
+.q-no { background: var(--c1); }
