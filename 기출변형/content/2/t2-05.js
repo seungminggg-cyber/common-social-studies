@@ -208,9 +208,10 @@ export default [
       series: [
         { name: '평등선', points: [[0, 0], [7.5, 7.5]], dash: true, color: 2 },
         { name: '이익 곡선', points: [[0, 0], [2, 1.8], [4, 3.2], [6, 4], [8, 3.5], [10, 2.4]], smooth: true, color: 1 },
+        { name: '점', points: [[2, 1.8], [4, 3.2], [6, 4], [8, 3.5]], smooth: true, color: 1, marker: true },
       ],
       legend: false,
-      notes: [{ x: 2, y: 2.5, text: 'A' }, { x: 4, y: 3.9, text: 'B' }, { x: 6, y: 4.7, text: 'C' }, { x: 8, y: 4.2, text: 'D' }],
+      notes: [{ x: 2.3, y: 1.0, text: 'A' }, { x: 4.3, y: 2.4, text: 'B' }, { x: 6, y: 3.2, text: 'C' }, { x: 8, y: 2.7, text: 'D' }],
       note: '점선 위의 점은 두 사람의 이익이 같은 상태이다. 곡선 위의 A~D는 서로 다른 사회 제도에서 두 사람이 얻는 이익이며, 기본적 자유와 공정한 기회균등은 모두 보장된다.' }],
     choices: [
       'A는 B보다 두 사람의 이익 차이가 작으므로 롤스는 A를 더 정의롭다고 볼 것이다.',
