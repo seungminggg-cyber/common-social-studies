@@ -80,6 +80,24 @@ async function emit(name, html, data) {
   await page.goto(pathToFileURL(htmlPath).href);
   await page.waitForFunction(() => window.PAGINATED === true, null, { timeout: 600000 });
   const { pages, warn } = await page.evaluate(() => ({ pages: window.PAGES, warn: window.WARN }));
+  // 넘침 검사: 단 밖으로 나간 내용, 단보다 넓은 그림·표
+  const over = await page.evaluate(() => {
+    const out = [];
+    document.querySelectorAll('.page').forEach((pg, i) => {
+      const no = i + 1;
+      pg.querySelectorAll('.slot').forEach((s) => { if (s.scrollHeight > s.clientHeight + 2) out.push(`${no}쪽: 단 아래로 넘침`); });
+      pg.querySelectorAll('.slot').forEach((s) => {
+        const sr = s.getBoundingClientRect();
+        s.querySelectorAll('svg, table, img, .figrow').forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width > 0 && (r.right > sr.right + 3 || r.left < sr.left - 3)) out.push(`${no}쪽: 단보다 넓음 (${el.tagName.toLowerCase()} ${Math.round(r.width)}px > ${Math.round(sr.width)}px) — ${(el.closest('.row')?.querySelector('.q-stem')?.textContent || '').slice(0, 30)}`);
+        });
+      });
+      pg.querySelectorAll('.q-head').forEach((h) => { if (h.getBoundingClientRect().height > 40) out.push(`${no}쪽: 문제 머리 두 줄 — ${h.textContent.trim().slice(0, 30)}`); });
+    });
+    return out;
+  });
+  if (over.length) console.warn(`[${name}] 넘침 검사:\n  ` + [...new Set(over)].join('\n  '));
   if (warn.length) console.warn(`[${name}] 경고:\n  ` + warn.join('\n  '));
   await page.pdf({ path: join(OUT, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
   if (wantPng) {

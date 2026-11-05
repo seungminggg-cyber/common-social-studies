@@ -17,7 +17,10 @@ function conceptLabel(q, unit) {
   if (!list.length || !unit) return '';
   if (list.length > 1) return `<span class="q-cc">개념 ${list.join('·')}</span>`;
   const c = unit.concepts.find((x) => x.no === list[0]);
-  return `<span class="q-cc">개념 ${list[0]}${c ? `<em>${inl(c.title.split(' — ')[0])}</em>` : ''}</span>`;
+  // 개념 이름이 길면 문제 머리가 두 줄로 꺾이므로 번호만 쓴다
+  const t = c ? c.title.split(' — ')[0] : '';
+  const room = 19 - String(q.level || '').length - String(q.type || '').length;
+  return `<span class="q-cc">개념 ${list[0]}${t && t.length <= room ? `<em>${inl(t)}</em>` : ''}</span>`;
 }
 
 // 문항 하나 (opts.mock: 모의고사 — 난이도·개념 대신 배점)

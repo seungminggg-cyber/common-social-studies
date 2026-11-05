@@ -31,7 +31,9 @@ async function load(e) {
   }
   const md = join(dir, 'mock');
   if (existsSync(md)) for (const f of readdirSync(md).filter((x) => /^m\d+\.js$/.test(x))) (await import(pathToFileURL(join(md, f)).href)).default.questions.forEach((q) => qs.push(q));
-  return qs.map((q) => ({ q, data: shingles(text(q.data) + text(q.bogi)), ch: q.choices.map((c) => shingles(c)), dataLen: norm(text(q.data)).length }));
+  // 숫자(연도 축 등)는 빼고 비교한다
+  const nd = (s) => s.replace(/[0-9]/g, '');
+  return qs.map((q) => ({ q, data: shingles(nd(text(q.data) + text(q.bogi))), ch: q.choices.map((c) => shingles(nd(c))), dataLen: norm(nd(text(q.data))).length }));
 }
 
 const A = await load(ed);
@@ -40,9 +42,9 @@ let n = 0;
 for (let i = 0; i < A.length; i++) {
   for (let j = vs ? 0 : i + 1; j < B.length; j++) {
     const a = A[i], b = B[j];
-    const d = a.dataLen > 30 && b.dataLen > 30 ? jac(a.data, b.data) : 0;
+    const d = a.dataLen > 60 && b.dataLen > 60 ? jac(a.data, b.data) : 0;
     let same = 0;
-    for (const x of a.ch) for (const y of b.ch) if (x.size > 6 && y.size > 6 && jac(x, y) >= 0.8) same++;
+    for (const x of a.ch) for (const y of b.ch) if (x.size > 14 && y.size > 14 && jac(x, y) >= 0.8) same++;
     if (d >= 0.45 || same >= 2) {
       n++;
       console.log(`${a.q.id} ↔ ${b.q.id}  자료 ${(d * 100).toFixed(0)}% · 같은 선지 ${same}개`);
@@ -71,6 +73,9 @@ if (srcDir) {
       }
       if (run >= 6) found.push(best);
     }
+    // 숫자만 이어진 조각(연도 축), 헌법·법 조문 인용(공문서라 저작권 대상 아님)은 뺀다
+    const real = found.filter((x) => (x.match(/[0-9]/g) || []).length < x.length * 0.4 && !/^제\d+조|헌법제\d+조|^\d*조/.test(x));
+    found.length = 0; found.push(...real);
     if (found.length) { hits++; console.log(`[원문과 같음] ${q.id}: ${found.map((x) => x.slice(0, 40)).join(' / ')}`); }
   }
   console.log(`원문과 긴 조각이 같은 문항 ${hits}개`);
