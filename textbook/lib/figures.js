@@ -453,7 +453,42 @@ function map(b) {
   return { W, H, s };
 }
 
-const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev };
+// ── 방사형(레이더) 그래프 ──
+// { kind:'radar', axes:['경제',...], max:10, rings:5, reverse:false, series:[{ name, values:[...] }] }
+// reverse: true 이면 값이 작을수록 바깥(순위 그래프: 1위가 가장 바깥)
+function radar(b) {
+  const W = b.w || 420, H = b.h || 320;
+  const n = b.axes.length, max = b.max ?? 10, rings = b.rings ?? 5, rev = !!b.reverse;
+  const hasLegend = b.series.length > 1;
+  const cx = W / 2, cy = (hasLegend ? 34 : 14) + (H - (hasLegend ? 34 : 14) - 14) / 2;
+  const R = Math.min(W / 2 - 64, (H - (hasLegend ? 34 : 14) - 14) / 2 - 20);
+  const ang = (i) => -Math.PI / 2 + (2 * Math.PI * i) / n;
+  const pt = (i, f) => [cx + Math.cos(ang(i)) * R * f, cy + Math.sin(ang(i)) * R * f];
+  const frac = (v) => (rev ? (max - v + 1) / max : v / max);
+  let s = '';
+  for (let k = 1; k <= rings; k++) {
+    const f = k / rings;
+    s += `<polygon points="${b.axes.map((_, i) => pt(i, f).map(r1).join(',')).join(' ')}" class="grid" fill="none"/>`;
+  }
+  b.axes.forEach((a, i) => {
+    const [x, y] = pt(i, 1);
+    s += `<line x1="${r1(cx)}" y1="${r1(cy)}" x2="${r1(x)}" y2="${r1(y)}" class="grid"/>`;
+    const [lx, ly] = pt(i, 1.13);
+    const an = Math.abs(lx - cx) < 4 ? 'middle' : lx > cx ? 'start' : 'end';
+    s += text(lx, ly + 4, a, { size: 11.5, anchor: an, cls: 'cat', weight: 700 });
+  });
+  if (b.ringLabels) b.ringLabels.forEach((t, k) => { const [x, y] = pt(0, (k + 1) / rings); s += text(x + 4, y + 4, t, { size: 9.5, cls: 'tick' }); });
+  b.series.forEach((ser, j) => {
+    const c = ser.color || j + 1;
+    const pts = ser.values.map((v, i) => pt(i, frac(v)));
+    s += `<polygon points="${pts.map((p) => p.map(r1).join(',')).join(' ')}" class="ln s${c}${ser.dash ? ' dash' : ''}" style="fill-opacity:.08"/>`;
+    pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="3.2" class="dot s${c}"/>`));
+  });
+  if (hasLegend) s += legend(b.series.map((x, j) => ({ ...x, cls: `s${x.color || j + 1}` })), W / 2 - legendWidth(b.series, 11, 'line') / 2, 16, { kind: 'line' });
+  return { W, H, s };
+}
+
+const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev, radar };
 
 // 그림 블록 → HTML (<figure>)
 export function figure(b) {
