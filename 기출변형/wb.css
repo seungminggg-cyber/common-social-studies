@@ -1,0 +1,45 @@
+/* 기출변형 문제집 — 시안 H(개념서) 위에 문제집에 필요한 것만 더한다 */
+.wb .q-lv.lv-중상 { color: #a0522d; }
+.wb .q-lv.lv-하 { color: var(--gray); }
+.wb .q-pts { font-weight: 400; font-family: var(--sans-h); font-size: 8.4pt; color: var(--ink-2); white-space: nowrap; }
+.wb .q-mock .q-head { margin-bottom: 1mm; }
+.wb .q-mock .q-no { background: var(--ink); }
+.wb .q-meta { font-size: 7.2pt; }
+
+/* 단원 띠 */
+.wb-band .band-title { font-size: 12pt; }
+.wb-band .band-sub { margin-left: auto; }
+
+/* 대단원 첫머리 */
+.wb-chap { display: grid; grid-template-columns: 22mm 1fr; column-gap: 5mm; align-items: end; border-bottom: 1.2pt solid var(--c1); padding-bottom: 3mm; margin-bottom: 5mm; }
+.wb-chap-no { grid-row: span 2; font-family: var(--serif-h); font-size: 44pt; line-height: .9; color: var(--c1); font-weight: 700; }
+.wb-chap-t span { font-size: 8.6pt; color: var(--gray); letter-spacing: .05em; }
+.wb-chap-t h1 { margin: .5mm 0 0; font-family: var(--serif-h); font-size: 20pt; color: var(--ink); }
+.wb-chap ul { grid-column: 2; list-style: none; margin: 2.5mm 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .8mm 6mm; font-size: 8.4pt; }
+.wb-chap li b { color: var(--c1-dark); margin-right: 1.2mm; }
+.wb-chap li i { font-style: normal; color: var(--gray); margin-left: 1mm; }
+
+/* 모의고사 머리 */
+.wb-mock { display: flex; justify-content: space-between; align-items: flex-end; border-top: 2.4pt solid var(--ink); border-bottom: .6pt solid var(--ink); padding: 3mm 0 2.6mm; margin-bottom: 5mm; }
+.wb-mock-l span { display: block; font-size: 8.4pt; color: var(--gray); }
+.wb-mock-l b { font-family: var(--serif-h); font-size: 22pt; letter-spacing: -.02em; }
+.wb-mock-r { text-align: right; font-size: 8.2pt; color: var(--ink-2); display: flex; flex-direction: column; gap: .6mm; }
+.wb-mock-r span:first-child { font-weight: 700; color: var(--ink); font-size: 9.4pt; }
+.page[data-ch$="회"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+.page[data-ch$="회"] .edge-tab { top: 38mm; background: var(--ink); }
+
+/* 차례 */
+.wb-toc-h { font-family: var(--serif-h); font-size: 11pt; margin: 4mm 0 1.5mm; border-bottom: .6pt solid var(--ink); padding-bottom: 1mm; }
+.wb-toc { width: 100%; border-collapse: collapse; font-size: 9pt; }
+.wb-toc td { padding: 1.1mm 0; border-bottom: .4pt dotted var(--rule); }
+.wb-toc td.n { width: 18mm; text-align: right; color: var(--gray); }
+.wb-toc td.pg { width: 14mm; text-align: right; font-weight: 700; }
+.wb-howto { margin-top: 6mm; font-size: 8.4pt; color: var(--ink-2); border-top: .6pt solid var(--rule); padding-top: 3mm; }
+
+/* 정답과 해설 */
+.wb-quick .ans-list span { min-width: 9%; }
+.aq-h { display: flex; align-items: center; }
+.aq-lv { font-size: 7.4pt; font-weight: 700; color: var(--gray); margin-left: 1.5mm; }
+.aq-lv.lv-상 { color: var(--red); }
+.aq-lv.lv-중상 { color: #a0522d; }
+.aq-meta { margin-left: auto; font-size: 7pt; color: var(--gray); }

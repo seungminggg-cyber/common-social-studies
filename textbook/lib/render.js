@@ -32,7 +32,7 @@ const GANADA = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ'];
 const two = (n) => String(n).padStart(2, '0');
 
 // ── 블록 하나 그리기 ─────────────────────────────
-function block(b) {
+export function block(b) {
   switch (b.t) {
     case 'sec':
       return `<h2 class="sec"><span class="sec-mark">${esc(b.mark)}</span><span class="sec-title">${inl(b.title)}</span></h2>`;
