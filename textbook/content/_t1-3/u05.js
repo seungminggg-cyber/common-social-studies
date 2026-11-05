@@ -390,7 +390,7 @@ export default {
       markers: [
         { lon: 6.9, lat: 61.1, label: '노르웨이 피오르', pos: 'right' },
         { lon: -19, lat: 64.9, label: '아이슬란드 지열·온천', pos: 'left' },
-        { lon: -42, lat: 76.5, label: '그린란드 빙하', pos: 'top' },
+        { lon: -42, lat: 76.5, label: '그린란드 빙하', pos: 'right' },
         { lon: 10, lat: 46.5, label: '알프스 이목', pos: 'left' },
         { lon: 29.1, lat: 37.9, label: '파묵칼레', pos: 'right' },
         { lon: 110.3, lat: 25.3, label: '구이린(카르스트)', pos: 'right' },
