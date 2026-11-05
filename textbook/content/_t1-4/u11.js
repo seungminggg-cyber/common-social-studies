@@ -38,8 +38,8 @@ export default {
     {
       t: 'figrow', title: '우리나라 외국인 주민의 구성 (2022)',
       items: [
-        { t: 'chart', kind: 'pie', donut: true, title: '유형별', h: 230, w: 300, center: '유형별', unit: '%', slices: [{ label: '외국인 근로자', value: 17.9 }, { label: '외국 국적 동포', value: 17.6 }, { label: '외국인 주민 자녀', value: 12.5 }, { label: '한국 국적 취득자', value: 9.9 }, { label: '외국인 유학생', value: 8.4 }, { label: '결혼 이민자', value: 7.8 }, { label: '기타', value: 25.9 }] },
-        { t: 'chart', kind: 'pie', donut: true, title: '국적별', h: 230, w: 300, center: '국적별', unit: '%', slices: [{ label: '중국(한국계 포함)', value: 41.8 }, { label: '베트남', value: 11.9 }, { label: '타이', value: 9.3 }, { label: '우즈베키스탄', value: 3.9 }, { label: '미국', value: 3.3 }, { label: '캄보디아', value: 2.5 }, { label: '기타', value: 27.3 }] },
+        { t: 'chart', kind: 'pie', donut: true, title: '유형별 (단위: %)', h: 230, w: 300, center: '유형별', unit: '', slices: [{ label: '외국인 근로자', value: 17.9 }, { label: '외국 국적 동포', value: 17.6 }, { label: '외국인 주민 자녀', value: 12.5 }, { label: '한국 국적 취득자', value: 9.9 }, { label: '외국인 유학생', value: 8.4 }, { label: '결혼 이민자', value: 7.8 }, { label: '기타', value: 25.9 }] },
+        { t: 'chart', kind: 'pie', donut: true, title: '국적별 (단위: %)', h: 230, w: 300, center: '국적별', unit: '', slices: [{ label: '중국(한국계 포함)', value: 41.8 }, { label: '베트남', value: 11.9 }, { label: '타이', value: 9.3 }, { label: '우즈베키스탄', value: 3.9 }, { label: '미국', value: 3.3 }, { label: '캄보디아', value: 2.5 }, { label: '기타', value: 27.3 }] },
       ],
       note: '외국인 근로자의 비율이 가장 높고, 외국 국적 동포, 외국인 주민 자녀가 뒤를 잇는다. 국적별로는 한국계 중국인(30.1%)을 포함한 중국 국적이 가장 많다.',
       source: '자료: 행정안전부, 2023',
@@ -131,7 +131,7 @@ export default {
       },
     },
     {
-      t: 'item', no: '2', title: '모자이크 사회, 캐나다',
+      t: 'item', no: '1', title: '모자이크 사회, 캐나다',
       body: [{ t: 'ul', items: [
         '캐나다는 이민자와 그 자녀가 인구의 큰 몫을 차지하는 나라이다. 여러 문화의 조각이 각자의 색을 지닌 채 하나의 그림을 이루는 **모자이크**에 빗대어 "모자이크 사회"라고 부른다.',
         '1971년 세계에서 처음으로 다문화주의를 국가 정책으로 채택했고, 이민자들이 자신의 정체성을 지키면서 사회에 적응할 수 있도록 지원한다. 저출산·고령화와 노동력 부족 문제를 이민 정책으로 해결하고 있다.',
