@@ -102,8 +102,8 @@ export default {
         x: { min: 0, max: 80, step: 20, label: '사회적 신뢰(%)' }, y: { min: 4, max: 8, step: 1, label: '삶의 만족도(점)' },
         groups: [{ name: '나라', points: [[65, 7.6], [20, 5.4], [45, 6.6], [15, 4.6], [55, 7.0]] }],
         labels: [
-          { x: 65, y: 7.6, text: 'A(5.5)', pos: 'left' }, { x: 20, y: 5.4, text: 'B(5.8)' }, { x: 45, y: 6.6, text: 'C(3.0)' },
-          { x: 15, y: 4.6, text: 'D(1.2)' }, { x: 55, y: 7.0, text: 'E(2.4)', pos: 'bottom' },
+          { x: 65, y: 7.6, text: 'A(5.5)', pos: 'left' }, { x: 20, y: 5.4, text: 'B(5.8)' }, { x: 45, y: 6.6, text: 'C(3.0)', pos: 'left' },
+          { x: 15, y: 4.6, text: 'D(1.2)' }, { x: 55, y: 7.0, text: 'E(2.4)' },
         ],
         note: '사회적 신뢰는 ‘대부분의 사람을 믿을 수 있다’고 답한 비율, 괄호 안은 1인당 국민 소득(만 달러)임.', source: '가상 자료' }],
       bogi: [

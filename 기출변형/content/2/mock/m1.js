@@ -133,11 +133,11 @@ export default {
       stem: '그래프는 세 지역 (가)~(다)의 기후를 나타낸 것이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은?',
       data: [
         { t: 'figrow', items: [
-          { t: 'chart', kind: 'climate', compact: true, label: '(가)', h: 175, tMin: -20, tMax: 30, tStep: 10, pMax: 250,
+          { t: 'chart', kind: 'climate', compact: true, label: '(가)', w: 230, h: 210, tMin: -20, tMax: 30, tStep: 10, pMax: 250,
             temp: [24, 24, 22, 19, 16, 14, 13, 13, 15, 17, 20, 22], precip: [10, 12, 18, 40, 110, 165, 155, 120, 75, 45, 25, 12] },
-          { t: 'chart', kind: 'climate', compact: true, label: '(나)', h: 175, tMin: -20, tMax: 30, tStep: 10, pMax: 250,
+          { t: 'chart', kind: 'climate', compact: true, label: '(나)', w: 230, h: 210, tMin: -20, tMax: 30, tStep: 10, pMax: 250,
             temp: [4, 4, 6, 9, 12, 15, 17, 17, 15, 11, 7, 4], precip: [55, 45, 45, 45, 50, 50, 50, 55, 55, 65, 60, 55] },
-          { t: 'chart', kind: 'climate', compact: true, label: '(다)', h: 175, tMin: -20, tMax: 30, tStep: 10, pMax: 250,
+          { t: 'chart', kind: 'climate', compact: true, label: '(다)', w: 230, h: 210, tMin: -20, tMax: 30, tStep: 10, pMax: 250,
             temp: [-18, -14, -4, 7, 15, 21, 23, 21, 15, 6, -5, -15], precip: [4, 6, 12, 25, 45, 95, 160, 120, 55, 25, 10, 6] },
         ] },
         { t: 'p', text: '※ 연 강수량: (가) 787mm, (나) 630mm, (다) 563mm (가상 자료)' },
