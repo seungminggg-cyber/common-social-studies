@@ -162,9 +162,11 @@ function line(b) {
   const y = b.y || {}, xx = b.x || {};
   const schem = !!b.schematic;
   const hasLegend = b.legend !== false && b.series.length > 1 && !b.series.every((s) => s.end);
-  const L = schem ? 30 : 54, R = b.series.some((s) => s.end) ? 92 : 18, T = hasLegend ? 40 : 28, B = 40;
-  const pw = W - L - R, ph = H - T - B;
   const cats = b.categories;
+  // 마지막 가로 눈금 글씨가 그림 밖으로 잘리지 않게 오른쪽 여백을 넉넉히
+  const lastHalf = cats ? tw(String(cats[cats.length - 1]).split('\n')[0], 11) / 2 + 4 : 0;
+  const L = schem ? 30 : 54, R = Math.max(b.series.some((s) => s.end) ? 92 : 18, lastHalf), T = hasLegend ? 40 : 28, B = 40;
+  const pw = W - L - R, ph = H - T - B;
   const xmin = xx.min ?? 0, xmax = xx.max ?? (cats ? cats.length - 1 : 1);
   const sx = (v) => L + ((v - xmin) / (xmax - xmin || 1)) * pw;
   const ymin = y.min ?? 0, ymax = y.max ?? 10;
@@ -194,7 +196,7 @@ function line(b) {
     const v = typeof t === 'object' ? t.v : t, lab = typeof t === 'object' ? t.label : fmt(t);
     s += text(sx(v), T + ph + 17, lab, { size: 11, anchor: 'middle', cls: 'tick' });
   }
-  if (schem) s += text(L - 6, T + ph + 14, '0', { size: 11, anchor: 'end', cls: 'tick' });
+  if (schem && !cats) s += text(L - 6, T + ph + 14, '0', { size: 11, anchor: 'end', cls: 'tick' });
   // 선
   b.series.forEach((ser, j) => {
     const pts = (ser.points || ser.values.map((v, i) => [i, v])).map(([a, v]) => [sx(a), sy(v)]);
@@ -264,8 +266,12 @@ function pie(b) {
     const p = (a, rr) => [cx + rr * Math.cos(a), cy + rr * Math.sin(a)];
     const [x0, y0] = p(a0, r), [x1, y1] = p(a1, r), [x2, y2] = p(a1, ri), [x3, y3] = p(a0, ri);
     s += `<path d="M${r1(x0)},${r1(y0)}A${r},${r} 0 ${large} 1 ${r1(x1)},${r1(y1)}L${r1(x2)},${r1(y2)}${ri ? `A${ri},${ri} 0 ${large} 0 ${r1(x3)},${r1(y3)}` : ''}Z" class="fl s${i + 1} pie"/>`;
-    const [lx, ly] = p((a0 + a1) / 2, (r + ri) / 2 + (ri ? 0 : r * 0.12));
-    s += text(lx, ly + 4, `${fmt(sl.value)}${b.unit ?? '%'}`, { size: 12, anchor: 'middle', cls: `in s${i + 1}`, weight: 700 });
+    // 아주 작은 조각(5% 미만)은 글씨가 겹치지 않게 원 바깥에 쓴다
+    const small = sl.value / total < 0.05;
+    const [lx, ly] = p((a0 + a1) / 2, small ? r + 13 : (r + ri) / 2 + (ri ? 0 : r * 0.12));
+    s += text(lx, ly + 4, `${fmt(sl.value)}${b.unit ?? '%'}`, small
+      ? { size: 10, anchor: 'middle', cls: 'val', weight: 700 }
+      : { size: 12, anchor: 'middle', cls: `in s${i + 1}`, weight: 700 });
     a0 = a1;
   });
   if (b.center) s += text(cx, cy, b.center, { size: 12, anchor: 'middle', cls: 'cat', weight: 700, baseline: 'middle' });
@@ -305,7 +311,7 @@ function climate(b) {
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw}" y2="${T + ph}" class="axis"/>`;
   for (const m of [1, 4, 7, 10, 12]) s += text(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
   s += text(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + text(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
-  s += text(L + pw, T + ph + 26, '(월)', { size: 10, anchor: 'end', cls: 'axl' });
+  s += text(L + pw + 5, T + ph + 16, '(월)', { size: 10, cls: 'axl' }); // 12월 눈금 오른쪽
   if (b.label) s += text(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
   return { W, H, s };
 }
@@ -337,7 +343,7 @@ function climdev(b) {
   pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="2.8" class="dot s3"/>`));
   for (const m of [1, 4, 7, 10, 12]) s += text(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
   s += text(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + text(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
-  s += text(L + pw, T + ph + 26, '(월)', { size: 10, anchor: 'end', cls: 'axl' });
+  s += text(L + pw + 5, T + ph + 16, '(월)', { size: 10, cls: 'axl' }); // 12월 눈금 오른쪽
   if (b.label) s += text(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
   return { W, H, s };
 }
@@ -378,6 +384,7 @@ function map(b) {
     const [w, sLat, e, n] = b.view;
     const box = { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[w, sLat], [w, n], [e, n], [e, sLat], [w, sLat]]] } };
     proj = geoMercator().fitExtent([[2, 2], [W - 2, H - 2]], box);
+    proj.clipExtent([[-20, -20], [W + 20, H + 20]]); // 지도 밖 육지는 잘라 내 PDF 용량을 줄인다
   }
   const path = geoPath(proj);
   const byName = new Map(countries.features.map((f) => [f.properties.name, f]));

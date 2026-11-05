@@ -187,7 +187,7 @@ function row(b) {
 
 // ── 단원 첫머리 (큰 번호 + 제목 + 핵심 질문 + 수능 포인트) ──
 function opener(book, u) {
-  return `<div class="top">
+  return `<div class="top" id="u${esc(u.no)}">
     <div class="opener">
       <div class="op-deco"><i></i><i></i><i></i></div>
       <div class="op-no">${esc(u.no)}</div>
@@ -204,7 +204,8 @@ function opener(book, u) {
 }
 
 function bandTop(kind, title, u) {
-  return `<div class="top"><div class="band band-${kind}"><span class="band-title">${esc(title)}</span>${
+  const id = u && (kind === 'check' || kind === 'exam') ? ` id="${kind[0]}${esc(u.no)}"` : '';
+  return `<div class="top"${id}><div class="band band-${kind}"><span class="band-title">${esc(title)}</span>${
     u ? `<span class="band-unit"><b>${esc(u.no)}</b> ${esc(u.title)}</span>` : ''}</div></div>`;
 }
 
@@ -307,6 +308,149 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
 <body class="theme-${theme} mode-${mode}">
+<div id="book"></div>
+<div id="source">${sections.join('\n')}</div>
+<script>window.LAYOUT = ${JSON.stringify(layout)};</script>
+<script>${paginateJs}</script>
+</body></html>`;
+}
+
+// ── 통합본: 여러 대단원을 한 권으로 ─────────────────
+// part 'book'    : 표지 → 이 책의 주인 → 차례 → 이 책의 구성 → (간지 → 학습 계획표 → 중단원들) × 대단원
+// part 'answers' : 별책 정답과 해설 (표지 → 대단원별 정답과 해설)
+// 간지(data-odd)는 양면 인쇄에서 늘 오른쪽(홀수) 쪽에 오도록 paginate.js가 필요할 때 메모 쪽을 끼운다.
+// 쪽 번호가 필요한 곳은 data-pg="찾을 id" 를 달아 두면 쪽 나누기가 끝난 뒤 채워진다.
+export function renderFull(full, { mode, layout, paginateJs, part = 'book' }) {
+  const { subject, chapters } = full;
+  const sections = [];
+  const add = (kind, attrs, inner) => sections.push(`<section class="flow" data-kind="${kind}" ${attrs || ''}>${inner}</section>`);
+  const chapterList = chapters.map((ch) => `<li><b>${esc(ch.chapter.no)}</b><span>${esc(ch.chapter.title)}</span></li>`).join('');
+  const unitsOf = (ch) => ch.units;
+
+  if (part === 'answers') {
+    add('cover', '', `<div class="top"><div class="cover cover-ans">
+      <div class="cv-brand">승민T 통합사회 · 개념서 별책</div>
+      <div class="cv-title">정답과<br>해설</div>
+      <div class="cv-sub">${esc(subject)} · 개념 확인과 수능형 문제의 정답, 해설</div>
+      <ul class="cv-chapters">${chapterList}</ul>
+    </div></div>`);
+    chapters.forEach((ch) => {
+      let q = 1;
+      const starts = ch.units.map((u) => { const k = q; q += u.exam?.length || 0; return k; });
+      add('answers', `data-tab="${esc(ch.chapter.no)}" data-head-left="${esc(subject)} <b>정답과 해설</b>" data-head-right="${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}"`,
+        `${bandTop('answers', `${ch.chapter.no}. ${ch.chapter.title}`)}${ch.units.map((u, i) => answerRows(u, starts[i])).join('\n')}`);
+    });
+  } else {
+    // 표지
+    add('cover', '', `<div class="top"><div class="cover">
+      <div class="cv-brand">승민T 통합사회</div>
+      <div class="cv-title">개념서</div>
+      <div class="cv-sub">${esc(subject)} · 2022 개정 교육과정 · 수능 대비</div>
+      ${mode === 'teacher' ? '<div class="cv-badge">교사용</div>' : ''}
+      <ul class="cv-chapters">${chapterList}</ul>
+    </div></div>`);
+    // 표지 뒤: 이 책의 주인
+    add('owner', '', `<div class="top"><div class="owner">
+      <div class="ow-box"><div class="ow-title">이 책의 주인</div>
+        <div class="ow-line"><span>학교</span><i></i></div>
+        <div class="ow-line"><span>학년 · 반</span><i></i></div>
+        <div class="ow-line"><span>이름</span><i></i></div>
+        <div class="ow-line"><span>공부 시작한 날</span><i></i></div>
+      </div>
+      <div class="ow-note">이 책의 설명·자료·문제는 승민T 통합사회 수업을 위해 새로 쓴 것입니다. 사상가의 글은 원전을 새로 옮기거나 요지만 정리했고,
+      그래프와 지도의 출처는 각 그림 아래에 적었습니다. "개념도"는 원리를 보여 주려고 단순하게 그린 그림, "가상 자료"는 실제 값이 아닌 연습용 자료입니다.</div>
+    </div></div>`);
+    // 차례
+    const tocUnits = (ch) => unitsOf(ch).map((u) => `<li class="toc-u"><span class="toc-no">${esc(u.no)}</span><span class="toc-t">${esc(u.title)}</span>
+        <span class="toc-sub">개념 확인 <i data-pg="c${esc(u.no)}"></i> · 수능형 문제 <i data-pg="e${esc(u.no)}"></i></span><span class="toc-dots"></span><span class="toc-pg" data-pg="u${esc(u.no)}"></span></li>`).join('');
+    add('toc', '', `<div class="top"><div class="toc"><div class="toc-head"><span class="toc-title">차례</span><span class="toc-en">CONTENTS</span></div>
+      <ul class="toc-list"><li class="toc-guide"><span class="toc-t">이 책의 구성</span><span class="toc-dots"></span><span class="toc-pg" data-pg="guide"></span></li>
+      ${chapters.map((ch, i) => `<li class="toc-ch"><span class="toc-chno">${esc(ch.chapter.no)}</span><span class="toc-t">${esc(ch.chapter.title)}</span><span class="toc-dots"></span><span class="toc-pg" data-pg="ch${i}"></span></li>${tocUnits(ch)}`).join('')}
+      </ul><div class="toc-foot">별책 · 정답과 해설</div></div></div>`);
+    // 이 책의 구성
+    const GUIDE = [
+      ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
+      ['단원 첫머리', '핵심 질문 두 개와 수능 포인트. 시험에 어떤 자료와 선지로 나오는지 먼저 보고 시작한다.'],
+      ['개념 정리', '교과서 9종의 공통 내용을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어, <mark>형광펜</mark>은 시험에 그대로 나오는 문장이다.'],
+      ['빈칸과 빈칸 정답 띠', '본문의 번호 빈칸을 직접 채운다. 정답은 그 쪽 맨 아래 띠에 있으니 채운 뒤에 확인한다.'],
+      ['개념 더하기', '본문 아래 회색 상자. 용어 뜻, 헷갈리는 개념, 교과서마다 다른 표현을 정리했다.'],
+      ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
+      ['그래프 · 지도 · 표', '수능 자료와 같은 모양으로 그렸다. 그림 아래의 설명과 출처, "개념도·가상 자료" 표시를 꼭 함께 읽는다.'],
+      ['자료 읽기 · 해석 연습', '제시문과 자료를 읽는 법을 단계(STEP)별로 연습한다. 함정 선지가 어디서 나오는지 표시했다.'],
+      ['승민T 한마디', '그 중단원에서 시험 직전에 다시 볼 한 줄 정리.'],
+      ['정리 노트 · 오답 노트', '쪽 아래 남는 칸. 핵심어를 다시 쓰거나 틀린 문제와 다시 볼 쪽을 적는다.'],
+      ['개념 확인', 'O/X와 빈칸 채우기로 개념을 점검한다. 맞힌 개수를 학습 계획표에 적는다.'],
+      ['수능형 문제', '학력평가·수능 예시문항과 같은 형식의 새 문제. 정답과 해설은 별책에 있다.'],
+    ];
+    add('guide', '', `<div class="top" id="guide"><div class="guide"><div class="band band-guide"><span class="band-title">이 책의 구성</span><span class="band-unit">이렇게 공부하세요</span></div>
+      <ol class="guide-list">${GUIDE.map(([t, d], i) => `<li><span class="gd-n">${two(i + 1)}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
+      <div class="guide-flow"><span>1회독</span> 개념 정리를 읽으며 빈칸 채우기 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 승민T 한마디·오답 노트 다시 보기</div>
+    </div></div>`);
+
+    chapters.forEach((ch, ci) => {
+      const d = full.dividers?.[ch.chapter.no] || {};
+      const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
+      // 간지 (오른쪽 쪽)
+      add('divider', `data-odd="1"`, `<div class="top" id="ch${ci}"><div class="divider">
+        <div class="dv-bg">${esc(ch.chapter.no)}</div>
+        <div class="dv-label">대단원 ${ci + 1}</div>
+        <div class="dv-no">${esc(ch.chapter.no)}</div>
+        <div class="dv-title">${esc(ch.chapter.title)}</div>
+        ${d.lead ? `<div class="dv-lead">${inl(d.lead)}</div>` : ''}
+        <ol class="dv-units">${unitsOf(ch).map((u) => `<li><b>${esc(u.no)}</b><span>${esc(u.title)}</span><i data-pg="u${esc(u.no)}"></i></li>`).join('')}</ol>
+        ${d.keys ? `<div class="dv-keys"><div class="dv-kt">이 대단원에서 꼭 잡을 것</div><ul>${d.keys.map((k) => `<li>${inl(k)}</li>`).join('')}</ul></div>` : ''}
+      </div></div>`);
+      // 간지 뒷면: 학습 계획표
+      const rows = unitsOf(ch).map((u) => {
+        const nc = (u.check?.ox?.length || 0) + (u.check?.blank?.length || 0);
+        return `<tr><td class="pl-u"><b>${esc(u.no)}</b> ${esc(u.title)}</td><td class="pl-pg" data-pg="u${esc(u.no)}"></td><td>월 &nbsp;&nbsp; 일</td><td>월 &nbsp;&nbsp; 일</td><td>&nbsp;&nbsp;&nbsp; / ${nc}</td><td>&nbsp;&nbsp;&nbsp; / ${u.exam?.length || 0}</td></tr>`;
+      }).join('');
+      add('plan', `data-tab="${esc(ch.chapter.no)}" data-head-left="${headLeft}" data-head-right="학습 계획표"`, `<div class="top"><div class="plan">
+        <div class="band band-plan"><span class="band-title">학습 계획표</span><span class="band-unit"><b>${esc(ch.chapter.no)}</b> ${esc(ch.chapter.title)}</span></div>
+        <table class="plan-t"><thead><tr><th>중단원</th><th>쪽</th><th>1회독</th><th>2회독</th><th>개념 확인</th><th>수능형 문제</th></tr></thead><tbody>${rows}</tbody></table>
+        <ul class="plan-how"><li><b>1회독</b> 개념 정리를 읽고 빈칸을 채운 날을 적는다.</li><li><b>2회독</b> 개념 확인·수능형 문제를 다시 푼 날을 적는다.</li><li>맞힌 개수가 80%가 안 되는 중단원은 시험 전에 한 번 더 본다.</li></ul>
+        <div class="memo plan-memo"><div class="memo-head"><span class="memo-tag">나의 목표</span><span class="memo-q">이 대단원을 마치면 꼭 설명할 수 있어야 할 것을 적어 보자.</span></div><div class="memo-lines"></div></div>
+      </div></div>`);
+      // 중단원들 (수능형 문제 번호는 대단원마다 01부터)
+      let qNo = 1;
+      for (const u of ch.units) {
+        const attrs = `data-tab="${esc(ch.chapter.no)}" data-head-left="${headLeft}" data-head-right="${esc(u.no)} ${esc(u.title)}"`;
+        add('concept', attrs, `${opener(ch, u)}${u.concept.map(row).join('\n')}`);
+        if (u.check?.ox?.length || u.check?.blank?.length) add('check', attrs, `${bandTop('check', '개념 확인', u)}${checkRows(u)}`);
+        if (u.exam?.length) add('exam', attrs, `${bandTop('exam', '수능형 문제', u)}${u.exam.map((q) => question(q, qNo++)).join('\n')}`);
+      }
+    });
+    // 뒤표지 (양면 인쇄에서 늘 왼쪽 쪽 = 마지막 쪽)
+    add('backcover', `data-even="1"`, `<div class="top"><div class="cover cover-back">
+      <div class="cv-brand">승민T 통합사회</div>
+      <div class="bk-title">${esc(subject)} 개념서</div>
+      <ul class="bk-points">
+        <li>교과서 9종의 공통 내용을 수능에 맞게 정리한 개념 정리</li>
+        <li>2028 수능 예시문항과 학력평가를 분석한 수능 포인트·자료 해석 연습</li>
+        <li>사상가 카드, 기후 그래프와 지도, 실제 통계로 그린 그래프</li>
+        <li>개념 확인 O/X·빈칸과 수능형 문제, 별책 정답과 해설</li>
+      </ul>
+      <ul class="cv-chapters">${chapterList}</ul>
+    </div></div>`);
+  }
+
+  const title = part === 'answers' ? `승민T 통합사회 개념서 ${subject} — 정답과 해설` : `승민T 통합사회 개념서 ${subject}${mode === 'teacher' ? ' (교사용)' : ''}`;
+  return `<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>${esc(title)}</title>
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/400.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-kr/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/nanum-pen-script/400.css">
+<style>
+@font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: block;
+  src: url('../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); }
+</style>
+<link rel="stylesheet" href="../themes/base.css">
+<link rel="stylesheet" href="../themes/b.css">
+<link rel="stylesheet" href="../themes/book.css">
+</head>
+<body class="theme-b mode-${mode} full-book part-${part}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>

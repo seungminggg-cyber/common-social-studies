@@ -506,8 +506,8 @@ export default {
         categories: ['1970', '1990', '2010', '2020'],
         y: { min: 0, max: 100, step: 20, label: '(%)' },
         series: [
-          { name: '갑국', values: [78, 80, 82, 83], color: 2, marker: true, end: '갑국' },
-          { name: '을국', values: [40, 74, 82, 82], color: 1, marker: true, end: '을국' },
+          { name: '갑국', values: [78, 80, 82, 83], color: 2, marker: true, end: '갑국', endDy: -6 },
+          { name: '을국', values: [40, 74, 82, 82], color: 1, marker: true, end: '을국', endDy: 6 },
           { name: '병국', values: [12, 19, 30, 37], color: 3, marker: true, end: '병국' },
         ],
         source: '가상 자료',
@@ -619,7 +619,7 @@ export default {
     },
     {
       level: '중',
-      stem: '그래프는 지도에 표시된 세 국가의 산업별 종사자 비율과 도시화율을 나타낸 것이다. (가)~(다)에 대한 설명으로 옳은 것은? (단, (가)~(다)는 에스파냐, 니제르, 타이 중 하나이다.)',
+      stem: '그래프는 세 국가의 산업별 종사자 비율과 도시화율을 나타낸 것이다. (가)~(다)에 대한 설명으로 옳은 것은? (단, (가)~(다)는 에스파냐, 니제르, 타이 중 하나이다.)',
       data: [{
         t: 'chart', kind: 'stack100', w: 460, rowH: 28,
         categories: ['(가) 도시화율 81%', '(나) 도시화율 18%', '(다) 도시화율 54%'],

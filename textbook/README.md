@@ -87,3 +87,16 @@ node build.mjs t1-2 b        # out/t1-2.json 과 그림(out/fig/t1-2/*.png)을 �
 python3 hwpx_build.py out/t1-2.json out/t1-2-B-학생용.hwpx
 python3 hwpx_build.py out/t1-2.json out/t1-2-B-교사용.hwpx teacher
 ```
+
+## 통합본 (한 권으로 묶기)
+
+```bash
+node build-book.mjs          # 학생용 개념서 + 교사용 개념서 + 별책 정답과 해설 (PDF 3개)
+node build-book.mjs png      # 쪽 그림(out/png/book-*.png)도 저장
+```
+
+- 묶을 대단원과 간지 문구는 `content/_book/t1.js`에 있다. 디자인은 `themes/book.css`.
+- 순서: 표지 → 이 책의 주인 → 차례 → 이 책의 구성 → (간지 → 학습 계획표 → 중단원) × 대단원 → 뒤표지.
+- 양면 인쇄용: 간지는 늘 오른쪽(홀수) 쪽, 뒤표지는 왼쪽(짝수) 쪽에 온다. 모자라면 앞에 '메모' 쪽이 들어간다.
+- 개념서에는 해설을 싣지 않는다(빈칸 정답 띠는 그대로). 수능형 문제 번호는 대단원마다 01부터, 해설은 별책에 있다.
+- 교사용은 빈칸·O/X·정답 선지가 채워져 있고, 쪽 번호가 학생용과 같다.

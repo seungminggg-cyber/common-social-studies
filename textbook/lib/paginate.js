@@ -157,9 +157,17 @@
     }
   }
 
+  // 양면 인쇄: 간지처럼 오른쪽(홀수) 쪽에서 시작해야 하는 부분 앞에 메모 쪽을 끼운다.
+  function fillerPage() {
+    const p = newPage({ dataset: { kind: 'filler', tab: '', headLeft: '', headRight: '' } });
+    p.body.innerHTML = `<div class="filler">${memoHtml('메모', '공부하면서 떠오른 생각, 질문, 다시 볼 내용을 자유롭게 적어 보자.')}</div>`;
+  }
+
   function run() {
     for (const sec of [...src.children]) {
       const kind = sec.dataset.kind;
+      if (sec.dataset.odd && pageNo % 2 === 1) fillerPage(); // 오른쪽 쪽에서 시작
+      if (sec.dataset.even && pageNo % 2 === 0) fillerPage(); // 왼쪽 쪽에서 시작
       const n = L[kind] || 1;
       let top = sec.querySelector(':scope > .top');
       if (top) top.remove();
@@ -298,8 +306,20 @@
   function finish() {
     document.querySelectorAll('.region[data-end]').forEach((r) => {
       if (r === r.parentElement.lastElementChild) balance(r);
+      else if (r.style.height && r.querySelectorAll('.slot').length === 2) {
+        // 아래에 다음 부분이 이어 붙은 2단 영역: 두 단을 맞춘 뒤 높이를 다시 줄인다
+        balance(r);
+        r.style.height = `${Math.ceil(usedBottom(r) - r.getBoundingClientRect().top)}px`;
+      }
     });
     [...document.querySelectorAll('.page')].forEach((p, k) => { fillPage(p, k); fillWide(p); });
+    // 차례·간지·학습 계획표의 쪽 번호 채우기
+    document.querySelectorAll('[data-pg]').forEach((el) => {
+      const t = document.getElementById(el.dataset.pg);
+      const p = t && t.closest('.page');
+      if (!p) WARN.push(`쪽 번호를 찾지 못함: ${el.dataset.pg}`);
+      el.textContent = p ? p.querySelector('.folio span').textContent : '';
+    });
   }
 
   // 글꼴을 먼저 모두 불러와야 높이를 정확히 잴 수 있다.

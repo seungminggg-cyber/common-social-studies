@@ -117,10 +117,10 @@ th, td { padding: 0; vertical-align: middle; }
 .fig-svg .venn.v1 { fill: var(--fig-1); fill-opacity: .13; stroke: var(--fig-1); }
 .fig-svg .venn.v2 { fill: var(--fig-3); fill-opacity: .13; stroke: var(--fig-3); }
 .fig-svg .vl { fill: #39424b; } .fig-svg .vi { fill: #2b333b; }
-.fig-svg .sea { fill: #eaf3f8; } .fig-map .fig-svg .sea { fill: #eaf3f8; }
-.fig-svg .sphere { fill: #eaf3f8; stroke: #b9cad6; stroke-width: 1; }
+.fig-svg .sea { fill: #dcebf5; } .fig-map .fig-svg .sea { fill: #dcebf5; }
+.fig-svg .sphere { fill: #dcebf5; stroke: #b9cad6; stroke-width: 1; }
 .fig-svg .grat { fill: none; stroke: #d3e2ec; stroke-width: .6; }
-.fig-svg .land { fill: #f4f5f6; stroke: none; }
+.fig-svg .land { fill: #f7f6f1; stroke: #aebdc8; stroke-width: .5; }
 .fig-svg .border { fill: none; stroke: #a9b4be; stroke-width: .6; }
 .fig-svg .hl.h1 { fill: var(--fig-1); fill-opacity: .55; } .fig-svg .hl.h2 { fill: var(--fig-3); fill-opacity: .55; }
 .fig-svg .hl.h3 { fill: var(--fig-4); fill-opacity: .65; } .fig-svg .hl.h4 { fill: var(--fig-2); fill-opacity: .45; }

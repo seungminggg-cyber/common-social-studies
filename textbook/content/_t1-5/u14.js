@@ -11,7 +11,7 @@ const INNOVATION = {
     { lon: 128.73, lat: 35.88, label: '대구', pos: 'right' },
     { lon: 129.32, lat: 35.55, label: '울산', pos: 'right' },
     { lon: 128.11, lat: 35.17, label: '진주(경남)', pos: 'bottom' },
-    { lon: 129.07, lat: 35.13, label: '부산', pos: 'bottom' },
+    { lon: 129.07, lat: 35.13, label: '부산', pos: 'right' },
     { lon: 126.72, lat: 35.02, label: '나주(광주·전남)', pos: 'left' },
     { lon: 126.51, lat: 33.25, label: '서귀포(제주)', pos: 'right' },
   ],

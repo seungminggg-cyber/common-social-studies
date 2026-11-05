@@ -1,0 +1,123 @@
+/* 통합본 전용 (build-book.mjs): 표지 · 이 책의 주인 · 차례 · 이 책의 구성 · 간지 · 학습 계획표 · 메모 쪽 */
+
+/* 해설은 별책(정답과 해설)에만 싣는다 → 교사용도 학생용과 쪽 번호가 같다 */
+.full-book .q-explain { display: none !important; }
+
+/* 머리글·쪽 번호를 숨기는 쪽 */
+.page-owner .page-head, .page-owner .page-foot,
+.page-divider .page-head, .page-divider .page-foot,
+.page-toc .page-head, .page-guide .page-head, .page-filler .page-head { display: none; }
+.page-toc .strip, .page-guide .strip, .page-plan .strip, .page-filler .strip { visibility: hidden; }
+
+/* 쪽 전체를 쓰는 부분: 내용(.top)이 쪽 높이를 채운다 */
+.page-owner .page-body, .page-divider .page-body,
+.region-owner, .region-owner .region-top, .region-owner .top,
+.region-divider, .region-divider .region-top, .region-divider .top,
+.region-toc, .region-toc .region-top, .region-toc .top,
+.region-guide, .region-guide .region-top, .region-guide .top,
+.region-plan, .region-plan .region-top, .region-plan .top { flex: 1; display: flex; }
+.region-owner .region-slots, .region-divider .region-slots, .region-toc .region-slots,
+.region-guide .region-slots, .region-plan .region-slots { display: none; }
+.owner, .divider, .toc, .guide, .plan { flex: 1; min-width: 0; }
+
+/* ── 표지 ── */
+.cv-badge { position: relative; z-index: 1; display: inline-block; margin-top: 9mm; background: var(--ans); color: #fff; font-weight: 800; font-size: 13pt; padding: 1.2mm 7mm; border-radius: 99px; }
+.cv-chapters { position: absolute; z-index: 1; left: 22mm; bottom: 24mm; margin: 0; padding: 0; list-style: none; display: grid; gap: 2.2mm; }
+.cv-chapters li { display: flex; align-items: baseline; gap: 3mm; font-size: 11pt; color: #d3f1ec; }
+.cv-chapters b { width: 8mm; color: var(--hl); font-weight: 800; }
+.cover-ans .cv-title { font-size: 58pt; line-height: 1.12; margin-top: 2mm; }
+
+/* ── 이 책의 주인 ── */
+.owner { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16mm; }
+.ow-box { width: 122mm; border: 1.2px solid var(--navy); border-radius: 4mm; padding: 9mm 11mm 8mm; }
+.ow-title { font-size: 15pt; font-weight: 800; color: var(--navy); text-align: center; margin-bottom: 5mm; }
+.ow-line { display: flex; align-items: flex-end; gap: 4mm; height: 13mm; font-size: 10pt; color: var(--gray); }
+.ow-line span { flex: none; width: 30mm; }
+.ow-line i { flex: 1; border-bottom: 1px solid #b8c4cc; height: 8mm; }
+.ow-note { width: 142mm; font-size: 8.2pt; color: var(--gray); line-height: 1.8; text-align: center; }
+
+/* ── 차례 ── */
+.toc { display: flex; flex-direction: column; }
+.toc-head { display: flex; align-items: baseline; gap: 4mm; border-bottom: 2px solid var(--navy); padding-bottom: 3mm; margin-bottom: 5mm; }
+.toc-title { font-size: 26pt; font-weight: 900; color: var(--navy); letter-spacing: -1px; }
+.toc-en { font-size: 9pt; font-weight: 700; color: var(--c1); letter-spacing: 3px; }
+.toc-list { list-style: none; margin: 0; padding: 0; }
+.toc-list li { display: flex; align-items: baseline; gap: 2.5mm; }
+.toc-guide { font-size: 10pt; color: var(--gray); padding: 0 3mm; }
+.toc-ch { margin-top: 5.5mm; margin-bottom: 1mm; padding: 2.2mm 3.5mm; background: var(--navy); color: #fff; border-radius: 2mm; font-size: 12pt; font-weight: 800; }
+.toc-chno { flex: none; width: 8mm; color: var(--hl); }
+.toc-ch .toc-dots { border-color: rgba(255, 255, 255, .35); }
+.toc-u { padding: 2mm 3.5mm 0; font-size: 10.2pt; }
+.toc-no { flex: none; width: 8mm; font-weight: 800; color: var(--c1); }
+.toc-t { flex: none; }
+.toc-sub { flex: none; font-size: 7.8pt; color: var(--gray); margin-left: 2mm; }
+.toc-sub i { font-style: normal; font-weight: 700; color: var(--navy); }
+.toc-dots { flex: 1; min-width: 6mm; border-bottom: 1px dotted #9aa8b2; transform: translateY(-1.2mm); }
+.toc-pg { flex: none; min-width: 8mm; text-align: right; font-weight: 800; color: var(--navy); }
+.toc-ch .toc-pg { color: #fff; }
+.toc-foot { margin-top: auto; padding-top: 6mm; font-size: 9pt; color: var(--gray); text-align: right; }
+
+/* ── 이 책의 구성 ── */
+.guide { display: flex; flex-direction: column; }
+.guide-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 3.6mm 5mm; }
+.guide-list li { display: flex; gap: 3mm; background: #f6f9fa; border: 1px solid var(--line); border-radius: 3mm; padding: 3.4mm 4mm; }
+.gd-n { flex: none; width: 7.5mm; height: 7.5mm; border-radius: 50%; background: var(--c1); color: #fff; font-weight: 800; display: grid; place-items: center; font-size: 8.2pt; }
+.guide-list b { color: var(--navy); font-size: 10pt; }
+.guide-list p { margin: .8mm 0 0; font-size: 8.6pt; line-height: 1.66; color: #3d4852; }
+.guide-list mark { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.guide-flow { margin-top: auto; background: var(--warm); border-radius: 3mm; padding: 4mm 5mm; font-size: 9.4pt; line-height: 1.8; }
+.guide-flow span { font-weight: 800; color: var(--ans); }
+
+/* ── 간지 (늘 오른쪽 쪽) ── */
+.divider { position: relative; margin: -12mm -17mm -10mm -19mm; padding: 38mm 26mm 0 28mm; background: var(--navy); color: #fff; overflow: hidden; display: flex; flex-direction: column; }
+.divider::before { content: ''; position: absolute; right: -52mm; top: -46mm; width: 156mm; height: 156mm; border-radius: 50%; background: var(--c1); opacity: .85; }
+.divider::after { content: ''; position: absolute; right: 40mm; top: 78mm; width: 22mm; height: 22mm; border-radius: 50%; background: var(--hl); }
+.dv-label { position: relative; z-index: 1; font-size: 11pt; font-weight: 700; color: #8fe0d3; letter-spacing: 2px; }
+.dv-no { position: relative; z-index: 1; font-size: 100pt; font-weight: 900; line-height: 1; margin-top: 2mm; }
+.dv-title { position: relative; z-index: 1; font-size: 30pt; font-weight: 900; letter-spacing: -1px; margin-top: 3mm; line-height: 1.3; }
+.dv-lead { position: relative; z-index: 1; font-size: 11pt; color: #c9d6e3; line-height: 1.8; margin-top: 6mm; max-width: 132mm; }
+.dv-units { position: relative; z-index: 1; list-style: none; margin: 14mm 0 0; padding: 0; border-top: 1px solid rgba(255, 255, 255, .28); }
+.dv-units li { display: flex; align-items: baseline; gap: 4mm; padding: 3.4mm 0; border-bottom: 1px solid rgba(255, 255, 255, .16); font-size: 12.5pt; font-weight: 700; }
+.dv-units b { flex: none; width: 10mm; color: var(--hl); }
+.dv-units span { flex: 1; }
+.dv-units i { flex: none; font-style: normal; font-size: 10pt; color: #8fe0d3; }
+.dv-units i::before { content: 'p. '; }
+.dv-keys { position: relative; z-index: 1; margin-top: 12mm; background: rgba(255, 255, 255, .07); border-radius: 4mm; padding: 5mm 6mm; }
+.dv-kt { font-size: 10pt; font-weight: 800; color: var(--hl); margin-bottom: 1.5mm; }
+.dv-keys ul { margin: 0; padding: 0; list-style: none; }
+.dv-keys li { position: relative; padding-left: 4.5mm; font-size: 10pt; color: #e5edf3; line-height: 1.85; }
+.dv-keys li::before { content: ''; position: absolute; left: 0; top: 2.3mm; width: 1.6mm; height: 1.6mm; border-radius: 50%; background: #8fe0d3; }
+.dv-bg { position: absolute; z-index: 0; right: 10mm; bottom: -16mm; font-size: 300pt; font-weight: 900; line-height: 1; color: rgba(255, 255, 255, .05); }
+.dv-keys b { color: #fff; }
+
+/* ── 학습 계획표 (간지 뒷면) ── */
+.plan { display: flex; flex-direction: column; }
+.plan-t { width: 100%; border-collapse: collapse; font-size: 9.4pt; }
+.plan-t th { background: var(--c1-soft); color: var(--navy); font-weight: 800; padding: 2.4mm 2mm; border-bottom: 1.5px solid var(--c1); white-space: nowrap; }
+.plan-t td { padding: 4.6mm 2mm; border-bottom: 1px solid var(--line); text-align: center; color: var(--gray); white-space: nowrap; }
+.plan-t td.pl-u { text-align: left; color: var(--ink); white-space: normal; }
+.plan-t td.pl-u b { color: var(--c1); margin-right: 1.5mm; }
+.plan-t td.pl-pg { font-weight: 800; color: var(--navy); }
+.plan-how { margin: 5mm 0; padding-left: 4.5mm; font-size: 8.8pt; color: #3d4852; line-height: 1.85; }
+.plan-how b { color: var(--c1); margin-right: 1mm; }
+.plan-memo { flex: 1; }
+
+/* ── 메모 쪽 (양면 인쇄 맞춤) ── */
+.page-filler .page-body { display: flex; }
+.filler { flex: 1; display: flex; }
+.filler .memo { flex: 1; }
+
+/* ── 뒤표지 ── */
+.page-backcover .page-head, .page-backcover .page-foot { display: none; }
+.page-backcover .page-body, .region-backcover, .region-backcover .region-top, .region-backcover .top { flex: 1; display: flex; }
+.region-backcover .region-slots { display: none; }
+.cover-back { flex: 1; padding-top: 40mm; }
+.cover-back::before { right: auto; left: -60mm; top: auto; bottom: -50mm; width: 150mm; height: 150mm; }
+.cover-back::after { right: 34mm; top: 34mm; width: 26mm; height: 26mm; }
+.bk-title { position: relative; z-index: 1; font-size: 30pt; font-weight: 900; letter-spacing: -1px; margin-top: 2mm; }
+.bk-points { position: relative; z-index: 1; margin: 12mm 0 0; padding: 0; list-style: none; display: grid; gap: 3.2mm; max-width: 140mm; }
+.bk-points li { position: relative; padding-left: 6mm; font-size: 11pt; color: #e5edf3; line-height: 1.6; }
+.bk-points li::before { content: ''; position: absolute; left: 0; top: 2.4mm; width: 2.4mm; height: 2.4mm; border-radius: 50%; background: var(--hl); }
+.cover-back .cv-chapters { left: auto; right: 24mm; }
+.page-backcover .edge-tab { display: none; }
+.page.even .cover-back { margin: -12mm -19mm -10mm -17mm; } /* 왼쪽 쪽은 안쪽·바깥 여백이 반대 */
