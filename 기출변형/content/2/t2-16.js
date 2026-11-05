@@ -15,7 +15,7 @@ export default [
         { name: '중간', values: [50, 46, 40, 35], color: 2, marker: true, end: '중간' },
         { name: '낮음', values: [50, 40, 30, 22], color: 3, marker: true, end: '낮음' },
       ],
-      note: '세 시나리오는 앞으로의 합계 출산율을 높게·중간·낮게 가정한 것이다.',
+      note: '세 시나리오는 앞으로의 합계 출산율을 높게·중간·낮게 가정한 것이다. 인구(백만 명)는 높음 50 → 52 → 54 → 55, 중간 50 → 46 → 40 → 35, 낮음 50 → 40 → 30 → 22이다.',
       source: '가상 자료',
     }],
     choices: [
@@ -129,8 +129,8 @@ export default [
     data: [{
       t: 'chart', kind: 'pie', h: 230, w: 420,
       slices: [
-        { label: '주거·식비 등 필수 생활비', value: 55 },
-        { label: '여가·취미·고가품', value: 25 },
+        { label: '필수 생활비', value: 55 },
+        { label: '여가·고가품', value: 25 },
         { label: '저축', value: 15 },
         { label: '기부', value: 5 },
       ],
