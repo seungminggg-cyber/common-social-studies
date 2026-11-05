@@ -389,8 +389,8 @@ export default [
         '(나) 큰 강이 바다와 만나는 곳에 강이 실어 온 흙이 쌓인 평야가 부채꼴로 펼쳐져 있어, 오래전부터 많은 사람이 모여 농사를 지었다.',
         '(다) 땅속에서 솟는 뜨거운 물과 증기로 전기를 만들고, 진흙 온천을 찾아오는 관광객이 많다.',
       ] },
-      { t: 'map', view: [18, -47, 184, 38], h: 250, w: 420, deg: false, scale: false,
-        markers: [PIN('A', 110.4, -7.6, 'bottom', 9), PIN('B', 31.0, 30.9, 'right', 9), PIN('C', 176.2, -38.1, 'top', 9), PIN('D', 107.1, 20.9, 'top', 9)],
+      { t: 'map', view: [22, -46, 179, 38], h: 250, w: 420, deg: false, scale: false,
+        markers: [PIN('A', 110.4, -7.6, 'bottom', 9), PIN('B', 31.0, 30.9, 'right', 9), PIN('C', 175.6, -38.1, 'left', 9), PIN('D', 107.1, 20.9, 'top', 9)],
         source: MAPSRC },
     ],
     choices: [
