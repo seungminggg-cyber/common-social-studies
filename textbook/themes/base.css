@@ -194,3 +194,130 @@ th, td { padding: 0; vertical-align: middle; }
 .fig-svg .ring.k1 { fill: #e03131; stroke: #e03131; } .fig-svg .ring.k2 { fill: #f08c00; stroke: #f08c00; } .fig-svg .ring.k3 { fill: #2f9e44; stroke: #2f9e44; }
 .fig-svg .ring.k4 { fill: #1971c2; stroke: #1971c2; } .fig-svg .ring.k8 { fill: #c2255c; stroke: #c2255c; }
 .fig-svg path.hl.tl { fill-opacity: .4; }
+
+/* ── 개념 도식 (인포그래픽, lib/diagrams.js) ── 색은 대단원 색(--c1)을 따른다 */
+:root, .page { --dg1: var(--c1, #1b7f8c); --dg2: var(--c1-dark, #135e68); --dg3: #e8590c; --dg4: #5b6672; --dg5: #ae3ec9; --dg6: #2f9e44; }
+.page[data-ch="Ⅱ"] { --dg5: #0ca678; } .page[data-ch="Ⅲ"] { --dg6: #f08c00; } .page[data-ch="Ⅳ"] { --dg3: #1c7ed6; }
+.fig-diagram .fig-body { overflow: visible; }
+.dg { position: relative; font-size: 8.4pt; line-height: 1.45; color: #2b333b; }
+.dg b { font-weight: 800; color: #1f2933; }
+.dg .ic { display: block; }
+.dg-badge { display: inline-grid; place-items: center; width: 9mm; height: 9mm; border-radius: 50%; background: var(--t, var(--dg1)); color: #fff;
+  box-shadow: 0 .6mm 1.6mm rgba(20,40,60,.18); flex: none; }
+/* 순환도 */
+.dg-cycle { width: 100%; }
+.dg-layer { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.dg-arc { fill: none; stroke: #9aa7b3; stroke-width: .9; vector-effect: non-scaling-stroke; stroke-width: 2.2px; }
+.dg-ahd { fill: #9aa7b3; }
+.dg-cnode { position: absolute; transform: translate(-50%, -50%); width: 34%; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .6mm; }
+.dg-cnode b { font-size: 9pt; color: var(--t); }
+.dg-cnode span:not(.dg-badge) { font-size: 7.8pt; color: #4a545e; background: rgba(255,255,255,.85); border-radius: 1.2mm; padding: 0 1mm; }
+.dg-ccenter { position: absolute; left: 50%; transform: translate(-50%, -50%); max-width: 30%; text-align: center; font-weight: 800; font-size: 9.6pt; color: var(--dg2);
+  background: var(--c1-soft, #eef4f5); border: 1px solid var(--c1-line, #c9dde0); border-radius: 50%; aspect-ratio: 1; display: grid; place-items: center; padding: 2mm; }
+/* 동심원 */
+.dg-concentric { display: grid; grid-template-columns: 40% 1fr; gap: 4mm; align-items: center; }
+.dg-rings { width: 100%; }
+.dg-ring { fill-opacity: .24; stroke: #fff; stroke-width: 1.4; }
+.dg-rlabel { font-size: 11px; font-weight: 800; fill: #1f2933; }
+.dg-rlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.6mm; }
+.dg-rlist li { display: flex; gap: 2mm; align-items: flex-start; }
+.dg-rlist li > div { display: flex; flex-direction: column; }
+.dg-rlist li span:not(.dg-dot) { font-size: 7.8pt; color: #4a545e; }
+.dg-rlist li b { color: var(--t); }
+.dg-dot { flex: none; min-width: 5.4mm; height: 5.4mm; padding: 0 1mm; border-radius: 3mm; background: var(--t); color: #fff; font-weight: 800; font-size: 7.6pt; display: grid; place-items: center; }
+.dg-rlab { font-size: 7.6pt; color: #6b7480; margin-bottom: .5mm; }
+/* 삼각형 */
+.dg-triangle { width: 100%; }
+.dg-tri { fill: var(--c1-pale, #f4fafb); stroke: var(--c1-line, #b5dbe0); stroke-width: 2px; vector-effect: non-scaling-stroke; }
+.dg-split { stroke: #9aa7b3; stroke-dasharray: 2 1.5; stroke-width: 1.4px; vector-effect: non-scaling-stroke; }
+.dg-splitl { position: absolute; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 3.2mm; font-size: 7.6pt; font-weight: 700; color: #6b7480; text-align: right; }
+.dg-tnode { position: absolute; width: 34%; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .5mm; }
+/* 배지(지름 9mm)의 가운데를 꼭짓점에 맞춤. 위 꼭짓점은 글자를 배지 위에, 아래 꼭짓점은 배지 아래에 둔다 */
+.dg-tnode.top { transform: translate(-50%, calc(-100% + 4.5mm)); }
+.dg-tnode.top .dg-badge { order: 3; }
+.dg-tnode.bl { transform: translate(-40%, -4.5mm); } .dg-tnode.br { transform: translate(-60%, -4.5mm); }
+.dg-tnode b { font-size: 9pt; color: var(--t); }
+.dg-tnode span:not(.dg-badge) { font-size: 7.6pt; color: #4a545e; }
+.dg-tcenter { position: absolute; left: 50%; top: 61%; transform: translate(-50%, -50%); width: 28%; text-align: center; font-weight: 800; font-size: 9pt; color: var(--dg2); }
+/* 계단 */
+.dg-stairs { display: flex; align-items: stretch; gap: 1.6mm; padding-top: 5mm; }
+.dg-step { flex: 1; background: color-mix(in srgb, var(--t) 12%, white); border-top: 1.2mm solid var(--t); border-radius: 1.6mm 1.6mm 0 0; padding: 1.6mm 2mm;
+  display: flex; flex-direction: column; gap: .6mm; }
+.dg-sh { display: flex; align-items: center; gap: 1.2mm; color: var(--t); }
+.dg-sn { width: 5mm; height: 5mm; border-radius: 50%; background: var(--t); color: #fff; font-weight: 800; font-size: 7.4pt; display: grid; place-items: center; }
+.dg-step b { color: var(--t); font-size: 8.8pt; }
+.dg-step span:not(.dg-sn) { font-size: 7.6pt; color: #3f4851; }
+.dg-sarrow { position: absolute; top: 0; right: 0; font-size: 7.6pt; font-weight: 700; color: var(--dg2); }
+/* 연표 */
+.dg-timeline { display: grid; gap: 1.6mm; position: relative; padding-top: 1mm; }
+.dg-timeline::before { content: ''; position: absolute; left: 0; right: 0; top: 9.4mm; height: .9mm; background: linear-gradient(90deg, var(--c1-line, #b5dbe0), var(--c1, #1b7f8c)); border-radius: 1mm; }
+.dg-ev { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .6mm; position: relative; }
+.dg-year { font-weight: 900; font-size: 9.4pt; color: var(--t); letter-spacing: -.2px; }
+.dg-pin { width: 6mm; height: 6mm; border-radius: 50%; background: #fff; border: .7mm solid var(--t); color: var(--t); display: grid; place-items: center; z-index: 1; }
+.dg-ev b { font-size: 8.6pt; margin-top: .8mm; }
+.dg-ev span { font-size: 7.6pt; color: #4a545e; }
+/* 아이콘 카드 */
+.dg-cards { display: grid; gap: 2mm; }
+.dg-card { position: relative; background: color-mix(in srgb, var(--t) 8%, white); border: 1px solid color-mix(in srgb, var(--t) 30%, white); border-radius: 2.2mm;
+  padding: 2.6mm 2.4mm 2.4mm; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .8mm; }
+.dg-card b { color: var(--t); font-size: 9pt; }
+.dg-card span:not(.dg-badge):not(.dg-tag) { font-size: 7.8pt; color: #3f4851; }
+.dg-tag { position: absolute; top: 1.4mm; left: 1.6mm; font-size: 6.8pt; font-weight: 800; color: var(--t); }
+/* 층 (피라미드·쌓기) */
+.dg-layers { display: flex; flex-direction: column; gap: .9mm; position: relative; }
+.dg-lrow { display: grid; grid-template-columns: 46% 1fr; gap: 3mm; align-items: center; }
+.dg-lbox { margin: 0 auto; background: var(--t); color: #fff; text-align: center; padding: 2.2mm 1mm; }
+.dg-layers:not(.pyr) .dg-lbox { border-radius: 1.4mm; }
+.dg-lbox b { color: #fff; font-size: 8.8pt; }
+.dg-ltext { font-size: 7.8pt; color: #3f4851; border-left: 2px solid var(--c1-line, #b5dbe0); padding-left: 2mm; }
+.dg-larrow { font-size: 7.4pt; color: #6b7480; text-align: left; }
+/* 민간 경제의 순환 */
+.dg-econ svg { width: 100%; display: block; }
+.dg-ebox { stroke: none; } .dg-ebox.hh { fill: var(--dg1); } .dg-ebox.firm { fill: var(--dg2); } .dg-ebox.mk { fill: #5b6672; } .dg-ebox.gov { fill: var(--dg3); }
+.dg-et { fill: #fff; font-size: 13px; font-weight: 800; }
+.dg-ea { fill: none; stroke-width: 2.2; } .dg-ea.real { stroke: #1c7ed6; } .dg-ea.money { stroke: #e8590c; stroke-dasharray: 6 3.5; } .dg-ea.gov { stroke: #e8590c; stroke-dasharray: 4 3; }
+.dg-eah.real { fill: #1c7ed6; } .dg-eah.money { fill: #e8590c; }
+.dg-el { font-size: 10.5px; font-weight: 700; paint-order: stroke; stroke: #fff; stroke-width: 3px; } .dg-el.real { fill: #1864ab; } .dg-el.money, .dg-el.gov { fill: #c2410c; }
+.dg-elg { font-size: 10px; fill: #4a545e; }
+/* 문화 변동의 양상 */
+.dg-cult { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; }
+.dg-ccard { border: 1px solid color-mix(in srgb, var(--t) 30%, white); border-top: 1.1mm solid var(--t); border-radius: 2mm; padding: 1.8mm 2mm; text-align: center; background: #fff; }
+.dg-ccard b { color: var(--t); font-size: 9.2pt; } .dg-ccard svg { width: 100%; display: block; margin: .5mm 0; }
+.dg-ccard span { font-size: 7.6pt; color: #3f4851; }
+.dg-cc { stroke: #fff; stroke-width: 1.5; } .dg-cc.a { fill: var(--dg1); } .dg-cc.b { fill: #e8590c; } .dg-cc.c { fill: #7048e8; }
+.dg-cct { fill: #fff; font-size: 12px; font-weight: 800; } .dg-carr { stroke: #5c6670; stroke-width: 2; }
+.dg-cleg { font-size: 7.2pt; color: #6b7480; text-align: right; margin-top: 1mm; }
+.dg-cleg i { display: inline-block; width: 2.6mm; height: 2.6mm; border-radius: 50%; margin: 0 .8mm 0 2mm; vertical-align: -.3mm; }
+.dg-cleg i.a { background: var(--dg1); } .dg-cleg i.b { background: #e8590c; } .dg-cleg i.c { background: #7048e8; }
+/* 세 원 */
+.dg-venn3 { display: grid; grid-template-columns: 46% 1fr; gap: 3mm; align-items: center; }
+.dg-vc { fill-opacity: .28; stroke: #fff; stroke-width: 1.5; }
+.dg-vt { font-size: 15px; font-weight: 800; fill: #1f2933; } .dg-vcen { font-size: 12.5px; font-weight: 900; fill: var(--dg2); }
+.dg-vlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.6mm; font-size: 7.9pt; color: #3f4851; }
+.dg-vlist b { color: var(--t); }
+
+/* 그림 제목 아이콘 */
+.fig-ic { display: inline-grid; place-items: center; width: 4.6mm; height: 4.6mm; border-radius: 1.2mm; background: var(--c1, #1b7f8c); color: #fff; margin-right: 1.4mm; vertical-align: -.9mm; }
+.fig-ic .ic { display: block; }
+/* 사진 */
+.ph-row { display: flex; gap: 2mm; }
+.ph-item { min-width: 0; display: flex; flex-direction: column; }
+.ph-item img { width: 100%; height: var(--ph-h, 46mm); object-fit: cover; border-radius: 1.6mm; display: block; }
+.ph-cap { font-size: 7.8pt; color: #2b333b; margin-top: 1mm; line-height: 1.4; font-weight: 600; }
+.ph-cr { font-size: 6pt; color: #8a939c; line-height: 1.3; margin-top: .3mm; word-break: break-all; }
+/* 사상가 초상 */
+.tk-head.has-photo::after { display: none; }
+.tk-photo { position: absolute; right: 3.6mm; top: 50%; transform: translateY(-50%); width: 14mm; height: 14mm; border-radius: 50%; object-fit: cover;
+  border: .6mm solid rgba(255,255,255,.85); box-shadow: 0 .6mm 1.6mm rgba(0,0,0,.25); background: #fff; }
+/* 흐름·사슬·허브 아이콘 */
+.fl-ic { display: block; color: var(--c1, #1b7f8c); margin: .6mm 0 .4mm; }
+.ch-step .ch-ic { display: inline-block; vertical-align: -.6mm; margin-right: .8mm; }
+.hub-ic { display: inline-grid; place-items: center; color: var(--c1, #1b7f8c); margin-bottom: .4mm; }
+/* 사진 출처 쪽 */
+.credits { font-size: 7.6pt; line-height: 1.55; color: #3f4851; margin: 0 0 2mm; }
+.cr-list { margin: 0; padding-left: 5mm; font-size: 7.4pt; line-height: 1.5; color: #3f4851; }
+.cr-list li { break-inside: avoid; margin-bottom: 1.2mm; word-break: break-all; }
+
+/* 그래프 다듬기: 선 아래 옅은 칠, 값 글씨 굵게 */
+.fig-svg .area { stroke: none; fill-opacity: .1; } .fig-svg .area.s1 { fill: var(--fig-1); } .fig-svg .area.s2 { fill: var(--fig-2); } .fig-svg .area.s3 { fill: var(--fig-3); }
+.fig-svg .val { font-weight: 600; }

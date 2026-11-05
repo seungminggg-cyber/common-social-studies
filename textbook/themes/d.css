@@ -177,3 +177,5 @@ mark { background: linear-gradient(transparent 56%, var(--hl) 56%); }
 .page-divider .dv-keys { background: rgba(0,0,0,.14); }
 .page-plan .plan-t th { background: var(--c1-soft); color: var(--c1-dark); border-bottom-color: var(--c1); }
 .page-plan .plan-t td.pl-u b, .page-plan .plan-how b { color: var(--c1); }
+/* 용어 칸: 용어 길이에 맞춰 칸 너비를 정해 알약 모양 이름이 두 줄로 꺾이지 않게 */
+.kv th { width: 1%; min-width: 22mm; white-space: nowrap; padding-right: 3mm; }

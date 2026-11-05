@@ -27,10 +27,10 @@ const OUT = join(ROOT, 'out');
 // 시안별 이름과 단 수 (concept=개념, check=개념 확인, exam=수능형 문제, answers=정답과 해설)
 // soft: 앞 쪽에 자리가 넉넉하면 새 쪽을 만들지 않고 이어 붙일 부분
 export const THEMES = {
-  a: { name: '시안 A · 날개형', layout: { concept: 1, check: 2, exam: 2, answers: 2, soft: ['check'] } },
-  b: { name: '시안 B · 카드형', layout: { concept: 1, check: 1, exam: 2, answers: 2, soft: ['check', 'exam'] } },
-  c: { name: '시안 C · 2단 노트형', layout: { concept: 2, check: 2, exam: 2, answers: 2, soft: ['check', 'exam'] } },
-  d: { name: '시안 D · 교과서형', layout: { concept: 1, check: 1, exam: 2, answers: 2, soft: ['check', 'exam'] } },
+  a: { name: '시안 A · 날개형', layout: { concept: 1, check: 2, exam: 2, answers: 2, credits: 2, soft: ['check'] } },
+  b: { name: '시안 B · 카드형', layout: { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
+  c: { name: '시안 C · 2단 노트형', layout: { concept: 2, check: 2, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
+  d: { name: '시안 D · 교과서형', layout: { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
 };
 
 const args = process.argv.slice(2);

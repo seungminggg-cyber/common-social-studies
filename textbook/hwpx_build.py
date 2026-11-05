@@ -44,7 +44,8 @@ TEACHER = len(sys.argv) > 3 and sys.argv[3] == 'teacher'
 book = json.load(open(src, encoding='utf-8'))
 # build.mjs가 찍어 둔 그래프·지도 그림 (out/fig/<단원>/<번호>.png)
 FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(src)), 'fig', os.path.splitext(os.path.basename(src))[0])
-FIGS = ('chart', 'venn', 'map')
+PHOTO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'photos')  # 사상가 초상
+FIGS = ('chart', 'venn', 'map', 'diagram', 'photo')
 
 doc = document.HwpxDocument.new()
 doc.page.setup(paper_size='A4', margin_left_mm=M_LEFT, margin_right_mm=M_RIGHT, margin_top_mm=12, margin_bottom_mm=12)
@@ -463,7 +464,11 @@ def chain(b):
 
 
 def thinker(b):
-    """사상가 카드: 머리(남색) → 핵심 주장 → 용어 → 원전 읽기 → 기출 선지 O·X → 헷갈리지 말자"""
+    """사상가 카드: (초상) → 머리(남색) → 핵심 주장 → 용어 → 원전 읽기 → 기출 선지 O·X → 헷갈리지 말자"""
+    face = os.path.join(PHOTO_DIR, f"{b.get('photo', '')}.jpg")
+    if b.get('photo') and os.path.exists(face):
+        with open(face, 'rb') as f:
+            doc.add_picture(f.read(), 'jpg', width_mm=20, height_mm=20, align='LEFT')
     t = table(1, 1, [100])
     p = cell(t, 0, 0, fill=NAVY, pad=(4.5, 4.5, 2.4, 2.4))
     run(p, b['name'], size=14, color=WHITE, bold=True)
@@ -759,6 +764,32 @@ for ui, u in enumerate(book['units']):
         chip(p, f'{starts[ui] + i:02d}', TEAL, size=8.5)
         run(p, f"  정답 {CIRCLED[q['answer'] - 1]}", size=9, color=ORANGE, bold=True)
         rich(para(after=3, spacing=160), q['explain'], size=8.8)
+
+# ── 사진 출처 (위키미디어 공용 사진의 저작자·라이선스) ──
+def used_photos(x, acc):
+    if isinstance(x, list):
+        for y in x: used_photos(y, acc)
+    elif isinstance(x, dict):
+        if x.get('t') == 'photo':
+            for it in x.get('items') or []: acc.append(it.get('src'))
+        if x.get('t') == 'thinker' and x.get('photo'): acc.append(x['photo'])
+        for v in x.values(): used_photos(v, acc)
+    return acc
+
+cred_path = os.path.join(PHOTO_DIR, 'credits.json')
+CRED = json.load(open(cred_path, encoding='utf-8')) if os.path.exists(cred_path) else {}
+ids = [i for i in dict.fromkeys(used_photos(book['units'], [])) if i in CRED and os.path.exists(os.path.join(PHOTO_DIR, f'{i}.jpg'))]
+if ids:
+    columns(1)
+    band('사진 출처')
+    rich(para(after=3, spacing=160), '이 책의 사진은 위키미디어 공용(Wikimedia Commons)에서 자유 이용 허락(CC BY, CC BY-SA, CC0, 퍼블릭 도메인)을 확인한 것입니다. 사진은 크기를 줄이거나 잘라서 실었으며, 각 사진의 저작자와 라이선스는 다음과 같습니다. 아이콘: Tabler Icons(MIT 라이선스).', size=8.6)
+    for n, i in enumerate(ids):
+        c = CRED[i]
+        p = para(after=1.5, spacing=150)
+        run(p, f'{n + 1}. ', size=8, color=TEAL, bold=True)
+        run(p, c.get('caption', ''), size=8, color=NAVY, bold=True)
+        lic = c.get('license', '') + (f" ({c['licenseUrl']})" if c.get('licenseUrl') else '')
+        run(p, f" — {c.get('author') or '작자 미상'}, {lic}, 위키미디어 공용 「{c.get('title', '').replace('File:', '')}」 {c.get('page', '')}", size=8)
 
 report = doc.validate()
 print('형식 검사:', '통과' if getattr(report, 'ok', False) else report)

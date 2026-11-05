@@ -113,8 +113,9 @@ export default {
       ] }],
     },
     {
-      t: 'chain', title: '다중 격차의 악순환',
-      steps: ['소득 격차', '자산 격차(저축·투자 여력)', '주거 격차(사는 곳과 환경)', '교육 격차(교육 기회·진학)', '다시 일자리·소득 격차'],
+      t: 'diagram', kind: 'cycle', title: '다중 격차의 악순환', width: 88, center: '격차가 대물림된다',
+      nodes: [{ title: '소득 격차', text: '버는 돈의 차이', icon: 'coin' }, { title: '자산 격차', text: '저축·투자 여력', icon: 'pig-money' },
+        { title: '주거 격차', text: '사는 곳과 환경', icon: 'home' }, { title: '교육 격차', text: '교육 기회·진학', icon: 'school' }, { title: '일자리 격차', text: '다시 소득 격차로', icon: 'briefcase' }],
     },
 
     // ── B ──

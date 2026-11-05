@@ -13,6 +13,9 @@
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { drawMap } from './maps.js';
+import { diagram } from './diagrams.js';
+import { icon } from './icons.js';
+import { hasPhoto, photoUrl, shortCredit, credits } from './photos.js';
 
 const require = createRequire(import.meta.url);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -56,6 +59,12 @@ function legend(items, x, y, { size = 11, kind = 'box' } = {}) {
 const legendWidth = (items, size = 11, kind = 'box') => items.reduce((w, it) => w + (kind === 'line' ? 22 : 16) + tw(it.name, size) + 14, 0);
 
 // ── 막대그래프 (세로, 여러 계열) ──
+// 위쪽 모서리만 둥근 막대
+function roundTop(x, y, w, h, r) {
+  if (h <= 0) return `M${r1(x)},${r1(y)}h${r1(w)}`;
+  r = Math.min(r, h, w / 2);
+  return `M${r1(x)},${r1(y + h)}V${r1(y + r)}Q${r1(x)},${r1(y)} ${r1(x + r)},${r1(y)}H${r1(x + w - r)}Q${r1(x + w)},${r1(y)} ${r1(x + w)},${r1(y + r)}V${r1(y + h)}Z`;
+}
 function bar(b) {
   const W = b.w || 600, H = b.h || 300;
   const cats = b.categories, series = b.series;
@@ -76,7 +85,7 @@ function bar(b) {
     ser.values.forEach((v, i) => {
       const x = L + band * i + (band - gw) / 2 + bw * j;
       const hl = (b.highlight || []).includes(i) ? ' hl' : '';
-      s += `<rect x="${r1(x + 1)}" y="${r1(sy(v))}" width="${r1(bw - 2)}" height="${r1(sy(min) - sy(v))}" class="fl s${j + 1}${hl}"/>`;
+      s += `<path d="${roundTop(x + 1, sy(v), bw - 2, sy(min) - sy(v), Math.min(4, (bw - 2) / 4))}" class="fl s${j + 1}${hl}"/>`;
       if (b.valueLabels !== false) s += text(x + bw / 2, sy(v) - 5, fmt(v) + (b.valueSuffix || ''), { size: 10.5, anchor: 'middle', cls: 'val' });
     });
   });
@@ -201,8 +210,10 @@ function line(b) {
     const pts = (ser.points || ser.values.map((v, i) => [i, v])).map(([a, v]) => [sx(a), sy(v)]);
     const cls = `ln s${ser.color || j + 1}${ser.dash ? ' dash' : ''}`;
     const d = ser.smooth || b.smooth ? smoothPath(pts) : 'M' + pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L');
+    // 실제 자료 선 하나뿐이면 아래를 옅게 칠함, 점은 자료가 적을 때 기본으로 찍음
+    if (!schem && b.series.length === 1 && b.area !== false) s += `<path d="${d}L${r1(pts[pts.length - 1][0])},${r1(T + ph)}L${r1(pts[0][0])},${r1(T + ph)}Z" class="area s${ser.color || j + 1}"/>`;
     s += `<path d="${d}" class="${cls}"/>`;
-    if (ser.marker) pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="3.4" class="dot s${ser.color || j + 1}"/>`));
+    if (ser.marker ?? (!schem && pts.length <= 16)) pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="3.4" class="dot s${ser.color || j + 1}"/>`));
     if (ser.end) {
       const p = pts[pts.length - 1];
       s += text(p[0] + 6, p[1] + 4 + (ser.endDy || 0), ser.end, { size: 11, cls: `endl s${ser.color || j + 1}` }); // endDy: 이름표가 겹칠 때 위아래로 옮김
@@ -428,16 +439,35 @@ function pyramid(b) {
 const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev, radar, pyramid };
 
 // 그림 블록 → HTML (<figure>)
-export function figure(b) {
+// inl: 글자 안의 **굵게** 등을 HTML로 바꾸는 함수 (render.js 가 넘김) — 도식·사진의 설명에 쓴다
+export function figure(b, inl = (x) => esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')) {
+  const width = b.width ? ` style="width:${b.width}%"` : '';
+  const foot = (extra = '') => (b.source || b.note || extra ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${inl(b.note)}</span>` : ''}${
+    b.source ? `<span class="fig-src">${esc(b.source)}</span>` : extra}</div>` : '');
+  const cap = b.title ? `<figcaption class="fig-title">${FIG_ICON[b.t] || ''}${esc(b.title)}</figcaption>` : '';
+  const fig = (cls, body) => `<figure class="fig fig-${cls}"${width}${b._fig ? ` data-fig="${b._fig}"` : ''}>${cap}<div class="fig-body">${body}</div>${foot()}</figure>`;
+  if (b.t === 'diagram') return fig('diagram', diagram(b, inl));
+  if (b.t === 'photo') {
+    // 사진 여러 장을 같은 높이로 나란히. 그림마다 설명과 짧은 출처
+    const items = b.items.filter((it) => hasPhoto(it.src));
+    if (!items.length) return '';
+    const body = `<div class="ph-row" style="--ph-h:${b.h || 46}mm">${items.map((it) => `<div class="ph-item" style="flex:${it.flex || 1}"><img src="${photoUrl(it.src)}" alt="" style="object-position:${it.pos || '50% 50%'}"><div class="ph-cap">${inl(it.caption || credits()[it.src]?.caption || '')}</div><div class="ph-cr">사진: ${esc(shortCredit(it.src))}</div></div>`).join('')}</div>`;
+    return fig('photo', body);
+  }
   const out = b.t === 'venn' ? venn(b) : b.t === 'map' ? map(b) : (KINDS[b.kind] || (() => { throw new Error(`모르는 그래프: ${b.kind}`); }))(b);
   const defs = `<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd"/></marker>`
     + `<marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd2"/></marker>`
     + ['warm', 'cold', 'wind', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8'].map((k) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd-${k}"/></marker>`).join('') + '</defs>';
   const svg = `<svg viewBox="0 0 ${out.W} ${out.H}" xmlns="http://www.w3.org/2000/svg" class="fig-svg">${defs}${out.s}</svg>`;
-  const width = b.width ? ` style="width:${b.width}%"` : '';
-  return `<figure class="fig fig-${b.t === 'chart' ? b.kind : b.t}"${width}${b._fig ? ` data-fig="${b._fig}"` : ''}>${
-    b.title ? `<figcaption class="fig-title">${esc(b.title)}</figcaption>` : ''}<div class="fig-body">${svg}</div>${
-    b.source || b.note ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${esc(b.note).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : ''}</figure>`;
+  return fig(b.t === 'chart' ? b.kind : b.t, svg);
 }
+// 그림 제목 앞 작은 아이콘 (그래프·지도·도식)
+const FIG_ICON = {
+  chart: `<span class="fig-ic">${icon('chart-bar', { size: 13, stroke: 2.2 })}</span>`,
+  map: `<span class="fig-ic">${icon('map-2', { size: 13, stroke: 2.2 })}</span>`,
+  venn: `<span class="fig-ic">${icon('circles', { size: 13, stroke: 2.2 })}</span>`,
+  diagram: `<span class="fig-ic">${icon('bulb', { size: 13, stroke: 2.2 })}</span>`,
+  photo: `<span class="fig-ic">${icon('photo', { size: 13, stroke: 2.2 })}</span>`,
+};
 
-export const FIGURE_TYPES = new Set(['chart', 'venn', 'map']);
+export const FIGURE_TYPES = new Set(['chart', 'venn', 'map', 'diagram', 'photo']);

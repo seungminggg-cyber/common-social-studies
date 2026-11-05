@@ -89,7 +89,9 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - 통합사회2 Ⅱ(t2-2: 04~06)·Ⅲ(t2-3: 07~10)·Ⅳ(t2-4: 11~13)·Ⅴ(t2-5: 14~16) 완료(2026-11-05). 통합본 `node build-book.mjs t2` → 통합사회2 개념서 학생용·교사용 178쪽 + 정답과 해설 11쪽. 강사 확인 사항은 `참고/검토할점.md`의 통합사회2 부분.
 - 2026-11-05 강사 요청 "통합사회2 내용이 적다, 오류 점검·세세하게 보완" → 다섯 단원 모두 개념·자료·사상가 주장·문제 보강(중단원마다 수능형 10~13문항). 통합본은 178쪽 → **204쪽**, 정답과 해설 13쪽. 새 사실 확인 목록은 `참고/검토할점.md`의 '통합사회2 2차 보완'.
 - 2026-11-05 강사 요청 "실제 문제집처럼 현실적인 지도(색, 국경, 바다·육지·호수·강)" → 지도 41개를 새 방식(`lib/maps.js`)으로 다시 그림. 지형도(고도 음영)·정치 지도·주제도·단계 구분도, 판의 경계, 우리나라 시·도 경계와 하천(고도로 계산). 강사가 견본을 보고 승인, 하천 표현은 상류 가늘고 하류 굵게로 고침. 자세한 설정은 `textbook/README.md`의 '지도'.
-- 이 환경에서 열리는 지도 자료: raw.githubusercontent.com(Natural Earth, 판의 경계 fraxen/tectonicplates, southkorea-maps), s3.amazonaws.com(고도 타일). 위키미디어 공용(upload/commons.wikimedia.org)은 강사가 허용 도메인에 추가함(사진용, 아직 안 씀).
+- 이 환경에서 열리는 지도 자료: raw.githubusercontent.com(Natural Earth, 판의 경계 fraxen/tectonicplates, southkorea-maps), s3.amazonaws.com(고도 타일). 위키미디어 공용(upload/commons.wikimedia.org)은 강사가 허용 도메인에 추가함.
+- 2026-11-05 강사 요청 "위키미디어 사진 + 그래프·개념 도식을 인포그래픽으로, 지도 재검토" → 인포그래픽 도식(`lib/diagrams.js`, 아이콘 Tabler Icons `lib/icons.js`), 사진 블록·사상가 초상(`lib/photos.js`, `assets/photos/` + `credits.json`, 단원·통합본 끝 '사진 출처' 쪽). 지도는 우리나라 정부 시각 국경(Natural Earth KOR 판), 2023 군위 대구 편입, 해류 색 바로잡음. 사진은 자유 라이선스만(84장), 사진 아래 저작자·라이선스 표시, 한글 파일 끝에도 '사진 출처'. 통합본은 통합사회1 **224쪽**, 통합사회2 **212쪽**으로 늘어남.
+- 위키미디어 사진 받기: upload.wikimedia.org는 429(요청 제한)가 심하고 thumb.wikimedia.org는 막힘 → `https://commons.wikimedia.org/w/thumb.php?f=파일이름&w=960`으로 받으면 잘 됨(URL 끝 `?utm_…` 떼기, User-Agent에 프로젝트 주소).
 - 그림 기능 추가: 방사형(radar, 순위형은 reverse), 인구 피라미드(pyramid). 그림 설명(note)에서 **굵게** 지원.
 - 실제 통계: Our World in Data의 GitHub 공개 자료(owid/energy-data, owid/co2-data)를 raw.githubusercontent.com으로 받을 수 있음. datahub.io, fred, ourworldindata.org 직접 접속은 막힘.
 - 예금자 보호 한도는 2025-09-01부터 1억 원(교재의 5천만 원은 옛 기준).

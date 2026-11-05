@@ -103,6 +103,13 @@ export default {
       ] }],
     },
 
+    {
+      t: 'photo', width: 58, h: 44,
+      items: [
+        { src: 'ph-shibuya' },
+      ],
+    },
+
     // ── B ──
     { t: 'sec', mark: 'B', title: '인구 구조와 인구 이동' },
     {

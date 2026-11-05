@@ -87,9 +87,32 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 | `borders: false`, `deg: false`, `north: false`, `scale: false` | 국경·경위도 숫자·방위표·축척 끄기 |
 | `legend: [{ pin }, { line: 'border'·'river'·'prov'·'mdl'·'plate'·'warm'·'cold'·'wind' }, { fill }]`, `legendV`, `legendAt` | 범례 모양·세로 배치·위치 |
 
-- 바탕 자료는 `data/geo/` (Natural Earth 강·호수·국경, 통계청 시·도 경계, 판의 경계, 고도 자료로 계산한 우리나라 하천). 다시 만들 때는 `tools/geo-prep.mjs`.
+- 바탕 자료는 `data/geo/` (Natural Earth 강·호수, **우리나라 정부 시각의 국경**(Natural Earth 'KOR' 판: `countries-kor-10m/50m.json`, 군사 분계선 등 `ne-special-lines.json`), 통계청 시·도 경계(2023 군위군 대구 편입 반영), 판의 경계, 고도 자료로 계산한 우리나라 하천). 다시 만들 때는 `tools/geo-prep.mjs`.
+- 나라 이름은 ISO3 코드(`KOR`, `JPN` …)로 쓴다. 예전 이름('South Korea' 등)은 `lib/maps.js`의 `ALIAS`로 바꿔 준다.
 - 지형도 바탕 그림은 `assets/terrain/<번호>.jpg`. 지도 설정(범위·크기)을 바꾸면 빌드할 때 `lib/terrain.js`가 고도 타일(AWS Terrain Tiles)을 내려받아 새로 만든다(인터넷 필요, 타일은 `~/.cache/terrain-tiles`).
 - 우리나라 하천은 `tools/terrain/mosaic.py` + `tools/terrain/rivers.mjs`로 고도 자료에서 물길을 계산한 것(작은 지류는 실제와 조금 다를 수 있음).
+
+## 인포그래픽 도식 (`lib/diagrams.js`, 2026-11)
+`{ t: 'diagram', kind, title, width, note }` — 아이콘(Tabler Icons, MIT)과 대단원 색으로 그리는 개념 도식. 견본은 `content/z-diagrams.js`.
+| `kind` | 모양 |
+|---|---|
+| `cycle` | 순환 고리 (`nodes: [{ title, text, icon }]`, `center`) |
+| `concentric` | 동심원 + 옆 설명 (`rings: [{ short, title, text }]`, 안쪽부터) |
+| `triangle` | 삼각형 꼭짓점 셋 (`corners`, `split: ['위', '아래']` 점선, `center`) |
+| `stairs` | 왼쪽→오른쪽으로 높아지는 계단 (`steps`, `arrow`) |
+| `timeline` | 연표 (`events: [{ year, title, text, icon }]`) |
+| `cards` | 아이콘 카드 여러 장 (`items: [{ title, text, icon, tag }]`, `cols`) |
+| `layers` | 피라미드(`shape: 'pyramid'`)·쌓기(`'stack'`) (`layers`는 아래에서부터) |
+| `econflow` | 가계·기업(·정부) 경제 순환 (`gov: true`) |
+| `cultchange` | 문화 변동 세 양상(동화·병존·융합) (`items`) |
+| `venn3` | 세 원 겹치기 (`sets`, `texts`, `center`) |
+- `hub`·`chain`·`flow` 블록에도 `icon: '이름'`을 줄 수 있다. 아이콘 이름은 https://tabler.io/icons (outline).
+
+## 사진 (`lib/photos.js`, 위키미디어 공용)
+- `{ t: 'photo', title, h, items: [{ src: 'ph-…', caption, flex, pos }] }`. 사상가 카드는 `photo: 'pt-…'`(정사각형 초상).
+- 사진 파일은 `assets/photos/<id>.jpg`, 출처는 `assets/photos/credits.json`(제목·저작자·라이선스·원본 주소). 사진마다 아래에 저작자·라이선스를 적고, 단원 끝과 통합본 끝에 '사진 출처' 쪽이 자동으로 붙는다.
+- 자유 라이선스(CC BY, CC BY-SA, CC0, 퍼블릭 도메인)만 쓴다. 사진 파일이 없으면 그 사진 블록은 건너뛴다(빌드는 그대로 됨).
+- 내려받기: upload.wikimedia.org는 요청 제한(429)이 심해서 `commons.wikimedia.org/w/thumb.php?f=파일이름&w=960`으로 받는다(주소 끝 `?utm_…`는 떼야 함).
 
 ## 한글 파일
 `hwpx_build.py`가 같은 내용으로 시안 B 모양의 한글 파일(.hwpx)을 만듭니다.

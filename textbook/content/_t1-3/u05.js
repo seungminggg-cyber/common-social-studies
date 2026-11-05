@@ -268,6 +268,24 @@ export default {
         '공기가 희박해 햇볕이 강하고 일교차가 크다 → 머리만 내놓고 입는 **판초**와 챙 넓은 모자. 고도에 따라 감자·옥수수·커피 등을 나누어 기르고, 짐을 나르고 털을 얻기 위해 **라마·알파카**를 기른다.',
       ] }],
     },
+
+    {
+      t: 'photo', title: '기후에 따라 다른 집과 생활', h: 34,
+      items: [
+        { src: 'ph-stilt', caption: '열대: 캄보디아의 고상 가옥' },
+        { src: 'ph-mudbrick', caption: '건조: 모로코의 흙벽돌집' },
+        { src: 'ph-ger', caption: '건조: 몽골 유목민의 게르' },
+      ],
+    },
+
+    {
+      t: 'photo', h: 34,
+      items: [
+        { src: 'ph-santorini', caption: '온대: 지중해의 흰 벽 집(그리스 산토리니)' },
+        { src: 'ph-taiga', caption: '냉대: 시베리아의 타이가(침엽수림)' },
+        { src: 'ph-lapaz', caption: '고산: 볼리비아의 고산 도시 라파스' },
+      ],
+    },
     pair(
       CITYCL('키토', { title: '고산 기후 (해발 약 2,800m)', tMin: 0, tMax: 40, pMax: 300 }),
       CITYCL('과야킬', { title: '같은 위도의 해안 저지대', tMin: 0, tMax: 40, pMax: 300 }),
@@ -320,6 +338,14 @@ export default {
         [{ text: '특수 지형', cls: 'em' }, '화산·카르스트·빙하 지형은 독특한 경관을 이룬다.', '**관광 산업**의 자원, 지열 발전, 시멘트 공업'],
       ],
     },
+
+    {
+      t: 'photo', h: 40,
+      items: [
+        { src: 'ph-banaue', caption: '산지: 필리핀 바타드의 계단식 논' },
+        { src: 'ph-suncheon', caption: '해안: 전남 순천만의 갯벌과 갈대밭' },
+      ],
+    },
     {
       t: 'item', no: '1', title: '하천과 해안의 지형',
       body: [
@@ -341,6 +367,24 @@ export default {
         ] },
       ],
     },
+
+    {
+      t: 'photo', title: '사진으로 보는 특수 지형', h: 34,
+      items: [
+        { src: 'ph-seongsan', caption: '화산: 제주 성산 일출봉' },
+        { src: 'ph-cave', caption: '카르스트: 충북 단양 고수 동굴' },
+        { src: 'ph-halong', caption: '카르스트: 베트남 할롱 베이' },
+      ],
+    },
+
+    {
+      t: 'photo', h: 34,
+      items: [
+        { src: 'ph-fjord', caption: '빙하: 노르웨이 게이랑에르피오르' },
+        { src: 'ph-perito', caption: '빙하: 아르헨티나 페리토 모레노 빙하' },
+        { src: 'ph-pamukkale', caption: '석회화 단구: 튀르키예 파묵칼레' },
+      ],
+    },
     {
       t: 'map', view: 'world', title: '세계의 대표 지형과 생활', h: 310, style: 'terrain',
       markers: [
@@ -350,16 +394,16 @@ export default {
         { lon: 10, lat: 46.5, label: '알프스 이목', pos: 'left' },
         { lon: 29.1, lat: 37.9, label: '파묵칼레', pos: 'right' },
         { lon: 110.3, lat: 25.3, label: '구이린(카르스트)', pos: 'right' },
-        { lon: 107.1, lat: 20.9, label: '할롱 베이', pos: 'left' },
+        { lon: 107.1, lat: 20.9, label: '할롱 베이', pos: 'bottom' },
         { lon: 110.4, lat: -7.6, label: '자바섬(화산재 토양)', pos: 'bottom' },
         { lon: 121.1, lat: 16.9, label: '필리핀 계단식 논', pos: 'right' },
         { lon: -72.0, lat: -13.5, label: '쿠스코·마추픽추', pos: 'left' },
         { lon: -73.5, lat: -49, label: '파타고니아 빙하', pos: 'right' },
-        { lon: 31.2, lat: 30.4, label: '나일강 삼각주', pos: 'bottom' },
+        { lon: 31.2, lat: 30.4, label: '나일강 삼각주', pos: 'left' },
       ],
       labels: [
         { at: [-112, 47], text: '로키산맥', size: 10.5, cls: 'terr', rot: 62 }, { at: [-66.5, -24], text: '안데스산맥', size: 10.5, cls: 'terr', rot: 78 },
-        { at: [88, 33], text: '히말라야산맥', size: 10.5, cls: 'terr' }, { at: [10, 15], text: '사하라 사막', size: 10.5, cls: 'terr' },
+        { at: [82, 28.8], text: '히말라야산맥', size: 10, cls: 'terr', rot: 14 }, { at: [4, 19.5], text: '사하라 사막', size: 10.5, cls: 'terr' },
       ],
       equator: true,
       source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
@@ -399,6 +443,13 @@ export default {
         '**차드호의 축소**: 아프리카 사헬 지대의 차드호는 가뭄과 인구 증가에 따른 무분별한 관개로 1960년대보다 면적이 약 90% 줄었다. 물을 둘러싼 이웃 나라 간 갈등과 폭력 사태가 이어지고 많은 난민이 생겼다. (중앙아시아의 아랄해도 비슷하게 줄어들었다.)',
       ] }],
     },
+
+    {
+      t: 'photo', width: 72, h: 52,
+      items: [
+        { src: 'ph-aral' },
+      ],
+    },
     {
       t: 'map', view: [-6, 2, 32, 26], title: '줄어든 차드호와 사헬 지대', w: 520, h: 320, width: 66, style: 'terrain', palette: 'soft',
       highlight: [
@@ -409,7 +460,7 @@ export default {
       ],
       markers: [{ lon: 14.4, lat: 13.2, ring: 16, label: '차드호', pos: 'right', cls: 'k4' }],
       labels: [{ at: [3.5, 15.3], text: '사 헬 지 대', size: 13, cls: 'strong' }, { at: [13, 22.5], text: '사하라 사막', size: 12, cls: 'terr' },
-        { at: [6.0, 10.4], text: '니제르강', size: 10, cls: 'river' }],
+        { at: [5.6, 11.8], text: '니제르강', size: 10, cls: 'river' }],
       seas: [['기니만', 4, 3.5, 11]],
       parallels: [{ lat: 17.5 }, { lat: 12.5 }],
       source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
@@ -480,6 +531,13 @@ export default {
         title: '태풍의 위험 반원',
         text: '북반구에서 태풍이 나아가는 방향의 **오른쪽**은 태풍 자체의 바람과 주변 바람(편서풍·무역풍)의 방향이 같아 바람이 더 강하다(위험 반원). 왼쪽은 상대적으로 약하다(가항 반원). 열대 저기압은 지역마다 이름이 달라 동아시아는 태풍, 북아메리카는 허리케인, 인도양은 사이클론이라 부른다.',
       },
+    },
+
+    {
+      t: 'photo', width: 52, h: 56,
+      items: [
+        { src: 'ph-typhoon' },
+      ],
     },
     {
       t: 'table', title: '자연재해별 특징과 대책',
@@ -569,10 +627,10 @@ export default {
     },
     {
       t: 'flow', steps: [
-        { title: '예방', text: '위험 지역 정비, 내진 설계, 댐·제방 건설' },
-        { title: '대비', text: '예보·경보 체계, 대피 훈련, 비상 물품 준비' },
-        { title: '대응', text: '신속한 대피와 구조, 응급 복구' },
-        { title: '복구', text: '피해 조사, 재건·보상, 재발 방지 대책' },
+        { title: '예방', text: '위험 지역 정비, 내진 설계, 댐·제방 건설', icon: 'shield-check' },
+        { title: '대비', text: '예보·경보 체계, 대피 훈련, 비상 물품 준비', icon: 'bell-ringing' },
+        { title: '대응', text: '신속한 대피와 구조, 응급 복구', icon: 'ambulance' },
+        { title: '복구', text: '피해 조사, 재건·보상, 재발 방지 대책', icon: 'tool' },
       ],
     },
 

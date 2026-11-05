@@ -32,7 +32,7 @@ const picked = ['student', 'teacher', 'answers'].filter((k) => args.includes(k))
 const jobs = picked.length ? picked : ['student', 'teacher', 'answers'];
 
 // 시안 B 배치 (개념 1단, 개념 확인 1단, 수능형 문제·정답 2단)
-const layout = { concept: 1, check: 1, exam: 2, answers: 2, soft: ['check', 'exam'] };
+const layout = { concept: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] };
 const NAMES = { student: '개념서-학생용', teacher: '개념서-교사용', answers: '정답과해설' };
 const paginateJs = readFileSync(join(ROOT, 'lib/paginate.js'), 'utf8');
 

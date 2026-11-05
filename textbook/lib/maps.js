@@ -1,7 +1,7 @@
 // 지도 그리기 (2026-11 새 방식)
 //
 // 바탕 자료
-//   나라·육지: world-atlas (Natural Earth), 강·호수·국경: data/geo/ne-*.json (Natural Earth, 공개 자료)
+//   나라·육지·국경: data/geo/countries-kor-*.json (Natural Earth 한국 관점), 강·호수: data/geo/ne-*.json (Natural Earth, 공개 자료)
 //   우리나라: data/geo/kr-provinces.json (통계청 시·도 경계), kr-rivers.json (고도 자료로 계산한 하천)
 //   지형 바탕(음영 기복): assets/terrain/<번호>.jpg — lib/terrain.js 가 고도 자료(AWS Terrain Tiles)로 만든다
 //
@@ -20,7 +20,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { geoEqualEarth, geoMercator, geoPath, geoGraticule, geoBounds, geoCentroid, geoArea } from 'd3-geo';
-import { feature, mesh } from 'topojson-client';
+import { feature, mesh, merge } from 'topojson-client';
 
 const require = createRequire(import.meta.url);
 const ROOT = new URL('../', import.meta.url).pathname;
@@ -29,13 +29,13 @@ const r1 = (n) => Math.round(n * 10) / 10;
 // ── 자료 불러오기 (한 번만) ──
 const cache = {};
 function atlas(detail) {
+  // 나라 경계: Natural Earth "한국 관점" 자료를 묶은 topojson (tools/geo-prep.mjs) — 크림반도·골란고원·서사하라 등이 우리 정부 입장대로
   return (cache['a' + detail] ||= (() => {
-    const topo = JSON.parse(readFileSync(require.resolve(`world-atlas/countries-${detail}.json`), 'utf8'));
-    const land = JSON.parse(readFileSync(require.resolve(`world-atlas/land-${detail}.json`), 'utf8'));
+    const topo = JSON.parse(readFileSync(`${ROOT}data/geo/countries-kor-${detail}.json`, 'utf8'));
     return {
       countries: rewind(feature(topo, topo.objects.countries)),
       borders: mesh(topo, topo.objects.countries, (a, b) => a !== b),
-      land: rewind(feature(land, land.objects.land)),
+      land: rewind({ type: 'Feature', properties: {}, geometry: merge(topo, topo.objects.countries.geometries) }),
     };
   })());
 }
@@ -50,11 +50,9 @@ function rewind(fc) {
   return fc;
 }
 const geo = (n) => (cache[n] ||= JSON.parse(readFileSync(ROOT + 'data/geo/' + n, 'utf8')));
-const META = () => geo('countries-meta.json');
-function metaOf(f) {
-  const m = META();
-  return m[String(f.id).padStart(3, '0')] || m[`n:${f.properties.name}`] || Object.values(m).find((x) => x.name === f.properties.name) || {};
-}
+// 예전 world-atlas 이름 → 한국 관점 자료의 코드 (null: 다른 나라에 포함되어 따로 칠하지 않음)
+const ALIAS = { 'South Korea': 'KOR', 'North Korea': 'PRK', Macedonia: 'MKD', 'United States of America': 'USA', 'Dem. Rep. Congo': 'COD', Congo: 'COG', 'N. Cyprus': null, Somaliland: null };
+const metaOf = (f) => ({ c7: f.properties.c7, iso3: f.properties.iso });
 
 // ── 투영 ──
 export function makeProjection(b) {
@@ -155,9 +153,9 @@ export function drawMap(b, h) {
   };
   const A = atlas(detail);
   const countries = A.countries.features.filter(inView);
-  const byName = new Map(A.countries.features.map((f) => [f.properties.name, f]));
-  const byId = new Map(A.countries.features.map((f) => [String(f.id), f]));
-  const find = (k) => byName.get(k) || byId.get(String(k));
+  const byKey = new Map();
+  for (const f of A.countries.features) for (const k of [f.properties.name, f.properties.long, f.properties.ko, f.properties.iso, f.id]) if (k && !byKey.has(k)) byKey.set(k, f);
+  const find = (k) => byKey.get(ALIAS[k] ?? k);
   const uid = (b._fig || 'm') + terrainKey(b).slice(0, 4);
   const terrain = style === 'terrain';
   let s = '';
@@ -196,6 +194,7 @@ export function drawMap(b, h) {
     }
   }
   for (const hl of b.highlight || []) {
+    if (ALIAS[hl.country] === null) continue; // 한국 관점 자료에서 다른 나라에 포함된 지역(예: 북키프로스 → 키프로스)
     const f = find(hl.country);
     if (!f) throw new Error(`지도에 없는 나라: ${hl.country}`);
     if (hl.fill) s += `<path d="${path(f)}" fill="${hl.fill}" fill-opacity="${hl.opacity ?? (terrain ? 0.45 : 0.9)}"/>`;
@@ -254,8 +253,9 @@ export function drawMap(b, h) {
   else if (world && style !== 'political') {
     s += `<path d="${path(A.borders)}" fill="none" stroke="${terrain ? 'rgba(120,70,130,.75)' : '#c9c1b2'}" stroke-width="${terrain ? 0.5 : 0.45}"${terrain ? ' stroke-dasharray="2.5 1.2"' : ''}/>`;
   } else {
-    const bd = { i: '', d: '', c: '' };
-    for (const f of geo('ne-borders.json').features) if (inView(f)) bd[f.properties.k] += path(f);
+    // 국경선: 나라 경계 자료에서 이웃끼리 맞닿은 선(한국 관점), 특별한 선(군사 분계선·실질 통제선)은 따로
+    const bd = { i: path(A.borders), d: '', c: '' };
+    for (const f of geo('ne-special-lines.json').features) if (inView(f)) bd.c += path(f);
     const col = '#8a4f8f';
     if (bd.i) s += `<path d="${bd.i}" fill="none" stroke="#fff" stroke-width="2.4" stroke-opacity=".65"/><path d="${bd.i}" fill="none" stroke="${col}" stroke-width="${world ? 0.6 : 1}" stroke-dasharray="${world ? '3 1.2' : '5 2 1.5 2'}"/>`;
     if (bd.d) s += `<path d="${bd.d}" fill="none" stroke="${col}" stroke-width=".9" stroke-dasharray="1.6 1.8"/>`;
@@ -295,7 +295,7 @@ export function drawMap(b, h) {
     const [x, y] = proj([lo, la]); s += lab(x, y + sz * 0.35, n, { size: sz, cls: 'sea', rot });
   }
   for (const hl of b.highlight || []) {
-    if (!hl.label) continue;
+    if (!hl.label || ALIAS[hl.country] === null) continue;
     const [x, y] = proj(hl.at || geoCentroid(find(hl.country)));
     s += text(x, y + 4, hl.label, { size: 12, anchor: 'middle', cls: 'mapl', weight: 700 });
   }

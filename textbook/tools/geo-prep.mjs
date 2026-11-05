@@ -52,20 +52,7 @@ save('ne-rivers.json', fc(rd('ne_10m_rivers_lake_centerlines.geojson').features
 save('ne-lakes.json', fc(rd('ne_10m_lakes.geojson').features
   .filter((f) => f.geometry && f.properties.scalerank <= 9)
   .map((f) => ({ type: 'Feature', properties: { r: f.properties.scalerank, n: f.properties.name || '' }, geometry: roundGeom(f.geometry, 3, 0.005) }))));
-// 국경선 (육지): 군사 분계선·분쟁 경계 구분, 비무장 지대 테두리(Overlay limit)는 뺌
-const KIND = { 'International boundary (verify)': 'i', 'Disputed (please verify)': 'd', 'Line of control (please verify)': 'c', 'Indefinite (please verify)': 'd', 'Indeterminant frontier': 'd', 'Lease limit': 'd' };
-save('ne-borders.json', fc(rd('ne_10m_admin_0_boundary_lines_land.geojson').features
-  .filter((f) => f.geometry && f.properties.FEATURECLA !== 'Overlay limit')
-  .map((f) => ({ type: 'Feature', properties: { k: KIND[f.properties.FEATURECLA] || 'i' }, geometry: roundGeom(f.geometry, 3, 0.003) }))));
-// 나라 정보: ISO 숫자 코드(world-atlas id) → ISO3, 한글 이름, 색 번호(이웃끼리 다른 색, MAPCOLOR7)
-const meta = {};
-for (const f of rd('ne_10m_admin_0_countries.geojson').features) {
-  const p = f.properties;
-  const iso3 = p.ISO_A3 !== '-99' ? p.ISO_A3 : p.ADM0_A3;
-  const key = p.ISO_N3 !== '-99' ? String(Number(p.ISO_N3)).padStart(3, '0') : `n:${p.NAME}`;
-  meta[key] = { iso3, ko: p.NAME_KO, c7: p.MAPCOLOR7, name: p.NAME };
-}
-save('countries-meta.json', meta);
+// 국경선·나라 정보는 아래 '한국 관점 나라 경계'(countries-kor-*.json, ne-special-lines.json)로 만든다
 // 우리나라 시·도 경계
 const kr = rd('kr_provinces.json');
 save('kr-provinces.json', fc(kr.features.map((f) => ({ type: 'Feature', properties: { name: f.properties.name }, geometry: roundGeom(f.geometry, 4) }))));
@@ -80,3 +67,52 @@ if (krRivers) {
 try {
   save('plates.json', fc(rd('pb2002.json').features.map((f) => ({ type: 'Feature', properties: { t: f.properties.Type || '' }, geometry: roundGeom(f.geometry, 2, 0.05) }))));
 } catch (e) { console.log('판의 경계 자료 없음 (건너뜀)'); }
+
+// ── 나라 경계: Natural Earth "한국 관점"(ne_10m_admin_0_countries_kor) ──
+// 크림반도 = 우크라이나, 골란고원 = 시리아, 서사하라 = 별도 지역 등 우리 정부의 입장에 맞춘 자료
+// topojson 으로 묶어 이웃 나라끼리 경계선을 공유 → 국경선(mesh)과 육지(merge)를 같은 자료에서 얻는다
+{
+  const { topology } = await import('topojson-server');
+  const { presimplify, simplify, quantile } = await import('topojson-simplify');
+  const { geoArea } = await import('d3-geo');
+  let src;
+  try { src = rd('ne_10m_admin_0_countries_kor.geojson'); } catch { src = null; }
+  if (src) {
+    const feats = src.features.filter((f) => f.geometry).map((f) => {
+      const p = f.properties, g = f.geometry;
+      // 감김 방향이 뒤집힌 다각형 바로잡기
+      const fix = (ps) => ps.map((poly) => (geoArea({ type: 'Polygon', coordinates: poly }) > 2 * Math.PI ? poly.map((r) => r.slice().reverse()) : poly));
+      const geometry = g.type === 'Polygon' ? { type: 'Polygon', coordinates: fix([g.coordinates])[0] } : { type: 'MultiPolygon', coordinates: fix(g.coordinates) };
+      const iso = p.ISO_A3_EH && p.ISO_A3_EH !== '-99' ? p.ISO_A3_EH : p.ISO_A3 !== '-99' ? p.ISO_A3 : p.ADM0_A3;
+      return { type: 'Feature', id: p.ADM0_A3, properties: { name: p.NAME, long: p.NAME_LONG, iso, ko: p.NAME_KO, c7: p.MAPCOLOR7 }, geometry };
+    });
+    const { quantize } = await import('topojson-client');
+    // 10m: 점의 절반을 남김(지역 지도용), 50m: 7%만 남김(세계 지도용) — quantile 값은 "남길 비율"처럼 동작한다
+    for (const [file, q, qz] of [['countries-kor-10m.json', 0.5, 2e5], ['countries-kor-50m.json', 0.07, 5e4]]) {
+      let topo = topology({ countries: { type: 'FeatureCollection', features: structuredClone(feats) } });
+      topo = presimplify(topo);
+      topo = simplify(topo, quantile(topo, q));
+      save(file, quantize(topo, qz));
+    }
+  }
+}
+// 특별한 경계선: 군사 분계선, 카슈미르 실질 통제선, 골란고원 휴전선, 키프로스 완충선 (서사하라 모래 장벽은 뺌)
+save('ne-special-lines.json', fc(rd('ne_10m_admin_0_boundary_lines_land.geojson').features
+  .filter((f) => f.geometry && /Line of control|Indeterminant/.test(f.properties.FEATURECLA) && !/Western Sahara/.test(`${f.properties.ADM0_LEFT}${f.properties.ADM0_RIGHT}`))
+  .map((f) => ({ type: 'Feature', properties: { name: f.properties.NAME || '' }, geometry: roundGeom(f.geometry, 3, 0.002) }))));
+// 우리나라 시·도 경계: 통계청 2013 시·군·구 경계를 합쳐 만듦. 2023년 7월 군위군이 경상북도 → 대구광역시로 편입된 것을 반영
+{
+  const { topology } = await import('topojson-server');
+  const { merge } = await import('topojson-client');
+  let mun = null;
+  try { mun = rd('kr_municipalities.json'); } catch {}
+  if (mun) {
+    const PROV = { 11: '서울특별시', 21: '부산광역시', 22: '대구광역시', 23: '인천광역시', 24: '광주광역시', 25: '대전광역시', 26: '울산광역시', 29: '세종특별자치시', 31: '경기도', 32: '강원특별자치도', 33: '충청북도', 34: '충청남도', 35: '전북특별자치도', 36: '전라남도', 37: '경상북도', 38: '경상남도', 39: '제주특별자치도' };
+    const provOf = (code) => (code === '37310' ? '22' : code.slice(0, 2)); // 군위군 → 대구
+    const topo = topology({ m: mun }, 1e6);
+    const groups = {};
+    for (const g of topo.objects.m.geometries) (groups[provOf(g.properties.code)] ||= []).push(g);
+    const feats = Object.entries(groups).map(([c, gs]) => ({ type: 'Feature', properties: { name: PROV[c] || c }, geometry: merge(topo, gs) }));
+    save('kr-provinces.json', fc(feats.map((f) => ({ ...f, geometry: roundGeom(f.geometry, 4) }))));
+  }
+}

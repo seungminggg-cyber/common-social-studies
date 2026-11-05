@@ -4,6 +4,8 @@
 // 색·배치·글꼴은 themes/*.css가 정하고, 쪽 나누기는 lib/paginate.js가 브라우저에서 합니다.
 
 import { figure, FIGURE_TYPES } from './figures.js';
+import { icon } from './icons.js';
+import { hasPhoto, photoUrl, collectPhotos, credits } from './photos.js';
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -99,17 +101,19 @@ function block(b) {
     case 'chart':
     case 'venn':
     case 'map':
-      return figure(b);
+    case 'diagram':
+    case 'photo':
+      return figure(b, inl);
     case 'figrow': {
       // 그림 여러 개를 가로로 나란히 (기후 그래프 비교 등). 한글 파일에는 줄 전체를 한 장의 그림으로 넣는다.
       const foot = b.source || b.note
         ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${inl(b.note)}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : '';
       return `<div class="figrow-wrap">${b.title ? `<div class="tbl-title">${inl(b.title)}</div>` : ''}<div class="figrow"${
-        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:repeat(${b.items.length},1fr)">${b.items.map(figure).join('')}</div>${foot}</div>`;
+        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:repeat(${b.items.length},1fr)">${b.items.map((x) => figure(x, inl)).join('')}</div>${foot}</div>`;
     }
     case 'hub':
       return `<div class="hub"><div class="hub-center"><span>${inl(b.center)}</span></div>${b.spokes
-        .map((s, i) => `<div class="hub-spoke s${i + 1}"><b>${inl(s.title)}</b><span>${inl(s.text)}</span></div>`)
+        .map((s, i) => `<div class="hub-spoke s${i + 1}">${s.icon ? `<span class="hub-ic">${icon(s.icon, { size: 16 })}</span>` : ''}<b>${inl(s.title)}</b><span>${inl(s.text)}</span></div>`)
         .join('')}</div>`;
     case 'compare':
       return `<div class="compare"><div class="cmp-title"><span>${inl(b.title)}</span></div><div class="cmp-cols">${b.cols
@@ -132,11 +136,11 @@ function block(b) {
         <ol class="ex-steps">${b.steps.map((x, i) => `<li><span class="ex-n">STEP ${i + 1}</span><span>${inl(x)}</span></li>`).join('')}</ol></div></div>`;
     case 'chain':
       return `<div class="chain">${b.title ? `<div class="chain-title">${inl(b.title)}</div>` : ''}<div class="chain-steps">${b.steps
-        .map((x) => `<span class="ch-step">${inl(x)}</span>`)
+        .map((x) => (typeof x === 'object' ? `<span class="ch-step">${x.icon ? icon(x.icon, { size: 14, cls: 'ic ch-ic' }) : ''}${inl(x.text)}</span>` : `<span class="ch-step">${inl(x)}</span>`))
         .join('<span class="ch-arrow">→</span>')}</div></div>`;
     case 'flow':
       return `<ol class="flow">${b.steps
-        .map((s, i) => `<li><span class="fl-no">${i + 1}</span><div class="fl-title">${inl(s.title)}</div><div class="fl-text">${inl(s.text)}</div></li>`)
+        .map((s, i) => `<li${s.icon ? ' class="has-ic"' : ''}><span class="fl-no">${i + 1}</span>${s.icon ? `<span class="fl-ic">${icon(s.icon, { size: 18 })}</span>` : ''}<div class="fl-title">${inl(s.title)}</div><div class="fl-text">${inl(s.text)}</div></li>`)
         .join('')}</ol>`;
     default:
       throw new Error(`모르는 블록 종류: ${b.t}`);
@@ -157,7 +161,8 @@ function thinkerRows(b) {
   const keys = (b.keywords || []).map((k) => `<span class="tk-key">${inl(k)}</span>`).join('');
   const terms = b.terms
     ? `<dl class="tk-terms">${b.terms.map(([k, v]) => `<div><dt>${inl(k)}</dt><dd>${inl(v)}</dd></div>`).join('')}</dl>` : '';
-  parts.push(`<div class="tk tk-head" data-initial="${esc([...String(b.name)][0])}"><div class="tk-top"><span class="tk-name">${inl(b.name)}</span>${
+  const face = hasPhoto(b.photo) ? `<img class="tk-photo" src="${photoUrl(b.photo)}" alt="" style="object-position:${b.photoPos || '50% 22%'}">` : '';
+  parts.push(`<div class="tk tk-head${face ? ' has-photo' : ''}" data-initial="${esc([...String(b.name)][0])}">${face}<div class="tk-top"><span class="tk-name">${inl(b.name)}</span>${
     b.era ? `<span class="tk-era">${esc(b.era)}</span>` : ''}</div>${keys ? `<div class="tk-keys">${keys}</div>` : ''}</div>`
     + `<div class="tk tk-body"><div class="tk-label">핵심 주장</div><ol class="tk-claims">${b.claims
       .map((c, i) => `<li><span class="tk-n">${i + 1}</span><span>${inl(c)}</span></li>`).join('')}</ol>${terms}</div>`);
@@ -181,6 +186,7 @@ function thinkerRows(b) {
 // 쪽 나누기의 단위. 제목(sec)은 다음 블록과 같은 쪽에 붙어 다닌다(data-keep).
 function row(b) {
   if (b.t === 'thinker') return thinkerRows(b);
+  if (b.t === 'photo' && !b.items.some((it) => hasPhoto(it.src))) return ''; // 사진을 아직 못 받았으면 건너뜀
   const keep = b.t === 'sec' ? ' data-keep="next"' : '';
   return `<div class="row row-${b.t}${b.side ? ' has-side' : ''}"${keep}><div class="main">${block(b)}</div>${note(b.side)}</div>`;
 }
@@ -262,6 +268,22 @@ function answerRows(u, startNo) {
 }
 
 // ── 책 전체 ──
+
+// 책 끝 '사진 출처' 쪽 (위키미디어 공용 사진의 저작자·라이선스·주소)
+function creditsSection(root, attrs) {
+  const ids = collectPhotos(root);
+  if (!ids.length) return '';
+  const C = credits();
+  const item = (id) => {
+    const c = C[id];
+    return `<li><b>${esc(c.caption || '')}</b> — ${esc(c.author || '작자 미상')}, ${esc(c.license)}${c.licenseUrl ? ` (${esc(c.licenseUrl)})` : ''}, 위키미디어 공용 「${esc((c.title || '').replace(/^File:/, ''))}」 ${esc(c.page || '')}</li>`;
+  };
+  // 쪽 나눔(paginate.js)은 .row 단위로 옮기므로, 목록을 몇 줄씩 .row로 나눠 담는다
+  const rows = [];
+  for (let i = 0; i < ids.length; i += 4) rows.push(`<div class="row"><ol class="cr-list" start="${i + 1}">${ids.slice(i, i + 4).map(item).join('')}</ol></div>`);
+  return `<section class="flow" data-kind="credits" ${attrs}>${bandTop('answers', '사진 출처')}<div class="row"><p class="credits">이 책의 사진은 위키미디어 공용(Wikimedia Commons)에서 자유 이용 허락(CC BY, CC BY-SA, CC0, 퍼블릭 도메인)을 확인한 것입니다. 사진은 크기를 줄이거나 잘라서 실었으며, 각 사진의 저작자와 라이선스는 다음과 같습니다. 아이콘: Tabler Icons(MIT 라이선스).</p></div>${rows.join('')}</section>`;
+}
+
 export function renderBook(book, { theme, themeName, mode, layout, paginateJs }) {
   const headLeft = `${esc(book.subject)} <b>${esc(book.chapter.no)}. ${esc(book.chapter.title)}</b>`;
   const sections = [];
@@ -292,6 +314,7 @@ export function renderBook(book, { theme, themeName, mode, layout, paginateJs })
   if (book.units.some((u) => u.exam?.length)) sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설">${bandTop('answers', '정답과 해설')}${book.units
     .map((u, i) => answerRows(u, qStart[i]))
     .join('\n')}</section>`);
+  sections.push(creditsSection(book.units, `data-tab="출처" data-head-left="${esc(headLeft)}" data-head-right="사진 출처"`));
 
   return `<!doctype html>
 <html lang="ko"><head>
@@ -436,6 +459,9 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         if (u.exam?.length) add('exam', attrs, `${bandTop('exam', '수능형 문제', u)}${u.exam.map((q) => question(q, qNo++)).join('\n')}`);
       }
     });
+    // 사진 출처
+    const cr = creditsSection(full.chapters, `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진 출처"`);
+    if (cr) add('credits', `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진 출처"`, cr.replace(/^<section[^>]*>|<\/section>$/g, ''));
     // 뒤표지 (양면 인쇄에서 늘 왼쪽 쪽 = 마지막 쪽)
     add('backcover', `data-even="1"`, `<div class="top" id="back"><div class="cover cover-back">
       <div class="cv-brand">승민T 통합사회</div>
@@ -443,7 +469,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <ul class="bk-points">
         <li>${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리한 개념 정리</li>
         <li>2028 수능 예시문항과 학력평가를 분석한 수능 포인트·자료 해석 연습</li>
-        <li>사상가 카드, 기후 그래프와 지도, 실제 통계로 그린 그래프</li>
+        <li>사상가 카드와 초상, 실제 지형을 살린 지도, 실제 통계 그래프와 개념 인포그래픽, 현장 사진</li>
         <li>개념 확인 O/X·빈칸과 수능형 문제, 별책 정답과 해설</li>
       </ul>
       <ul class="cv-chapters">${chapterList}</ul>
