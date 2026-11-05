@@ -1,7 +1,7 @@
 // 개념서 만들기: 내용 + 디자인 → HTML → (자동 쪽 나눔) → PDF / PNG
 //
-//   node build.mjs                      모든 단원(content/*.js), 시안 b, 학생용 PDF
-//   node build.mjs t1-2 b both          Ⅱ단원만, 시안 b, 학생용+교사용
+//   node build.mjs                      모든 단원(content/*.js), 시안 d(기본), 학생용 PDF
+//   node build.mjs t1-2 both            Ⅱ단원만, 시안 d, 학생용+교사용 (b를 주면 예전 시안 B)
 //   node build.mjs t1-1 all both png    Ⅰ단원, 모든 시안, 쪽 그림(PNG)까지
 //
 // 결과물은 out/ 폴더에 생깁니다.
@@ -36,7 +36,7 @@ const args = process.argv.slice(2);
 const allBooks = readdirSync(join(ROOT, 'content')).filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort();
 const bookArg = args.find((a) => allBooks.includes(a) || a.split(',').every((x) => allBooks.includes(x)));
 const books = bookArg ? bookArg.split(',') : allBooks.filter((b) => !b.startsWith('z-'));
-const themeArg = args.find((a) => /^(all|[abcd](,[abcd])*)$/.test(a)) || 'b';
+const themeArg = args.find((a) => /^(all|[abcd](,[abcd])*)$/.test(a)) || 'd'; // 기본 디자인: 시안 D(강사 확정, 2026-11)
 const themes = themeArg === 'all' ? Object.keys(THEMES) : themeArg.split(',');
 const modeArg = args.find((a) => ['student', 'teacher', 'both'].includes(a)) || 'student';
 const modes = modeArg === 'both' ? ['student', 'teacher'] : [modeArg];
