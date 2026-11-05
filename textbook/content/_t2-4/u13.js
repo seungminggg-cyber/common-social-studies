@@ -4,26 +4,29 @@
 // 남북 합의 문서는 원문 대신 핵심 내용을 정리함
 
 const EAST_ASIA_MAP = {
-  t: 'map', view: [103, 4, 152, 49], title: '동아시아의 영토 분쟁 지역과 독도', h: 400, width: 64,
+  t: 'map', view: [103, 4, 152, 49], title: '동아시아의 영토 분쟁 지역과 독도', h: 400, width: 70, style: 'terrain',
   markers: [
-    { lon: 147.0, lat: 44.2, label: '쿠릴 열도 남부', pos: 'top', cls: 'k3' },
-    { lon: 123.5, lat: 25.75, label: '센카쿠 열도(댜오위다오)', pos: 'right', cls: 'k3' },
-    { lon: 112.0, lat: 16.5, label: '시사 군도', pos: 'left', cls: 'k3' },
-    { lon: 114.5, lat: 10.0, label: '난사 군도', pos: 'right', cls: 'k3' },
-    { lon: 131.87, lat: 37.24, label: '독도', pos: 'right', cls: 'k1' },
+    { lon: 147.0, lat: 44.2, label: '쿠릴 열도 남부', pos: 'top', cls: 'k2', ring: 8.5 },
+    { lon: 123.5, lat: 25.75, label: '센카쿠 열도(댜오위다오)', pos: 'right', cls: 'k2', ring: 8.5 },
+    { lon: 112.0, lat: 16.5, label: '시사 군도', pos: 'left', cls: 'k2', ring: 8.5 },
+    { lon: 114.5, lat: 10.0, label: '난사 군도', pos: 'right', cls: 'k2', ring: 8.5 },
+    { lon: 131.87, lat: 37.24, label: '독도', pos: 'right', cls: 'k8', ring: 8.5 },
   ],
+  seas: [['동해', 134.5, 40.2, 13], ['황해', 123.6, 35.6, 13], ['동중국해', 125.5, 29.5, 12], ['남중국해', 114.5, 14.0, 13],
+    ['필리핀해', 133.0, 20.0, 13], ['태 평 양', 145.0, 30.0, 15], ['오호츠크해', 148.5, 47.2, 12]],
   labels: [
-    { at: [126.5, 44.5], text: '동북 3성', size: 11.5 },
-    { at: [113, 33], text: '중국', size: 12.5 },
-    { at: [139, 37.5], text: '일본', size: 12.5 },
-    { at: [138, 47.5], text: '러시아', size: 12 },
-    { at: [121, 15.5], text: '필리핀', size: 11 },
-    { at: [106.5, 13], text: '베트남', size: 11 },
+    { at: [110, 33], text: '중국', size: 15, cls: 'country' }, { at: [106.5, 46.6], text: '몽골', size: 12.5, cls: 'country' },
+    { at: [132, 47.3], text: '러시아', size: 13, cls: 'country' }, { at: [140.2, 38.9], text: '일본', size: 14, cls: 'country' },
+    { at: [126.9, 40.3], text: '북한', size: 11, cls: 'country' }, { at: [127.8, 36.1], text: '한국', size: 11, cls: 'country' },
+    { at: [121, 23.7], text: '타이완', size: 10, cls: 'country' }, { at: [122.2, 12], text: '필리핀', size: 12, cls: 'country' },
+    { at: [106.4, 12.6], text: '베트남', size: 11.5, cls: 'country' }, { at: [103.8, 19.0], text: '라오스', size: 10, cls: 'country' },
+    { at: [126.5, 45.2], text: '동북 3성', size: 11, cls: 'region' },
   ],
-  legend: [{ cls: 'k3', label: '영토 분쟁 지역' }, { cls: 'k1', label: '우리 고유 영토(일본이 부당하게 영유권 주장)' }],
-  note: '쿠릴 열도 남부는 러시아가, 센카쿠 열도는 일본이, 시사 군도는 중국이 실제로 지배하고 있다. 난사 군도는 여섯 나라·지역이 영유권을 다툰다. 동북 3성(랴오닝·지린·헤이룽장)은 중국 동북공정의 연구 대상 지역이다.',
-  source: '지도 자료: Natural Earth (위치는 대략)',
+  legend: [{ pin: 'k2', label: '영토 분쟁 지역' }, { pin: 'k8', label: '우리 고유 영토' }, { line: 'border', label: '국경' }, { line: 'river', label: '하천' }],
+  note: '쿠릴 열도 남부는 러시아가, 센카쿠 열도는 일본이, 시사 군도는 중국이 실제로 지배하고 있다. 난사 군도는 여섯 나라·지역이 영유권을 다툰다. 동북 3성(랴오닝·지린·헤이룽장)은 중국 동북공정의 연구 대상 지역이다. 일본은 우리 고유 영토인 독도에 대해 부당하게 영유권을 주장한다.',
+  source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles (위치는 대략)',
 };
+
 
 const ODA = {
   t: 'chart', kind: 'bar', title: '우리나라의 공적 개발 원조(ODA) 규모', h: 220, w: 420, width: 62,
@@ -360,13 +363,13 @@ export default {
       level: '중',
       stem: '지도의 A~C 지역에 대한 설명으로 옳은 것은?',
       data: [{
-        t: 'map', view: [108, 8, 150, 47], h: 260, w: 420,
+        t: 'map', view: [108, 8, 150, 47], h: 280, w: 420, style: 'terrain', palette: 'soft', rivers: false,
         markers: [
           { lon: 147.0, lat: 44.2, label: 'A', pos: 'left', cls: 'k3' },
           { lon: 123.5, lat: 25.75, label: 'B', pos: 'right', cls: 'k3' },
           { lon: 114.5, lat: 10.5, label: 'C', pos: 'right', cls: 'k3' },
         ],
-        source: '지도 자료: Natural Earth',
+        source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
       }],
       choices: [
         'A는 중국과 베트남의 영토 분쟁 지역이다.',

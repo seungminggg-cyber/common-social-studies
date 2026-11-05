@@ -15,7 +15,7 @@ const SPEED = {
 
 // 페마른벨트 해저 터널 (2028 수능 예시문항 소재)
 const FEHMARN = {
-  t: 'map', view: [8.4, 53.05, 13.2, 56.1], title: '덴마크와 독일을 잇는 페마른벨트 해저 터널 (건설 중)', h: 330,
+  t: 'map', view: [8.4, 53.05, 13.2, 56.1], title: '덴마크와 독일을 잇는 페마른벨트 해저 터널 (건설 중)', h: 330, style: 'political',
   markers: [
     { lon: 12.57, lat: 55.68, label: '코펜하겐', pos: 'right' },
     { lon: 9.99, lat: 53.55, label: '함부르크', pos: 'left' },
@@ -29,7 +29,7 @@ const FEHMARN = {
     { from: [10.05, 53.58], to: [11.2, 54.46], bend: -0.1, cls: 'k1', label: 'B (터널 이용)' },
     { from: [11.38, 54.7], to: [12.5, 55.62], bend: 0.1, cls: 'k1' },
   ],
-  labels: [{ at: [9.15, 55.85], text: '덴마크', size: 12.5 }, { at: [11.0, 53.3], text: '독일', size: 12.5 }, { at: [12.4, 54.45], text: '발트해', size: 11 }],
+  labels: [{ at: [9.15, 55.85], text: '덴마크', size: 13, cls: 'country' }, { at: [11.0, 53.3], text: '독일', size: 13, cls: 'country' }, { at: [12.45, 54.42], text: '발트해', size: 11.5, cls: 'sea' }, { at: [11.15, 54.95], text: '롤란섬', size: 9.5, cls: 'soft' }, { at: [11.15, 54.33], text: '페마른섬', size: 9.5, cls: 'soft' }],
   legend: [{ cls: 'k1', label: '해저 터널을 지나는 길(B)' }, { cls: 'k3', label: '지금 쓰는 길(A)' }],
   note: '독일 페마른섬과 덴마크 롤란섬 사이 바다 밑에 도로와 고속 철도가 함께 지나는 터널(약 18km)을 짓고 있다. 개통되면 여객선을 대신하고, 코펜하겐~함부르크 육로 거리가 약 160km 줄어 이동 시간과 물류비가 크게 준다.',
   source: '지도 자료: Natural Earth (경로는 개념도)',

@@ -461,16 +461,18 @@ export default {
           ] },
         },
         {
-          t: 'map', view: [58, 21, 98, 41], title: '분쟁 지역의 행복 기준 — 카슈미르', h: 300, width: 82,
+          t: 'map', view: [58, 21, 98, 41], title: '분쟁 지역의 행복 기준 — 카슈미르', h: 300, width: 84, style: 'terrain', rivers: 5,
+          seas: [['아라비아해', 63.5, 22.6, 11.5]],
+          legend: [{ line: 'mdl', label: '실질 통제선' }, { line: 'border', label: '국경' }], legendAt: [420, 266],
           highlight: [
-            { country: 'India', cls: 'h4', label: '인도', at: [79, 24] },
-            { country: 'Pakistan', cls: 'h3', label: '파키스탄', at: [67.5, 28.5] },
-            { country: 'China', cls: 'h1', label: '중국', at: [88, 35.5] },
-            { country: 'Afghanistan', label: '아프가니스탄', at: [65.5, 34] },
+            { country: 'India', fill: '#f08c00', label: '인도', at: [79, 24] },
+            { country: 'Pakistan', fill: '#2f9e44', label: '파키스탄', at: [67.5, 28.5] },
+            { country: 'China', fill: '#e03131', opacity: 0.25, label: '중국', at: [88, 35.5] },
           ],
-          markers: [{ lon: 75.5, lat: 34.6, ring: 22, label: '카슈미르', pos: 'right' }],
+          markers: [{ lon: 75.5, lat: 34.6, ring: 22, label: '카슈미르', pos: 'right', cls: 'k8' }],
+          labels: [{ at: [65.5, 34], text: '아프가니스탄', size: 11, cls: 'country' }, { at: [84, 29.2], text: '히말라야산맥', size: 10, cls: 'terr', rot: 22 }],
           note: '힌두교도가 많은 인도와 이슬람교도가 많은 파키스탄이 카슈미르의 영유권을 두고 여러 차례 무력 충돌을 벌였다. 이런 지역의 주민에게는 평화와 정치적 안정이 가장 절실한 행복의 조건이다.',
-          source: '지도 자료: Natural Earth',
+          source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
         },
 
         {

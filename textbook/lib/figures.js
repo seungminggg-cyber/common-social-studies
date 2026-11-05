@@ -12,8 +12,7 @@
 
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { geoEqualEarth, geoMercator, geoPath, geoGraticule10, geoCentroid } from 'd3-geo';
-import { feature, mesh } from 'topojson-client';
+import { drawMap } from './maps.js';
 
 const require = createRequire(import.meta.url);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -363,94 +362,9 @@ function venn(b) {
   return { W, H, s };
 }
 
-// ── 지도 ──
-let WORLD = {};
-function worldData(detail) {
-  if (!WORLD[detail]) {
-    const topo = JSON.parse(readFileSync(require.resolve(`world-atlas/countries-${detail}.json`), 'utf8'));
-    WORLD[detail] = { countries: feature(topo, topo.objects.countries), borders: mesh(topo, topo.objects.countries, (a, b) => a !== b) };
-  }
-  return WORLD[detail];
-}
+// ── 지도 ── (lib/maps.js)
 function map(b) {
-  const W = b.w || 600, H = b.h || (b.view === 'world' || !b.view ? 300 : 340);
-  const isWorld = b.view === 'world' || !b.view;
-  const detail = b.detail || (isWorld ? '110m' : '50m');
-  const { countries, borders } = worldData(detail);
-  let proj;
-  if (isWorld) {
-    proj = geoEqualEarth().fitExtent([[6, 6], [W - 6, H - 6]], { type: 'Sphere' });
-  } else {
-    const [w, sLat, e, n] = b.view;
-    const box = { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[w, sLat], [w, n], [e, n], [e, sLat], [w, sLat]]] } };
-    proj = geoMercator().fitExtent([[2, 2], [W - 2, H - 2]], box);
-    proj.clipExtent([[-20, -20], [W + 20, H + 20]]); // 지도 밖 육지는 잘라 내 PDF 용량을 줄인다
-  }
-  const path = geoPath(proj);
-  const byName = new Map(countries.features.map((f) => [f.properties.name, f]));
-  const byId = new Map(countries.features.map((f) => [String(f.id), f]));
-  const find = (k) => byName.get(k) || byId.get(String(k));
-  let s = `<rect x="0" y="0" width="${W}" height="${H}" class="sea"/>`;
-  if (isWorld) s += `<path d="${path({ type: 'Sphere' })}" class="sphere"/>`;
-  if (b.graticule !== false && isWorld) s += `<path d="${path(geoGraticule10())}" class="grat"/>`;
-  s += `<path d="${path(countries)}" class="land"/>`;
-  for (const h of b.highlight || []) {
-    const f = find(h.country);
-    if (!f) throw new Error(`지도에 없는 나라: ${h.country}`);
-    s += `<path d="${path(f)}" class="hl ${h.cls || 'h1'}"/>`;
-  }
-  s += `<path d="${path(borders)}" class="border"/>`;
-  // 위도선 (예: 남북회귀선 parallels: [{ lat: -23.4, label: '남회귀선' }])
-  for (const pl of b.parallels || []) {
-    const lons = isWorld ? [-180, -90, 0, 90, 180] : [b.view[0], (b.view[0] + b.view[2]) / 2, b.view[2]];
-    const d = path({ type: 'LineString', coordinates: lons.map((lo) => [lo, pl.lat]) });
-    if (d) s += `<path d="${d}" class="eq"/>`;
-    if (pl.label) { const [lx, ly] = proj([isWorld ? -170 : b.view[0] + 0.5, pl.lat]); s += text(lx + 2, ly - 4, pl.label, { size: 10.5, cls: 'mapl soft' }); }
-  }
-  if (b.equator) {
-    const eq = path({ type: 'LineString', coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]] });
-    if (eq) s += `<path d="${eq}" class="eq"/>`;
-  }
-  for (const h of b.highlight || []) {
-    if (!h.label) continue;
-    const at = h.at || geoCentroid(find(h.country));
-    const [x, y] = proj(at);
-    s += text(x, y + 4, h.label, { size: 12, anchor: 'middle', cls: 'mapl', weight: 700 });
-  }
-  for (const l of b.labels || []) {
-    const [x, y] = proj(l.at);
-    s += text(x, y, l.text, { size: l.size || 11.5, anchor: 'middle', cls: `mapl ${l.cls || 'soft'}` });
-  }
-  for (const a of b.arrows || []) {
-    const [x1, y1] = proj(a.from), [x2, y2] = proj(a.to);
-    const mx = (x1 + x2) / 2 - (y2 - y1) * (a.bend ?? 0.2), my = (y1 + y2) / 2 + (x2 - x1) * (a.bend ?? 0.2);
-    s += `<path d="M${r1(x1)},${r1(y1)}Q${r1(mx)},${r1(my)} ${r1(x2)},${r1(y2)}" class="arrow ${a.cls || ''}" marker-end="url(#${a.cls ? `ah-${a.cls}` : 'ah2'})"/>`;
-    if (a.label) s += text(mx, my - 4, a.label, { size: 11, anchor: 'middle', cls: 'mapl' });
-  }
-  for (const m of b.markers || []) {
-    const [x, y] = proj([m.lon, m.lat]);
-    if (m.ring) s += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${m.ring}" class="ring"/>`;
-    else s += `<circle cx="${r1(x)}" cy="${r1(y)}" r="4.5" class="pin ${m.cls || ''}"/>`;
-    if (m.label) {
-      const pos = m.pos || 'right', d = (m.ring || 6) + 4;
-      const [tx, ty, an] = pos === 'left' ? [x - d, y + 4, 'end'] : pos === 'top' ? [x, y - d, 'middle'] : pos === 'bottom' ? [x, y + d + 10, 'middle'] : [x + d, y + 4, 'start'];
-      s += text(tx, ty, m.label, { size: m.size || 12.5, anchor: an, cls: 'mapl pinl', weight: 700 });
-    }
-  }
-  if (b.legend) {
-    // 범례: 폭이 넘치면 여러 줄로, 흰 바탕 위에
-    const items = b.legend.map((l) => ({ name: l.label, cls: l.cls })), size = b.legendSize || 11;
-    const rows = [[]]; let w = 0;
-    for (const it of items) {
-      const iw = 16 + tw(it.name, size) + 14;
-      if (w + iw > W - 40 && rows[rows.length - 1].length) { rows.push([]); w = 0; }
-      rows[rows.length - 1].push(it); w += iw;
-    }
-    const lh = size + 7, bw = Math.max(...rows.map((r) => legendWidth(r, size))) + 10, bh = rows.length * lh + 6;
-    s += `<rect x="6" y="${H - bh - 6}" width="${r1(bw)}" height="${bh}" rx="4" class="lgbg"/>`;
-    rows.forEach((r, i) => (s += legend(r, 12, H - bh - 6 + 4 + (i + 1) * lh - 3, { size })));
-  }
-  return { W, H, s };
+  return drawMap(b, { text, esc, legend, legendWidth, tw });
 }
 
 // ── 방사형(레이더) 그래프 ──

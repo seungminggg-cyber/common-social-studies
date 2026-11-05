@@ -65,12 +65,31 @@ Playwright(크롬)가 설치된 환경이 필요합니다.
 | `kind: 'pie'` | 원그래프 (`donut: true`) |
 | `kind: 'climate'` | 기후 그래프 (월평균 기온 + 월 강수량) |
 | `{ t: 'venn' }` | 벤 다이어그램 (A 왼쪽만, B 공통, C 오른쪽만) |
-| `{ t: 'map', view: 'world' }` | 세계 지도 / `view: [서경, 남위, 동경, 북위]` 지역 지도. 나라 색칠(`highlight`), 지점(`markers`), 화살표(`arrows`), 이름표(`labels`) |
+| `{ t: 'map', view: 'world' }` | 세계 지도 / `view: [서경, 남위, 동경, 북위]` 지역 지도. 나라 색칠(`highlight`), 지점(`markers`), 화살표(`arrows`), 이름표(`labels`). 자세한 설정은 아래 '지도' |
 | `{ t: 'figrow', items: [그림, 그림] }` | 그림 나란히 놓기 (기후 그래프 비교 등). 기후 그래프는 `compact: true`. 한글 파일에는 줄 전체가 그림 한 장으로 들어감 |
 | `{ t: 'table' }` | 칸 합치기 `{ text, rs, cs }`, 여러 줄 머리, 열 정렬 `align`, 강조 칸 `cls: 'hl'`, 빗금 빈칸 `cls: 'hatch'` |
 
 공통: `title`(제목), `source`(출처), `note`(설명), `width`(폭 %), `h`(높이), `w`(좁은 단에서 글자를 키우려면 420 정도).
 출처를 확인한 숫자만 실제 자료로 쓰고, 나머지는 "개념도"나 "가상 자료"라고 적습니다.
+
+## 지도 (2026-11 새 방식, `lib/maps.js`)
+| 설정 | 모양 |
+|---|---|
+| `style: 'terrain'` | 지형도: 실제 고도로 산지·평야 색과 음영, 바다 깊이. `palette: 'soft'`면 베이지 한 톤의 옅은 음영(기후·분포도 바탕) |
+| `style: 'political'` | 나라마다 다른 색(이웃 나라는 다른 색) |
+| `style: 'thematic'`(기본) | 옅은 땅 + 주제 색칠(문화권·종교 분포 같은 개념도) |
+| `choro: { data: { ISO3: 값 }, breaks, colors, title, labels }` | 단계 구분도(실제 통계로 나라별 색칠) |
+| `center: 150` | 세계 지도 가운데 경도(태평양 중심) |
+| `seas`, `labels[].cls` | 바다 이름(파란 기울임), `cls: 'country'·'river'·'terr'(산맥)·'region'·'strong'`, `rot` 기울기 |
+| `rivers`, `lakes`, `riverEmph: ['Mekong']` | 강·호수 표시 등급, 강조할 강 |
+| `provinces: true`, `krRivers` | 우리나라 시·도 경계, 우리나라 하천(최소 유역 km²) |
+| `plates: true` | 판의 경계(Bird 2003) |
+| `borders: false`, `deg: false`, `north: false`, `scale: false` | 국경·경위도 숫자·방위표·축척 끄기 |
+| `legend: [{ pin }, { line: 'border'·'river'·'prov'·'mdl'·'plate'·'warm'·'cold'·'wind' }, { fill }]`, `legendV`, `legendAt` | 범례 모양·세로 배치·위치 |
+
+- 바탕 자료는 `data/geo/` (Natural Earth 강·호수·국경, 통계청 시·도 경계, 판의 경계, 고도 자료로 계산한 우리나라 하천). 다시 만들 때는 `tools/geo-prep.mjs`.
+- 지형도 바탕 그림은 `assets/terrain/<번호>.jpg`. 지도 설정(범위·크기)을 바꾸면 빌드할 때 `lib/terrain.js`가 고도 타일(AWS Terrain Tiles)을 내려받아 새로 만든다(인터넷 필요, 타일은 `~/.cache/terrain-tiles`).
+- 우리나라 하천은 `tools/terrain/mosaic.py` + `tools/terrain/rivers.mjs`로 고도 자료에서 물길을 계산한 것(작은 지류는 실제와 조금 다를 수 있음).
 
 ## 한글 파일
 `hwpx_build.py`가 같은 내용으로 시안 B 모양의 한글 파일(.hwpx)을 만듭니다.

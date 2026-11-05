@@ -89,7 +89,8 @@ const KOR_INDUSTRY = {
 
 // 산업화를 이끈 공업 도시와 인구 이동 (개념도)
 const KOR_INDUSTRY_MAP = {
-  t: 'map', view: [124.6, 33.0, 131.2, 38.7], title: '산업화와 인구 이동 (1960~1980년대, 개념도)', h: 340,
+  t: 'map', view: [124.6, 33.0, 131.2, 38.7], title: '산업화와 인구 이동 (1960~1980년대, 개념도)', w: 420, h: 440, width: 52, style: 'terrain', provinces: true, krRivers: 600,
+  seas: [['동 해', 130.4, 36.6, 12], ['황 해', 125.3, 36.4, 12], ['남 해', 128.0, 33.9, 11]],
   markers: [
     { lon: 126.98, lat: 37.56, label: '서울', pos: 'top', cls: 'k1' },
     { lon: 126.7, lat: 37.46, label: '인천', pos: 'left', cls: 'k1' },
@@ -105,9 +106,9 @@ const KOR_INDUSTRY_MAP = {
     { from: [128.4, 37.1], to: [127.25, 37.5], bend: -0.1, cls: 'k4' },
     { from: [128.2, 36.5], to: [128.9, 35.6], bend: 0.1, cls: 'k4' },
   ],
-  legend: [{ cls: 'k1', label: '수도권' }, { cls: 'k2', label: '남동 임해 공업 지역' }, { cls: 'k3', label: '내륙 공업 도시' }, { cls: 'k4', label: '주요 인구 이동' }],
+  legend: [{ pin: 'k1', label: '수도권' }, { pin: 'k2', label: '남동 임해 공업 지역' }, { pin: 'k3', label: '내륙 공업 도시' }, { line: 'cold', label: '주요 인구 이동' }], legendV: true, legendAt: [262, 296],
   note: '공업이 발달한 수도권과 남동 임해 지역의 도시로 촌락 인구가 몰려들었다. 산업화와 도시화가 이 지역을 중심으로 진행되면서 지역 간 격차도 커졌다.',
-  source: '지도 자료: Natural Earth (위치는 대략, 이동은 개념도)',
+  source: '지도 자료: Natural Earth, 통계청, 고도 AWS Terrain Tiles (위치는 대략, 이동은 개념도)',
 };
 
 // 도시 내부 구조 — 기능별 지대 지불 능력 (개념도)

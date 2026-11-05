@@ -88,6 +88,8 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - **강사가 시안 D(교과서형: 대단원별 색, 엄지 색인, `themes/d.css`)로 확정**(2026-11-05). 앞으로 모든 단원·통합본은 시안 D로 만든다(`build.mjs`, `build-book.mjs` 기본값 d). 통합사회1 통합본(216쪽)도 시안 D로 다시 만듦.
 - 통합사회2 Ⅱ(t2-2: 04~06)·Ⅲ(t2-3: 07~10)·Ⅳ(t2-4: 11~13)·Ⅴ(t2-5: 14~16) 완료(2026-11-05). 통합본 `node build-book.mjs t2` → 통합사회2 개념서 학생용·교사용 178쪽 + 정답과 해설 11쪽. 강사 확인 사항은 `참고/검토할점.md`의 통합사회2 부분.
 - 2026-11-05 강사 요청 "통합사회2 내용이 적다, 오류 점검·세세하게 보완" → 다섯 단원 모두 개념·자료·사상가 주장·문제 보강(중단원마다 수능형 10~13문항). 통합본은 178쪽 → **204쪽**, 정답과 해설 13쪽. 새 사실 확인 목록은 `참고/검토할점.md`의 '통합사회2 2차 보완'.
+- 2026-11-05 강사 요청 "실제 문제집처럼 현실적인 지도(색, 국경, 바다·육지·호수·강)" → 지도 41개를 새 방식(`lib/maps.js`)으로 다시 그림. 지형도(고도 음영)·정치 지도·주제도·단계 구분도, 판의 경계, 우리나라 시·도 경계와 하천(고도로 계산). 강사가 견본을 보고 승인, 하천 표현은 상류 가늘고 하류 굵게로 고침. 자세한 설정은 `textbook/README.md`의 '지도'.
+- 이 환경에서 열리는 지도 자료: raw.githubusercontent.com(Natural Earth, 판의 경계 fraxen/tectonicplates, southkorea-maps), s3.amazonaws.com(고도 타일). 위키미디어 공용(upload/commons.wikimedia.org)은 강사가 허용 도메인에 추가함(사진용, 아직 안 씀).
 - 그림 기능 추가: 방사형(radar, 순위형은 reverse), 인구 피라미드(pyramid). 그림 설명(note)에서 **굵게** 지원.
 - 실제 통계: Our World in Data의 GitHub 공개 자료(owid/energy-data, owid/co2-data)를 raw.githubusercontent.com으로 받을 수 있음. datahub.io, fred, ourworldindata.org 직접 접속은 막힘.
 - 예금자 보호 한도는 2025-09-01부터 1억 원(교재의 5천만 원은 옛 기준).

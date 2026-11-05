@@ -2,7 +2,7 @@
 
 // 인권 문서가 나온 곳 (개념도)
 const RIGHTS_MAP = {
-  t: 'map', view: 'world', title: '인권 보장의 역사가 펼쳐진 곳', h: 250,
+  t: 'map', view: 'world', title: '인권 보장의 역사가 펼쳐진 곳', h: 270, style: 'political', seas: false,
   markers: [
     { lon: -0.13, lat: 51.5, label: '영국 1215·1689·1838', pos: 'left', cls: 'k1' },
     { lon: 2.35, lat: 48.86, label: '프랑스 1789·1948', pos: 'bottom', cls: 'k1' },
@@ -10,7 +10,7 @@ const RIGHTS_MAP = {
     { lon: -75.16, lat: 39.95, label: '미국 1776', pos: 'left', cls: 'k1' },
     { lon: 174.78, lat: -41.29, label: '뉴질랜드 1893', pos: 'left', cls: 'k3' },
   ],
-  legend: [{ cls: 'k1', label: '자유권·참정권의 출발(시민 혁명, 세계 인권 선언)' }, { cls: 'k2', label: '사회권(바이마르 헌법)' }, { cls: 'k3', label: '여성 참정권' }],
+  legend: [{ pin: 'k1', label: '자유권·참정권의 출발(시민 혁명, 세계 인권 선언)' }, { pin: 'k2', label: '사회권(바이마르 헌법)' }, { pin: 'k3', label: '여성 참정권' }], legendV: true, legendAt: [8, 196],
   note: '영국: 대헌장(1215)·권리 장전(1689)·차티스트 운동(1838), 미국: 독립 선언(1776), 프랑스: 인간과 시민의 권리 선언(1789)·세계 인권 선언 채택(1948, 파리 국제 연합 총회), 독일: 바이마르 헌법(1919), 뉴질랜드: 세계 최초로 국가 단위 여성 참정권 인정(1893).',
   source: '지도 자료: Natural Earth (위치는 대략)',
 };

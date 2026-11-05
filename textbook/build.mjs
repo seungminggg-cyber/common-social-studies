@@ -14,6 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { renderBook } from './lib/render.js';
 import { FIGURE_TYPES } from './lib/figures.js';
+import { ensureTerrain } from './lib/terrain.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => {
@@ -66,6 +67,7 @@ let failed = false;
 for (const bookName of books) {
   const book = (await import(`./content/${bookName}.js`)).default;
   const nFig = numberFigures(book);
+  ensureTerrain(book.units); // 지형도 바탕 그림이 없으면 만든다
   writeFileSync(join(OUT, `${bookName}.json`), JSON.stringify(book));
   let figsSaved = false;
 

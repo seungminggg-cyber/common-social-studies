@@ -2,7 +2,8 @@
 
 // 혁신 도시 지도 (실제 위치: 공공 기관이 옮겨 간 10개 혁신 도시)
 const INNOVATION = {
-  t: 'map', view: [124.6, 33.0, 131.2, 38.7], title: '공공 기관 이전과 혁신 도시', h: 320,
+  t: 'map', view: [124.6, 33.0, 131.2, 38.7], title: '공공 기관 이전과 혁신 도시', w: 420, h: 440, width: 58, style: 'terrain', provinces: true, krRivers: 700,
+  seas: [['동 해', 130.4, 36.6, 12], ['황 해', 125.3, 36.4, 12]],
   markers: [
     { lon: 127.95, lat: 37.34, label: '원주(강원)', pos: 'right' },
     { lon: 127.47, lat: 36.9, label: '진천·음성(충북)', pos: 'right' },
@@ -15,9 +16,9 @@ const INNOVATION = {
     { lon: 126.72, lat: 35.02, label: '나주(광주·전남)', pos: 'left' },
     { lon: 126.51, lat: 33.25, label: '서귀포(제주)', pos: 'right' },
   ],
-  labels: [{ at: [127.0, 37.6], text: '수도권', size: 12 }],
+  labels: [{ at: [127.05, 37.78], text: '수도권', size: 12, cls: 'strong' }],
   note: '수도권에 몰린 공공 기관을 지방으로 옮겨 지역의 성장 거점을 만들려는 국가 균형 발전 정책이다. 2020년에는 대전과 충남(내포)도 혁신 도시로 추가 지정되었다.',
-  source: '지도 자료: Natural Earth (위치는 대략)',
+  source: '지도 자료: Natural Earth, 통계청, 고도 AWS Terrain Tiles (위치는 대략)',
 };
 
 // 촌락이 도시로 바뀐 지역의 토지 이용 (가상 자료)

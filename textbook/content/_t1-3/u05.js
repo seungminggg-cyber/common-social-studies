@@ -26,14 +26,21 @@ export default {
       side: { title: '4대 문명과 큰 강', text: '메소포타미아(티그리스강·유프라테스강), 이집트(나일강), 인더스(인더스강), 중국(황허강) 문명은 모두 기후가 온화한 큰 강 유역에서 일어났다. 물을 얻기 쉽고, 강이 넘쳐 쌓인 흙이 기름져 농사에 유리했으며, 강을 교통로로도 쓸 수 있었기 때문이다.' },
     },
     {
-      t: 'map', view: [18, 14, 126, 46], title: '세계 4대 문명의 발상지', h: 230, width: 92,
+      t: 'map', view: [18, 14, 126, 46], title: '세계 4대 문명의 발상지', h: 250, width: 96, style: 'terrain', rivers: 4, borders: false,
       markers: [
-        { lon: 31.2, lat: 27.5, ring: 14, label: '이집트 문명(나일강)', pos: 'bottom' },
-        { lon: 45, lat: 32.5, ring: 14, label: '메소포타미아 문명', pos: 'top' },
-        { lon: 69.5, lat: 27.5, ring: 14, label: '인더스 문명', pos: 'bottom' },
-        { lon: 113, lat: 35.5, ring: 14, label: '중국 문명(황허강)', pos: 'top' },
+        { lon: 31.2, lat: 27.5, ring: 14, label: '이집트 문명', pos: 'right', cls: 'k2' },
+        { lon: 45, lat: 32.5, ring: 14, label: '메소포타미아 문명', pos: 'top', cls: 'k2' },
+        { lon: 69.5, lat: 27.5, ring: 14, label: '인더스 문명', pos: 'bottom', cls: 'k2' },
+        { lon: 113, lat: 35.5, ring: 14, label: '중국 문명', pos: 'top', cls: 'k2' },
       ],
-      source: '지도 자료: Natural Earth (위치는 개념도)',
+      labels: [
+        { at: [30.2, 23.0], text: '나일강', cls: 'river', size: 10.5, anchor: 'end' }, { at: [47.6, 31.4], text: '티그리스강', cls: 'river', size: 10, anchor: 'start' },
+        { at: [42.4, 31.4], text: '유프라테스강', cls: 'river', size: 10, anchor: 'end' }, { at: [73.3, 31.4], text: '인더스강', cls: 'river', size: 10.5 },
+        { at: [107.5, 39.6], text: '황허강', cls: 'river', size: 10.5 }, { at: [86, 33.5], text: '티베트고원', cls: 'terr', size: 10.5 },
+        { at: [84, 28.2], text: '히말라야산맥', cls: 'terr', size: 9.5, rot: 18 },
+      ],
+      seas: [['지중해', 24, 34.2, 11], ['홍해', 37.6, 20.2, 10, 60], ['아라비아해', 63, 17, 11], ['벵골만', 89, 17.5, 11], ['황해', 123, 35.5, 10.5], ['페르시아만', 51.5, 27.0, 9.5, -35]],
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles (위치는 개념도)',
     },
 
     // ── B ──
@@ -75,7 +82,9 @@ export default {
       note: '적도 부근과 위도 60° 부근은 강수량이 많고, 위도 30° 부근과 극지방은 강수량이 적다.',
     },
     {
-      t: 'map', view: [-32, 32, 48, 68], title: '서유럽이 온화한 까닭 — 편서풍과 북대서양 해류', h: 260, width: 88,
+      t: 'map', view: [-32, 32, 48, 68], title: '서유럽이 온화한 까닭 — 편서풍과 북대서양 해류', h: 280, width: 90, style: 'terrain', rivers: 4,
+      seas: [['대 서 양', -22, 47, 13], ['북해', 3.5, 56.5, 10.5], ['지중해', 17, 35.2, 11], ['발트해', 19.5, 57.5, 10]],
+      legend: [{ line: 'warm', label: '난류' }, { line: 'cold', label: '한류' }, { line: 'wind', label: '편서풍' }],
       arrows: [
         { from: [-30, 38], to: [-2, 60], bend: -0.15, cls: 'warm', label: '북대서양 해류(난류)' },
         { from: [-28, 50], to: [6, 51], bend: 0.05, cls: 'wind', label: '편서풍' },
@@ -87,7 +96,7 @@ export default {
         { lon: 12.5, lat: 41.9, label: '로마', pos: 'bottom', cls: 'k3' },
       ],
       note: '바다에서 육지로 부는 편서풍이 따뜻한 해류의 열기를 실어 와, 서유럽은 위도가 높은데도 겨울이 온화하다. 대륙 안쪽(동쪽)으로 갈수록 바다의 영향이 줄어 겨울이 추워진다(모스크바).',
-      source: '지도 자료: Natural Earth (흐름은 개념도)',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles (흐름은 개념도)',
     },
     pair(
       CITYCL('포르투', { title: '대륙 서안 (포르투갈 포르투, 북위 41°)', tMin: -10, tMax: 30, pMax: 400 }),
@@ -128,7 +137,7 @@ export default {
       note: '동아시아처럼 계절풍의 영향을 크게 받는 온대 지역(온대 겨울 건조 기후와 온난 습윤 기후)을 묶어 **온대 계절풍 기후**라고도 부른다.',
     },
     {
-      t: 'map', view: 'world', title: '이 단원에 나오는 기후 그래프 도시', h: 310,
+      t: 'map', view: 'world', title: '이 단원에 나오는 기후 그래프 도시', h: 310, style: 'terrain', palette: 'soft', rivers: false,
       markers: [
         { lon: 103.8, lat: 1.4, label: '싱가포르', pos: 'bottom', cls: 'k1', size: 10.5 },
         { lon: 96.2, lat: 16.8, label: '양곤', pos: 'left', cls: 'k1', size: 10.5 },
@@ -152,7 +161,7 @@ export default {
       ],
       equator: true,
       legend: [{ cls: 'k1', label: '열대' }, { cls: 'k2', label: '건조' }, { cls: 'k3', label: '온대' }, { cls: 'k4', label: '냉대' }, { cls: 'k5', label: '한대' }, { cls: 'k6', label: '고산' }],
-      source: '지도 자료: Natural Earth',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
     {
       t: 'item', no: '2', title: '기후 그래프 읽는 순서',
@@ -274,7 +283,8 @@ export default {
       ] }],
     },
     {
-      t: 'map', view: [110, -45, 156, -9], title: '오스트레일리아의 기후와 주요 도시', w: 440, h: 330, width: 62,
+      t: 'map', view: [110, -45, 156, -9], title: '오스트레일리아의 기후와 주요 도시', w: 440, h: 330, width: 62, style: 'terrain', palette: 'soft',
+      seas: [['인 도 양', 114, -38, 12], ['태 평 양', 154, -40, 12], ['산호해', 153, -17, 10.5], ['티모르해', 124, -11.5, 10]],
       markers: [
         { lon: 130.8, lat: -12.5, label: '다윈(사바나)', pos: 'right', cls: 'k1' },
         { lon: 133.9, lat: -23.7, label: '앨리스스프링스(사막)', pos: 'right', cls: 'k2' },
@@ -282,10 +292,10 @@ export default {
         { lon: 151.2, lat: -33.9, label: '시드니(온난 습윤)', pos: 'left', cls: 'k3' },
         { lon: 145.0, lat: -37.8, label: '멜버른(서안 해양성)', pos: 'bottom', cls: 'k3' },
       ],
-      labels: [{ at: [127, -27], text: '건조 기후(대륙의 절반 이상)', size: 12 }],
+      labels: [{ at: [128, -27], text: '건조 기후(대륙의 절반 이상)', size: 12, cls: 'strong' }, { at: [141.2, -35.4], text: '머리강', size: 9.5, cls: 'river' }],
       parallels: [{ lat: -23.4, label: '남회귀선' }],
       legend: [{ cls: 'k1', label: '열대' }, { cls: 'k2', label: '건조' }, { cls: 'k3', label: '온대' }],
-      source: '지도 자료: Natural Earth',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
     pair(
       CITYCL('앨리스스프링스', { title: '사막 기후 (남반구)', tMin: 0, tMax: 40, pMax: 200 }),
@@ -332,7 +342,7 @@ export default {
       ],
     },
     {
-      t: 'map', view: 'world', title: '세계의 대표 지형과 생활', h: 310,
+      t: 'map', view: 'world', title: '세계의 대표 지형과 생활', h: 310, style: 'terrain',
       markers: [
         { lon: 6.9, lat: 61.1, label: '노르웨이 피오르', pos: 'right' },
         { lon: -19, lat: 64.9, label: '아이슬란드 지열·온천', pos: 'left' },
@@ -347,24 +357,35 @@ export default {
         { lon: -73.5, lat: -49, label: '파타고니아 빙하', pos: 'right' },
         { lon: 31.2, lat: 30.4, label: '나일강 삼각주', pos: 'bottom' },
       ],
+      labels: [
+        { at: [-112, 47], text: '로키산맥', size: 10.5, cls: 'terr', rot: 62 }, { at: [-66.5, -24], text: '안데스산맥', size: 10.5, cls: 'terr', rot: 78 },
+        { at: [88, 33], text: '히말라야산맥', size: 10.5, cls: 'terr' }, { at: [10, 15], text: '사하라 사막', size: 10.5, cls: 'terr' },
+      ],
       equator: true,
-      source: '지도 자료: Natural Earth',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
     {
-      t: 'map', view: [124.4, 33.0, 131.2, 38.7], title: '우리나라의 특수 지형', w: 420, h: 400, width: 46,
+      t: 'map', view: [124.4, 33.0, 131.2, 38.7], title: '우리나라의 특수 지형', w: 420, h: 400, width: 52, style: 'terrain', provinces: true,
       markers: [
-        { lon: 128.37, lat: 36.98, label: '단양(석회 동굴·시멘트)', pos: 'left' },
-        { lon: 128.46, lat: 37.18, label: '영월', pos: 'right' },
-        { lon: 129.0, lat: 37.32, label: '삼척 환선굴', pos: 'right' },
-        { lon: 126.53, lat: 33.36, label: '한라산', pos: 'bottom' },
-        { lon: 126.94, lat: 33.46, label: '성산 일출봉', pos: 'right' },
-        { lon: 126.77, lat: 33.53, label: '만장굴(용암 동굴)', pos: 'top' },
-        { lon: 130.87, lat: 37.5, label: '울릉도(화산섬)', pos: 'bottom' },
-        { lon: 126.4, lat: 35.6, label: '서해안 갯벌', pos: 'left' },
-        { lon: 127.5, lat: 34.85, label: '순천만 갯벌', pos: 'bottom' },
+        { lon: 128.37, lat: 36.98, label: '단양(석회 동굴·시멘트)', pos: 'left', cls: 'k2' },
+        { lon: 128.46, lat: 37.18, label: '영월', pos: 'right', cls: 'k2' },
+        { lon: 129.0, lat: 37.32, label: '삼척 환선굴', pos: 'right', cls: 'k2' },
+        { lon: 126.53, lat: 33.36, label: '한라산', pos: 'left', cls: 'k1' },
+        { lon: 126.94, lat: 33.46, label: '성산 일출봉', pos: 'right', cls: 'k1' },
+        { lon: 126.77, lat: 33.53, label: '만장굴(용암 동굴)', pos: 'top', cls: 'k1' },
+        { lon: 130.87, lat: 37.5, label: '울릉도(화산섬)', pos: 'top', cls: 'k1' },
+        { lon: 126.4, lat: 35.6, label: '서해안 갯벌', pos: 'left', cls: 'k3' },
+        { lon: 127.5, lat: 34.85, label: '순천만 갯벌', pos: 'bottom', cls: 'k3' },
       ],
-      note: '강원도 남부와 충청북도 북동부에는 석회암이 넓게 분포해 석회 동굴과 시멘트 공업이 발달했다. 제주도와 울릉도는 화산 활동으로 만들어진 섬이다.',
-      source: '지도 자료: Natural Earth (위치는 대략)',
+      seas: [['동 해', 130.3, 36.4, 13], ['황 해', 125.0, 36.6, 13], ['남 해', 128.4, 33.95, 12], ['대한 해협', 129.4, 34.6, 10]],
+      labels: [
+        { at: [128.75, 37.6], text: '태백산맥', size: 10, cls: 'terr', rot: 62 }, { at: [127.75, 36.05], text: '소백산맥', size: 10, cls: 'terr', rot: -42 },
+        { at: [127.1, 37.47], text: '한강', size: 9.5, cls: 'river' }, { at: [128.75, 35.95], text: '낙동강', size: 9.5, cls: 'river', rot: 80 },
+        { at: [127.15, 36.43], text: '금강', size: 9.5, cls: 'river' },
+      ],
+      legend: [{ pin: 'k2', label: '석회암 지형' }, { pin: 'k1', label: '화산 지형' }, { pin: 'k3', label: '갯벌' }, { line: 'river', label: '하천' }], legendV: true, legendAt: [318, 290],
+      note: '강원도 남부와 충청북도 북동부에는 석회암이 넓게 분포해 석회 동굴과 시멘트 공업이 발달했다. 제주도와 울릉도는 화산 활동으로 만들어진 섬이다. 서해안과 남해안에는 조수 간만의 차가 커서 갯벌이 넓다.',
+      source: '지도 자료: Natural Earth, 통계청, 고도 AWS Terrain Tiles (위치는 대략)',
     },
 
     // ── E ──
@@ -379,16 +400,19 @@ export default {
       ] }],
     },
     {
-      t: 'map', view: [-6, 2, 32, 26], title: '줄어든 차드호와 사헬 지대', w: 520, h: 320, width: 66,
+      t: 'map', view: [-6, 2, 32, 26], title: '줄어든 차드호와 사헬 지대', w: 520, h: 320, width: 66, style: 'terrain', palette: 'soft',
       highlight: [
-        { country: 'Chad', cls: 'h3', label: '차드', at: [19, 17] },
-        { country: 'Niger', cls: 'h4', label: '니제르', at: [9, 18] },
-        { country: 'Nigeria', cls: 'h1', label: '나이지리아', at: [8, 9] },
-        { country: 'Cameroon', cls: 'h2', label: '카메룬', at: [12.7, 5.5] },
+        { country: 'Chad', fill: '#efb34c', label: '차드', at: [19, 17] },
+        { country: 'Niger', fill: '#e38a6b', label: '니제르', at: [9, 18] },
+        { country: 'Nigeria', fill: '#5fb58e', label: '나이지리아', at: [8, 9] },
+        { country: 'Cameroon', fill: '#a993d6', label: '카메룬', at: [12.7, 5.5] },
       ],
-      markers: [{ lon: 14.4, lat: 13.2, ring: 16, label: '차드호', pos: 'right' }],
-      labels: [{ at: [4, 15.5], text: '사헬 지대', size: 12 }],
-      source: '지도 자료: Natural Earth',
+      markers: [{ lon: 14.4, lat: 13.2, ring: 16, label: '차드호', pos: 'right', cls: 'k4' }],
+      labels: [{ at: [3.5, 15.3], text: '사 헬 지 대', size: 13, cls: 'strong' }, { at: [13, 22.5], text: '사하라 사막', size: 12, cls: 'terr' },
+        { at: [6.0, 10.4], text: '니제르강', size: 10, cls: 'river' }],
+      seas: [['기니만', 4, 3.5, 11]],
+      parallels: [{ lat: 17.5 }, { lat: 12.5 }],
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
     {
       t: 'item', no: '2', title: '지구 온난화로 달라지는 삶',
@@ -400,7 +424,8 @@ export default {
       ] }],
     },
     {
-      t: 'map', view: 'world', title: '수에즈 운하 항로와 북극 항로 (개념도)', h: 300,
+      t: 'map', view: 'world', title: '수에즈 운하 항로와 북극 항로 (개념도)', h: 300, center: 70,
+      seas: [['대 서 양', -38, 22, 13], ['인 도 양', 78, -24, 13], ['태 평 양', 168, 10, 13]],
       arrows: [
         { from: [129, 35], to: [4.5, 51.9], bend: -0.42, cls: 'cold', label: '기존 항로(수에즈 운하) 약 2만 2천 km' },
         { from: [129, 35], to: [4.5, 51.9], bend: 0.22, cls: 'warm', label: '북극 항로 약 1만 5천 km' },
@@ -419,19 +444,19 @@ export default {
       ] }],
     },
     {
-      t: 'map', view: [92, 7.5, 112, 32], title: '메콩강과 댐 건설을 둘러싼 갈등', w: 360, h: 380, width: 42,
+      t: 'map', view: [92, 7.5, 112, 32], title: '메콩강과 댐 건설을 둘러싼 갈등', w: 360, h: 380, width: 44, style: 'political', riverEmph: ['Mekong', 'Lancang', 'Za'], rivers: 5,
       highlight: [
-        { country: 'China', cls: 'h1', label: '중국', at: [104, 28.5] },
-        { country: 'Laos', cls: 'h3', label: '라오스', at: [103.2, 19.6] },
-        { country: 'Cambodia', cls: 'h2', label: '캄보디아', at: [104.8, 12.6] },
-        { country: 'Vietnam', cls: 'h4', label: '베트남', at: [108.2, 15.5] },
-        { country: 'Thailand', label: '타이', at: [100.6, 15.5] },
-        { country: 'Myanmar', label: '미얀마', at: [96.2, 21.5] },
+        { country: 'China', fill: '#f4b2a6', label: '중국', at: [104, 28.5] },
+        { country: 'Laos', fill: '#f4b2a6', label: '라오스', at: [103.2, 19.6] },
+        { country: 'Cambodia', fill: '#9cc7ea', label: '캄보디아', at: [104.8, 12.6] },
+        { country: 'Vietnam', fill: '#9cc7ea', label: '베트남', at: [108.2, 15.5] },
       ],
-      arrows: [{ from: [98.8, 30], to: [106.5, 9.8], bend: 0.12, cls: 'cold', label: '메콩강' }],
-      markers: [{ lon: 105.8, lat: 9.9, label: '메콩 삼각주', pos: 'left' }],
+      legend: [{ fill: '#f4b2a6', label: '상류 국가(댐 건설)' }, { fill: '#9cc7ea', label: '하류 국가(피해 우려)' }], legendV: true, legendAt: [6, 300],
+      labels: [{ at: [99.6, 26.2], text: '메콩강', size: 11.5, cls: 'river' }, { at: [107.3, 10.2], text: '메콩 삼각주', size: 10.5, cls: 'strong', anchor: 'start' },
+        { at: [100.6, 15.5], text: '타이', size: 11, cls: 'country' }, { at: [96.2, 21.5], text: '미얀마', size: 11, cls: 'country' }],
+      seas: [['남중국해', 110, 13, 11], ['타이만', 101.5, 10.3, 10], ['벵골만', 93.2, 15, 10.5]],
       note: '상류(중국·라오스)는 전력 생산을 위해 댐을 짓고, 하류(캄보디아·베트남)는 강물·흙 감소, 삼각주 침식, 바닷물 유입으로 피해를 걱정한다.',
-      source: '지도 자료: Natural Earth (강의 흐름은 개념도)',
+      source: '지도 자료: Natural Earth',
     },
 
     // ── F ──
@@ -472,7 +497,9 @@ export default {
       ],
     },
     {
-      t: 'map', view: 'world', title: '지진과 화산이 많은 곳 — 판의 경계(조산대)', h: 300,
+      t: 'map', view: 'world', title: '지진과 화산이 많은 곳 — 판의 경계(조산대)', h: 300, center: 150, style: 'terrain', plates: true, rivers: false,
+      legend: [{ line: 'plate', label: '판의 경계' }],
+      seas: [['태 평 양', -165, -18, 14], ['인 도 양', 80, -28, 13]],
       markers: [
         { lon: 140, lat: 37, ring: 16, label: '일본', pos: 'right' },
         { lon: 112, lat: -6, ring: 16, label: '인도네시아', pos: 'bottom' },
@@ -488,7 +515,7 @@ export default {
       ],
       equator: true,
       note: '태평양을 둘러싼 환태평양 조산대와 유럽 남부에서 히말라야로 이어지는 알프스-히말라야 조산대는 지각이 불안정해 지진과 화산 활동이 잦다. 2023년 튀르키예·시리아 대지진(규모 7.8)도 이곳에서 일어났다.',
-      source: '지도 자료: Natural Earth (위치는 개념도)',
+      source: '지도 자료: Natural Earth, 판의 경계 Bird(2003), 고도 AWS Terrain Tiles',
     },
     {
       t: 'table', title: '우리나라의 계절별 자연재해',
@@ -504,7 +531,8 @@ export default {
       note: '태풍은 주로 7~9월에 찾아온다. 봄의 황사는 중국·몽골 내륙의 건조 지역에서 편서풍을 타고 날아온다.',
     },
     {
-      t: 'map', view: [108, 5, 150, 46], title: '태풍의 진로와 위험 반원 (개념도)', w: 440, h: 420, width: 44,
+      t: 'map', view: [108, 5, 150, 46], title: '태풍의 진로와 위험 반원 (개념도)', w: 440, h: 420, width: 46, style: 'terrain', palette: 'soft', rivers: false,
+      seas: [['태 평 양', 143, 31, 13], ['동중국해', 124.5, 27.5, 10.5], ['동해', 134.5, 40.5, 11]],
       arrows: [
         { from: [141, 11], to: [126.5, 29.5], bend: -0.12, label: '태풍의 진로' },
         { from: [126.5, 30.5], to: [141, 43], bend: -0.2 },
@@ -515,7 +543,7 @@ export default {
       ],
       markers: [{ lon: 127.0, lat: 37.6, label: '서울', pos: 'left' }],
       note: '북태평양의 열대 해상에서 생긴 태풍은 북서쪽으로 나아가다가 편서풍을 만나 북동쪽으로 방향을 바꾼다.',
-      source: '지도 자료: Natural Earth',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
 
     // ── G ──
@@ -783,9 +811,9 @@ export default {
       level: '중',
       stem: '다음 지도에 표시된 A, B 일대에 대한 설명으로 옳은 것은?',
       data: [{
-        t: 'map', view: [60, -5, 155, 50], h: 300,
+        t: 'map', view: [60, -5, 155, 50], h: 300, style: 'terrain', palette: 'soft', rivers: false,
         markers: [{ lon: 139, lat: 37, ring: 22, label: 'A', pos: 'right' }, { lon: 85, lat: 28, ring: 22, label: 'B', pos: 'top' }],
-        source: '지도 자료: Natural Earth',
+        source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
       }],
       choices: [
         'A는 알프스-히말라야 조산대에 속한다.',
@@ -852,7 +880,7 @@ export default {
       level: '중',
       stem: '지도에 표시된 A, B 지역에 대한 설명으로 옳은 것은?',
       data: [{
-        t: 'map', view: [124.4, 33.0, 131.2, 38.7], h: 260,
+        t: 'map', view: [124.4, 33.0, 131.2, 38.7], h: 260, style: 'terrain', palette: 'soft', krRivers: false, rivers: false, scale: false,
         markers: [{ lon: 128.37, lat: 36.98, ring: 12, label: 'A', pos: 'left' }, { lon: 126.53, lat: 33.36, ring: 12, label: 'B', pos: 'right' }],
       }],
       choices: [

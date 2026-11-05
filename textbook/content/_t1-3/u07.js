@@ -91,7 +91,9 @@ export default {
       source: '자료: 미국 항공 우주국(NASA), 2022',
     },
     {
-      t: 'map', view: 'world', title: '바다의 5대 쓰레기 지대와 해류 (개념도)', h: 300,
+      t: 'map', view: 'world', title: '바다의 5대 쓰레기 지대와 해류 (개념도)', h: 300, style: 'terrain', center: -150, rivers: false,
+      seas: [['태 평 양', -175, 5, 14], ['대 서 양', -32, 8, 12], ['인 도 양', 70, -8, 12]],
+      legend: [{ line: 'warm', label: '난류' }, { line: 'cold', label: '한류' }],
       markers: [
         { lon: -145, lat: 32, ring: 20, label: '북태평양 거대 쓰레기 섬', pos: 'bottom' },
         { lon: -110, lat: -30, ring: 17, label: '남태평양', pos: 'bottom' },
@@ -105,10 +107,11 @@ export default {
       ],
       equator: true,
       note: '큰 바다에서는 해류가 큰 원을 그리며 돈다(환류). 그 가운데에 물에 뜬 쓰레기가 모인다. 북태평양에는 태평양 연안 여러 나라에서 흘러온 플라스틱이 모여 세계 최대의 쓰레기 섬을 이룬다.',
-      source: '지도 자료: Natural Earth (위치·흐름은 개념도)',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles (위치·흐름은 개념도)',
     },
     {
-      t: 'map', view: 'world', title: '세계의 주요 환경 문제가 나타나는 곳', h: 300,
+      t: 'map', view: 'world', title: '세계의 주요 환경 문제가 나타나는 곳', h: 300, style: 'terrain', palette: 'soft', rivers: false,
+      seas: [['태 평 양', -140, -12, 13], ['대 서 양', -38, 25, 12], ['인 도 양', 78, -25, 12]],
       markers: [
         { lon: 2, lat: 14, ring: 16, label: '사헬 지대(사막화)', pos: 'bottom' },
         { lon: 105, lat: 42, ring: 14, label: '몽골·중국 내륙(사막화)', pos: 'top' },
@@ -120,7 +123,7 @@ export default {
       ],
       labels: [{ at: [0, -72], text: '남극 상공 오존 구멍', size: 11.5 }],
       equator: true,
-      source: '지도 자료: Natural Earth (위치는 개념도)',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles (위치는 개념도)',
     },
     {
       t: 'table', title: '환경 문제 한 줄 정리',
@@ -257,7 +260,7 @@ export default {
       t: 'figrow', title: '국제 환경 협약이 맺어진 곳',
       items: [
         {
-          t: 'map', view: 'world', w: 560, h: 300,
+          t: 'map', view: 'world', w: 560, h: 300, style: 'political', seas: false,
           markers: [
             { lon: 50.7, lat: 36.8, label: '람사르(1971)', pos: 'bottom', size: 13 },
             { lon: -77.0, lat: 38.9, label: '워싱턴(1973)', pos: 'bottom', size: 13 },
@@ -268,7 +271,7 @@ export default {
           ],
         },
         {
-          t: 'map', view: [-11, 40, 26, 63], w: 360, h: 300,
+          t: 'map', view: [-11, 40, 26, 63], w: 360, h: 300, style: 'political', rivers: 4, scale: false,
           markers: [
             { lon: -0.1, lat: 51.5, label: '런던(1972)', pos: 'left', size: 13 },
             { lon: 18.1, lat: 59.3, label: '스톡홀름(1972)', pos: 'bottom', size: 13 },
@@ -312,13 +315,13 @@ export default {
       t: 'example', title: '지도의 A~C 환경 문제 찾기',
       stem: '지도에 표시된 A~C 지역에서 나타나는 환경 문제와 원인, 대책을 연결해 보자.',
       data: {
-        t: 'map', view: 'world', h: 250,
+        t: 'map', view: 'world', h: 250, style: 'terrain', palette: 'soft', rivers: false, seas: false,
         markers: [
           { lon: 2, lat: 14, ring: 16, label: 'A', pos: 'right' },
           { lon: -62, lat: -5, ring: 18, label: 'B', pos: 'right' },
           { lon: -145, lat: 32, ring: 20, label: 'C', pos: 'right' },
         ],
-        source: '지도 자료: Natural Earth',
+        source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
       },
       steps: [
         '**위치로 먼저 찾는다**: A는 사하라 사막 남쪽 가장자리(사헬 지대) → **사막화**, B는 적도 부근 남아메리카(아마존) → **열대림 파괴**, C는 북태평양 한가운데 → **해양 쓰레기 섬**',

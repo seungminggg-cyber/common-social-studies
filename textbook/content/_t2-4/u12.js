@@ -4,7 +4,7 @@
 // 그림: 세계의 주요 분쟁 지역(번호로 표시, 위치는 대략)
 
 const CONFLICT_MAP = {
-  t: 'map', view: 'world', title: '세계의 주요 분쟁 지역',
+  t: 'map', view: 'world', title: '세계의 주요 분쟁 지역', style: 'political', seas: false,
   markers: [
     { lon: 75.5, lat: 34.3, label: '①', pos: 'right', cls: 'k3' },
     { lon: 35.0, lat: 31.6, label: '②', pos: 'left', cls: 'k3' },
@@ -391,10 +391,10 @@ export default {
       level: '하',
       stem: '지도에 표시된 분쟁 지역 A에 대한 설명으로 옳은 것은?',
       data: [{
-        t: 'map', view: [60, 18, 90, 40], h: 220, w: 420,
-        highlight: [{ country: 'India', cls: 'h1', label: '인도', at: [78, 23] }, { country: 'Pakistan', cls: 'h2', label: '파키스탄', at: [68, 28] }],
+        t: 'map', view: [60, 18, 90, 40], h: 240, w: 420, style: 'terrain', palette: 'soft', rivers: false,
+        highlight: [{ country: 'India', fill: '#f08c00', label: '인도', at: [78, 23] }, { country: 'Pakistan', fill: '#2f9e44', label: '파키스탄', at: [68, 28] }],
         markers: [{ lon: 75.5, lat: 34.3, label: 'A', pos: 'right', cls: 'k3' }],
-        source: '지도 자료: Natural Earth',
+        source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
       }],
       choices: [
         '아르메니아와 아제르바이잔의 영토 분쟁 지역이다.',

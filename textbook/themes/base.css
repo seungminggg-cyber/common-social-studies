@@ -89,7 +89,8 @@ th, td { padding: 0; vertical-align: middle; }
 .fig-svg { display: block; width: 100%; height: auto; overflow: visible; }
 .fig-svg text { font-family: 'Pretendard Variable', Pretendard, sans-serif; fill: var(--fig-ink); }
 .fig-foot { display: flex; gap: 4mm; font-size: 7.6pt; color: #6b7480; margin-top: 1.2mm; line-height: 1.5; }
-.fig-src { margin-left: auto; text-align: right; white-space: nowrap; }
+.fig-src { margin-left: auto; text-align: right; flex: 0 1 auto; max-width: 44%; } /* 출처가 길면 두 줄로 (설명이 좁은 기둥이 되지 않게) */
+.fig-note { flex: 1 1 56%; }
 .fig-svg .grid { stroke: #e2e6ea; stroke-width: 1; }
 .fig-svg .axis { stroke: #4b5560; stroke-width: 1.3; fill: none; }
 .fig-svg .ref { stroke: #7c8792; stroke-width: 1.2; stroke-dasharray: 4 3; }
@@ -177,3 +178,19 @@ th, td { padding: 0; vertical-align: middle; }
 .fig-svg .lgbg { fill: #fff; fill-opacity: .85; stroke: #d0d7de; stroke-width: .8; }
 .fig-svg .fl.s6 { fill: #12b886; } .fig-svg .fl.s7 { fill: #adb5bd; } .fig-svg .fl.s8 { fill: #e64980; }
 .fig-svg .in.s7 { fill: #222; }
+/* 지도 (2026-11 새 방식): 바다·나라·강·산맥 이름, 경위도 숫자, 도시 */
+.fig-svg .hl.solid { fill-opacity: .72; }
+.fig-svg .hl.h1.solid { fill-opacity: .62; } .fig-svg .hl.h2.solid { fill-opacity: .62; }
+.fig-svg .fl.h1.hlbox { fill: var(--fig-1); fill-opacity: .62; } .fig-svg .fl.h2.hlbox { fill: var(--fig-3); fill-opacity: .62; }
+.fig-svg .fl.h3.hlbox { fill: var(--fig-4); fill-opacity: .7; } .fig-svg .fl.h4.hlbox { fill: var(--fig-2); fill-opacity: .55; }
+.fig-svg .msea { fill: #2a6aa8; font-style: italic; font-weight: 600; letter-spacing: .3px; stroke: rgba(255,255,255,.75); stroke-width: 2.4px; }
+.fig-svg .mcountry { fill: #353b42; font-weight: 700; letter-spacing: 1px; }
+.fig-svg .mriver { fill: #1f6fb8; font-weight: 600; stroke: rgba(255,255,255,.85); stroke-width: 2.4px; }
+.fig-svg .mterr { fill: #6b4423; font-weight: 700; letter-spacing: 2px; stroke: rgba(255,255,255,.72); stroke-width: 2.6px; }
+.fig-svg .mregion { fill: #6a4a2a; font-weight: 600; }
+.fig-svg .mdeg { fill: #3d5a78; font-weight: 500; paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: 2px; stroke-linejoin: round; }
+.fig-svg .mnorth, .fig-svg .mscale { fill: #2b333b; font-weight: 700; }
+.fig-svg .city { fill: #fff; stroke: #222; stroke-width: 1.5; }
+.fig-svg .ring.k1 { fill: #e03131; stroke: #e03131; } .fig-svg .ring.k2 { fill: #f08c00; stroke: #f08c00; } .fig-svg .ring.k3 { fill: #2f9e44; stroke: #2f9e44; }
+.fig-svg .ring.k4 { fill: #1971c2; stroke: #1971c2; } .fig-svg .ring.k8 { fill: #c2255c; stroke: #c2255c; }
+.fig-svg path.hl.tl { fill-opacity: .4; }

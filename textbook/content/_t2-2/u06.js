@@ -49,7 +49,8 @@ const CAPITAL = {
 
 // 혁신 도시와 행정 중심 복합 도시 (위치는 대략)
 const INNOV_MAP = {
-  t: 'map', view: [124.9, 32.2, 130.5, 38.7], title: '공공 기관 지방 이전: 혁신 도시와 세종', w: 440, h: 460, width: 58,
+  t: 'map', view: [124.9, 32.2, 130.5, 38.7], title: '공공 기관 지방 이전: 혁신 도시와 세종', w: 440, h: 460, width: 58, style: 'terrain', provinces: true, krRivers: 600,
+  seas: [['동 해', 130.0, 36.6, 12], ['황 해', 125.4, 36.0, 12], ['남 해', 128.2, 33.9, 11]],
   markers: [
     { lon: 126.98, lat: 37.56, label: '서울', pos: 'left', cls: 'k1' },
     { lon: 127.29, lat: 36.48, label: '세종', pos: 'left', cls: 'k3' },
@@ -64,9 +65,9 @@ const INNOV_MAP = {
     { lon: 126.79, lat: 35.02, label: '나주', pos: 'left', cls: 'k2' },
     { lon: 126.51, lat: 33.25, label: '서귀포', pos: 'right', cls: 'k2' },
   ],
-  legend: [{ cls: 'k2', label: '혁신 도시' }, { cls: 'k3', label: '행정 중심 복합 도시' }, { cls: 'k1', label: '수도권 중심' }],
+  legend: [{ pin: 'k2', label: '혁신 도시' }, { pin: 'k3', label: '행정 중심 복합 도시' }, { pin: 'k1', label: '수도권 중심' }], legendV: true, legendAt: [6, 380],
   note: '수도권에 몰려 있던 100개가 넘는 공공 기관을 전국 10개 혁신 도시와 세종으로 옮겨, 지역에 일자리를 만들고 관련 기업과 인구를 끌어들이려 했다.',
-  source: '지도 자료: Natural Earth (위치는 대략)',
+  source: '지도 자료: Natural Earth, 통계청, 고도 AWS Terrain Tiles (위치는 대략)',
 };
 
 export default {

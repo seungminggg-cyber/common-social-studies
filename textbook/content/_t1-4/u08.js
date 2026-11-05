@@ -287,7 +287,7 @@ export default {
       vs: '**유일신교**: 크리스트교, 이슬람교(그리고 유대교) / **다신교**: 힌두교. 불교는 신을 믿는 것보다 스스로의 수행과 깨달음을 중시한다. 크리스트교·이슬람교·유대교의 성지는 모두 **예루살렘**이다.',
     },
     {
-      t: 'map', view: [-12, 8, 100, 52], title: '세계 주요 종교의 발상지와 성지', h: 300,
+      t: 'map', view: [-12, 8, 100, 52], title: '세계 주요 종교의 발상지와 성지', h: 300, style: 'terrain', rivers: 4,
       markers: [
         { lon: 35.2, lat: 31.8, label: '예루살렘(크리스트교·유대교·이슬람교)', pos: 'left' },
         { lon: 39.8, lat: 21.4, label: '메카(이슬람교)', pos: 'right' },
@@ -295,7 +295,7 @@ export default {
         { lon: 83, lat: 25.3, label: '바라나시(힌두교)', pos: 'top' },
         { lon: 85, lat: 24.7, label: '부다가야(불교)', pos: 'bottom' },
       ],
-      source: '지도 자료: Natural Earth',
+      source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
     },
 
     // ── D ──

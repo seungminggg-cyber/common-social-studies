@@ -13,6 +13,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync } from 
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { renderFull } from './lib/render.js';
+import { ensureTerrain } from './lib/terrain.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => {
@@ -25,6 +26,7 @@ const args = process.argv.slice(2);
 // 어느 책을 만들지: 기본은 통합사회1, t2 를 주면 통합사회2
 const { default: full } = await import(args.includes('t2') ? './content/_book/t2.js' : './content/_book/t1.js');
 const wantPng = args.includes('png');
+ensureTerrain(full); // 지형도 바탕 그림이 없으면 만든다
 const theme = args.includes('b') ? 'b' : 'd'; // 디자인: 기본은 시안 D(교과서형), b를 주면 예전 시안 B
 const picked = ['student', 'teacher', 'answers'].filter((k) => args.includes(k));
 const jobs = picked.length ? picked : ['student', 'teacher', 'answers'];

@@ -139,6 +139,7 @@ export default {
     },
     {
       t: 'map', view: 'world', title: '다문화 정책의 여러 사례 (개념도)', h: 280,
+      seas: [['태 평 양', -140, 2, 14], ['대 서 양', -30, 2, 13], ['인 도 양', 72, -44, 13]],
       markers: [
         { lon: -100, lat: 56, label: '캐나다: 모자이크·다문화주의(1971)', pos: 'right', size: 11 },
         { lon: -98, lat: 38, label: '미국: 용광로 → 샐러드 볼', pos: 'bottom', size: 11 },
