@@ -92,8 +92,8 @@ for (const bookName of books) {
           await els[i].screenshot({ path: join(OUT, 'png', `${name}-${String(i + 1).padStart(2, '0')}.png`) });
         }
       }
-      // 한글 파일용 그림: 시안 b 기준으로 한 번만 저장
-      if (nFig && theme === 'b' && !figsSaved) {
+      // 한글 파일용 그림: 시안 b 또는 d로 만들 때 한 번만 저장 (그래프 색은 두 시안이 같다)
+      if (nFig && (theme === 'b' || theme === 'd') && !figsSaved) {
         const dir = join(OUT, 'fig', bookName);
         mkdirSync(dir, { recursive: true });
         for (const el of await page.$$('figure[data-fig]')) {
