@@ -164,3 +164,14 @@ th, td { padding: 0; vertical-align: middle; }
 /* 바다 흐름 화살표: 난류(빨강)·한류(파랑) */
 .fig-svg .arrow.warm { stroke: #e03131; } .fig-svg .arrow.cold { stroke: #1971c2; } .fig-svg .arrow.wind { stroke: #868e96; stroke-dasharray: 6 4; }
 .fig-svg .ahd-warm { fill: #e03131; } .fig-svg .ahd-cold { fill: #1971c2; } .fig-svg .ahd-wind { fill: #868e96; }
+/* 지도 색칠·화살표 8색 (k1~k8): 종교·언어·문화권 분포도 */
+.fig-svg .pin.k7, .fig-svg .fl.k7 { fill: #0c8599; } .fig-svg .pin.k8, .fig-svg .fl.k8 { fill: #c2255c; }
+.fig-svg .hl.k1 { fill: #e03131; fill-opacity: .5; } .fig-svg .hl.k2 { fill: #f08c00; fill-opacity: .5; }
+.fig-svg .hl.k3 { fill: #2f9e44; fill-opacity: .5; } .fig-svg .hl.k4 { fill: #1971c2; fill-opacity: .5; }
+.fig-svg .hl.k5 { fill: #7048e8; fill-opacity: .5; } .fig-svg .hl.k6 { fill: #495057; fill-opacity: .45; }
+.fig-svg .hl.k7 { fill: #0c8599; fill-opacity: .5; } .fig-svg .hl.k8 { fill: #c2255c; fill-opacity: .5; }
+.fig-svg .arrow.k1 { stroke: #e03131; } .fig-svg .arrow.k2 { stroke: #f08c00; } .fig-svg .arrow.k3 { stroke: #2f9e44; } .fig-svg .arrow.k4 { stroke: #1971c2; }
+.fig-svg .arrow.k5 { stroke: #7048e8; } .fig-svg .arrow.k6 { stroke: #495057; } .fig-svg .arrow.k7 { stroke: #0c8599; } .fig-svg .arrow.k8 { stroke: #c2255c; }
+.fig-svg .ahd-k1 { fill: #e03131; } .fig-svg .ahd-k2 { fill: #f08c00; } .fig-svg .ahd-k3 { fill: #2f9e44; } .fig-svg .ahd-k4 { fill: #1971c2; }
+.fig-svg .ahd-k5 { fill: #7048e8; } .fig-svg .ahd-k6 { fill: #495057; } .fig-svg .ahd-k7 { fill: #0c8599; } .fig-svg .ahd-k8 { fill: #c2255c; }
+.fig-svg .lgbg { fill: #fff; fill-opacity: .85; stroke: #d0d7de; stroke-width: .8; }

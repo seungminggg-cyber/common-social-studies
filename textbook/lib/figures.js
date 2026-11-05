@@ -420,7 +420,19 @@ function map(b) {
       s += text(tx, ty, m.label, { size: m.size || 12.5, anchor: an, cls: 'mapl pinl', weight: 700 });
     }
   }
-  if (b.legend) s += legend(b.legend.map((l) => ({ name: l.label, cls: l.cls })), 12, H - 10);
+  if (b.legend) {
+    // 범례: 폭이 넘치면 여러 줄로, 흰 바탕 위에
+    const items = b.legend.map((l) => ({ name: l.label, cls: l.cls })), size = b.legendSize || 11;
+    const rows = [[]]; let w = 0;
+    for (const it of items) {
+      const iw = 16 + tw(it.name, size) + 14;
+      if (w + iw > W - 40 && rows[rows.length - 1].length) { rows.push([]); w = 0; }
+      rows[rows.length - 1].push(it); w += iw;
+    }
+    const lh = size + 7, bw = Math.max(...rows.map((r) => legendWidth(r, size))) + 10, bh = rows.length * lh + 6;
+    s += `<rect x="6" y="${H - bh - 6}" width="${r1(bw)}" height="${bh}" rx="4" class="lgbg"/>`;
+    rows.forEach((r, i) => (s += legend(r, 12, H - bh - 6 + 4 + (i + 1) * lh - 3, { size })));
+  }
   return { W, H, s };
 }
 
@@ -431,7 +443,7 @@ export function figure(b) {
   const out = b.t === 'venn' ? venn(b) : b.t === 'map' ? map(b) : (KINDS[b.kind] || (() => { throw new Error(`모르는 그래프: ${b.kind}`); }))(b);
   const defs = `<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd"/></marker>`
     + `<marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd2"/></marker>`
-    + ['warm', 'cold', 'wind'].map((k) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd-${k}"/></marker>`).join('') + '</defs>';
+    + ['warm', 'cold', 'wind', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8'].map((k) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd-${k}"/></marker>`).join('') + '</defs>';
   const svg = `<svg viewBox="0 0 ${out.W} ${out.H}" xmlns="http://www.w3.org/2000/svg" class="fig-svg">${defs}${out.s}</svg>`;
   const width = b.width ? ` style="width:${b.width}%"` : '';
   return `<figure class="fig fig-${b.t === 'chart' ? b.kind : b.t}"${width}${b._fig ? ` data-fig="${b._fig}"` : ''}>${
