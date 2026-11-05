@@ -384,6 +384,8 @@ def example(b):
         return
     if d['t'] == 'dialog':  # 대화 자료: 머리 줄 없는 2칸 표로
         d = {'t': 'table', 'head': None, 'widths': [12, 88], 'rows': d['rows']}
+    elif d['t'] == 'p':  # 글 자료: 한 칸짜리 표로
+        d = {'t': 'table', 'head': None, 'widths': [100], 'rows': [[d['text']]]}
     head = d.get('head')
     ncol = len(head) if head else len(d['rows'][0])
     has_stem = bool(b.get('stem'))
