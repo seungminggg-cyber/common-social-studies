@@ -226,6 +226,14 @@ function scatter(b) {
     for (const v of ticks(x.min, x.max, x.step)) s += text(sx(v), T + ph + 16, fmt(v), { size: 11, anchor: 'middle', cls: 'tick' });
   }
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw}" y2="${T + ph}" class="axis"/><line x1="${L}" y1="${T}" x2="${L}" y2="${T + ph}" class="axis"/>`;
+  if (b.zero) {
+    if (x.min < 0 && x.max > 0) s += `<line x1="${r1(sx(0))}" y1="${T}" x2="${r1(sx(0))}" y2="${T + ph}" class="zero"/>`;
+    if (y.min < 0 && y.max > 0) s += `<line x1="${L}" y1="${r1(sy(0))}" x2="${L + pw}" y2="${r1(sy(0))}" class="zero"/>`;
+  }
+  for (const l of b.labels || []) {
+    const [dx, dy, an] = l.pos === 'left' ? [-8, 4, 'end'] : l.pos === 'top' ? [0, -9, 'middle'] : l.pos === 'bottom' ? [0, 17, 'middle'] : [8, 4, 'start'];
+    s += text(sx(l.x) + dx, sy(l.y) + dy, l.text, { size: l.size || 12.5, anchor: an, cls: 'cat', weight: 700 });
+  }
   const all = [];
   b.groups.forEach((g, j) => g.points.forEach(([a, v]) => {
     all.push([a, v]);
@@ -268,7 +276,7 @@ function pie(b) {
 
 // ── 기후 그래프 (월평균 기온 꺾은선 + 월 강수량 막대) ──
 function climate(b) {
-  const W = b.compact ? 300 : 600, H = b.h || 260;
+  const W = b.w || (b.compact ? 300 : 600), H = b.h || 260;
   const L = 40, R = 44, T = 30, B = 28, pw = W - L - R, ph = H - T - B;
   const tmin = b.tMin ?? -20, tmax = b.tMax ?? 30, pmax = b.pMax ?? 500;
   const st = (v) => T + ph - ((v - tmin) / (tmax - tmin)) * ph, sp = (v) => T + ph - (v / pmax) * ph;
@@ -279,11 +287,44 @@ function climate(b) {
   }
   const nT = ticks(tmin, tmax, b.tStep ?? 10).length - 1;
   for (let i = 0; i <= nT; i++) s += text(L + pw + 5, T + ph - (ph * i) / nT + 4, fmt(Math.round((pmax * i) / nT)), { size: 10.5, cls: 'tick' });
-  b.precip.forEach((v, i) => (s += `<rect x="${r1(L + band * i + band * 0.18)}" y="${r1(sp(v))}" width="${r1(band * 0.64)}" height="${r1(T + ph - sp(v))}" class="fl s2 prec"/>`));
+  if (tmin < 0 && tmax > 0) s += `<line x1="${L}" y1="${r1(st(0))}" x2="${L + pw}" y2="${r1(st(0))}" class="zero"/>`;
+  b.precip.forEach((v, i) => (s += `<rect x="${r1(L + band * i + band * 0.18)}" y="${r1(sp(Math.min(v, pmax)))}" width="${r1(band * 0.64)}" height="${r1(T + ph - sp(Math.min(v, pmax)))}" class="fl s2 prec"/>`));
   const pts = b.temp.map((v, i) => [L + band * i + band / 2, st(v)]);
   s += `<path d="M${pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L')}" class="ln s3"/>`;
   pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="2.8" class="dot s3"/>`));
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw}" y2="${T + ph}" class="axis"/>`;
+  for (const m of [1, 4, 7, 10, 12]) s += text(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
+  s += text(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + text(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
+  s += text(L + pw, T + ph + 26, '(월)', { size: 10, anchor: 'end', cls: 'axl' });
+  if (b.label) s += text(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
+  return { W, H, s };
+}
+
+// ── 기온·강수 편차 그래프 (수능 예시문항형) ──
+//   월 기온 편차 = 월평균 기온 - 연평균 기온 (꺾은선, 왼쪽 축)
+//   월 강수 편차 = 월 강수량 - 연 강수량/12 (막대, 오른쪽 축, 0 아래로도 그림)
+function climdev(b) {
+  const W = b.w || 300, H = b.h || 210;
+  const L = 40, R = 46, T = 30, B = 28, pw = W - L - R, ph = H - T - B;
+  const tAvg = b.temp.reduce((a, v) => a + v, 0) / 12, pAvg = b.precip.reduce((a, v) => a + v, 0) / 12;
+  const dt = b.temp.map((v) => v - tAvg), dp = b.precip.map((v) => v - pAvg);
+  const tr = b.tRange ?? 20, pr = b.pRange ?? 200;
+  const st = (v) => T + ph / 2 - (v / tr) * (ph / 2), sp = (v) => T + ph / 2 - (v / pr) * (ph / 2);
+  const band = pw / 12;
+  let s = '';
+  for (let i = -2; i <= 2; i++) {
+    const y = T + ph / 2 - (i / 2) * (ph / 2);
+    s += `<line x1="${L}" y1="${r1(y)}" x2="${L + pw}" y2="${r1(y)}" class="${i === 0 ? 'zero' : 'grid'}"/>`;
+    s += text(L - 5, y + 4, fmt((tr * i) / 2), { size: 10.5, anchor: 'end', cls: 'tick' });
+    s += text(L + pw + 5, y + 4, fmt((pr * i) / 2), { size: 10.5, cls: 'tick' });
+  }
+  dp.forEach((v, i) => {
+    const c = Math.max(-pr, Math.min(pr, v)), y0 = st(0), y1 = sp(c);
+    s += `<rect x="${r1(L + band * i + band * 0.18)}" y="${r1(Math.min(y0, y1))}" width="${r1(band * 0.64)}" height="${r1(Math.abs(y1 - y0))}" class="fl s2 prec"/>`;
+  });
+  const pts = dt.map((v, i) => [L + band * i + band / 2, st(Math.max(-tr, Math.min(tr, v)))]);
+  s += `<path d="M${pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L')}" class="ln s3"/>`;
+  pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="2.8" class="dot s3"/>`));
   for (const m of [1, 4, 7, 10, 12]) s += text(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
   s += text(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + text(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
   s += text(L + pw, T + ph + 26, '(월)', { size: 10, anchor: 'end', cls: 'axl' });
@@ -316,7 +357,7 @@ function worldData(detail) {
   return WORLD[detail];
 }
 function map(b) {
-  const W = 600, H = b.h || (b.view === 'world' || !b.view ? 300 : 340);
+  const W = b.w || 600, H = b.h || (b.view === 'world' || !b.view ? 300 : 340);
   const isWorld = b.view === 'world' || !b.view;
   const detail = b.detail || (isWorld ? '110m' : '50m');
   const { countries, borders } = worldData(detail);
@@ -342,6 +383,13 @@ function map(b) {
     s += `<path d="${path(f)}" class="hl ${h.cls || 'h1'}"/>`;
   }
   s += `<path d="${path(borders)}" class="border"/>`;
+  // 위도선 (예: 남북회귀선 parallels: [{ lat: -23.4, label: '남회귀선' }])
+  for (const pl of b.parallels || []) {
+    const lons = isWorld ? [-180, -90, 0, 90, 180] : [b.view[0], (b.view[0] + b.view[2]) / 2, b.view[2]];
+    const d = path({ type: 'LineString', coordinates: lons.map((lo) => [lo, pl.lat]) });
+    if (d) s += `<path d="${d}" class="eq"/>`;
+    if (pl.label) { const [lx, ly] = proj([isWorld ? -170 : b.view[0] + 0.5, pl.lat]); s += text(lx + 2, ly - 4, pl.label, { size: 10.5, cls: 'mapl soft' }); }
+  }
   if (b.equator) {
     const eq = path({ type: 'LineString', coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]] });
     if (eq) s += `<path d="${eq}" class="eq"/>`;
@@ -359,7 +407,7 @@ function map(b) {
   for (const a of b.arrows || []) {
     const [x1, y1] = proj(a.from), [x2, y2] = proj(a.to);
     const mx = (x1 + x2) / 2 - (y2 - y1) * (a.bend ?? 0.2), my = (y1 + y2) / 2 + (x2 - x1) * (a.bend ?? 0.2);
-    s += `<path d="M${r1(x1)},${r1(y1)}Q${r1(mx)},${r1(my)} ${r1(x2)},${r1(y2)}" class="arrow" marker-end="url(#ah2)"/>`;
+    s += `<path d="M${r1(x1)},${r1(y1)}Q${r1(mx)},${r1(my)} ${r1(x2)},${r1(y2)}" class="arrow ${a.cls || ''}" marker-end="url(#${a.cls ? `ah-${a.cls}` : 'ah2'})"/>`;
     if (a.label) s += text(mx, my - 4, a.label, { size: 11, anchor: 'middle', cls: 'mapl' });
   }
   for (const m of b.markers || []) {
@@ -369,20 +417,21 @@ function map(b) {
     if (m.label) {
       const pos = m.pos || 'right', d = (m.ring || 6) + 4;
       const [tx, ty, an] = pos === 'left' ? [x - d, y + 4, 'end'] : pos === 'top' ? [x, y - d, 'middle'] : pos === 'bottom' ? [x, y + d + 10, 'middle'] : [x + d, y + 4, 'start'];
-      s += text(tx, ty, m.label, { size: 12.5, anchor: an, cls: 'mapl pinl', weight: 700 });
+      s += text(tx, ty, m.label, { size: m.size || 12.5, anchor: an, cls: 'mapl pinl', weight: 700 });
     }
   }
   if (b.legend) s += legend(b.legend.map((l) => ({ name: l.label, cls: l.cls })), 12, H - 10);
   return { W, H, s };
 }
 
-const KINDS = { bar, hbar, stack100, line, scatter, pie, climate };
+const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev };
 
 // 그림 블록 → HTML (<figure>)
 export function figure(b) {
   const out = b.t === 'venn' ? venn(b) : b.t === 'map' ? map(b) : (KINDS[b.kind] || (() => { throw new Error(`모르는 그래프: ${b.kind}`); }))(b);
   const defs = `<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd"/></marker>`
-    + `<marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd2"/></marker></defs>`;
+    + `<marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd2"/></marker>`
+    + ['warm', 'cold', 'wind'].map((k) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="ahd-${k}"/></marker>`).join('') + '</defs>';
   const svg = `<svg viewBox="0 0 ${out.W} ${out.H}" xmlns="http://www.w3.org/2000/svg" class="fig-svg">${defs}${out.s}</svg>`;
   const width = b.width ? ` style="width:${b.width}%"` : '';
   return `<figure class="fig fig-${b.t === 'chart' ? b.kind : b.t}"${width}${b._fig ? ` data-fig="${b._fig}"` : ''}>${

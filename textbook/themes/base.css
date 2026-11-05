@@ -154,3 +154,13 @@ th, td { padding: 0; vertical-align: middle; }
 .memo-lines { flex: 1; margin-top: 1.4mm; background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7.6mm - 1px), #dfe4e7 calc(7.6mm - 1px), #dfe4e7 7.6mm); }
 .region-memo { flex: 1 1 auto; min-height: 0; display: flex; margin-top: var(--gap, 4.5mm); }
 .region-memo .memo { flex: 1; }
+
+/* 기준선(0) */
+.fig-svg .zero { stroke: #6b7682; stroke-width: 1.3; }
+/* 지도 지점 색깔 — 기후대별 (k1 열대, k2 건조, k3 온대, k4 냉대, k5 한대, k6 고산) */
+.fig-svg .pin.k1, .fig-svg .fl.k1 { fill: #e03131; } .fig-svg .pin.k2, .fig-svg .fl.k2 { fill: #f08c00; }
+.fig-svg .pin.k3, .fig-svg .fl.k3 { fill: #2f9e44; } .fig-svg .pin.k4, .fig-svg .fl.k4 { fill: #1971c2; }
+.fig-svg .pin.k5, .fig-svg .fl.k5 { fill: #7048e8; } .fig-svg .pin.k6, .fig-svg .fl.k6 { fill: #495057; }
+/* 바다 흐름 화살표: 난류(빨강)·한류(파랑) */
+.fig-svg .arrow.warm { stroke: #e03131; } .fig-svg .arrow.cold { stroke: #1971c2; } .fig-svg .arrow.wind { stroke: #868e96; stroke-dasharray: 6 4; }
+.fig-svg .ahd-warm { fill: #e03131; } .fig-svg .ahd-cold { fill: #1971c2; } .fig-svg .ahd-wind { fill: #868e96; }
