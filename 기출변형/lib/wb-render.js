@@ -143,8 +143,9 @@ export function renderAnswers(groups, { title, edition }) {
       const meta = g.mock
         ? `${q.points || 2}점 · ${esc(UNITS[q.unit]?.book ? `${BOOKS[UNITS[q.unit].book].subject} ${UNITS[q.unit].no} ${UNITS[q.unit].title}` : '')}`
         : '';
+      // 모의고사는 배점·단원만(유형까지 넣으면 머리 줄이 두 줄로 꺾임)
       const lv = `<span class="aq-lv lv-${esc(q.level)}">${esc(q.level)}</span>`;
-      rows.push(`<div class="row row-ae"><div class="main"><div class="ans-q"><div class="aq-h"><span class="aq-no">${two(i + 1)}</span><span class="aq-a">${CIRCLED[q.answer - 1]}</span>${lv}<span class="aq-meta">${meta}${q.type ? `${meta ? ' · ' : ''}${esc(q.type)}` : ''}</span></div><p>${inl(q.explain)}</p>${q.note ? `<div class="aq-note"><b>보충 설명 · 개념서 밖 내용</b> ${inl(q.note)}</div>` : ''}</div></div></div>`);
+      rows.push(`<div class="row row-ae"><div class="main"><div class="ans-q"><div class="aq-h"><span class="aq-no">${two(i + 1)}</span><span class="aq-a">${CIRCLED[q.answer - 1]}</span>${lv}<span class="aq-meta">${meta}${q.type && !g.mock ? `${meta ? ' · ' : ''}${esc(q.type)}` : ''}</span></div><p>${inl(q.explain)}</p>${q.note ? `<div class="aq-note"><b>보충 설명 · 개념서 밖 내용</b> ${inl(q.note)}</div>` : ''}</div></div></div>`);
     });
   }
   sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="승민T 통합사회 <b>기출변형 문제집</b>" data-head-right="정답과 해설">${rows.join('\n')}</section>`);

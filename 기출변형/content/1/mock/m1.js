@@ -425,7 +425,7 @@ export default {
       src: '2028 예시 3번 유형(문화권 지도 + 다문화 정책 결합)',
       stem: '다음은 세계의 문화권에 대한 수업 자료의 일부이다. 이에 대한 설명으로 옳은 것은?',
       data: [
-        { t: 'map', view: [-140, 8, 12, 72], h: 230,
+        { t: 'map', view: [-140, 8, 12, 72], h: 230, deg: false, scale: false,
           markers: [
             { lon: -102.0, lat: 57.0, ring: 15, label: 'A', pos: 'right' },
             { lon: -102.0, lat: 23.0, ring: 12, label: 'B', pos: 'right' },
