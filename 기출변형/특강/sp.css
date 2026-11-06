@@ -1,0 +1,88 @@
+/* 2028 예시문항 특강 교재 — 문제집(wb.css)·시안 H 위에 특강에만 있는 것을 더한다 */
+
+/* 유형별 색(엄지 색인): 인쇄 잉크 기준의 차분한 색 */
+.page[data-ch="안내"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+.page[data-ch="01"] { --c1: #7d3566; --c1-dark: #5a2449; --c1-soft: #f2e5ee; --c1-line: #d6b3cb; --c1-pale: #faf4f8; }
+.page[data-ch="02"] { --c1: #5b3d8a; --c1-dark: #412b66; --c1-soft: #ece6f4; --c1-line: #c7b8de; --c1-pale: #f7f4fb; }
+.page[data-ch="03"] { --c1: #3c7a37; --c1-dark: #295626; --c1-soft: #e7f0e5; --c1-line: #b5d0b1; --c1-pale: #f4f8f3; }
+.page[data-ch="04"] { --c1: #234e8a; --c1-dark: #173562; --c1-soft: #e3e9f3; --c1-line: #aebfdb; --c1-pale: #f3f6fa; }
+.page[data-ch="05"] { --c1: #b5651d; --c1-dark: #844812; --c1-soft: #f6ebe0; --c1-line: #e2c3a4; --c1-pale: #fcf7f2; }
+.page[data-ch="06"] { --c1: #7a5a2e; --c1-dark: #574020; --c1-soft: #f1ebe2; --c1-line: #d5c4aa; --c1-pale: #f9f6f1; }
+.page[data-ch="07"] { --c1: #1d6c74; --c1-dark: #134a50; --c1-soft: #e3eeef; --c1-line: #a9c9cc; --c1-pale: #f2f7f7; }
+.page[data-ch="세트"], .page[data-ch="답"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+.page[data-ch="안내"] .edge-tab { top: 22mm; }
+.page[data-ch="01"] .edge-tab { top: 46mm; }
+.page[data-ch="02"] .edge-tab { top: 70mm; }
+.page[data-ch="03"] .edge-tab { top: 94mm; }
+.page[data-ch="04"] .edge-tab { top: 118mm; }
+.page[data-ch="05"] .edge-tab { top: 142mm; }
+.page[data-ch="06"] .edge-tab { top: 166mm; }
+.page[data-ch="07"] .edge-tab { top: 190mm; }
+.page[data-ch="세트"] .edge-tab { top: 214mm; background: var(--ink); }
+.page[data-ch="답"] .edge-tab { top: 238mm; background: var(--ink); }
+.page[data-ch="안내"] .edge-tab, .page[data-ch="세트"] .edge-tab, .page[data-ch="답"] .edge-tab { font-size: 7.4pt; letter-spacing: -.04em; }
+
+/* 표지: 특강 이름이 길어 두 줄 */
+.sp-cover .cv-title { font-size: 34pt; line-height: 1.2; max-width: 120mm; }
+
+/* 유형 머리(대단원 첫머리와 같은 문법: 큰 번호 + 제목) */
+.sp-open { display: grid; grid-template-columns: 24mm 1fr; column-gap: 5mm; align-items: end; border-bottom: 1.4pt solid var(--c1); padding-bottom: 3mm; margin-bottom: 4mm; }
+.sp-open-no { font-family: var(--serif-h); font-size: 46pt; line-height: .9; color: var(--c1); font-weight: 700; }
+.sp-open-t span { font-size: 8.4pt; color: var(--gray); letter-spacing: .03em; }
+.sp-open-t h1 { margin: .6mm 0 0; font-family: var(--serif-h); font-size: 19pt; line-height: 1.25; color: var(--ink); }
+.sp-open-t p { margin: 1.6mm 0 0; font-size: 8.6pt; color: var(--ink-2); line-height: 1.6; }
+.sp-open-t p.sp-units { font-size: 8pt; color: var(--c1-dark); }
+
+.sp-intent { font-size: 9.4pt; line-height: 1.8; padding: 2.4mm 3mm; background: var(--c1-pale); border-left: 1.6pt solid var(--c1); }
+
+/* 안내 쪽 */
+.sp-trend th { width: 34mm; }
+.sp-two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 6mm; align-items: start; }
+.sp-facts .kv th { width: 13mm; }
+.sp-map .tbl { width: 100%; font-size: 7.8pt; }
+.sp-map .tbl th, .sp-map .tbl td { text-align: center; padding: .9mm 1.2mm; border-bottom: .4pt solid var(--rule); }
+.sp-map .tbl td.l { text-align: left; }
+.sp-map .tbl thead th { border-bottom: .9pt solid var(--ink); border-top: .9pt solid var(--ink); }
+
+/* 예시문항 분석 카드 */
+.sp-card { border-top: 1.2pt solid var(--c1); padding-top: 2mm; }
+.sp-card-h { display: flex; align-items: center; gap: 3mm; margin-bottom: 2mm; }
+.sp-ex { flex: none; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 12mm; height: 12mm; background: var(--c1); color: #fff;
+  font-family: var(--serif-h); font-weight: 700; font-size: 13pt; line-height: 1; clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); }
+.sp-ex small { font-family: var(--sans-h); font-size: 6pt; font-weight: 400; letter-spacing: .1em; margin-bottom: .5mm; }
+.sp-card-t { flex: 1; min-width: 0; }
+.sp-card-t b { display: block; font-family: var(--serif-h); font-size: 11pt; color: var(--ink); line-height: 1.35; }
+.sp-card-t span { display: block; font-size: 7.6pt; color: var(--gray); margin-top: .6mm; }
+.sp-ans { flex: none; font-weight: 700; font-size: 9pt; color: var(--red); border: .8pt solid var(--red); padding: .8mm 2mm; }
+.sp-ans.blank { color: var(--gray); border-color: var(--rule); font-weight: 400; }
+.sp-ans.blank i { display: inline-block; width: 8mm; border-bottom: .6pt solid var(--gray); margin-left: 1mm; }
+.sp-grid { display: grid; grid-template-columns: 19mm 1fr; column-gap: 3mm; row-gap: 1.6mm; font-size: 8.7pt; line-height: 1.68; }
+.sp-k { font-weight: 700; font-size: 7.8pt; color: var(--c1-dark); padding-top: .4mm; letter-spacing: .02em; }
+.sp-k.em { color: var(--ink); }
+.sp-k.red { color: var(--red); }
+.sp-v { min-width: 0; }
+.sp-v.em { background: var(--c1-pale); padding: .6mm 2mm; }
+.sp-steps { margin: 0; padding-left: 4.4mm; }
+.sp-steps li { margin: 0; }
+.sp-traps { margin: 0; padding: 0; list-style: none; }
+.sp-traps li b { color: var(--red); margin-right: 1mm; }
+.sp-judge { margin-top: 2mm; border: .6pt dashed var(--red); padding: 1.6mm 2.4mm; }
+.sp-judge .sp-k { color: var(--red); margin-bottom: .8mm; }
+.sp-judge table { width: 100%; border-collapse: collapse; font-size: 8pt; line-height: 1.5; }
+.sp-judge th { width: 6mm; text-align: left; font-weight: 700; }
+.sp-judge td.ox { width: 6mm; font-weight: 700; }
+.sp-judge tr.o td.ox { color: #2f6b2a; }
+.sp-judge tr.x td.ox { color: var(--red); }
+
+/* 함정 모음 · 점검표 */
+.sp-trap-t th { width: 34mm; color: var(--red); }
+.sp-check { margin-top: 3mm; border: .6pt solid var(--rule); padding: 2mm 3mm; font-size: 8.6pt; }
+.sp-check b { font-size: 8.4pt; color: var(--c1-dark); }
+.sp-check ul { list-style: none; margin: 1mm 0 0; padding: 0; display: grid; grid-template-columns: 1fr; row-gap: .6mm; }
+.sp-check li i { display: inline-block; width: 2.8mm; height: 2.8mm; border: .7pt solid var(--ink-2); margin-right: 1.8mm; vertical-align: -.4mm; }
+
+/* 차례 */
+.sp-toc td.n { width: 52mm; }
+
+/* 빠른 정답 */
+.sp-q-l { font-weight: 700; font-size: 8.4pt; margin-bottom: 1mm; color: var(--ink); }
