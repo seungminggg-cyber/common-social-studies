@@ -17,7 +17,7 @@ import { LETTER_STYLES } from './lettering.js';
 import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
-import { MMX, mmxFace } from './mmx.js';
+import { MMX, mmxFace, x5BackMini } from './mmx.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
@@ -188,6 +188,13 @@ if (args.includes('mmx')) {
     await emit(`MMX-${k}-${MMX[k]}-앞표지`, doc([mmxFace(k, 'front', mmVol('02'))]));
     await emit(`MMX-${k}-${MMX[k]}-뒷표지`, doc([mmxFace(k, 'back', mmVol('02'))]));
   }
+}
+// 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback
+if (args.includes('mmback')) {
+  const v = mmVol('02');
+  const sheet = (inner) => `<section class="sheet" style="background:#0B1026"><div class="t" style="overflow:visible">${inner}</div></section>`;
+  await emit('MMBACK-A-네온글자', doc([sheet(x5BackMini(v))]));
+  await emit('MMBACK-B-보통글자', doc([sheet(x5BackMini(v, { plain: true }))]));
 }
 // MINIMAX 완성본(인쇄용 낱장): 앞표지·뒷표지·간지 12장(도련 3mm). 본문은 build.mjs <차수> units mm
 //   node cover/build-cover.mjs mmfinal [2]   (2 = 03 심화편 데이터)

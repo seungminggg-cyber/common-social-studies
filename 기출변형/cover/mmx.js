@@ -281,6 +281,29 @@ function x5Back(v) {
   ${T(esc(MM.backLine), { x: 0, w: W, align: 'center', y: 252, size: 15, weight: 500, color: X5.sub, ls: 0.01 })}`;
 }
 
+// 뒷표지 시안(2026-11-07 강사: "문구는 아예 없이, 미로를 작게 가운데 + 가운데에 작게 MINIMAX")
+//  미로(앞표지와 같은 모양, 칸 c mm)와 MINIMAX를 한 덩어리로 쪽 가운데에 둔다.
+//  neon: 앞표지 로고와 같은 네온 글자(폭 logoW mm) · plain: 글꼴 글자(KoPub 돋움 굵게, 자간 넓게)
+export function x5BackMini(v, { plain = false, c = 9.5, logoW = 64, gap = 16, cy = H / 2 } = {}) {
+  const lay = layout('MINIMAX', { s: 8, d: 9, wf: 1 }, 18);
+  const [lo, hi] = neonExtent(lay, X5NEON.w);
+  const scale = logoW / (hi - lo);
+  const logoH = plain ? 6 : (100 + X5NEON.w) * scale; // 보이는 높이(mm)
+  const mazeH = 8 * c;
+  const top = cy - (mazeH + gap + logoH) / 2; // 미로 위 끝 → 덩어리 가운데 = cy
+  const gx = (W - 6 * c) / 2, gy = top;
+  const ly = gy + mazeH + gap; // 로고 위 끝
+  let word;
+  if (plain) {
+    word = T('MINIMAX', { x: 0, w: W, align: 'center', y: ly - 1.2, size: 17, weight: 700, color: X5.fg, ls: 0.42, extra: 'padding-left:0.42em;' });
+  } else {
+    const pad = 30, LX = (W - logoW) / 2, t = ly + (X5NEON.w / 2) * scale;
+    word = `<svg class="abs" style="left:${mm(LX - pad * scale)};top:${mm(t - pad * scale)};overflow:visible" width="${mm((hi - lo + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(hi - lo + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
+  }
+  return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(1.2))}
+  ${word}`;
+}
+
 export const MMX = { X1: '안장점', X2: '게임 트리', X3: '입체 행렬', X4: 'M 모노그램', X5: '네온 길' };
 const FN = { X1: [x1Front, x1Back, X1.bg], X2: [x2Front, x2Back, X2.bg], X3: [x3Front, x3Back, X3.bg], X4: [x4Front, x4Back, X4.bg], X5: [x5Front, x5Back, X5.bg] };
 export function mmxFace(k, side, v) {
