@@ -52,3 +52,14 @@
 /* 보충 설명: 개념서 범위를 넘는 내용을 해설에서 자세히 */
 .aq-note { display: block; margin-top: 1.6mm; padding: 1.8mm 2.4mm; border-left: 1.4pt solid var(--c1, #1f1d1b); background: var(--c1-pale, #f7f5f2); font-size: 8.2pt; line-height: 1.65; }
 .aq-note b { color: var(--c1-dark, #1f1d1b); margin-right: 1.2mm; }
+
+/* 문제 자료 표: 칸마다 글자 가운데, 바깥·안쪽 테두리가 끊기지 않게 (강사 요청 2026-11-06) */
+.wb .q-data .tbl { border-collapse: collapse; border: .8pt solid var(--ink) !important; }
+.wb .q-data .tbl th, .wb .q-data .tbl td { border: .5pt solid #8e979d !important; text-align: center !important; vertical-align: middle !important; }
+.wb .q-data .tbl thead th { border-bottom: .8pt solid var(--ink) !important; }
+.wb .q-data .tbl tbody tr:last-child > * { border-bottom: .5pt solid #8e979d !important; }
+
+/* 앞 단원이 끝난 쪽에 이어서 시작하는 단원 띠(한 단 폭): 제목 한 줄, 문항 수는 그 아래 */
+.slot .wb-band { display: block; margin-bottom: 4mm; }
+.slot .wb-band .band-title { display: block; font-size: 12.5pt; line-height: 1.35; }
+.slot .wb-band .band-sub { display: block; margin: 1.2mm 0 0 7.4mm; font-size: 8pt; }

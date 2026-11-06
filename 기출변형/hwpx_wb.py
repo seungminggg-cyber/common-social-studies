@@ -32,6 +32,9 @@ _data_box = data_box
 def data_box(items):
     """개념서 data_box에 목록(ul) 자료를 더한다: 테두리 상자 안에 한 줄씩"""
     for d in items:
+        if d['t'] == 'table':
+            # 문제 자료 표는 칸마다 글자 가운데 (강사 요청 2026-11-06)
+            d = {**d, 'align': ['center'] * 20}
         if d['t'] != 'ul':
             _data_box([d])
             continue

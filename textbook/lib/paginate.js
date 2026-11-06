@@ -175,7 +175,7 @@
 
       // 새 쪽에서 시작할까, 앞 쪽에 이어 붙일까? (LAYOUT.soft 에 적힌 부분만 이어 붙인다)
       let placed = false;
-      if (pg && (L.soft || []).includes(kind)) {
+      if (pg && (L.soft || []).includes(kind) && !sec.dataset.nosoft) { // data-nosoft: 언제나 새 쪽에서 시작
         const cur = pg.slots[pg.i];
         const curLast = cur.lastElementChild;
         const curRoom = cur.getBoundingClientRect().bottom - (curLast ? curLast.getBoundingClientRect().bottom : cur.getBoundingClientRect().top);

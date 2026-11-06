@@ -37,7 +37,7 @@ export function questionHtml(q, n, { unit, mock } = {}) {
   const head = mock
     ? `<div class="q-head"><span class="q-no">${n}</span></div>`
     : `<div class="q-head"><span class="q-no">${two(n)}</span><span class="q-lv lv-${esc(q.level)}">${esc(q.level)}</span><span class="q-meta">${conceptLabel(q, unit)}${q.type ? `<span class="q-type">${esc(q.type)}</span>` : ''}</span></div>`;
-  return `<div class="row row-q"><div class="main"><div class="q${mock ? ' q-mock' : ''}">
+  return `<div class="row row-q" data-qid="${esc(q.id)}"><div class="main"><div class="q${mock ? ' q-mock' : ''}">
     ${head}
     <div class="q-stem">${inl(q.stem)}${pts}</div>
     ${data ? `<div class="q-data">${data}</div>` : ''}
@@ -101,7 +101,7 @@ export function renderUnits(sets, { title, edition, mode }) {
     units.forEach(({ unit, qs }, k) => {
       const attrs = `data-tab="${esc(book.chapter.no)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${unit.no} ${unit.title}`)}"`;
       const top = `<div class="top">${k === 0 ? chapterHead(book, units) : ''}${unitBand(unit, qs)}</div>`;
-      sections.push(`<section class="flow" data-kind="exam" ${attrs}>${top}${qs.map((q, i) => questionHtml(q, i + 1, { unit })).join('\n')}</section>`);
+      sections.push(`<section class="flow" data-kind="exam" data-unit="${esc(unit.key)}"${k === 0 ? ' data-nosoft="1"' : ''} ${attrs}>${top}${qs.map((q, i) => questionHtml(q, i + 1, { unit })).join('\n')}</section>`);
     });
   }
   return page(sections, { title, mode });

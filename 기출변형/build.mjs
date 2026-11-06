@@ -30,17 +30,26 @@ const teacher = args.includes('teacher');
 const OUT = join(ROOT, 'out', ed);
 mkdirSync(join(OUT, 'png'), { recursive: true });
 const EDITION = ed === '1' ? '1차 · 겨울방학 특강판' : '2차 · 심화(중상·상)판';
-const LAYOUT = { cover: 1, toc: 1, exam: 2, mock: 2, answers: 2, soft: [], memoMin: 0.4, spreadMax: 9 };
+// soft: 단원이 끝난 쪽에 자리가 남으면 다음 단원을 이어서 싣는다(대단원 첫 단원은 새 쪽). 순서 정하기(order)에서는 끔.
+const LAYOUT = { cover: 1, toc: 1, exam: 2, mock: 2, answers: 2, soft: args.includes('order') ? [] : ['exam'], memoMin: 0.4, spreadMax: 9 };
 const paginateJs = readFileSync(join(ROOT, '../textbook/lib/paginate.js'), 'utf8');
 
 // 단원별 문항 모으기 (책 순서)
-async function loadUnits() {
+async function loadUnits(raw = false) {
   const dir = join(ROOT, 'content', ed);
-  const keys = Object.keys(UNITS).filter((k) => existsSync(join(dir, `${k}.js`)) && (!only.length || only.includes(k)) && (!sub || k.startsWith(sub)));
+  const keys = Object.keys(UNITS).filter((k) => existsSync(join(dir, `${k}.js`)) && (raw || ((!only.length || only.includes(k)) && (!sub || k.startsWith(sub)))));
+  // 책에 싣는 순서(order.json, 'order' 명령으로 만듦). 없거나 빠진 문항은 파일 순서대로 뒤에.
+  const orderFile = join(dir, 'order.json');
+  const order = !raw && existsSync(orderFile) ? JSON.parse(readFileSync(orderFile, 'utf8')) : {};
   const sets = [];
   for (const k of keys) {
     const mod = (await import(pathToFileURL(join(dir, `${k}.js`)).href)).default;
-    sets.push({ unit: UNITS[k], qs: mod.questions || mod });
+    let qs = mod.questions || mod;
+    if (order[k]) {
+      const pos = new Map(order[k].map((id, i) => [id, i]));
+      qs = [...qs].sort((a, b) => (pos.get(a.id) ?? 1e9) - (pos.get(b.id) ?? 1e9));
+    }
+    sets.push({ unit: UNITS[k], qs });
   }
   return sets;
 }
@@ -121,7 +130,106 @@ async function emit(name, html, data) {
   await page.close();
 }
 
+// ── 문항 순서 정하기 (node build.mjs <차수> order) ──
+// 지문이 긴 중상·상 문항만 이어지면 한 단에 한두 문제만 들어가 빈 곳이 생긴다.
+// 문항마다 실제 높이를 잰 뒤, 단마다 남은 높이에 가장 꼭 맞는 문항을 골라 넣는다(난이도가 이어지지 않게 섞음).
+// 결과는 content/<차수>/order.json(단원별 문항 id 순서)에 저장하고, 빌드·정답과 해설·한글 파일이 모두 이 순서를 쓴다.
+async function measure(sets) {
+  const htmlPath = join(OUT, '_order.html');
+  writeFileSync(htmlPath, renderUnits(sets, { title: 'order', edition: '', mode: 'student' }).replace('__LAYOUT__', JSON.stringify(LAYOUT)).replace('__PAGINATE__', () => paginateJs));
+  const page = await ctx.newPage();
+  await page.goto(pathToFileURL(htmlPath).href);
+  await page.waitForFunction(() => window.PAGINATED === true, null, { timeout: 600000 });
+  const m = await page.evaluate(() => {
+    document.querySelectorAll('.page.tight').forEach((p) => p.classList.remove('tight'));
+    const rows = [...document.querySelectorAll('.row-q[data-qid]')];
+    rows.forEach((r) => (r.style.marginTop = ''));
+    const second = rows.find((r) => r.previousElementSibling && r.previousElementSibling.classList.contains('row-q'));
+    const gap = parseFloat(getComputedStyle(second).marginTop);
+    const h = {};
+    rows.forEach((r) => (h[r.dataset.qid] = r.getBoundingClientRect().height));
+    const slots = [...document.querySelectorAll('.region-exam .slot')];
+    const H = Math.max(...slots.map((s) => s.clientHeight));
+    // 단원 첫 문항이 놓인 단의 높이(대단원 머리·단원 띠가 위에 있는 쪽)
+    const cap = {};
+    const band = {};
+    const probe = slots.find((s) => s.clientHeight === H);
+    document.querySelectorAll('.wb-band').forEach((b) => {
+      const key = b.id.replace('u-', '');
+      const first = document.querySelector(`.row-q[data-qid^="${key}-"]`);
+      cap[key] = first.closest('.slot').clientHeight;
+      const r = document.createElement('div');
+      r.className = 'row row-top';
+      const top = document.createElement('div');
+      top.className = 'top';
+      top.appendChild(b.cloneNode(true));
+      r.appendChild(top);
+      probe.prepend(r);
+      band[key] = r.getBoundingClientRect().height;
+      r.remove();
+    });
+    return { gap, h, H, cap, band };
+  });
+  await page.close();
+  rmSync(htmlPath, { force: true });
+  return m;
+}
+
+function packOrder(sets, m) {
+  const { gap, h, H, cap, band } = m;
+  const order = {};
+  const SOFT = 0.28; // paginate.js의 softMin
+  let R = 0, col = 2, colCap = H; // 지금 단에 남은 높이, 단 번호(0·1), 단 높이
+  const newPage = (c) => { col = 0; colCap = c; R = c; };
+  const nextCol = () => { if (col === 0) { col = 1; R = colCap; } else newPage(H); };
+  let prevBook = null;
+  for (const { unit, qs } of sets) {
+    const first = unit.book !== prevBook; // 대단원 첫 단원: 언제나 새 쪽
+    prevBook = unit.book;
+    let left = [...qs];
+    const out = [];
+    let lastLv = null;
+    const fits = (q) => h[q.id] + (R < colCap ? gap : 0) <= R + 1;
+    const pick = () => {
+      const ok = left.filter(fits);
+      if (!ok.length) return null;
+      const best = Math.max(...ok.map((q) => h[q.id]));
+      const near = ok.filter((q) => h[q.id] >= best - 45); // 거의 꼭 맞는 것들 가운데
+      return near.find((q) => q.level !== lastLv) || near[0]; // 앞 문항과 난이도가 다른 것을 먼저
+    };
+    const put = (q) => { R -= h[q.id] + (R < colCap ? gap : 0); out.push(q); lastLv = q.level; left = left.filter((x) => x !== q); };
+    // 단원 띠 놓기
+    if (first) newPage(cap[unit.key]);
+    else if (col === 0 || R > colCap * SOFT) {
+      if (R < colCap * SOFT) nextCol();
+      R -= band[unit.key] + (R < colCap ? gap : 0);
+      if (!pick()) { nextCol(); R -= band[unit.key]; }
+    } else newPage(cap[unit.key]);
+    while (left.length) {
+      const q = pick();
+      if (q) { put(q); continue; }
+      if (R >= colCap - 1) { put([...left].sort((a, b) => h[b.id] - h[a.id])[0]); continue; } // 한 단보다 큰 문항
+      nextCol();
+    }
+    order[unit.key] = out.map((q) => q.id);
+  }
+  return order;
+}
+
 const title = `기출변형 문제집 ${ed}차`;
+if (args.includes('order')) {
+  const all = await loadUnits(true);
+  const order = {};
+  for (const book of ['t1', 't2']) {
+    const s = all.filter((x) => x.unit.key.startsWith(book));
+    if (!s.length) continue;
+    Object.assign(order, packOrder(s, await measure(s)));
+  }
+  writeFileSync(join(ROOT, 'content', ed, 'order.json'), JSON.stringify(order, null, 1) + '\n');
+  console.log(`문항 순서 저장: content/${ed}/order.json (${Object.keys(order).length}개 단원)`);
+  await browser.close();
+  process.exit(0);
+}
 const sets = what === 'mock' ? [] : await loadUnits();
 const mocks = what === 'units' || only.length || sub ? [] : await loadMocks();
 numberFigures(sets.map((s) => s.qs));
