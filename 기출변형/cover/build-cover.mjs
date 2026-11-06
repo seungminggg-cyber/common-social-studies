@@ -8,7 +8,7 @@ import { dirname, join } from 'node:path';
 import { doc } from './sheet.js';
 import { front } from './front.js';
 import { vol } from './series.js';
-import { FONT_IS_TTF } from './tokens.js';
+import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => { try { return require('playwright'); } catch { return require('/opt/node-tools/node_modules/playwright'); } })();
@@ -44,5 +44,9 @@ if (args.includes('fronts')) {
     await emit(`앞표지-02-안${k}`, doc([front(vol('02'), k)]));
     await emit(`앞표지-바탕비교-안${k}`, doc(['02', '03', '06'].map((id) => front(vol(id), k))), { scale: 1 });
   }
+}
+// 제목 글꼴 후보 × 안 A·B·C (02권)
+if (args.includes('fonts')) {
+  for (const f of Object.keys(TITLE_FONTS)) for (const k of ['A', 'B', 'C']) await emit(`앞표지-글꼴-${f}-안${k}`, doc([front(vol('02'), k, f)]), { scale: 1 });
 }
 await browser.close();

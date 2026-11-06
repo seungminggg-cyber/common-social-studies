@@ -44,7 +44,25 @@ def convert(src, dst):
     font.save(dst)
 
 
+def hahmlet_black():
+    """제목 글꼴 후보 함렛: 가변 글꼴은 크롬이 Type 3으로 넣으므로 굵기 900 고정 글꼴을 만든다.
+    원본: google/fonts 저장소의 Hahmlet[wght].ttf (SIL OFL 1.1)."""
+    import urllib.request
+    from fontTools.varLib import instancer
+    dst = os.path.join(DST, 'Hahmlet-Black.ttf')
+    if os.path.exists(dst) and '-f' not in sys.argv:
+        return
+    src = os.path.join(DST, 'Hahmlet-VF.ttf')
+    if not os.path.exists(src):
+        urllib.request.urlretrieve('https://raw.githubusercontent.com/google/fonts/main/ofl/hahmlet/Hahmlet%5Bwght%5D.ttf', src)
+    font = instancer.instantiateVariableFont(TTFont(src), {'wght': 900})
+    font['name'].setName('Hahmlet Black', 1, 3, 1, 0x409)
+    font.save(dst)
+    print('만듦', os.path.basename(dst))
+
+
 os.makedirs(DST, exist_ok=True)
+hahmlet_black()
 for fam in ('Dotum', 'Batang'):
     for w in ('Light', 'Medium', 'Bold'):
         src = os.path.join(SRC, f'KoPubWorld-{fam}-{w}.otf')

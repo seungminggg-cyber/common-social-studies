@@ -52,6 +52,20 @@ export function fontFaces() {
   return out.join('\n');
 }
 
+// 제목('정조준'·앞 단어 상자) 글꼴 후보 — 모두 SIL Open Font License 1.1(인쇄 출판물 무료, PDF 임베드 허용).
+// css: 글꼴 패키지의 @font-face 파일(textbook/node_modules), scale: 같은 자리·같은 폭으로 보이도록 크기 맞춤
+const NM = join(HERE, '../../textbook/node_modules');
+export const TITLE_FONTS = {
+  kopub: { label: 'KoPub 바탕 Bold (지금)', family: FONT.batang, weight: 700, scale: 1, box: { family: FONT.dotum, weight: 700 } },
+  // 함렛: 가변 글꼴은 PDF에 Type 3으로 들어가므로 otf2ttf.py가 만든 굵기 900 고정 글꼴(out/cover/fonts)을 쓴다
+  hahmlet: { label: '함렛 Black', face: `${TTF_DIR}/Hahmlet-Black.ttf`, family: 'Hahmlet Black', weight: 900, scale: 0.94, spacing: -0.03, box: { family: FONT.dotum, weight: 700 } },
+  noto: { label: '본명조(Noto Serif KR) Black', css: `${NM}/@fontsource/noto-serif-kr/900.css`, family: 'Noto Serif KR', weight: 900, scale: 0.94, spacing: -0.02, box: { family: FONT.dotum, weight: 700 } },
+  bhs: { label: '검은고딕(Black Han Sans)', css: `${NM}/@fontsource/black-han-sans/400.css`, family: 'Black Han Sans', weight: 400, scale: 1.12, spacing: 0, box: { family: 'Black Han Sans', weight: 400, spacing: 0.08 } },
+};
+export const titleFontLinks = () =>
+  Object.values(TITLE_FONTS).filter((f) => f.css).map((f) => `<link rel="stylesheet" href="file://${f.css}">`).join('') +
+  `<style>${Object.values(TITLE_FONTS).filter((f) => f.face).map((f) => `@font-face{font-family:'${f.family}';font-weight:${f.weight};src:url('file://${f.face}');}`).join('')}</style>`;
+
 // 글자 크기(pt)
 export const TYPE = {
   title: 99, // '정조준' — 모든 권에서 같은 크기·같은 자리

@@ -1,11 +1,11 @@
 // 낱장 한 장(도련 포함) HTML 틀. 안쪽 .t 상자가 재단선(210×297mm)이고, 그 안의 위치는 모두 재단선 기준 mm.
-import { PAGE, BLEED, FONT, fontFaces, CUT } from './tokens.js';
+import { PAGE, BLEED, FONT, fontFaces, CUT, titleFontLinks } from './tokens.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export function doc(pages, { w = PAGE.w, h = PAGE.h, css = '' } = {}) {
   const W = w + 2 * BLEED, H = h + 2 * BLEED;
-  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8">${titleFontLinks()}<style>
 ${fontFaces()}
 @page { size: ${W}mm ${H}mm; margin: 0; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,6 +22,6 @@ ${css}
 }
 
 // 앞 단어 상자: 높이의 18%를 오른쪽 위에서 자른다
-export function wordBox(text, { h = 12, size = 19, bg, fg, pad = 4.6 }) {
-  return `<span class="cut sans" style="--cut:${(h * CUT).toFixed(2)}mm;display:inline-flex;align-items:center;height:${h}mm;padding:0 ${pad}mm;background:${bg};color:${fg};font-weight:700;font-size:${size}pt;letter-spacing:.06em;line-height:1">${text}</span>`;
+export function wordBox(text, { h = 12, size = 19, bg, fg, pad = 4.6, font = { family: FONT.dotum, weight: 700 } }) {
+  return `<span class="cut sans" style="--cut:${(h * CUT).toFixed(2)}mm;display:inline-flex;align-items:center;height:${h}mm;padding:0 ${pad}mm;background:${bg};color:${fg};font-family:'${font.family}';font-weight:${font.weight};font-size:${size}pt;letter-spacing:${font.spacing ?? 0.06}em;line-height:1">${text}</span>`;
 }
