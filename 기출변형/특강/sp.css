@@ -23,7 +23,7 @@
 .page[data-ch="안내"] .edge-tab, .page[data-ch="세트"] .edge-tab, .page[data-ch="답"] .edge-tab { font-size: 7.4pt; letter-spacing: -.04em; }
 
 /* 표지: 특강 이름이 길어 두 줄 */
-.sp-cover .cv-title { font-size: 34pt; line-height: 1.2; max-width: 120mm; }
+.sp-cover .cv-title { font-size: 32pt; line-height: 1.2; max-width: 90mm; }
 
 /* 유형 머리(대단원 첫머리와 같은 문법: 큰 번호 + 제목) */
 .sp-open { display: grid; grid-template-columns: 24mm 1fr; column-gap: 5mm; align-items: end; border-bottom: 1.4pt solid var(--c1); padding-bottom: 3mm; margin-bottom: 4mm; }

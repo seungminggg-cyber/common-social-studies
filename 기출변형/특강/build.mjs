@@ -41,9 +41,12 @@ function bigMapText(root) {
     if (!x || typeof x !== 'object') return;
     if (x.t === 'figrow' && x.items.every((i) => i.kind === 'climate' || i.kind === 'climdev')) {
       if (x.items.length >= 3 && !x.cols) x.cols = 2;
-      for (const i of x.items) if (i.compact && !i.w) i.w = 240;
+      for (const i of x.items) if (!i.w) i.w = 240;
     }
     if (x.t === 'map') {
+      // 특강: 한 단 폭으로 줄어든 지도의 경위도 숫자는 3pt 안팎이라 읽히지 않고 겹치므로 뺀다(문항에 deg를 적으면 그 값)
+      if (x.deg === undefined) x.deg = false;
+      if (x.north === undefined) x.north = false;
       const s = Math.max(11, Math.round((x.w || 600) * 0.036 * 10) / 10);
       if (x.legend && !x.legendSize) x.legendSize = s;
       for (const a of x.arrows || []) if (a.label && !a.size) a.size = s;

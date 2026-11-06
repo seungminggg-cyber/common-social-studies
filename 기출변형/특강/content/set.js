@@ -5,7 +5,7 @@
 // 배점: 예시문항과 같음(1.5점 8 · 2점 9 · 2.5점 8 = 50점). 정답 ①~⑤ 각 5개.
 
 const CL = (label, temp, precip) => ({ t: 'chart', kind: 'climate', compact: true, label, temp, precip, w: 240, h: 210, tMin: -30, tMax: 40, tStep: 10, pMax: 700 });
-const RD = (title, values) => ({ t: 'chart', kind: 'radar', title, w: 300, h: 250, axes: ['A', 'B', 'C', 'D'], max: 4, rings: 4, reverse: true, series: [{ name: title, values }] });
+const RD = (title, values) => ({ t: 'chart', kind: 'radar', title, w: 210, h: 190, axes: ['A', 'B', 'C', 'D'], max: 4, rings: 4, reverse: true, series: [{ name: title, values }] });
 
 export default {
   no: 1,
