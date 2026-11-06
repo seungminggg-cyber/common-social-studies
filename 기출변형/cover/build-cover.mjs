@@ -18,6 +18,7 @@ import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace } from './mmx.js';
+import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -187,5 +188,23 @@ if (args.includes('mmx')) {
     await emit(`MMX-${k}-${MMX[k]}-앞표지`, doc([mmxFace(k, 'front', mmVol('02'))]));
     await emit(`MMX-${k}-${MMX[k]}-뒷표지`, doc([mmxFace(k, 'back', mmVol('02'))]));
   }
+}
+// MINIMAX 완성본(인쇄용 낱장): 앞표지·뒷표지·간지 12장(도련 3mm). 본문은 build.mjs <차수> units mm
+//   node cover/build-cover.mjs mmfinal [2]   (2 = 03 심화편 데이터)
+if (args.includes('mmfinal')) {
+  const v = mmVol(args.includes('2') ? '03' : '02');
+  const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
+  const tag = `MINIMAX-${v.no}`;
+  const chs = await chapters(v.no === '03' ? '2' : '1');
+  const sheet = (inner) => `<section class="sheet" style="background:#0B1026"><div class="t" style="overflow:visible">${inner}</div></section>`;
+  const pages = [sheet(mmTitlePage(v))]; // 속표지 + 간지 12장(본문 순서)
+  for (const sub of ['통합사회1', '통합사회2']) {
+    const list = chs.filter((ch) => ch.subject === sub);
+    pages.push(sheet(mmSubjectPage(sub, list, { name, uid: `s${pages.length}` })));
+    for (const ch of list) pages.push(sheet(mmChapterPage(ch, { name, uid: `c${pages.length}`, tab: true })));
+  }
+  await emit(`${tag}-앞표지`, doc([mmxFace('X5', 'front', v)]));
+  await emit(`${tag}-뒷표지`, doc([mmxFace('X5', 'back', v)]));
+  await emit(`${tag}-속표지간지-도련`, doc(pages, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
 }
 await browser.close();

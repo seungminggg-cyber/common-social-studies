@@ -15,6 +15,9 @@ import { FIGURE_TYPES } from '../textbook/lib/figures.js';
 import { ensureTerrain } from '../textbook/lib/terrain.js';
 import { UNITS } from './lib/units.js';
 import { renderUnits, renderMocks, renderAnswers } from './lib/wb-render.js';
+import { chapters } from './cover/book-data.js';
+import { mmVol } from './cover/mm-data.js';
+import { mmSubjectPage, mmChapterPage, mmTitlePage, MM_DIV_CSS } from './cover/mm-div.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => { try { return require('playwright'); } catch { return require('/opt/node-tools/node_modules/playwright'); } })();
@@ -27,6 +30,8 @@ const only = args.filter((a) => /^t[12]-\d\d$/.test(a));
 const sub = args.find((a) => a === 't1' || a === 't2'); // 책 하나만
 const wantPng = args.includes('png');
 const teacher = args.includes('teacher');
+// mm: MINIMAX 완성본 본문 — 과목 간지·대단원 간지를 쪽 나누기에 넣고(쪽 번호·차례가 함께 맞춰짐), 글꼴을 인쇄용 TrueType으로
+const mmMode = args.includes('mm');
 const OUT = join(ROOT, 'out', ed);
 mkdirSync(join(OUT, 'png'), { recursive: true });
 const EDITION = ed === '1' ? '1차 · 겨울방학 특강판' : '2차 · 심화(중상·상)판';
@@ -237,6 +242,31 @@ numberFigures(mocks);
 ensureTerrain([...sets.flatMap((s) => s.qs), ...mocks.flatMap((m) => m.questions)]);
 const tag = only.length ? `-${only.join('_')}` : sub ? `-${sub === 't1' ? '통합사회1' : '통합사회2'}` : '';
 
+if (mmMode) {
+  // 인쇄용 글꼴: KoPub OTF·Pretendard 가변 글꼴은 PDF에 Type 3으로 들어가므로 TrueType 파일로 바꿔 쓴다(cover/otf2ttf.py가 만든 것)
+  const TTF = join(ROOT, 'out/cover/fonts'), PRE = join(ROOT, '../textbook/node_modules/pretendard/dist/public/static/alternative');
+  if (!existsSync(join(TTF, 'KoPubWorld-Dotum-Bold.ttf'))) { console.error('TrueType 글꼴이 없습니다 → python3 cover/otf2ttf.py'); process.exit(1); }
+  const faces = [['Dotum', 300, 'Light'], ['Dotum', 400, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 400, 'Medium'], ['Batang', 700, 'Bold']]
+    .map(([fam, w, n]) => `@font-face{font-family:'KoPubWorld ${fam}';font-weight:${w};src:url('file://${TTF}/KoPubWorld-${fam}-${n}.ttf');}`)
+    .concat([[300, 'Light'], [400, 'Regular'], [500, 'Medium'], [600, 'SemiBold'], [700, 'Bold'], [800, 'ExtraBold']].map(([w, n]) => `@font-face{font-family:'Pretendard Variable';font-weight:${w};src:url('file://${PRE}/Pretendard-${n}.ttf');}`))
+    .join('\n');
+  const v = mmVol(ed === '1' ? '02' : '03');
+  const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
+  const chs = await chapters(ed);
+  let uid = 0;
+  const mm = {
+    headLeft: `<b>${name}</b>`,
+    title: () => mmTitlePage(v),
+    subject: (sub) => mmSubjectPage(sub, chs.filter((c) => c.subject === sub), { name, uid: `s${uid++}` }),
+    chapter: (key) => mmChapterPage(chs.find((c) => c.key === key), { name, uid: `c${uid++}` }),
+  };
+  const html = renderUnits(sets, { title: name, edition: EDITION, mode: 'student', mm })
+    .replace(/@font-face \{ font-family: 'Pretendard Variable';[^}]*\}/, '')
+    .replace('</head>', `<style>${faces}\n${MM_DIV_CSS}</style></head>`);
+  await emit(`MINIMAX-${v.no}-본문`, html);
+  await browser.close();
+  process.exit(failed ? 1 : 0);
+}
 if (sets.length && what !== 'answers') {
   await emit(`단원별${tag}-학생용`, renderUnits(sets, { title, edition: EDITION, mode: 'student' }), { kind: 'units', ed, sets });
   if (teacher) await emit(`단원별${tag}-교사용`, renderUnits(sets, { title, edition: EDITION, mode: 'teacher' }));

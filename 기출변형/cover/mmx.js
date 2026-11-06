@@ -214,30 +214,31 @@ function x4Back(v) {
 }
 
 // ═════════ X5 네온 길 ═════════
-const X5 = { bg: '#0B1026', wall: '#26306B', cyan: '#29E3FF', pink: '#FF3EC8', fg: '#FFFFFF', sub: '#8C95C9', faint: '#2A3260' };
+export const X5 = { bg: '#0B1026', wall: '#26306B', cyan: '#29E3FF', pink: '#FF3EC8', fg: '#FFFFFF', sub: '#8C95C9', faint: '#2A3260' };
 // 칸 격자 위의 벽과 가장 짧은 길. (gx, gy): 왼쪽 위, c: 칸 크기(mm)
 const PATH = [[0, 8], [0, 6], [2, 6], [2, 4], [1, 4], [1, 2], [3, 2], [3, 1], [5, 1], [5, 3], [6, 3], [6, 0]];
 const WALLS = [[[0, 7], [1, 7]], [[1, 5], [1, 7]], [[2, 7], [4, 7]], [[3, 4], [3, 6]], [[0, 3], [2, 3]], [[2, 1], [2, 3]], [[4, 2], [4, 5]], [[4, 5], [6, 5]], [[5, 6], [5, 8]], [[1, 1], [2, 1]], [[6, 1], [6, 2]], [[3, 0], [4, 0]]];
-function maze(gx, gy, c, { cols = 7, rows = 9, glowId = 'ng' } = {}) {
+// from·to: 빛나는 길의 시작·끝 색, ids: 한 문서에 미로가 여러 개일 때 겹치지 않는 이름
+export function maze(gx, gy, c, { cols = 7, rows = 9, glowId = 'ng', gradId = 'pg', from = X5.cyan, to = X5.pink, wall = X5.wall } = {}) {
   const X = (i) => gx + i * c, Y = (j) => gy + j * c;
   let o = '';
-  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) o += `<circle cx="${f(X(i))}" cy="${f(Y(j))}" r="${f(c * 0.045)}" fill="${X5.wall}"/>`;
-  for (const [[a, b], [p, q]] of WALLS) o += `<line x1="${f(X(a))}" y1="${f(Y(b))}" x2="${f(X(p))}" y2="${f(Y(q))}" stroke="${X5.wall}" stroke-width="${f(c * 0.12)}" stroke-linecap="square"/>`;
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) o += `<circle cx="${f(X(i))}" cy="${f(Y(j))}" r="${f(c * 0.045)}" fill="${wall}"/>`;
+  for (const [[a, b], [p, q]] of WALLS) o += `<line x1="${f(X(a))}" y1="${f(Y(b))}" x2="${f(X(p))}" y2="${f(Y(q))}" stroke="${wall}" stroke-width="${f(c * 0.12)}" stroke-linecap="square"/>`;
   const pts = PATH.map(([i, j]) => [X(i), Y(j)]);
-  o += `<linearGradient id="pg" gradientUnits="userSpaceOnUse" x1="${f(pts[0][0])}" y1="${f(pts[0][1])}" x2="${f(pts.at(-1)[0])}" y2="${f(pts.at(-1)[1])}"><stop offset="0" stop-color="${X5.cyan}"/><stop offset="1" stop-color="${X5.pink}"/></linearGradient>`;
-  o += `<polyline points="${P(pts)}" fill="none" stroke="url(#pg)" stroke-width="${f(c * 0.34)}" stroke-linejoin="miter" opacity=".6" filter="url(#${glowId})"/>`;
-  o += `<polyline points="${P(pts)}" fill="none" stroke="url(#pg)" stroke-width="${f(c * 0.12)}" stroke-linejoin="miter"/><polyline points="${P(pts)}" fill="none" stroke="#fff" stroke-width="${f(c * 0.04)}" stroke-linejoin="miter"/>`;
+  o += `<linearGradient id="${gradId}" gradientUnits="userSpaceOnUse" x1="${f(pts[0][0])}" y1="${f(pts[0][1])}" x2="${f(pts.at(-1)[0])}" y2="${f(pts.at(-1)[1])}"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient>`;
+  o += `<polyline points="${P(pts)}" fill="none" stroke="url(#${gradId})" stroke-width="${f(c * 0.34)}" stroke-linejoin="miter" opacity=".6" filter="url(#${glowId})"/>`;
+  o += `<polyline points="${P(pts)}" fill="none" stroke="url(#${gradId})" stroke-width="${f(c * 0.12)}" stroke-linejoin="miter"/><polyline points="${P(pts)}" fill="none" stroke="#fff" stroke-width="${f(c * 0.04)}" stroke-linejoin="miter"/>`;
   const [sx, sy] = pts[0], [ex, ey] = pts.at(-1), s = c * 0.5;
-  o += `<circle cx="${f(sx)}" cy="${f(sy)}" r="${f(c * 0.16)}" fill="${X5.cyan}"/><polygon points="${cutPoly(ex - s / 2, ey - s / 2, s, s)}" fill="${X5.pink}" filter="url(#${glowId})"/><polygon points="${cutPoly(ex - s / 2, ey - s / 2, s, s)}" fill="${X5.pink}"/>`;
+  o += `<circle cx="${f(sx)}" cy="${f(sy)}" r="${f(c * 0.16)}" fill="${from}"/><polygon points="${cutPoly(ex - s / 2, ey - s / 2, s, s)}" fill="${to}" filter="url(#${glowId})"/><polygon points="${cutPoly(ex - s / 2, ey - s / 2, s, s)}" fill="${to}"/>`;
   return o;
 }
-const ng = (sd = 2.4) => `<filter id="ng" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
+export const ng = (sd = 2.4, id = 'ng') => `<filter id="${id}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
 // 강사가 고른 안(2026-11-07) — 2차 수정(2026-11-07):
 //  · 로고 가로·더 굵게, 02/07·미니맥스 뺌, 수능 대비 줄은 MINIMAX의 X 오른쪽 끝에 맞춤
 //  · 3차 수정: 책 종류·과목 줄은 가운데 정렬·크게(22pt·15pt), 뒷표지 회색 줄 15pt
 //  · 뒷표지: 앞표지와 같은 미로(같은 크기·같은 자리), 대표 문장을 로고와 같은 네온 글씨로, 모두 가운데 정렬
-const X5MAZE = { c: 19, gx: (W - 6 * 19) / 2, gy: 30 }; // 앞·뒤 같은 미로
-const X5NEON = { w: 9, core: 0.38 }; // 로고 관 굵기(글자 단위)·흰 심 비율
+export const X5MAZE = { c: 19, gx: (W - 6 * 19) / 2, gy: 30 }; // 앞·뒤 같은 미로
+export const X5NEON = { w: 9, core: 0.38 }; // 로고 관 굵기(글자 단위)·흰 심 비율
 const tg = `<filter id="tg" filterUnits="userSpaceOnUse" x="-20" y="-20" width="260" height="340"><feGaussianBlur stdDeviation="1.3"/></filter>`;
 // 대표 문장 네온 글씨: 로고와 같은 짜임(빛 번짐 + 하늘색 관 + 흰 심). 글자 크기 size(mm), 가운데 (cx), 첫 줄 바닥선 y
 function neonText(lines, { cx, y, size, lh, weight = 500 }) {

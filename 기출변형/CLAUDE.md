@@ -53,3 +53,9 @@
 - 단원이 끝난 쪽에 자리가 남으면 다음 단원을 이어 싣는다(LAYOUT.soft). 대단원 첫 단원은 새 쪽(`data-nosoft`). 모의고사는 시험 순서 그대로.
 - 문제 자료 표는 칸마다 가운데 정렬, 테두리 전부(wb.css 끝, hwpx_wb.py data_box).
 
+
+## MINIMAX 완성본 (2026-11-07, 시리즈 이름 '정조준' → 'MINIMAX')
+- 표지·간지 디자인은 `cover/`(진행 기록 `참고/디자인진행.md`). 강사가 고른 표지 = `cover/mmx.js`의 X5 '네온 길'.
+- 만들기(02 기본편): `node build.mjs 1 units mm` → `node cover/build-cover.mjs mmfinal` → `python3 cover/assemble.py 02` → `out/MINIMAX-02-완성본/`.
+  `mm` 모드는 속표지·과목 간지·대단원 간지를 쪽 나누기에 넣고 인쇄용 TrueType 글꼴로 바꾼다(그 전에 `python3 cover/otf2ttf.py` 한 번). 기본 빌드(옛 표지)는 그대로.
+- 뒷표지 대표 문장의 네온 글자는 `cover/mm-letters.js`의 HANGUL에 직접 그린 글자만 쓸 수 있다(새 글자는 그려 넣어야 함).
