@@ -69,4 +69,4 @@ export function drawNeon(lay, { glow = '#29E3FF', core = '#ffffff', w = 7, blurI
   const path = (sw, c, extra = '') => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linejoin="miter" stroke-linecap="square" ${extra}/>`;
   return path(w * 2.4, glow, `opacity=".55" filter="url(#${blurId})"`) + path(w, glow) + path(w * 0.38, core);
 }
-export const neonFilter = (id = 'nb', sd = 4) => `<filter id="${id}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
+export const neonFilter = (id = 'nb', sd = 4) => `<filter id="${id}" filterUnits="userSpaceOnUse" x="-60" y="-60" width="2000" height="240"><feGaussianBlur stdDeviation="${sd}"/></filter>`;

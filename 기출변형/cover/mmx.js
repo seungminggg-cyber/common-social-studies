@@ -232,21 +232,24 @@ function maze(gx, gy, c, { cols = 7, rows = 9, glowId = 'ng' } = {}) {
   return o;
 }
 const ng = (sd = 2.4) => `<filter id="ng" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
+// 강사가 고른 안(2026-11-07): 로고는 가로로, 뒷표지는 대표 문장 + 회색 한 줄만
 function x5Front(v) {
+  const c = 19, gx = (W - 6 * c) / 2, gy = 30; // 미로 7×9 점, 가운데 위
   const lay = layout('MINIMAX', { s: 8, d: 9, wf: 1 }, 18);
-  // 세로로 세운 네온 로고(아래에서 위로 읽음), 왼쪽 가장자리를 따라
-  const len = 252, hh = (len * 100) / lay.width; // 로고 길이 → 글자 높이(mm)
-  const inner = drawNeon(lay, { w: 6 });
-  const logo = `<svg class="abs" style="left:${mm(M)};top:${mm(268)};overflow:visible;transform:rotate(-90deg);transform-origin:0 0" width="${mm(len)}" height="${mm(hh)}" viewBox="-8 -8 ${lay.width + 16} 116" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${inner}</svg>`;
-  return `${svgFull(`${rectBg(X5.bg)}${maze(84, 40, 17.5)}`, ng(2.2))}
-  ${logo}
-  ${T(esc(MM.brand), { right: M, y: 13, size: 10, weight: 700, color: X5.fg, ls: 0.02 })}
-  ${noBox(v, { right: M, y: 220, bg: X5.pink, fg: X5.bg, sub: X5.sub })}
-  ${infoBlock(v, { x: 84, y: 238, w: 110, fg: X5.fg, sub: X5.sub })}
-  ${examLine({ x: 84, sub: X5.sub })}`;
+  const L = placeLogo(lay, drawNeon(lay, { w: 6 }), { x: M, y: 196, w: LW, pad: [10, 10, 10, 10], defs: neonFilter('nb', 4) });
+  return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
+  ${T(esc(MM.brand), { y: 13, size: 10, weight: 700, color: X5.fg, ls: 0.02 })}
+  ${noBox(v, { bg: X5.pink, fg: X5.bg, sub: X5.sub })}
+  ${L.html}
+  ${infoBlock(v, { y: 196 + L.h + 10, fg: X5.fg, sub: X5.sub })}
+  ${examLine({ sub: X5.sub })}`;
 }
 function x5Back(v) {
-  return backCommon(v, { bgSvg: svgFull(`${rectBg(X5.bg)}${maze(124, 28, 8.6)}`, ng(1.2)), fg: X5.fg, sub: X5.sub, faint: X5.faint, mottoColor: X5.cyan, isbnLine: '#fff' });
+  return `${svgFull(`${rectBg(X5.bg)}${maze(M + 4, 40, 9.5)}`, ng(1.2))}
+  <div class="abs" style="left:${mm(M)};top:132mm;width:${mm(LW)}">
+    <div style="font-family:'KoPub Dotum';font-weight:700;font-size:36pt;line-height:1.24;letter-spacing:-.03em;color:${X5.cyan}">${MM.motto[1].lines.map(esc).join('<br>')}</div>
+    <div style="font-family:'KoPub Dotum';font-weight:500;font-size:11pt;color:${X5.sub};margin-top:7mm;letter-spacing:.01em">${esc(MM.backLine)}</div>
+  </div>`;
 }
 
 export const MMX = { X1: '안장점', X2: '게임 트리', X3: '입체 행렬', X4: 'M 모노그램', X5: '네온 길' };
