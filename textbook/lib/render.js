@@ -435,7 +435,9 @@ ${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/
 // part 'answers' : 별책 정답과 해설 (표지 → 대단원별 정답과 해설)
 // 간지(data-odd)는 양면 인쇄에서 늘 오른쪽(홀수) 쪽에 오도록 paginate.js가 필요할 때 메모 쪽을 끼운다.
 // 쪽 번호가 필요한 곳은 data-pg="찾을 id" 를 달아 두면 쪽 나누기가 끝난 뒤 채워진다.
-export function renderFull(full, { mode, layout, paginateJs, part = 'book', theme = 'b' }) {
+// mm(선택, MINIMAP 완성본 — build-book.mjs mm): { title: () => 속표지 HTML, chapter: (ch, ci, dividerData) => 대단원 간지 HTML }
+//   주면 옛 표지 대신 속표지(mmtitle), 옛 간지 대신 MINIMAP 간지(mmdiv)를 넣는다. 나머지 쪽은 그대로.
+export function renderFull(full, { mode, layout, paginateJs, part = 'book', theme = 'b', mm = null }) {
   const { subject, chapters } = full;
   const sections = [];
   const add = (kind, attrs, inner) => sections.push(`<section class="flow" data-kind="${kind}" ${attrs || ''}>${inner}</section>`);
@@ -456,8 +458,9 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         `${bandTop('answers', `${ch.chapter.no}. ${ch.chapter.title}`)}${ch.units.map((u, i) => answerRows(u, starts[i])).join('\n')}`);
     });
   } else {
-    // 표지
-    add('cover', '', `<div class="top"><div class="cover">
+    // 표지 (MINIMAP 완성본이면 표지와 같은 그림의 속표지)
+    if (mm?.title) add('mmtitle', '', `<div class="top">${mm.title()}</div>`);
+    else add('cover', '', `<div class="top"><div class="cover">
       <div class="cv-brand">승민T 통합사회</div>
       <div class="cv-title">개념서</div>
       <div class="cv-sub">${esc(subject)} · 2022 개정 교육과정 · 수능 대비</div>
@@ -521,8 +524,9 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     chapters.forEach((ch, ci) => {
       const d = full.dividers?.[ch.chapter.no] || {};
       const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
-      // 간지 (오른쪽 쪽)
-      add('divider', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}"><div class="divider">
+      // 간지 (오른쪽 쪽). MINIMAP 완성본이면 MINIMAP 간지
+      if (mm?.chapter) add('mmdiv', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
+      else add('divider', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}"><div class="divider">
         <div class="dv-bg">${esc(ch.chapter.no)}</div>
         <div class="dv-label">대단원 ${ci + 1}</div>
         <div class="dv-no">${esc(ch.chapter.no)}</div>

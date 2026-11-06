@@ -2,7 +2,7 @@
 //   node cover/build-cover.mjs fronts        앞표지 다듬은 안 A·B·C (02권) + 바탕별 비교(02·03·06)
 // 결과: out/cover/*.pdf, out/cover/png/*.png  (out/은 커밋하지 않음)
 import { createRequire } from 'node:module';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { doc } from './sheet.js';
@@ -203,6 +203,16 @@ if (args.includes('mmapfinal')) {
   for (const v of MMAP.vols) {
     await emit(`MINIMAP-${v.subject}-앞표지`, doc([mmapFace('M1', v)]));
     await emit(`MINIMAP-${v.subject}-뒷표지`, doc([m1Back(v)]));
+    // 속표지 + 대단원 간지 5장(도련 3mm, 엄지 색인 포함). 표의 쪽 번호는 개념서 본문 빌드(textbook: node build-book.mjs mm)가 남긴 json
+    const { mmapTitlePage, mmapChapterPage, chapterInfo } = await import('./mmap-div.js');
+    const { C1 } = await import('./mmap.js');
+    const book = (await import(`../../textbook/content/_book/${v.id}.js`)).default;
+    const pj = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-쪽.json`);
+    const pages = existsSync(pj) ? JSON.parse(readFileSync(pj, 'utf8')) : null;
+    if (!pages) console.warn(`[${v.subject}] 쪽 번호 파일이 없어 간지 표의 쪽 칸이 비어 있습니다 → textbook에서 node build-book.mjs mm${v.n === 2 ? ' t2' : ''}`);
+    const sheet = (inner) => `<section class="sheet" style="background:${C1[v.n].bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
+    const divs = [sheet(mmapTitlePage(v)), ...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
+    await emit(`MINIMAP-${v.subject}-속표지간지-도련`, doc(divs, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
   }
 }
 // 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback

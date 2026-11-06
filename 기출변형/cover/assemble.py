@@ -1,6 +1,8 @@
 """MINIMAX 완성본 묶기 — 인쇄용 쪽 상자 맞추기 + 한 권 미리보기 PDF.
 
     python3 cover/assemble.py 02      (기출변형 폴더에서. 먼저 build-cover.mjs mmfinal, build.mjs 1 units mm)
+    python3 cover/assemble.py t1      MINIMAP 개념서 통합사회1(t2 = 통합사회2). 먼저 textbook에서 build-book.mjs mm [t2],
+                                      그다음 build-cover.mjs mmapfinal
 
 1. 표지·속표지·간지(도련 3mm) PDF의 쪽 크기를 정확히 216×303mm로 맞추고,
    인쇄소 프로그램이 읽는 재단 상자(TrimBox, 210×297mm)와 도련 상자(BleedBox)를 넣는다.
@@ -46,18 +48,26 @@ def trimmed(path):
 
 
 def main(no):
-    ed = '1' if no == '02' else '2'
     cover = os.path.join(OUT, 'cover')
-    dst = os.path.join(OUT, f'MINIMAX-{no}-완성본')
+    if no in ('t1', 't2'):  # MINIMAP 개념서
+        sub = '통합사회1' if no == 't1' else '통합사회2'
+        tag = f'MINIMAP-{sub}'
+        body = os.path.join(HERE, '..', '..', 'textbook', 'out', f'{tag}-본문.pdf')
+        ndiv = '6쪽'
+    else:  # MINIMAX 기출분석
+        ed = '1' if no == '02' else '2'
+        tag = f'MINIMAX-{no}'
+        body = os.path.join(OUT, ed, f'{tag}-본문.pdf')
+        ndiv = '13쪽'
+    dst = os.path.join(OUT, f'{tag}-완성본')
     os.makedirs(dst, exist_ok=True)
     files = {
-        f'1_앞표지(도련 3mm).pdf': os.path.join(cover, f'MINIMAX-{no}-앞표지.pdf'),
-        f'2_뒷표지(도련 3mm).pdf': os.path.join(cover, f'MINIMAX-{no}-뒷표지.pdf'),
-        f'4_속표지·간지(도련 3mm, 13쪽).pdf': os.path.join(cover, f'MINIMAX-{no}-속표지간지-도련.pdf'),
+        f'1_앞표지(도련 3mm).pdf': os.path.join(cover, f'{tag}-앞표지.pdf'),
+        f'2_뒷표지(도련 3mm).pdf': os.path.join(cover, f'{tag}-뒷표지.pdf'),
+        f'4_속표지·간지(도련 3mm, {ndiv}).pdf': os.path.join(cover, f'{tag}-속표지간지-도련.pdf'),
     }
     for name, src in files.items():
         fix_boxes(src, os.path.join(dst, name))
-    body = os.path.join(OUT, ed, f'MINIMAX-{no}-본문.pdf')
     shutil.copyfile(body, os.path.join(dst, '3_본문(A4, 속표지·간지 포함).pdf'))
     # 미리보기 한 권
     w = PdfWriter()
