@@ -51,18 +51,13 @@ export default [
     id: 't1-14-2-003', level: '중상', concept: [2], type: '그래프 해석', src: '2026.3 고2 20번 유형(산업 구조 변화)·2026.9 고1 25번 바탕(비율과 수)',
     stem: '그래프는 ○○군의 산업별 종사자 수 변화를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'chart', kind: 'line', h: 220, w: 420,
-      categories: ['2005', '2015', '2025'],
+      t: 'chart', kind: 'bar', h: 220, w: 420,
+      categories: ['2005년', '2015년', '2025년'],
       y: { min: 0, max: 20, step: 5, label: '(천 명)' },
       series: [
-        { name: '1차 산업', values: [12, 11, 10], color: 3, marker: true, end: '1차 산업' },
-        { name: '2차 산업', values: [2, 9, 16], color: 1, marker: true, end: '2차 산업' },
-        { name: '3차 산업', values: [6, 10, 14], color: 2, marker: true, end: '3차 산업' },
-      ],
-      notes: [
-        { x: 0, y: 13.1, text: '12', size: 10 }, { x: 0, y: 3.1, text: '2', size: 10 }, { x: 0, y: 7.1, text: '6', size: 10 },
-        { x: 1, y: 12.1, text: '11', size: 10 }, { x: 1.09, y: 9.7, text: '10', size: 10, anchor: 'start' }, { x: 1, y: 7.3, text: '9', size: 10 },
-        { x: 2, y: 17.1, text: '16', size: 10 }, { x: 2, y: 12.4, text: '14', size: 10 }, { x: 2, y: 8.4, text: '10', size: 10 },
+        { name: '1차 산업', values: [12, 11, 10] },
+        { name: '2차 산업', values: [2, 9, 16] },
+        { name: '3차 산업', values: [6, 10, 14] },
       ],
       note: '2008년 ○○군에 대규모 산업 단지가 조성되었다.',
       source: '가상 자료',
