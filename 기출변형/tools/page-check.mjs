@@ -4,6 +4,7 @@
 //   node tools/page-check.mjs 2 단원별-통합사회2-학생용     한 권만
 //   node tools/page-check.mjs 2 --only t2-15-2-004,m2-7-04  이 문항이 있는 쪽만 보고
 //   node tools/page-check.mjs 2 --json 결과.json          결과를 파일로도 저장
+//   node tools/page-check.mjs --dir ../textbook/out       다른 폴더의 HTML(개념서 등)도 검사
 //
 // 찾는 것
 //   넘침    단 아래로 넘친 내용, 단보다 넓은 그림·표
@@ -27,13 +28,14 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const ed = args.find((a) => a === '1' || a === '2') || '2';
 const jsonOut = args.includes('--json') ? args[args.indexOf('--json') + 1] : null;
+const dirArg = args.includes('--dir') ? args[args.indexOf('--dir') + 1] : null;
 const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',')) : null;
-const names = args.filter((a) => !['1', '2'].includes(a) && !a.startsWith('--') && a !== jsonOut && !(only && args[args.indexOf('--only') + 1] === a));
+const names = args.filter((a) => !['1', '2'].includes(a) && !a.startsWith('--') && a !== jsonOut && a !== dirArg && !(only && args[args.indexOf('--only') + 1] === a));
 const MIN_PT = 5; // 이보다 작으면 인쇄해서 읽기 어렵다
 const EMPTY = 0.35; // 단이 이만큼 넘게 비면 알림
 const showAll = args.includes('--all');
 
-const dir = join(ROOT, 'out', ed);
+const dir = dirArg ? join(process.cwd(), dirArg) : join(ROOT, 'out', ed);
 if (!existsSync(dir)) { console.error(`out/${ed} 가 없습니다. 먼저 node build.mjs ${ed} … 로 빌드하세요.`); process.exit(1); }
 const files = readdirSync(dir).filter((f) => f.endsWith('.html') && (!names.length || names.includes(f.replace(/\.html$/, ''))));
 
