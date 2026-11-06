@@ -1,6 +1,7 @@
 // 중복·표절 검사
 //   node tools/dup-check.mjs 1                  1차 안에서 비슷한 문항 쌍
 //   node tools/dup-check.mjs 2 --vs 1           2차 문항이 1차와 겹치는지 (같은 자료·같은 선지·같은 사례)
+//   node tools/dup-check.mjs sp --vs 2          예시문항 특강 문항이 2차와 겹치는지 (sp 안끼리: node tools/dup-check.mjs sp)
 //   node tools/dup-check.mjs 1 --src <txt폴더>   기출·문제집 글자 추출본과 긴 문장이 같은 곳(저작권)
 //
 // 방법: 띄어쓰기·문장 부호를 뺀 글자에서 글자 n개 조각(shingle)을 만들어 겹치는 비율을 잰다.
@@ -24,6 +25,15 @@ const jac = (a, b) => { if (!a.size || !b.size) return 0; let k = 0; for (const 
 
 async function load(e) {
   const qs = [];
+  if (e === 'sp') { // 예시문항 특강(특강/content): 유형별 연습 p-*.js + 쌍둥이 세트 set.js
+    const sd = join(ROOT, '특강', 'content');
+    for (const f of readdirSync(sd).filter((x) => /^(p-\w|set)\.js$/.test(x))) {
+      const m = (await import(pathToFileURL(join(sd, f)).href)).default;
+      (m.questions || m).forEach((q) => qs.push(q));
+    }
+    const nd0 = (s) => s.replace(/[0-9]/g, '');
+    return qs.map((q) => ({ q, data: shingles(nd0(text(q.data) + text(q.bogi))), ch: q.choices.map((c) => shingles(nd0(c))), dataLen: norm(nd0(text(q.data))).length }));
+  }
   const dir = join(ROOT, 'content', e);
   for (const k of Object.keys(UNITS)) {
     const f = join(dir, `${k}.js`);
