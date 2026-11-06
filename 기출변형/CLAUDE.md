@@ -57,5 +57,6 @@
 ## MINIMAX 완성본 (2026-11-07, 시리즈 이름 '정조준' → 'MINIMAX')
 - 표지·간지 디자인은 `cover/`(진행 기록 `참고/디자인진행.md`). 강사가 고른 표지 = `cover/mmx.js`의 X5 '네온 길'.
 - 만들기(02 기본편): `node build.mjs 1 units mm` → `node cover/build-cover.mjs mmfinal` → `python3 cover/assemble.py 02` → `out/MINIMAX-02-완성본/`.
+  03 심화편: `node build.mjs 2 units mm` → `node cover/build-cover.mjs mmfinal 2` → `python3 cover/assemble.py 03` → `out/MINIMAX-03-완성본/`.
   `mm` 모드는 속표지·과목 간지·대단원 간지를 쪽 나누기에 넣고 인쇄용 TrueType 글꼴로 바꾼다(그 전에 `python3 cover/otf2ttf.py` 한 번). 기본 빌드(옛 표지)는 그대로.
 - 뒷표지 대표 문장의 네온 글자는 `cover/mm-letters.js`의 HANGUL에 직접 그린 글자만 쓸 수 있다(새 글자는 그려 넣어야 함).
