@@ -250,16 +250,18 @@ function x5Front(v) {
   const { c, gx, gy } = X5MAZE;
   const lay = layout('MINIMAX', { s: 8, d: 9, wf: 1 }, 18);
   const [lo, hi] = neonExtent(lay, X5NEON.w);
-  const scale = LW / (hi - lo); // 보이는 관의 왼쪽 끝 = M, 오른쪽 끝(X) = W − M
+  // 4차 수정(강사: 로고 조금 작게, 양옆 여백): 로고 폭 160mm, 가운데. 보이는 관의 왼쪽 끝 = LX, 오른쪽 끝(X) = W − LX
+  const LOGO_W = 160, LX = (W - LOGO_W) / 2;
+  const scale = LOGO_W / (hi - lo);
   const pad = 30, vbx = lo - pad, vbw = hi - lo + 2 * pad, vby = -pad, vbh = 100 + 2 * pad, top = 199;
-  const logo = `<svg class="abs" style="left:${mm(M - pad * scale)};top:${mm(top - pad * scale)};overflow:visible" width="${mm(vbw * scale)}" height="${mm(vbh * scale)}" viewBox="${f(vbx)} ${vby} ${f(vbw)} ${vbh}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
+  const logo = `<svg class="abs" style="left:${mm(LX - pad * scale)};top:${mm(top - pad * scale)};overflow:visible" width="${mm(vbw * scale)}" height="${mm(vbh * scale)}" viewBox="${f(vbx)} ${vby} ${f(vbw)} ${vbh}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
   const below = top + 100 * scale + X5NEON.w * scale / 2 + 9; // 로고 바닥 아래
   return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
   ${T(esc(MM.brand), { y: 13, size: 10, weight: 700, color: X5.fg, ls: 0.02 })}
   ${logo}
   ${T(esc(v.kind), { x: 0, w: W, align: 'center', y: below + 1, size: 22, weight: 700, color: X5.fg, ls: -0.01, lh: 1.3 })}
   ${T(esc(v.subject), { x: 0, w: W, align: 'center', y: below + 13.5, size: 15, weight: 300, color: X5.sub })}
-  ${T(esc(MM.exam), { right: M, y: 279, size: 8.6, color: X5.sub })}`;
+  ${T(esc(MM.exam), { right: LX, y: 279, size: 8.6, color: X5.sub })}`;
 }
 // 뒷표지 대표 문장: 로고와 같은 짜임의 네온 한글(layoutHangul + drawNeon, 같은 관 굵기 비율), 줄마다 가운데
 function neonLine(text, { cy, hMm }) {
