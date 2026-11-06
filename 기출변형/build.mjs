@@ -249,6 +249,8 @@ if (mmMode) {
   const faces = [['Dotum', 300, 'Light'], ['Dotum', 400, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 400, 'Medium'], ['Batang', 700, 'Bold']]
     .map(([fam, w, n]) => `@font-face{font-family:'KoPubWorld ${fam}';font-weight:${w};src:url('file://${TTF}/KoPubWorld-${fam}-${n}.ttf');}`)
     .concat([[300, 'Light'], [400, 'Regular'], [500, 'Medium'], [600, 'SemiBold'], [700, 'Bold'], [800, 'ExtraBold']].map(([w, n]) => `@font-face{font-family:'Pretendard Variable';font-weight:${w};src:url('file://${PRE}/Pretendard-${n}.ttf');}`))
+    // 표지와 같은 그림을 쓰는 속표지(cover/mmx.js)는 글꼴 이름 'KoPub Dotum'·'KoPub Batang'을 쓴다
+    .concat([['Dotum', 300, 'Light'], ['Dotum', 500, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 500, 'Medium'], ['Batang', 700, 'Bold']].map(([fam, w, n]) => `@font-face{font-family:'KoPub ${fam}';font-weight:${w};src:url('file://${TTF}/KoPubWorld-${fam}-${n}.ttf');}`))
     .join('\n');
   const v = mmVol(ed === '1' ? '02' : '03');
   const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;

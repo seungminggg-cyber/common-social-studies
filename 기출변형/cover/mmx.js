@@ -247,7 +247,7 @@ function neonText(lines, { cx, y, size, lh, weight = 500 }) {
   return t(`fill="${X5.cyan}" stroke="${X5.cyan}" stroke-width="${rim * 1.9}" stroke-linejoin="round" opacity=".55" filter="url(#tg)"`)
     + t(`fill="#ffffff" stroke="${X5.cyan}" stroke-width="${rim}" stroke-linejoin="round" paint-order="stroke"`);
 }
-function x5Front(v) {
+export function x5Front(v) {
   const { c, gx, gy } = X5MAZE;
   const lay = layout('MINIMAX', { s: 8, d: 9, wf: 1 }, 18);
   const [lo, hi] = neonExtent(lay, X5NEON.w);

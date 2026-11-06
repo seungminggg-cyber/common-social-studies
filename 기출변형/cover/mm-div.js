@@ -5,7 +5,7 @@
 // 같은 HTML을 두 곳에서 쓴다: 표지 빌드(도련 3mm 낱장)와 본문 빌드(build.mjs mm — 쪽 나누기 안의 한 쪽).
 // 위치는 쪽(재단선) 기준 mm. 글꼴 이름은 CSS 변수 --mm-sans(표지: 'KoPub Dotum', 본문: 'KoPubWorld Dotum').
 import { CH, BLEED } from './tokens.js';
-import { X5, X5MAZE, X5NEON, maze, ng } from './mmx.js';
+import { X5, X5MAZE, X5NEON, maze, ng, x5Front } from './mmx.js';
 import { layout, layoutHangul, layoutRoman, drawNeon, neonFilter, neonExtent } from './mm-letters.js';
 import { esc } from './sheet.js';
 
@@ -71,14 +71,9 @@ export function mmChapterPage(ch, { name, uid = 'c', tab = false }) {
     </div>${tabHtml}`);
 }
 
-// 속표지(본문 첫 쪽): 네온 MINIMAX + 책 종류·과목 + 브랜드. v: mm-data의 권
-export function mmTitlePage(v, { uid = 't' } = {}) {
-  return wrap(`${svgFull('', '')}
-    ${neon(layout('MINIMAX', { s: 8, d: 9, wf: 1 }, 18), { cx: W / 2, y: 110, hMm: 28, glow: X5.cyan, id: `n${uid}` })}
-    ${T(esc(v.kind), { x: 0, w: W, align: 'center', y: 152, size: 20, weight: 700, color: '#fff', ls: -0.01 })}
-    ${T(esc(v.subject), { x: 0, w: W, align: 'center', y: 163, size: 13, weight: 300, color: X5.sub })}
-    ${T('승민T 통합사회', { x: 0, w: W, align: 'center', y: 262, size: 10, weight: 700, color: '#fff', ls: 0.04 })}
-    ${T('2028 수능 대비 · 2022 개정 교육과정', { x: 0, w: W, align: 'center', y: 270, size: 8.6, color: X5.sub })}`);
+// 속표지(본문 첫 쪽) = 앞표지 최종 시안과 똑같은 그림(2026-11-07 강사: 앞표지는 최종 시안 그대로 — 다른 모양의 속표지가 헷갈림)
+export function mmTitlePage(v) {
+  return wrap(x5Front(v));
 }
 
 // 본문 빌드에 넣을 CSS: 간지 쪽은 머리글·쪽 번호를 숨기고, 표지와 같은 글꼴 변수를 쓴다
