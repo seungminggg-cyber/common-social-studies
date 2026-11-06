@@ -27,9 +27,11 @@ export const C = {
 
 // 권별 바탕(수능에 가까울수록 진해짐)
 export const GROUND = {
+  // 2차 시안(강사: 회색 바탕 싫음) — 01~05권 흰 종이, 06·07권 먹
+  white: { bg: C.white, fg: C.ink, sub: C.sub, rule: C.ink, boxBg: C.ink, boxFg: C.white, band: C.ink, bandFg: C.onDark, bandSub: C.onDarkSub, dark: false },
   paper: { bg: C.paper, fg: C.ink, sub: C.sub, rule: C.ink, boxBg: C.ink, boxFg: C.paper, dark: false },
   gray: { bg: C.paperGray, fg: C.ink, sub: C.sub, rule: C.ink, boxBg: C.ink, boxFg: C.paperGray, dark: false },
-  ink: { bg: C.inkBg, fg: C.onDark, sub: C.onDarkSub, rule: C.onDarkSub, boxBg: C.onDark, boxFg: C.inkBg, dark: true },
+  ink: { bg: C.inkBg, fg: C.onDark, sub: C.onDarkSub, rule: C.onDarkSub, boxBg: C.onDark, boxFg: C.inkBg, band: C.onDark, bandFg: C.inkBg, bandSub: C.sub, dark: true },
 };
 
 // 어두운 바탕에서 과녁 선이 묻히지 않게: 단원 색을 밝은 글자색 쪽으로 섞은 값
