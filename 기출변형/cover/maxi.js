@@ -8,8 +8,10 @@
 // 실행: node cover/build-cover.mjs maxi [G1 …] → out/cover/MAXI-<후보>-<이름>-앞표지·뒷표지
 import { esc } from './sheet.js';
 import { BLEED } from './tokens.js';
-import { layout, drawNeon, neonFilter, neonExtent } from './mm-letters.js';
+import { layout, layoutHangul, drawNeon, neonFilter, neonExtent } from './mm-letters.js';
 import { MAXI } from './mm-data.js';
+import { UNITS, BOOKS } from '../lib/units.js';
+import { UNIT_NEON } from './mm-div.js';
 
 const W = 210, H = 297, B = BLEED, M = 16;
 const mm = (v) => `${+(+v).toFixed(2)}mm`;
@@ -62,15 +64,17 @@ function g1(id) {
   return { svg, defs };
 }
 
-// G2 계기판
-function g2(id) {
-  const cx = 89, cy = 112, R = 78;
+// G2 계기판 (강사가 고름). R·cy: 크기·자리, lit: 켜진 칸 수, angle: 바늘 각도(180 = MIN, 360 = MAX)
+function g2(id, { R = 84, cy = 104, lit = 10, angle = 352 } = {}) {
+  const cx = 89;
   const at = (deg, r) => [cx + r * Math.cos((deg * Math.PI) / 180), cy + r * Math.sin((deg * Math.PI) / 180)];
   const arc = (a0, a1, r) => { const [x0, y0] = at(a0, r), [x1, y1] = at(a1, r); return `M ${f(x0)} ${f(y0)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${f(x1)} ${f(y1)}`; };
   let segs = '';
   for (let i = 0; i < 10; i++) {
     const a0 = 180 + i * 18 + 1, a1 = 180 + (i + 1) * 18 - 1, col = ramp(i / 9);
-    segs += `<path d="${arc(a0, a1, R)}" fill="none" stroke="${col}" stroke-width="9" opacity=".5" filter="url(#${id}g)"/><path d="${arc(a0, a1, R)}" fill="none" stroke="${col}" stroke-width="7"/>`;
+    segs += i < lit
+      ? `<path d="${arc(a0, a1, R)}" fill="none" stroke="${col}" stroke-width="9" opacity=".5" filter="url(#${id}g)"/><path d="${arc(a0, a1, R)}" fill="none" stroke="${col}" stroke-width="7"/>`
+      : `<path d="${arc(a0, a1, R)}" fill="none" stroke="${K.line}" stroke-width="7"/>`;
   }
   let ticks = '';
   for (let s = 0; s <= 50; s++) {
@@ -79,7 +83,7 @@ function g2(id) {
     ticks += `<line x1="${f(xa)}" y1="${f(ya)}" x2="${f(xb)}" y2="${f(yb)}" stroke="${major ? K.fg : K.sub}" stroke-width="${major ? 0.6 : 0.25}" opacity="${major ? 1 : 0.7}"/>`;
     if (major) { const [lx, ly] = at(a, R - 21); ticks += tx(lx, ly + 1.4, String(s), { size: 4, w: 500, fill: s === 50 ? K.gold : K.sub, anchor: 'middle' }); }
   }
-  const na = 352, [nx, ny] = at(na, R - 4), [bx1, by1] = at(na + 90, 2.6), [bx2, by2] = at(na - 90, 2.6), [tx0, ty0] = at(na + 180, 12);
+  const na = angle, [nx, ny] = at(na, R - 4), [bx1, by1] = at(na + 90, 2.6), [bx2, by2] = at(na - 90, 2.6), [tx0, ty0] = at(na + 180, 12);
   const needle = `<polygon points="${P([[nx, ny], [bx1, by1], [tx0, ty0], [bx2, by2]])}" fill="#fff" opacity=".55" filter="url(#${id}g)"/><polygon points="${P([[nx, ny], [bx1, by1], [tx0, ty0], [bx2, by2]])}" fill="#fff"/>
     <circle cx="${cx}" cy="${cy}" r="5.4" fill="${K.bg}" stroke="${K.gold}" stroke-width="1.3"/><circle cx="${cx}" cy="${cy}" r="1.6" fill="${K.gold}"/>`;
   const defs = glow(`${id}g`, 1.6, IW, IH);
@@ -160,15 +164,16 @@ function logo(w, top, id) {
 }
 const bg = `<rect x="${-B}" y="${-B}" width="${W + 2 * B}" height="${H + 2 * B}" fill="${K.bg}"/>`;
 
-export function maxiFront(k) {
-  const img = MAXIS[k][1]('f');
-  const L = logo(160, 200, 'nb');
-  return sheet(K.bg, `${full(`${bg}<g transform="translate(${(W - IW) / 2} 28)">${img.svg}</g>${L.g}`, img.defs + L.defs)}
+export function maxiInner(k = 'G2', id = 'f') {
+  const img = MAXIS[k][1](id);
+  const L = logo(160, 200, `${id}nb`);
+  return `${full(`${bg}<g transform="translate(${(W - IW) / 2} 28)">${img.svg}</g>${L.g}`, img.defs + L.defs)}
     ${T(esc(MAXI.brand), { y: 13, size: 10, weight: 700, color: K.fg, ls: 0.02 })}
     ${T(esc(MAXI.kind), { x: 0, w: W, align: 'center', y: L.bottom + 6, size: 22, weight: 700, color: K.fg, ls: -0.01 })}
     ${T(esc(MAXI.subject), { x: 0, w: W, align: 'center', y: L.bottom + 18.5, size: 15, weight: 300, color: K.sub })}
-    ${T(esc(MAXI.exam), { right: M, y: 279, size: 8.6, color: K.sub })}`);
+    ${T(esc(MAXI.exam), { right: M, y: 279, size: 8.6, color: K.sub })}`;
 }
+export const maxiFront = (k) => sheet(K.bg, maxiInner(k));
 // 뒷표지: 작은 그림(폭 iw) + 작은 네온 로고(폭 64)를 한 덩어리로 쪽 가운데
 export function maxiBack(k, { iw = 78, logoW = 64, gap = 14 } = {}) {
   const img = MAXIS[k][1]('b');
@@ -178,3 +183,110 @@ export function maxiBack(k, { iw = 78, logoW = 64, gap = 14 } = {}) {
   const L = logo(logoW, top + ih + gap, 'nb');
   return sheet(K.bg, full(`${bg}<g transform="translate(${f((W - iw) / 2)} ${f(top)}) scale(${+s.toFixed(5)})">${img.svg}</g>${L.g}`, img.defs + L.defs));
 }
+
+// ───────────── 본문에 넣는 쪽: 속표지 · 차례와 성적 기록표 · 회차 간지 (강사 2026-11-07: "2번으로 뒷표지, 간지까지") ─────────────
+// MINIMAX 간지(mm-div.js)와 같은 짜임. 같은 HTML을 표지 빌드(도련 낱장)와 본문 빌드(build.mjs 2 mock mx)에서 쓴다.
+const SANS = "var(--mm-sans, 'KoPub Dotum')";
+const TS = (s, o) => T(s, o).replace("font-family:'KoPub Dotum'", `font-family:${SANS}`);
+const wrap = (inner) => `<div class="mm-page" style="position:absolute;left:0;top:0;width:${W}mm;height:${H}mm;z-index:1">${inner}</div>`;
+const two = (n) => String(n).padStart(2, '0');
+export const roundColor = (n) => ramp((n - 1) / 9); // 1회 빨강 → 10회 금색
+export const tabTop = (n) => 22 + (n - 1) * 25.5; // 엄지 색인: 회차마다 한 칸씩 아래로(높이 24mm)
+
+// 속표지 = 앞표지와 똑같은 그림
+export const maxiTitlePage = () => wrap(maxiInner('G2', 'tt'));
+
+// 회차에서 대단원별 문항 수(책 순서)
+function rangeRows(m) {
+  const cnt = new Map();
+  for (const q of m.questions) { const u = UNITS[q.unit]; if (u) cnt.set(u.book, (cnt.get(u.book) || 0) + 1); }
+  return Object.keys(BOOKS).filter((k) => cnt.has(k)).map((k) => ({ subject: BOOKS[k].subject, no: BOOKS[k].chapter.no, title: BOOKS[k].chapter.title, n: cnt.get(k) }));
+}
+// 작은 계기판: n회까지 칸이 켜지고 바늘이 n번째 칸을 가리킨다(10회 = MAX)
+function gaugeMini(cx, cy, R, n, id) {
+  const at = (deg, r) => [cx + r * Math.cos((deg * Math.PI) / 180), cy + r * Math.sin((deg * Math.PI) / 180)];
+  const arc = (a0, a1, r) => { const [x0, y0] = at(a0, r), [x1, y1] = at(a1, r); return `M ${f(x0)} ${f(y0)} A ${r} ${r} 0 0 1 ${f(x1)} ${f(y1)}`; };
+  const sw = R * 0.13;
+  let o = '';
+  for (let i = 0; i < 10; i++) {
+    const a0 = 180 + i * 18 + 1.2, a1 = 180 + (i + 1) * 18 - 1.2, col = ramp(i / 9);
+    o += i < n ? `<path d="${arc(a0, a1, R)}" fill="none" stroke="${col}" stroke-width="${f(sw * 1.3)}" opacity=".5" filter="url(#${id})"/><path d="${arc(a0, a1, R)}" fill="none" stroke="${col}" stroke-width="${f(sw)}"/>`
+      : `<path d="${arc(a0, a1, R)}" fill="none" stroke="${K.line}" stroke-width="${f(sw)}"/>`;
+  }
+  const na = 180 + (n - 0.5) * 18, [nx, ny] = at(na, R - sw), [b1x, b1y] = at(na + 90, R * 0.05), [b2x, b2y] = at(na - 90, R * 0.05), [tx0, ty0] = at(na + 180, R * 0.14);
+  o += `<polygon points="${P([[nx, ny], [b1x, b1y], [tx0, ty0], [b2x, b2y]])}" fill="#fff"/><circle cx="${cx}" cy="${cy}" r="${f(R * 0.08)}" fill="${K.bg}" stroke="${K.gold}" stroke-width="${f(R * 0.025)}"/>`;
+  o += tx(cx - R, cy + 6, 'MIN', { size: 3.4, fill: K.red, anchor: 'middle', ls: 0.3 }) + tx(cx + R, cy + 6, 'MAX', { size: 3.4, fill: K.gold, anchor: 'middle', ls: 0.3 });
+  return o;
+}
+// 네온 글자 묶음(보이는 관 기준 왼쪽 x, 위 y, 글자 높이 hMm)
+function neonAt(lay, { x, y, hMm, glow: g, id }) {
+  const [lo, hi] = neonExtent(lay, 9);
+  const k = hMm / 100, pad = 30, wv = hi - lo;
+  return { html: `<svg class="abs" style="left:${mm(x - pad * k)};top:${mm(y - pad * k)};overflow:visible" width="${mm((wv + 2 * pad) * k)}" height="${mm((100 + 2 * pad) * k)}" viewBox="${f(lo - pad)} ${-pad} ${f(wv + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter(id, 4)}</defs>${drawNeon(lay, { w: 9, glow: g, blurId: id })}</svg>`, w: wv * k };
+}
+
+// 회차 간지. m: content/2/mock/m<n>.js
+export function maxiRoundPage(m, { uid = 'r', tab = false } = {}) {
+  const n = m.no, acc = roundColor(n), faint = mix(K.bg, '#ffffff', 0.14);
+  const rows = rangeRows(m);
+  const wide = rows.length > 5; // 전 범위(통합사회1·2)
+  const rowH = Math.min(13, 66 / rows.length), max = Math.max(...rows.map((r) => r.n));
+  const td = `height:${mm(rowH)};padding:0;border-bottom:.35pt solid ${faint};vertical-align:middle;`;
+  const trs = rows.map((r) => `<tr><td style="${td}width:${wide ? 30 : 12}mm;color:${UNIT_NEON[r.no]};font-weight:700;white-space:nowrap">${wide ? `<span style="color:${K.sub};font-weight:400;font-size:.82em">${esc(r.subject)}</span> ` : ''}${r.no}</td>
+    <td style="${td}">${esc(r.title)}</td>
+    <td style="${td}width:44mm"><div style="height:2.4mm;width:${f((40 * r.n) / max)}mm;background:${UNIT_NEON[r.no]};box-shadow:0 0 1.6mm ${UNIT_NEON[r.no]}"></div></td>
+    <td style="${td}width:16mm;text-align:right">${r.n}<span style="color:${K.sub};font-size:.8em">문항</span></td></tr>`).join('');
+  const num = neonAt(layoutHangul(two(n), 14), { x: 22, y: 46, hMm: 50, glow: acc, id: `n${uid}` }); // '07'·'10'처럼 넓은 숫자도 계기판과 겹치지 않게
+  const hoe = neonAt(layoutHangul('회'), { x: 22 + num.w + 5, y: 46 + 50 - 21, hMm: 21, glow: acc, id: `h${uid}` });
+  const box = (label, body, flex = 1) => `<div style="flex:${flex};border-top:1pt solid ${acc};padding-top:2.4mm"><div style="font-size:9.5pt;color:${K.sub}">${label}</div><div style="font-size:15pt;color:#fff;margin-top:5mm;white-space:nowrap">${body}</div></div>`;
+  const tabHtml = tab
+    ? `<div class="abs" style="left:${mm(W - 6.5)};top:${mm(tabTop(n))};width:${mm(6.5 + B)};height:24mm;background:${acc}"></div><div class="abs edge" style="left:${mm(W - 6.5)};top:${mm(tabTop(n))};width:6.5mm;height:24mm;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;text-orientation:upright;font-family:${SANS};font-weight:700;font-size:8pt;color:${n >= 6 ? K.bg : '#fff'}">${n}회</div>`
+    : '';
+  return wrap(`${full(`${bg}${gaugeMini(170, 88, 24, n, `g${uid}`)}`, glow(`g${uid}`, 1.2, W, H))}
+    ${TS('MAXIMIN 실전 모의고사', { x: 16, y: 13, size: 8.6, color: K.sub })}
+    ${TS(esc(m.range), { right: 22, y: 13, size: 8.6, weight: 700, color: '#fff' })}
+    ${TS('실전 모의고사', { x: 22, y: 32, size: 12, weight: 700, color: acc, ls: 0.2 })}
+    ${num.html}${hoe.html}
+    <div class="abs" style="left:22mm;top:124mm;width:166mm;font-family:${SANS};color:#fff">
+      <div style="font-size:36pt;font-weight:700;line-height:1.15;letter-spacing:-.025em">${esc(m.range)}</div>
+      <div style="font-size:14pt;color:${K.sub};margin-top:2.6mm">${m.questions.length}문항 · 50점 · 권장 시간 30분</div>
+      <table style="width:100%;border-collapse:collapse;font-size:${wide ? 11.5 : 13}pt;margin-top:9mm">
+        <tr style="font-size:10pt;color:${K.sub}"><td colspan="2" style="padding-bottom:2.4mm;border-bottom:1pt solid ${acc}">출제 범위</td><td style="padding-bottom:2.4mm;border-bottom:1pt solid ${acc}"></td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${acc}">문항 수</td></tr>
+        ${trs}
+      </table>
+    </div>
+    <div class="abs" style="left:22mm;top:250mm;width:166mm;display:flex;gap:7mm;font-family:${SANS}">
+      ${box('푼 날', '&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일')}${box('내 점수', `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:${K.sub}">/ 50점</span>`)}${box('틀린 문항', '', 1.5)}
+    </div>${tabHtml}`);
+}
+
+// 차례 · 성적 기록표(속표지 뒤, 짝수 쪽): 회차 목록(쪽 번호는 쪽 나누기가 채움) + 점수를 찍어 보는 그래프 칸
+export function maxiLogPage(mocks) {
+  const td = 'padding:2.2mm 1.6mm;border-bottom:.4pt solid #cfcac4;';
+  const rows = mocks.map((m) => `<tr><td style="${td}font-weight:700;color:${mix(roundColor(m.no), '#5a1406', 0.3)};width:14mm">${m.no}회</td><td style="${td}">${esc(m.range)}</td><td style="${td}text-align:right;width:12mm" data-pg="m-${m.no}"></td><td style="${td}width:26mm;color:#9a948e">&nbsp;&nbsp;&nbsp;월 &nbsp;&nbsp;&nbsp;일</td><td style="${td}width:22mm;text-align:right;color:#9a948e">/ 50</td><td style="${td}width:38mm"></td></tr>`).join('');
+  // 점수 그래프 칸: 가로 1~10회, 세로 0~50점
+  const gx0 = 12, gx1 = 160, gy0 = 6, gy1 = 56, X = (i) => gx0 + ((gx1 - gx0) * i) / 9, Y = (v) => gy1 - ((gy1 - gy0) * v) / 50;
+  let g = '';
+  for (let v = 0; v <= 50; v += 10) g += `<line x1="${gx0}" y1="${f(Y(v))}" x2="${gx1}" y2="${f(Y(v))}" stroke="${v === 50 ? K.red : '#d9d4ce'}" stroke-width="${v === 50 ? 0.4 : 0.25}"${v === 50 ? ' stroke-dasharray="1.4 1"' : ''}/>${tx(gx0 - 3, Y(v) + 1.2, String(v), { size: 3, w: 500, fill: v === 50 ? K.red : '#9a948e', anchor: 'end' })}`;
+  for (let i = 0; i < 10; i++) g += `<line x1="${f(X(i))}" y1="${gy0}" x2="${f(X(i))}" y2="${gy1}" stroke="#ebe7e2" stroke-width=".25"/>${tx(X(i), gy1 + 5, `${i + 1}회`, { size: 3, w: 500, fill: '#6b655f', anchor: 'middle' })}`;
+  g += tx(gx1 + 3, Y(50) + 1.2, 'MAX', { size: 3.2, fill: K.red });
+  return `<div class="mx-log" style="font-family:'KoPubWorld Dotum';color:#1f1d1b">
+    <div style="display:flex;align-items:baseline;gap:4mm;border-bottom:1.2pt solid #1f1d1b;padding-bottom:2mm"><b style="font-size:17pt">차례 · 성적 기록표</b><span style="font-size:9pt;color:#6b655f">한 회를 풀 때마다 날짜·점수·틀린 문항을 적고, 아래 그래프에 점을 찍어 이어 보자</span></div>
+    <table style="width:100%;border-collapse:collapse;font-size:10.5pt;margin-top:3mm">
+      <tr style="font-size:8.6pt;color:#6b655f"><td style="${td}">회차</td><td style="${td}">범위</td><td style="${td}text-align:right">쪽</td><td style="${td}">푼 날</td><td style="${td}text-align:right">점수</td><td style="${td}">틀린 문항</td></tr>${rows}
+    </table>
+    <div style="margin-top:9mm;font-size:11pt;font-weight:700">점수 그래프 <span style="font-size:8.6pt;font-weight:400;color:#6b655f">MIN에서 MAX(50점)까지</span></div>
+    <svg viewBox="0 0 170 64" style="width:170mm;height:64mm;margin-top:2mm" xmlns="http://www.w3.org/2000/svg">${g}</svg>
+  </div>`;
+}
+
+// 본문 빌드에 넣을 CSS: 속표지·간지는 머리글·쪽 번호 숨김, 엄지 색인은 회차마다 한 칸씩 아래로 + 빨강 → 금색
+export const MX_CSS = `
+.page-mxdiv .page-head, .page-mxdiv .page-foot, .page-mxtitle .page-head, .page-mxtitle .page-foot, .page-mxtitle .edge-tab, .page-mxlog .edge-tab { visibility: hidden; }
+.page-mxdiv .mm-page, .page-mxtitle .mm-page { --mm-sans: 'KoPubWorld Dotum'; }
+.page-mxdiv .edge-tab { z-index: 3; }
+.mm-page .abs { position: absolute; }
+.page-mxlog { --c1: #1f1d1b; --c1-dark: #1f1d1b; }
+.page[data-ch$="회"] .edge-tab span { writing-mode: vertical-rl; text-orientation: upright; font-size: 8pt; letter-spacing: 0; }
+${Array.from({ length: 10 }, (_, i) => `.page[data-ch="${i + 1}회"] .edge-tab { top: ${tabTop(i + 1)}mm; height: 24mm; background: ${roundColor(i + 1)}; color: ${i + 1 >= 6 ? K.bg : '#fff'}; }`).join('\n')}
+`;

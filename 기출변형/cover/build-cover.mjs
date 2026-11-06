@@ -19,7 +19,7 @@ import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini } from './mmx.js';
 import { MMAPS, mmapFace, m1Back } from './mmap.js';
-import { MAXIS, maxiFront, maxiBack } from './maxi.js';
+import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, K as MXK } from './maxi.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
@@ -223,6 +223,18 @@ if (args.includes('maxi')) {
     await emit(`MAXI-${k}-${MAXIS[k][0]}-앞표지`, doc([maxiFront(k)]), { scale: 1 });
     await emit(`MAXI-${k}-${MAXIS[k][0]}-뒷표지`, doc([maxiBack(k)]), { scale: 1 });
   }
+}
+// MAXIMIN 완성본(인쇄용 낱장, 강사 2026-11-07 2번 계기판): 앞·뒷표지 + 속표지·회차 간지 10장(도련 3mm, 엄지 색인)
+//   본문은 build.mjs 2 mock mx
+if (args.includes('maxifinal')) {
+  await emit('MAXIMIN-앞표지', doc([maxiFront('G2')]));
+  await emit('MAXIMIN-뒷표지', doc([maxiBack('G2')]));
+  const dir = join(ROOT, '../content/2/mock');
+  const mocks = [];
+  for (let i = 1; existsSync(join(dir, `m${i}.js`)); i++) mocks.push((await import(pathToFileURL(join(dir, `m${i}.js`)).href)).default);
+  const sheet = (inner) => `<section class="sheet" style="background:${MXK.bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
+  const pages = [sheet(maxiTitlePage()), ...mocks.map((m) => sheet(maxiRoundPage(m, { uid: `r${m.no}`, tab: true })))];
+  await emit('MAXIMIN-속표지간지-도련', doc(pages, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
 }
 // 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback
 if (args.includes('mmback')) {

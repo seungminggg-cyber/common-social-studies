@@ -18,6 +18,7 @@ import { renderUnits, renderMocks, renderAnswers } from './lib/wb-render.js';
 import { chapters } from './cover/book-data.js';
 import { mmVol } from './cover/mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage, MM_DIV_CSS } from './cover/mm-div.js';
+import { maxiTitlePage, maxiLogPage, maxiRoundPage, MX_CSS } from './cover/maxi.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => { try { return require('playwright'); } catch { return require('/opt/node-tools/node_modules/playwright'); } })();
@@ -32,6 +33,8 @@ const wantPng = args.includes('png');
 const teacher = args.includes('teacher');
 // mm: MINIMAX 완성본 본문 — 과목 간지·대단원 간지를 쪽 나누기에 넣고(쪽 번호·차례가 함께 맞춰짐), 글꼴을 인쇄용 TrueType으로
 const mmMode = args.includes('mm');
+// mx: MAXIMIN 완성본 본문(2차 모의고사 10회) — 속표지·차례와 성적 기록표·회차 간지 + 인쇄용 TrueType 글꼴
+const mxMode = args.includes('mx');
 const OUT = join(ROOT, 'out', ed);
 mkdirSync(join(OUT, 'png'), { recursive: true });
 const EDITION = ed === '1' ? '1차 · 겨울방학 특강판' : '2차 · 심화(중상·상)판';
@@ -242,16 +245,30 @@ numberFigures(mocks);
 ensureTerrain([...sets.flatMap((s) => s.qs), ...mocks.flatMap((m) => m.questions)]);
 const tag = only.length ? `-${only.join('_')}` : sub ? `-${sub === 't1' ? '통합사회1' : '통합사회2'}` : '';
 
-if (mmMode) {
-  // 인쇄용 글꼴: KoPub OTF·Pretendard 가변 글꼴은 PDF에 Type 3으로 들어가므로 TrueType 파일로 바꿔 쓴다(cover/otf2ttf.py가 만든 것)
+// 인쇄용 글꼴: KoPub OTF·Pretendard 가변 글꼴은 PDF에 Type 3으로 들어가므로 TrueType 파일로 바꿔 쓴다(cover/otf2ttf.py가 만든 것)
+function printFaces() {
   const TTF = join(ROOT, 'out/cover/fonts'), PRE = join(ROOT, '../textbook/node_modules/pretendard/dist/public/static/alternative');
   if (!existsSync(join(TTF, 'KoPubWorld-Dotum-Bold.ttf'))) { console.error('TrueType 글꼴이 없습니다 → python3 cover/otf2ttf.py'); process.exit(1); }
-  const faces = [['Dotum', 300, 'Light'], ['Dotum', 400, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 400, 'Medium'], ['Batang', 700, 'Bold']]
+  return [['Dotum', 300, 'Light'], ['Dotum', 400, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 400, 'Medium'], ['Batang', 700, 'Bold']]
     .map(([fam, w, n]) => `@font-face{font-family:'KoPubWorld ${fam}';font-weight:${w};src:url('file://${TTF}/KoPubWorld-${fam}-${n}.ttf');}`)
     .concat([[300, 'Light'], [400, 'Regular'], [500, 'Medium'], [600, 'SemiBold'], [700, 'Bold'], [800, 'ExtraBold']].map(([w, n]) => `@font-face{font-family:'Pretendard Variable';font-weight:${w};src:url('file://${PRE}/Pretendard-${n}.ttf');}`))
     // 표지와 같은 그림을 쓰는 속표지(cover/mmx.js)는 글꼴 이름 'KoPub Dotum'·'KoPub Batang'을 쓴다
     .concat([['Dotum', 300, 'Light'], ['Dotum', 500, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 500, 'Medium'], ['Batang', 700, 'Bold']].map(([fam, w, n]) => `@font-face{font-family:'KoPub ${fam}';font-weight:${w};src:url('file://${TTF}/KoPubWorld-${fam}-${n}.ttf');}`))
     .join('\n');
+}
+
+if (mxMode) {
+  const faces = printFaces();
+  const mx = { headLeft: '<b>MAXIMIN</b> 실전 모의고사', title: () => maxiTitlePage(), log: () => maxiLogPage(mocks), round: (m) => maxiRoundPage(m, { uid: `r${m.no}` }) };
+  const html = renderMocks(mocks, { title: 'MAXIMIN 실전 모의고사', edition: EDITION, mode: 'student', mx })
+    .replace(/@font-face \{ font-family: 'Pretendard Variable';[^}]*\}/, '')
+    .replace('</head>', `<style>${faces}\n${MX_CSS}</style></head>`);
+  await emit('MAXIMIN-본문', html);
+  await browser.close();
+  process.exit(failed ? 1 : 0);
+}
+if (mmMode) {
+  const faces = printFaces();
   const v = mmVol(ed === '1' ? '02' : '03');
   const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
   const chs = await chapters(ed);

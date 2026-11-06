@@ -117,10 +117,17 @@ export function renderUnits(sets, { title, edition, mode, mm = null }) {
 
 // ── 모의고사 ──
 // mocks: [{ no, title, range, questions }]
-export function renderMocks(mocks, { title, edition, mode }) {
-  const sections = [cover({ title, sub: `2022 개정 교육과정 · 2028 수능 통합사회 형식 · ${mocks.length}회`, edition, parts: mocks.map((m) => `${m.no}회 · ${m.range}`) })];
+// mx(선택, MAXIMIN 완성본 — build.mjs 2 mock mx): { title(), log(), round(m), headLeft }
+//   옛 표지 대신 속표지 → 차례·성적 기록표(짝수 쪽) → 회차마다 간지(홀수 쪽) + 문제. 문항·순서는 그대로.
+export function renderMocks(mocks, { title, edition, mode, mx = null }) {
+  const sections = mx ? [] : [cover({ title, sub: `2022 개정 교육과정 · 2028 수능 통합사회 형식 · ${mocks.length}회`, edition, parts: mocks.map((m) => `${m.no}회 · ${m.range}`) })];
+  if (mx) {
+    sections.push(`<section class="flow" data-kind="mxtitle"><div class="top">${mx.title()}</div></section>`);
+    sections.push(`<section class="flow" data-kind="mxlog" data-even="1" data-head-left="${mx.headLeft}" data-head-right="차례 · 성적 기록표"><div class="top">${mx.log()}</div></section>`);
+  }
   for (const m of mocks) {
-    const attrs = `data-tab="${m.no}회" data-head-left="승민T 통합사회 <b>실전 모의고사</b>" data-head-right="${esc(`${m.no}회 · ${m.range}`)}"`;
+    if (mx) sections.push(`<section class="flow" data-kind="mxdiv" data-odd="1" data-tab="${m.no}회"><div class="top">${mx.round(m)}</div></section>`);
+    const attrs = `data-tab="${m.no}회" data-head-left="${mx ? mx.headLeft : '승민T 통합사회 <b>실전 모의고사</b>'}" data-head-right="${esc(`${m.no}회 · ${m.range}`)}"`;
     const head = `<div class="top" id="m-${m.no}"><div class="wb-mock">
       <div class="wb-mock-l"><span>2022 개정 · 통합사회</span><b>실전 모의고사 ${m.no}회</b></div>
       <div class="wb-mock-r"><span>${esc(m.range)}</span><span>25문항 · 50점 · 권장 시간 30분</span><span>표시 없는 문항은 2점</span></div>

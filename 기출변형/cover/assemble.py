@@ -1,6 +1,7 @@
 """MINIMAX 완성본 묶기 — 인쇄용 쪽 상자 맞추기 + 한 권 미리보기 PDF.
 
     python3 cover/assemble.py 02      (기출변형 폴더에서. 먼저 build-cover.mjs mmfinal, build.mjs 1 units mm)
+    python3 cover/assemble.py maximin MAXIMIN 실전 모의고사(먼저 build.mjs 2 mock mx, build-cover.mjs maxifinal)
     python3 cover/assemble.py t1      MINIMAP 개념서 통합사회1(t2 = 통합사회2). 먼저 textbook에서 build-book.mjs mm [t2],
                                       그다음 build-cover.mjs mmapfinal
 
@@ -49,7 +50,11 @@ def trimmed(path):
 
 def main(no):
     cover = os.path.join(OUT, 'cover')
-    if no in ('t1', 't2'):  # MINIMAP 개념서
+    if no == 'maximin':  # MAXIMIN 실전 모의고사 10회
+        tag = 'MAXIMIN'
+        body = os.path.join(OUT, '2', 'MAXIMIN-본문.pdf')
+        ndiv = '11쪽'
+    elif no in ('t1', 't2'):  # MINIMAP 개념서
         sub = '통합사회1' if no == 't1' else '통합사회2'
         tag = f'MINIMAP-{sub}'
         body = os.path.join(HERE, '..', '..', 'textbook', 'out', f'{tag}-본문.pdf')
