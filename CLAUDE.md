@@ -107,4 +107,4 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - 한글 파일 그림(`out/fig/<책>/`)은 `build.mjs`가 시안 b·d·h로 빌드할 때 새로 저장한다(예전에는 h에서 빠져 있었음 — 블록 순서가 바뀌면 그림이 어긋나므로 한글 파일 전에 꼭 단원 빌드).
 - 검사 도구(세션 scratchpad, 저장소 밖): overflow·figbounds·textoverlap·fontfallback·qhead(문제 머리 줄바꿈)·qlv(난이도 꺾임).
 - 다음 일: 기출변형 문제집(별도 세션, `기출변형/`) — 1차 단원별 약 500 + 모의고사 4회, 2차 중상·상 위주 500 + 모의고사 10회(통합사회1 3·통합사회2 3·전 범위 4), 그 뒤 별도 검수 세션.
-- **기출변형 문제집(`기출변형/`, 2026-11-05~)**: 규칙은 `기출변형/CLAUDE.md`, 진행은 `기출변형/참고/진행.md`. 개념서의 render·paginate·시안 H를 다시 써서 `node build.mjs <차수>`로 PDF, `hwpx_wb.py`로 한글 파일. 1차(단원별 500 + 모의고사 4회) 완료·전달, 검사 도구 `tools/check.mjs`·`dup-check.mjs`(--src로 원문 유사 검사). 앱 빌드와 무관.
+- **기출변형 문제집(`기출변형/`, 2026-11-05~)**: 규칙은 `기출변형/CLAUDE.md`, 진행은 `기출변형/참고/진행.md`. 개념서의 render·paginate·시안 H를 다시 써서 `node build.mjs <차수>`로 PDF, `hwpx_wb.py`로 한글 파일. 1차(단원별 500 + 모의고사 4회)·2차(심화, 단원별 500 + 모의고사 10회) 완료·전달(2026-11-06), 검수는 별도 세션(브랜치 `claude/workbook-review`), 검사 도구 `tools/check.mjs`·`dup-check.mjs`(--src로 원문 유사 검사). 앱 빌드와 무관.
