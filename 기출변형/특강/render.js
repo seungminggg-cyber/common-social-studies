@@ -120,7 +120,7 @@ function typeSections(t, ITEMS, teacher) {
   const headLeft = `${esc(HEAD)}`;
   const headRight = `유형 ${t.no} ${t.title.split(' — ')[0]}`;
   const units = [...new Set(t.items.flatMap((n) => ITEMS[n].units.map(([k]) => k)))];
-  const top = `<div class="top" id="t-${t.key}"><div class="sp-open"><div class="sp-open-no">${t.no}</div><div class="sp-open-t"><span>유형 ${t.no} · 예시문항 ${t.items.map((n) => `${n}번`).join(' · ')}</span><h1>${inl(t.title)}</h1>
+  const top = `<div class="top" id="t-${t.key}"><div class="sp-open"><div class="sp-open-no">${t.no}</div><div class="sp-open-t"><span>유형 ${t.no} · 예시문항 ${t.items.map((n) => `${n}번`).join(' · ')}</span><h1>${inl(t.title.split(' — ')[0])}</h1>${t.title.includes(' — ') ? `<p>${inl(t.title.split(' — ')[1])}</p>` : ''}
     <p class="sp-units">${units.map((k) => esc(unitName(k))).join(' · ')}</p></div></div></div>`;
   const rows = [];
   rows.push(`<div class="row" data-keep="next"><div class="main">${block({ t: 'sec', mark: 'A', title: '출제 의도 — 이 유형은 무엇을 재는가' })}</div></div>`);

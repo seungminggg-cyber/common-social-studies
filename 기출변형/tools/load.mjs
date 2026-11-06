@@ -5,7 +5,15 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export async function loadAll(eds = ['1', '2'], base = join(ROOT, 'content')) {
   const all = {};
-  for (const ed of eds) for (const sub of ['', 'mock/']) {
+  for (const ed of eds) for (const sub of ed === 'sp' ? [''] : ['', 'mock/']) {
+    if (ed === 'sp') { // 예시문항 특강: 특강/content의 p-*.js·set.js
+      const dir = join(ROOT, '특강', 'content');
+      for (const f of readdirSync(dir).filter((f) => /^(p-\w|set)\.js$/.test(f))) {
+        const m = (await import(pathToFileURL(join(dir, f)).href + `?t=${Date.now()}`)).default;
+        for (const q of m.questions || m) all[q.id] = { ...q, _file: `특강/${f}` };
+      }
+      continue;
+    }
     const dir = join(base, ed, sub);
     if (!existsSync(dir)) continue;
     for (const f of readdirSync(dir).filter((f) => f.endsWith('.js'))) {

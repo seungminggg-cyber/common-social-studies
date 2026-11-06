@@ -4,7 +4,7 @@
 // '①~④는 옳다'처럼 범위로 쓴 것은 있는 것으로 본다. 짝 짓기·순서 문항(선지가 짧은 것)은 번호 대신 구성 요소 설명으로 충분해 뺀다.
 import { loadAll } from './load.mjs';
 const args = process.argv.slice(2);
-const eds = args.filter((a) => a === '1' || a === '2');
+const eds = args.filter((a) => a === '1' || a === '2' || a === 'sp'); // sp = 예시문항 특강
 const ids = args.includes('--ids') ? new Set(args[args.indexOf('--ids') + 1].split(',')) : null;
 const C = ['①', '②', '③', '④', '⑤'], G = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ'];
 const all = await loadAll(eds.length ? eds : ['1', '2']);
