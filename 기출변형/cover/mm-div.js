@@ -42,51 +42,33 @@ export function mmSubjectPage(subject, chs, { name, uid = 's' }) {
 }
 
 // 대단원 간지. ch: chapters()의 한 대단원
+// 2026-11-07 강사: 아래 '단원 분석'(최다 빈출 개념·난이도 구성)은 빼고, 남은 요소를 키워 아래 여백을 줄임.
+//   번호·미로·대단원 이름·표를 키우고, 표 줄 높이는 중단원 수에 맞춰 늘린다(중단원이 적을수록 줄이 높음) → 짧은 단원도 쪽 아래까지 찬다.
 export function mmChapterPage(ch, { name, uid = 'c', tab = false }) {
   const col = UNIT_NEON[ch.no];
-  const td = `padding:3.6mm 0;border-bottom:.3pt solid ${X5.faint};`;
-  const rows = ch.units.map((u) => `<tr><td style="${td}width:12mm;color:${col};font-weight:700">${u.no}</td><td style="${td}">${esc(u.title)}</td><td style="${td}text-align:right;color:${X5.sub}">${u.range}</td><td style="${td}text-align:right;width:18mm">${u.count}</td></tr>`).join('');
+  const n = ch.units.length;
+  const rowH = Math.min(30, 80 / n); // 표 한 줄 높이(mm): 중단원 2개 30 · 3개 26.7 · 4개 20
+  const td = `height:${mm(rowH)};padding:0;border-bottom:.35pt solid ${X5.faint};vertical-align:middle;`;
+  const rows = ch.units.map((u) => `<tr><td style="${td}width:14mm;color:${col};font-weight:700">${u.no}</td><td style="${td}">${esc(u.title)}</td><td style="${td}text-align:right;color:${X5.sub};width:28mm">${u.range}</td><td style="${td}text-align:right;width:20mm">${u.count}</td></tr>`).join('');
+  const types = ch.types.slice(0, 3).map(([t, c]) => `${esc(t)} <span style="color:${X5.sub}">${c}문항</span>`).join(`<span style="color:${X5.faint};padding:0 3mm">|</span>`);
   const tabHtml = tab // 도련 낱장용 엄지 색인(본문 쪽에서는 쪽 나누기가 같은 자리에 그린다)
     ? `<div class="abs" style="left:${mm(W - 6.5)};top:${mm(38 + 30 * (ch.k % 5))};width:${mm(6.5 + B)};height:26mm;background:${CH[ch.no]}"></div><div class="abs edge" style="left:${mm(W - 6.5)};top:${mm(38 + 30 * (ch.k % 5))};width:6.5mm;height:26mm;display:flex;align-items:center;justify-content:center;font-family:'KoPub Batang','KoPubWorld Batang';font-weight:700;font-size:10pt;color:#fff">${ch.no}</div>`
     : '';
-  return wrap(`${svgFull(maze(130, 30, 9, { glowId: `g${uid}`, gradId: `p${uid}`, from: col, to: '#ffffff' }), ng(1.6, `g${uid}`))}
+  return wrap(`${svgFull(maze(118, 28, 11, { glowId: `g${uid}`, gradId: `p${uid}`, from: col, to: '#ffffff' }), ng(1.8, `g${uid}`))}
     ${T(esc(name), { x: 16, y: 13, size: 8.6, color: X5.sub })}
     ${T(esc(ch.subject), { right: 22, y: 13, size: 8.6, weight: 700, color: '#fff' })}
-    ${T('대단원', { x: 22, y: 34, size: 10, weight: 700, color: col, ls: 0.2 })}
-    ${neon(layoutRoman(ch.no), { x: 22, y: 44, hMm: 40, glow: col, id: `n${uid}` })}
-    <div class="abs" style="left:22mm;top:104mm;width:160mm;font-family:${SANS};font-size:28pt;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-.02em">${esc(ch.title)}</div>
-    ${T(`${ch.units.length}개 중단원 · ${ch.total}문항`, { x: 22, y: 121, size: 11, color: X5.sub })}
-    <table class="abs" style="left:22mm;top:146mm;width:160mm;border-collapse:collapse;font-family:${SANS};font-size:11pt;color:#fff">
-      <tr style="font-size:8.6pt;color:${X5.sub}"><td colspan="2" style="padding-bottom:2mm;border-bottom:.8pt solid ${col}">중단원</td><td style="text-align:right;padding-bottom:2mm;border-bottom:.8pt solid ${col}">문항 번호</td><td style="text-align:right;padding-bottom:2mm;border-bottom:.8pt solid ${col}">문항 수</td></tr>
-      ${rows}
-      <tr style="font-weight:700"><td colspan="3" style="padding-top:3mm">단원 합계</td><td style="text-align:right;padding-top:3mm;color:${col}">${ch.total}</td></tr>
-    </table>${analysis(ch, col)}${tabHtml}`);
-}
-
-// 간지 아래 '단원 분석'(모든 간지에서 같은 자리): 최다 빈출 개념 · 난이도 구성 · 많이 나온 유형 — 값은 book-data.js가 문항에서 센다
-function analysis(ch, col) {
-  const y = 226;
-  const head = (t, x, w) => `<div class="abs" style="left:${mm(x)};top:${mm(y)};width:${mm(w)};font-family:${SANS};font-size:8.6pt;font-weight:700;color:${col};letter-spacing:.04em;padding-bottom:1.6mm;border-bottom:.3pt solid ${X5.faint}">${t}</div>`;
-  // 출제 빈도 표시: 개념서와 같은 칸 세 개(채운 칸 = 빈도)
-  const freq = (n) => [0, 1, 2].map((i) => `<i style="display:inline-block;width:1.8mm;height:1.8mm;margin-right:1.1mm;background:${i < n ? col : 'transparent'};outline:.35pt solid ${col}"></i>`).join('');
-  const hot = ch.hot.map((c) => `<div style="display:flex;align-items:center;gap:2.4mm;height:7mm;font-size:9.6pt">
-      <span style="width:6mm;color:${col};font-weight:700">${c.unit}</span>
-      <span style="flex:1;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.title)}</span>
-      <span style="flex:none;line-height:0">${freq(c.stars)}</span>
-      <span style="flex:none;width:12mm;text-align:right;color:${X5.sub};font-size:8.6pt">${c.n}문항</span></div>`).join('');
-  // 난이도 구성: 한 줄 막대(상 → 하로 갈수록 옅게)
-  const L = ['상', '중상', '중', '하'], op = [1, 0.7, 0.45, 0.25];
-  const sum = L.reduce((a, l) => a + ch.levels[l], 0) || 1;
-  const bar = L.map((l, i) => `<span style="display:inline-block;height:100%;width:${((ch.levels[l] / sum) * 100).toFixed(2)}%;background:${col};opacity:${op[i]}"></span>`).join('');
-  const legend = L.map((l, i) => `<span style="display:inline-flex;align-items:center;gap:1.2mm;margin-right:3.2mm"><i style="display:inline-block;width:2mm;height:2mm;background:${col};opacity:${op[i]}"></i>${l} <b style="color:#fff;font-weight:700">${ch.levels[l]}</b></span>`).join('');
-  const types = ch.types.slice(0, 3).map(([t, n]) => `<div style="display:flex;justify-content:space-between;height:6.6mm;align-items:center;font-size:9.6pt;color:#fff"><span>${esc(t)}</span><span style="color:${X5.sub};font-size:8.6pt">${n}문항</span></div>`).join('');
-  return `${head('최다 빈출 개념', 22, 92)}
-    <div class="abs" style="left:22mm;top:${mm(y + 7)};width:92mm;font-family:${SANS}">${hot}</div>
-    ${head('난이도 구성', 124, 58)}
-    <div class="abs" style="left:124mm;top:${mm(y + 9)};width:58mm;height:4.4mm;display:flex;font-size:0">${bar}</div>
-    <div class="abs" style="left:124mm;top:${mm(y + 15.6)};width:60mm;font-family:${SANS};font-size:8.4pt;color:${X5.sub};white-space:nowrap">${legend}</div>
-    ${head('많이 나온 유형', 124, 58).replace(`top:${mm(y)}`, `top:${mm(y + 24)}`)}
-    <div class="abs" style="left:124mm;top:${mm(y + 31)};width:58mm;font-family:${SANS}">${types}</div>`;
+    ${T('대단원', { x: 22, y: 32, size: 12, weight: 700, color: col, ls: 0.2 })}
+    ${neon(layoutRoman(ch.no), { x: 22, y: 44, hMm: 56, glow: col, id: `n${uid}` })}
+    <div class="abs" style="left:22mm;top:124mm;width:166mm;font-family:${SANS};color:#fff">
+      <div style="font-size:36pt;font-weight:700;line-height:1.15;letter-spacing:-.025em">${esc(ch.title)}</div>
+      <div style="font-size:14pt;color:${X5.sub};margin-top:2.6mm">${n}개 중단원 · ${ch.total}문항</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13pt;margin-top:12mm">
+        <tr style="font-size:10pt;color:${X5.sub}"><td colspan="2" style="padding-bottom:2.4mm;border-bottom:1pt solid ${col}">중단원</td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${col}">문항 번호</td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${col}">문항 수</td></tr>
+        ${rows}
+        <tr style="font-weight:700;font-size:14pt"><td colspan="3" style="padding-top:4mm">단원 합계</td><td style="text-align:right;padding-top:4mm;color:${col}">${ch.total}</td></tr>
+      </table>
+      <div style="margin-top:9mm;font-size:12pt;white-space:nowrap"><b style="color:${col};font-size:10.5pt;font-weight:700;letter-spacing:.04em;padding-right:4mm">많이 나온 유형</b>${types}</div>
+    </div>${tabHtml}`);
 }
 
 // 속표지(본문 첫 쪽): 네온 MINIMAX + 책 종류·과목 + 브랜드. v: mm-data의 권
