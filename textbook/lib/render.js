@@ -558,9 +558,12 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     });
     // 사진 출처
     const cr = creditsSection(full.chapters, `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진·자료 출처"`);
-    if (cr) add('credits', `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진·자료 출처"`, cr.replace(/^<section[^>]*>|<\/section>$/g, ''));
+    // MINIMAP 완성본은 예전 뒤표지 쪽을 뺀다(2026-11-07 강사: 따로 인쇄하는 뒷표지가 있음). 진도표 마지막 주의 쪽 범위는
+    // 끝 표시(id="back")를 '사진·자료 출처' 첫머리에 달아 Ⅴ단원 마지막 쪽까지로 계산한다.
+    const crHtml = cr ? cr.replace(/^<section[^>]*>|<\/section>$/g, '') : '';
+    if (cr) add('credits', `data-tab="출처" data-head-left="${esc(subject)}" data-head-right="사진·자료 출처"`, mm ? crHtml.replace('<div class="top">', '<div class="top" id="back">') : crHtml);
     // 뒤표지 (양면 인쇄에서 늘 왼쪽 쪽 = 마지막 쪽)
-    add('backcover', `data-even="1"`, `<div class="top" id="back"><div class="cover cover-back">
+    if (!mm) add('backcover', `data-even="1"`, `<div class="top" id="back"><div class="cover cover-back">
       <div class="cv-brand">승민T 통합사회</div>
       <div class="bk-title">${esc(subject)} 개념서</div>
       <ul class="bk-points">
