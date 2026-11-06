@@ -59,6 +59,11 @@ export default [
         { name: '2차 산업', values: [2, 9, 16], color: 1, marker: true, end: '2차 산업' },
         { name: '3차 산업', values: [6, 10, 14], color: 2, marker: true, end: '3차 산업' },
       ],
+      notes: [
+        { x: 0, y: 13.1, text: '12', size: 10 }, { x: 0, y: 3.1, text: '2', size: 10 }, { x: 0, y: 7.1, text: '6', size: 10 },
+        { x: 1, y: 12.1, text: '11', size: 10 }, { x: 1.09, y: 9.7, text: '10', size: 10, anchor: 'start' }, { x: 1, y: 7.3, text: '9', size: 10 },
+        { x: 2, y: 17.1, text: '16', size: 10 }, { x: 2, y: 12.4, text: '14', size: 10 }, { x: 2, y: 8.4, text: '10', size: 10 },
+      ],
       note: '2008년 ○○군에 대규모 산업 단지가 조성되었다.',
       source: '가상 자료',
     }],

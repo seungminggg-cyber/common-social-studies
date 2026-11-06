@@ -73,6 +73,10 @@ export default [
         { name: '도시 인구', values: [4, 10, 24, 36], color: 1, marker: true, end: '도시 인구' },
         { name: '촌락 인구', values: [16, 20, 18, 12], color: 3, marker: true, end: '촌락 인구' },
       ],
+      notes: [
+        { x: 0.12, y: 5.6, text: '4', size: 10 }, { x: 1, y: 7.4, text: '10', size: 10 }, { x: 2, y: 26.2, text: '24', size: 10 }, { x: 3, y: 38.2, text: '36', size: 10 },
+        { x: 0.12, y: 18, text: '16', size: 10 }, { x: 1, y: 22.2, text: '20', size: 10 }, { x: 2, y: 15.4, text: '18', size: 10 }, { x: 3, y: 9.4, text: '12', size: 10 },
+      ],
       source: '가상 자료',
     }],
     choices: [
