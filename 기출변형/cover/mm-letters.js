@@ -69,4 +69,45 @@ export function drawNeon(lay, { glow = '#29E3FF', core = '#ffffff', w = 7, blurI
   const path = (sw, c, extra = '') => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linejoin="miter" stroke-linecap="square" ${extra}/>`;
   return path(w * 2.4, glow, `opacity=".55" filter="url(#${blurId})"`) + path(w, glow) + path(w * 0.38, core);
 }
+// ── 한글 네온 글자(뒷표지 대표 문장) ──
+// MINIMAX 네온 로고와 같은 짜임: 곧은 가운데 선(ㅇ만 원)을 같은 굵기의 관으로 그린다. 한 글자 칸 100×100.
+const circ = (cx, cy, r, n = 40) => Array.from({ length: n + 1 }, (_, i) => [cx + r * Math.cos((2 * Math.PI * i) / n - Math.PI / 2), cy + r * Math.sin((2 * Math.PI * i) / n - Math.PI / 2)]);
+const CH_O = (cx, cy, r) => [circ(cx, cy, r)];
+const ㅅ = (ax, ay, x0, x1, y1) => [[[x0, y1], [ax, ay], [x1, y1]]];
+const HANGUL = {
+  최: [[[36, 2], [36, 14]], [[8, 16], [64, 16]], ...ㅅ(36, 16, 6, 66, 56), [[36, 68], [36, 86]], [[2, 86], [72, 86]], [[88, 0], [88, 100]]],
+  소: [...ㅅ(50, 4, 12, 88, 58), [[50, 66], [50, 86]], [[2, 86], [98, 86]]],
+  의: [...CH_O(38, 34, 25), [[2, 82], [74, 82]], [[88, 0], [88, 100]]],
+  시: [...ㅅ(36, 8, 4, 70, 94), [[88, 0], [88, 100]]],
+  간: [[[6, 6], [60, 6], [60, 50]], [[80, 0], [80, 62]], [[80, 30], [97, 30]], [[12, 68], [12, 96], [94, 96]]],
+  으: [...CH_O(50, 36, 27), [[2, 86], [98, 86]]],
+  로: [[[12, 4], [88, 4], [88, 29], [12, 29], [12, 54], [88, 54]], [[50, 62], [50, 86]], [[2, 86], [98, 86]]],
+  대: [[[56, 10], [6, 10], [6, 90], [58, 90]], [[70, 0], [70, 100]], [[70, 48], [90, 48]], [[90, 0], [90, 100]]],
+  점: [[[4, 6], [58, 6]], ...ㅅ(31, 6, 4, 58, 46), [[86, 0], [86, 58]], [[68, 26], [86, 26]], [[14, 66], [86, 66], [86, 96], [14, 96], [14, 66]]],
+  수: [...ㅅ(50, 4, 14, 86, 46), [[2, 58], [98, 58]], [[50, 58], [50, 96]]],
+  를: [[[14, 2], [86, 2], [86, 19], [14, 19], [14, 36], [86, 36]], [[2, 50], [98, 50]], [[14, 64], [86, 64], [86, 80], [14, 80], [14, 96], [86, 96]]],
+  ',': [[[14, 84], [14, 92], [7, 102]]],
+  '.': [[[10, 94], [10, 97]]],
+};
+const HW = { ',': 26, '.': 22, ' ': 34 };
+// 글자 늘어놓기 → drawNeon이 그대로 받는 모양 { glyphs: [{x, lines}], width }
+export function layoutHangul(text, track = 14) {
+  let x = 0;
+  const glyphs = [];
+  for (const ch of text) {
+    if (ch === ' ') { x += HW[' ']; continue; }
+    const lines = HANGUL[ch];
+    if (!lines) throw new Error('네온 한글 없음: ' + ch);
+    glyphs.push({ ch, x, lines, w: HW[ch] || 100 });
+    x += (HW[ch] || 100) + track;
+  }
+  return { glyphs, width: x - track, height: 100 };
+}
+
+// 네온 로고에서 실제로 보이는 관(빛 번짐 제외)의 왼쪽·오른쪽 끝(글자 단위). 글자 끝선 맞추기에 쓴다.
+export function neonExtent(lay, w = 7) {
+  let lo = Infinity, hi = -Infinity;
+  for (const g of lay.glyphs) for (const ln of g.lines) for (const [x] of ln) { lo = Math.min(lo, x + g.x); hi = Math.max(hi, x + g.x); }
+  return [lo - w / 2, hi + w / 2];
+}
 export const neonFilter = (id = 'nb', sd = 4) => `<filter id="${id}" filterUnits="userSpaceOnUse" x="-60" y="-60" width="2000" height="240"><feGaussianBlur stdDeviation="${sd}"/></filter>`;

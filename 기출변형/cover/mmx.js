@@ -10,7 +10,7 @@
 import { CUT, BLEED } from './tokens.js';
 import { MM, mmName, mmSeries } from './mm-data.js';
 import { esc } from './sheet.js';
-import { layout, drawFill, drawExtrude, drawNeon, neonFilter } from './mm-letters.js';
+import { layout, layoutHangul, drawFill, drawExtrude, drawNeon, neonFilter, neonExtent } from './mm-letters.js';
 
 const W = 210, H = 297, B = BLEED, M = 16, LW = W - 2 * M;
 const mm = (v) => `${+(+v).toFixed(2)}mm`;
@@ -232,24 +232,49 @@ function maze(gx, gy, c, { cols = 7, rows = 9, glowId = 'ng' } = {}) {
   return o;
 }
 const ng = (sd = 2.4) => `<filter id="ng" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
-// 강사가 고른 안(2026-11-07): 로고는 가로로, 뒷표지는 대표 문장 + 회색 한 줄만
+// 강사가 고른 안(2026-11-07) — 2차 수정(2026-11-07):
+//  · 로고 가로·더 굵게, 02/07·미니맥스 뺌, 책 종류·과목·수능 대비 줄은 MINIMAX의 X 오른쪽 끝에 맞춤
+//  · 뒷표지: 앞표지와 같은 미로(같은 크기·같은 자리), 대표 문장을 로고와 같은 네온 글씨로, 모두 가운데 정렬
+const X5MAZE = { c: 19, gx: (W - 6 * 19) / 2, gy: 30 }; // 앞·뒤 같은 미로
+const X5NEON = { w: 9, core: 0.38 }; // 로고 관 굵기(글자 단위)·흰 심 비율
+const tg = `<filter id="tg" filterUnits="userSpaceOnUse" x="-20" y="-20" width="260" height="340"><feGaussianBlur stdDeviation="1.3"/></filter>`;
+// 대표 문장 네온 글씨: 로고와 같은 짜임(빛 번짐 + 하늘색 관 + 흰 심). 글자 크기 size(mm), 가운데 (cx), 첫 줄 바닥선 y
+function neonText(lines, { cx, y, size, lh, weight = 500 }) {
+  const rim = 1.5; // 관 = 흰 심(글자 획) + 둘레 하늘색 0.75mm씩 → 로고의 심:관 비율과 비슷
+  const t = (extra) => lines.map((ln, i) => `<text x="${cx}" y="${f(y + i * lh)}" text-anchor="middle" font-family="KoPub Dotum" font-weight="${weight}" font-size="${size}" letter-spacing="${f(size * -0.01)}" ${extra}>${esc(ln)}</text>`).join('');
+  return t(`fill="${X5.cyan}" stroke="${X5.cyan}" stroke-width="${rim * 1.9}" stroke-linejoin="round" opacity=".55" filter="url(#tg)"`)
+    + t(`fill="#ffffff" stroke="${X5.cyan}" stroke-width="${rim}" stroke-linejoin="round" paint-order="stroke"`);
+}
 function x5Front(v) {
-  const c = 19, gx = (W - 6 * c) / 2, gy = 30; // 미로 7×9 점, 가운데 위
+  const { c, gx, gy } = X5MAZE;
   const lay = layout('MINIMAX', { s: 8, d: 9, wf: 1 }, 18);
-  const L = placeLogo(lay, drawNeon(lay, { w: 6 }), { x: M, y: 196, w: LW, pad: [10, 10, 10, 10], defs: neonFilter('nb', 4) });
+  const [lo, hi] = neonExtent(lay, X5NEON.w);
+  const scale = LW / (hi - lo); // 보이는 관의 왼쪽 끝 = M, 오른쪽 끝(X) = W − M
+  const pad = 30, vbx = lo - pad, vbw = hi - lo + 2 * pad, vby = -pad, vbh = 100 + 2 * pad, top = 199;
+  const logo = `<svg class="abs" style="left:${mm(M - pad * scale)};top:${mm(top - pad * scale)};overflow:visible" width="${mm(vbw * scale)}" height="${mm(vbh * scale)}" viewBox="${f(vbx)} ${vby} ${f(vbw)} ${vbh}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
+  const below = top + 100 * scale + X5NEON.w * scale / 2 + 9; // 로고 바닥 아래
   return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
   ${T(esc(MM.brand), { y: 13, size: 10, weight: 700, color: X5.fg, ls: 0.02 })}
-  ${noBox(v, { bg: X5.pink, fg: X5.bg, sub: X5.sub })}
-  ${L.html}
-  ${infoBlock(v, { y: 196 + L.h + 10, fg: X5.fg, sub: X5.sub })}
-  ${examLine({ sub: X5.sub })}`;
+  ${logo}
+  ${T(esc(v.kind), { right: M, y: below, size: 16, weight: 700, color: X5.fg, ls: -0.01, lh: 1.3 })}
+  ${T(esc(v.subject), { right: M, y: below + 9, size: 12, weight: 300, color: X5.sub })}
+  ${T(esc(MM.exam), { right: M, y: 279, size: 8.6, color: X5.sub })}`;
+}
+// 뒷표지 대표 문장: 로고와 같은 짜임의 네온 한글(layoutHangul + drawNeon, 같은 관 굵기 비율), 줄마다 가운데
+function neonLine(text, { cy, hMm }) {
+  const lay = layoutHangul(text);
+  const [lo, hi] = neonExtent(lay, X5NEON.w);
+  const scale = hMm / 100, pad = 30;
+  const wv = hi - lo, left = W / 2 - (wv * scale) / 2; // 보이는 관 기준 가운데
+  return `<svg class="abs" style="left:${mm(left - pad * scale)};top:${mm(cy - 50 * scale - pad * scale)};overflow:visible" width="${mm((wv + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(wv + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
 }
 function x5Back(v) {
-  return `${svgFull(`${rectBg(X5.bg)}${maze(M + 4, 40, 9.5)}`, ng(1.2))}
-  <div class="abs" style="left:${mm(M)};top:132mm;width:${mm(LW)}">
-    <div style="font-family:'KoPub Dotum';font-weight:700;font-size:36pt;line-height:1.24;letter-spacing:-.03em;color:${X5.cyan}">${MM.motto[1].lines.map(esc).join('<br>')}</div>
-    <div style="font-family:'KoPub Dotum';font-weight:500;font-size:11pt;color:${X5.sub};margin-top:7mm;letter-spacing:.01em">${esc(MM.backLine)}</div>
-  </div>`;
+  const { c, gx, gy } = X5MAZE;
+  const [l1, l2] = MM.motto[1].lines;
+  return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
+  ${neonLine(l1, { cy: 212, hMm: 13.5 })}
+  ${neonLine(l2, { cy: 234, hMm: 13.5 })}
+  ${T(esc(MM.backLine), { x: 0, w: W, align: 'center', y: 252, size: 11, weight: 500, color: X5.sub, ls: 0.01 })}`;
 }
 
 export const MMX = { X1: '안장점', X2: '게임 트리', X3: '입체 행렬', X4: 'M 모노그램', X5: '네온 길' };
