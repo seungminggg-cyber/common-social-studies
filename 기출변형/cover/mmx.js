@@ -233,7 +233,8 @@ function maze(gx, gy, c, { cols = 7, rows = 9, glowId = 'ng' } = {}) {
 }
 const ng = (sd = 2.4) => `<filter id="ng" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${sd}"/></filter>`;
 // 강사가 고른 안(2026-11-07) — 2차 수정(2026-11-07):
-//  · 로고 가로·더 굵게, 02/07·미니맥스 뺌, 책 종류·과목·수능 대비 줄은 MINIMAX의 X 오른쪽 끝에 맞춤
+//  · 로고 가로·더 굵게, 02/07·미니맥스 뺌, 수능 대비 줄은 MINIMAX의 X 오른쪽 끝에 맞춤
+//  · 3차 수정: 책 종류·과목 줄은 가운데 정렬·크게(22pt·15pt), 뒷표지 회색 줄 15pt
 //  · 뒷표지: 앞표지와 같은 미로(같은 크기·같은 자리), 대표 문장을 로고와 같은 네온 글씨로, 모두 가운데 정렬
 const X5MAZE = { c: 19, gx: (W - 6 * 19) / 2, gy: 30 }; // 앞·뒤 같은 미로
 const X5NEON = { w: 9, core: 0.38 }; // 로고 관 굵기(글자 단위)·흰 심 비율
@@ -256,8 +257,8 @@ function x5Front(v) {
   return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
   ${T(esc(MM.brand), { y: 13, size: 10, weight: 700, color: X5.fg, ls: 0.02 })}
   ${logo}
-  ${T(esc(v.kind), { right: M, y: below, size: 16, weight: 700, color: X5.fg, ls: -0.01, lh: 1.3 })}
-  ${T(esc(v.subject), { right: M, y: below + 9, size: 12, weight: 300, color: X5.sub })}
+  ${T(esc(v.kind), { x: 0, w: W, align: 'center', y: below + 1, size: 22, weight: 700, color: X5.fg, ls: -0.01, lh: 1.3 })}
+  ${T(esc(v.subject), { x: 0, w: W, align: 'center', y: below + 13.5, size: 15, weight: 300, color: X5.sub })}
   ${T(esc(MM.exam), { right: M, y: 279, size: 8.6, color: X5.sub })}`;
 }
 // 뒷표지 대표 문장: 로고와 같은 짜임의 네온 한글(layoutHangul + drawNeon, 같은 관 굵기 비율), 줄마다 가운데
@@ -274,7 +275,7 @@ function x5Back(v) {
   return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
   ${neonLine(l1, { cy: 212, hMm: 13.5 })}
   ${neonLine(l2, { cy: 234, hMm: 13.5 })}
-  ${T(esc(MM.backLine), { x: 0, w: W, align: 'center', y: 252, size: 11, weight: 500, color: X5.sub, ls: 0.01 })}`;
+  ${T(esc(MM.backLine), { x: 0, w: W, align: 'center', y: 252, size: 15, weight: 500, color: X5.sub, ls: 0.01 })}`;
 }
 
 export const MMX = { X1: '안장점', X2: '게임 트리', X3: '입체 행렬', X4: 'M 모노그램', X5: '네온 길' };
