@@ -109,7 +109,7 @@ export function block(b) {
       const foot = b.source || b.note
         ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${inl(b.note)}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : '';
       return `<div class="figrow-wrap">${b.title ? `<div class="tbl-title">${inl(b.title)}</div>` : ''}<div class="figrow"${
-        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:repeat(${b.items.length},1fr)">${b.items.map((x) => figure(x, inl)).join('')}</div>${foot}</div>`;
+        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:repeat(${b.cols || b.items.length},1fr)">${b.items.map((x) => figure(x, inl)).join('')}</div>${foot}</div>`;
     }
     case 'hub':
       return `<div class="hub"><div class="hub-center"><span>${inl(b.center)}</span></div>${b.spokes

@@ -54,6 +54,12 @@
 - 문제 자료 표는 칸마다 가운데 정렬, 테두리 전부(wb.css 끝, hwpx_wb.py data_box).
 
 
+## 2차 검수에서 정한 것 (2026-11-06, `참고/검수결과2.md`)
+- 교사용: 해설은 문항 아래 별도 줄(`row-qx`, data-keep=card) — 한 단에 안 들어가면 해설만 다음 단으로, 'NN번 정답 ④'로 시작.
+- 문제집에서만 그림 글씨 키움(`build.mjs` bigMapText): 지도 범례·화살표 이름표 약 6pt, 기후 그래프 줄은 두 개씩(cols 2)·폭 240.
+- 발문 속 '<보기>'는 줄 끝에서 갈라지지 않게 묶음(wb-render keepBogi). 모의고사 해설 머리 줄은 배점·단원만(유형 뺌).
+- 보충 설명에는 내부 이름(u09, tb 등)을 쓰지 않고 '개념서 09 단원', '개념서 개념 05'처럼 쓴다.
+
 ## MINIMAX 완성본 (2026-11-07, 시리즈 이름 '정조준' → 'MINIMAX')
 - 표지·간지 디자인은 `cover/`(진행 기록 `참고/디자인진행.md`). 강사가 고른 표지 = `cover/mmx.js`의 X5 '네온 길'.
 - 만들기(02 기본편): `node build.mjs 1 units mm` → `node cover/build-cover.mjs mmfinal` → `python3 cover/assemble.py 02` → `out/MINIMAX-02-완성본/`.

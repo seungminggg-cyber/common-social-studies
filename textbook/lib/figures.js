@@ -80,7 +80,7 @@ function bar(b) {
     s += `<line x1="${L}" y1="${r1(sy(v))}" x2="${W - R}" y2="${r1(sy(v))}" class="grid"/>`;
     s += text(L - 6, sy(v) + 4, fmt(v), { size: 11, anchor: 'end', cls: 'tick' });
   }
-  if (y.label) s += text(L - 6, T - 10, y.label, { size: 11, anchor: 'end', cls: 'axl' });
+  if (y.label) s += tw(y.label, 11) > L - 8 ? text(2, T - 10, y.label, { size: 11, cls: 'axl' }) : text(L - 6, T - 10, y.label, { size: 11, anchor: 'end', cls: 'axl' }); // 단위가 길면 왼쪽 끝에서 시작(잘림 방지)
   series.forEach((ser, j) => {
     ser.values.forEach((v, i) => {
       const x = L + band * i + (band - gw) / 2 + bw * j;
@@ -141,6 +141,7 @@ function stack100(b) {
       const x0 = L + (acc / total) * pw;
       s += `<rect x="${r1(x0)}" y="${r1(yy + 3)}" width="${r1(w)}" height="${rowH - 6}" class="fl s${j + 1}"/>`;
       if (w > 26) s += text(x0 + w / 2, yy + rowH / 2 + 4, `${fmt(v)}`, { size: 11, anchor: 'middle', cls: `in s${j + 1}` });
+      else if (w > 13 && v) s += text(x0 + w / 2, yy + rowH / 2 + 3.5, `${fmt(v)}`, { size: 9, anchor: 'middle', cls: `in s${j + 1}` }); // 좁은 칸도 숫자를 작게라도
       acc += v;
     });
   });
@@ -196,7 +197,7 @@ function line(b) {
   // 축
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw + (schem ? 10 : 0)}" y2="${T + ph}" class="axis"${schem ? ' marker-end="url(#ah)"' : ''}/>`;
   s += `<line x1="${L}" y1="${T + ph}" x2="${L}" y2="${T - (schem ? 10 : 0)}" class="axis"${schem ? ' marker-end="url(#ah)"' : ''}/>`;
-  if (y.label) s += schem ? text(L + 6, T - 2, y.label, { size: 11.5, cls: 'axl' }) : text(L - 6, T - 12, y.label, { size: 11, anchor: 'end', cls: 'axl' });
+  if (y.label) s += schem ? text(L + 6, T - 2, y.label, { size: 11.5, cls: 'axl' }) : (tw(y.label, 11) > L - 8 ? text(2, T - 12, y.label, { size: 11, cls: 'axl' }) : text(L - 6, T - 12, y.label, { size: 11, anchor: 'end', cls: 'axl' }));
   if (xx.label) s += text(L + pw + (schem ? 8 : 0), T + ph + 30, xx.label, { size: 11.5, anchor: 'end', cls: 'axl' });
   // x 눈금
   if (cats) cats.forEach((c, i) => (s += text(sx(i), T + ph + 17, c, { size: 11, anchor: 'middle', cls: 'tick' })));

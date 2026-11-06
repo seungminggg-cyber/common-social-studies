@@ -70,6 +70,27 @@ async function loadMocks() {
   return out;
 }
 
+// 지도 범례·화살표 이름표 글씨를 문제집에서만 키운다(한 단 너비에 줄어들면 4pt 안팎이라 인쇄하면 안 읽힘).
+// 지도 폭(w, 기본 600)에 맞춰 약 6~7pt가 되도록. 문항에 legendSize·size를 적으면 그 값을 쓴다.
+function bigMapText(root) {
+  const walk = (x) => {
+    if (Array.isArray(x)) return x.forEach(walk);
+    if (!x || typeof x !== 'object') return;
+    // 기후 그래프를 나란히 둔 줄: 한 줄에 셋이면 글씨가 3pt 안팎 → 두 개씩 놓고(cols 2), 그래프 폭을 줄여 글씨를 키운다
+    if (x.t === 'figrow' && x.items.every((i) => i.kind === 'climate' || i.kind === 'climdev')) {
+      if (x.items.length >= 3 && !x.cols) x.cols = 2;
+      for (const i of x.items) if (i.compact && !i.w) i.w = 240;
+    }
+    if (x.t === 'map') {
+      const s = Math.max(11, Math.round((x.w || 600) * 0.036 * 10) / 10);
+      if (x.legend && !x.legendSize) x.legendSize = s;
+      for (const a of x.arrows || []) if (a.label && !a.size) a.size = s;
+    }
+    Object.values(x).forEach(walk);
+  };
+  walk(root);
+}
+
 // 그림 블록마다 번호 → PDF와 한글 파일이 같은 그림을 가리키게
 function numberFigures(root) {
   let n = 0;
@@ -240,6 +261,8 @@ if (args.includes('order')) {
 }
 const sets = what === 'mock' ? [] : await loadUnits();
 const mocks = what === 'units' || only.length || sub ? [] : await loadMocks();
+bigMapText(sets.map((s) => s.qs));
+bigMapText(mocks);
 numberFigures(sets.map((s) => s.qs));
 numberFigures(mocks);
 ensureTerrain([...sets.flatMap((s) => s.qs), ...mocks.flatMap((m) => m.questions)]);
