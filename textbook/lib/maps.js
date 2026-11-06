@@ -291,6 +291,12 @@ export function drawMap(b, h) {
   for (const [n, lo, la, sz = 12, rot = 0] of seas) {
     if (world && seas === OCEANS) { // 가운데 경도에서 너무 먼 대양 이름은 빼기
       const dl = ((lo - (b.center || 0) + 540) % 360) - 180; if (Math.abs(dl) > 165) continue;
+      // 태평양 중심 지도: 같은 이름 두 개가 모두 가운데 가까우면(나란히 찍힘) 더 가까운 하나만
+      const twin = OCEANS.find((o) => o[0] === n && o[1] !== lo);
+      if (twin && Math.abs(dl) < 90) {
+        const dt = ((twin[1] - (b.center || 0) + 540) % 360) - 180;
+        if (Math.abs(dt) < 90 && Math.abs(dt) < Math.abs(dl)) continue;
+      }
     }
     const [x, y] = proj([lo, la]); s += lab(x, y + sz * 0.35, n, { size: sz, cls: 'sea', rot });
   }
