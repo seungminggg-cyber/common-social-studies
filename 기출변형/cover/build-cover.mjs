@@ -10,6 +10,7 @@ import { front } from './front.js';
 import { vol, spineMm, PAGES } from './series.js';
 import { front2, back2, spread2, divider2, subject2, DESIGNS, DIVIDER_CSS } from './v2.js';
 import { chapters } from './book-data.js';
+import { V3, face3 } from './v3.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -95,6 +96,15 @@ if (args.includes('v2')) {
     await emit(`${tag}-펼침면-02`, doc([spread2(v, d, S, font)], { w: 420 + S }).replace('<body>', `<body data-spine="${S}">`), { scale: 1 });
     await emit(`${tag}-대단원간지`, doc(chs.map((ch) => divider2(ch, v, d, font)), { css: DIVIDER_CSS }), { scale: 1 });
     await emit(`${tag}-과목간지`, doc([subject2('통합사회1', chs.slice(0, 5), v, d, font), subject2('통합사회2', chs.slice(5), v, d, font)]), { scale: 1 });
+  }
+}
+// 3차 시안: 시중 교재 표지를 참고한 후보 5개 — 앞표지·뒷표지
+//   node cover/build-cover.mjs v3 [1 2 3 4 5]
+if (args.includes('v3')) {
+  const ns = args.filter((a) => V3[a]);
+  for (const n of ns.length ? ns : Object.keys(V3)) {
+    await emit(`3차-${n}-${V3[n].name}-앞표지`, doc([face3(n, 'front', vol('02'))]));
+    await emit(`3차-${n}-${V3[n].name}-뒷표지`, doc([face3(n, 'back', vol('02'))]));
   }
 }
 await browser.close();
