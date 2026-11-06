@@ -78,7 +78,7 @@ async function emit(name, html, data) {
   writeFileSync(htmlPath, html.replace('__LAYOUT__', JSON.stringify(LAYOUT)).replace('__PAGINATE__', () => paginateJs));
   if (data) writeFileSync(join(OUT, `${name}.json`), JSON.stringify(data));
   const page = await ctx.newPage();
-  page.on('pageerror', (e) => { console.error(`[${name}] 페이지 오류:`, e.message); failed = true; });
+  page.on('pageerror', (e) => { console.error(`[${name}] 페이지 오류:`, e.message); process.exit(1); });
   await page.goto(pathToFileURL(htmlPath).href);
   await page.waitForFunction(() => window.PAGINATED === true, null, { timeout: 600000 });
   const { pages, warn } = await page.evaluate(() => ({ pages: window.PAGES, warn: window.WARN }));

@@ -82,6 +82,13 @@ function intro(TYPES, ITEMS, OVERVIEW, teacher) {
   R(`<div class="tbl-wrap sp-map"><table class="tbl compact"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${body
     .map((r) => `<tr>${r.map((c, i) => `<td class="${i === 3 ? 'l' : ''}">${inl(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>
     <div class="fig-foot"><span class="fig-note">${inl(`유형: ${TYPES.map((t) => `${t.no} ${t.title.split(' — ')[0]}`).join(' · ')}`)}</span></div></div>`);
+  R(block({ t: 'sec', mark: '4', title: '특강 운영 예시 (3시간)' }), true);
+  R(block({ t: 'kv', rows: [
+    ['0:00~0:35', '예시문항 원문(평가원 공개 PDF) 30분 실전 풀이 + 채점. 틀린 번호를 위 표에 동그라미 친다.'],
+    ['0:35~1:50', '유형 01~04 분석: 출제 의도 → 풀이 순서 → 예시문항 분석 카드 → 함정 선지. 유형마다 연습 문항 2~3개를 바로 푼다.'],
+    ['1:50~2:20', '유형 05~07 분석과 연습 문항(계산은 손으로 직접).'],
+    ['2:20~3:00', '쌍둥이 세트는 숙제(30분 재고 풀기) 또는 남은 시간에 절반. 다음 시간에 정답과 해설(별책)로 오답 정리.'],
+  ] }));
   return `<section class="flow" data-kind="intro" data-tab="안내" data-head-left="${esc(HEAD)}" data-head-right="수업 안내 · 예시문항 한눈에"><div class="top" id="sp-intro">
     <div class="sp-open"><div class="sp-open-no">00</div><div class="sp-open-t"><span>2028학년도 대학수학능력시험 · 사회탐구 영역(통합사회)</span><h1>예시문항 25문항 한눈에</h1>
     <p>${inl('예시문항은 2028 수능의 **설계도**다. 단원·배점·형식·자료의 모양을 먼저 익혀 두면 실제 시험에서 낯선 문항이 줄어든다.')}</p></div></div></div>${rows.join('\n')}</section>`;
@@ -96,7 +103,7 @@ function itemCard(no, it, teacher) {
         .map(([ox, why], i) => `<tr class="${ox === 'O' ? 'o' : 'x'}"><th>${label(i)}</th><td class="ox">${ox}</td><td>${inl(why)}</td></tr>`).join('')}</tbody></table></div>`
     : '';
   return `<div class="row row-item sp-card-row" data-keep="card" id="ex-${no}"><div class="main"><div class="sp-card">
-    <div class="sp-card-h"><span class="sp-ex"><small>예시</small>${two(no)}</span><div class="sp-card-t"><b>${inl(it.topic)}</b><span>${esc(it.pts)}점 · ${esc(it.form)} · 개념서 ${esc(conceptRef(it.units))}</span></div>${teacher ? `<span class="sp-ans">정답 ${CIRCLED[it.ans - 1]}</span>` : '<span class="sp-ans blank">내 답 <i></i></span>'}</div>
+    <div class="sp-card-h"><span class="sp-ex"><small>예시</small>${two(no)}</span><div class="sp-card-t"><b>${inl(it.topic)}</b><span>${esc(it.pts)}점 · ${esc(it.form)} · 개념서 ${esc(conceptRef(it.units))}</span></div>${teacher ? `<span class="sp-ans">정답 ${CIRCLED[it.ans - 1]}</span>` : '<span class="sp-ans mine">내 답 <i></i></span>'}</div>
     <div class="sp-grid">
       <div class="sp-k">핵심 자료</div><div class="sp-v">${inl(it.data)}</div>
       <div class="sp-k">묻는 것</div><div class="sp-v">${inl(it.ask)}</div>
@@ -157,9 +164,9 @@ export function renderLecture({ TYPES, ITEMS, OVERVIEW, set }, { mode, edition }
   const nPractice = TYPES.reduce((a, t) => a + t.qs.length, 0);
   const sections = [cover({
     title: TITLE,
-    sub: `2028학년도 수능 통합사회 예시문항 25문항 · 7가지 유형 전략 · 연습 ${nPractice}문항 · 쌍둥이 세트 ${set.questions.length}문항`,
+    sub: '출제 의도 → 풀이 순서 → 함정 선지 → 같은 유형 연습',
     edition: teacher ? '교사용 · 판서 노트와 해설 포함' : '학생용',
-    parts: TYPES.map((t) => `유형 ${t.no} ${t.title.split(' — ')[0]}`),
+    parts: ['2028학년도 수능 예시문항 25문항', `유형별 전략 7 · 연습 ${nPractice} · 쌍둥이 세트 ${set.questions.length}`],
   })];
   sections.push(toc(TYPES, set.questions.length));
   sections.push(intro(TYPES, ITEMS, OVERVIEW, teacher));

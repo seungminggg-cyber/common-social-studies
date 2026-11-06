@@ -54,8 +54,8 @@
 .sp-card-t b { display: block; font-family: var(--serif-h); font-size: 11pt; color: var(--ink); line-height: 1.35; }
 .sp-card-t span { display: block; font-size: 7.6pt; color: var(--gray); margin-top: .6mm; }
 .sp-ans { flex: none; font-weight: 700; font-size: 9pt; color: var(--red); border: .8pt solid var(--red); padding: .8mm 2mm; }
-.sp-ans.blank { color: var(--gray); border-color: var(--rule); font-weight: 400; }
-.sp-ans.blank i { display: inline-block; width: 8mm; border-bottom: .6pt solid var(--gray); margin-left: 1mm; }
+.sp-ans.mine { color: var(--gray); border-color: var(--rule); font-weight: 400; }
+.sp-ans.mine i { display: inline-block; width: 8mm; border-bottom: .6pt solid var(--gray); margin-left: 1mm; }
 .sp-grid { display: grid; grid-template-columns: 19mm 1fr; column-gap: 3mm; row-gap: 1.6mm; font-size: 8.7pt; line-height: 1.68; }
 .sp-k { font-weight: 700; font-size: 7.8pt; color: var(--c1-dark); padding-top: .4mm; letter-spacing: .02em; }
 .sp-k.em { color: var(--ink); }
