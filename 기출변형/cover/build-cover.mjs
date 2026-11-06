@@ -12,6 +12,7 @@ import { front2, back2, spread2, divider2, subject2, DESIGNS, DIVIDER_CSS } from
 import { chapters } from './book-data.js';
 import { V3, face3 } from './v3.js';
 import { V4, face4 } from './v4.js';
+import { V5, face5 } from './v5.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -115,6 +116,15 @@ if (args.includes('v4')) {
   for (const k of ks.length ? ks : Object.keys(V4)) {
     await emit(`4차-${k}-${V4[k].name}-앞표지`, doc([face4(k, 'front', vol('02'))]));
     await emit(`4차-${k}-${V4[k].name}-뒷표지`, doc([face4(k, 'back', vol('02'))]));
+  }
+}
+// 5차 시안: A 본문형 + 직접 그린 제목 레터링 3가지(L1 블록 · L2 조준선 · L3 기울임) — 앞표지·뒷표지
+//   node cover/build-cover.mjs v5 [L1 L2 L3]
+if (args.includes('v5')) {
+  const ks = args.filter((a) => V5[a]);
+  for (const k of ks.length ? ks : Object.keys(V5)) {
+    await emit(`5차-${k}-${V5[k]}-앞표지`, doc([face5(k, 'front', vol('02'))]));
+    await emit(`5차-${k}-${V5[k]}-뒷표지`, doc([face5(k, 'back', vol('02'))]));
   }
 }
 await browser.close();

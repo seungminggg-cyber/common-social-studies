@@ -129,3 +129,6 @@ export function face4(k, side, v, font) {
   const d = V4[k];
   return `<section class="sheet" style="background:${NAVY}"><div class="t" style="overflow:visible">${d[side](v, TITLE_FONTS[font || d.font])}</div></section>`;
 }
+
+// 5차 시안(v5.js)이 다시 쓰는 조각
+export { NAVY, SUB, HOT, LIT, UNIT, rings, tabs, word, bullet, numBox, footRule, fade, FADE };
