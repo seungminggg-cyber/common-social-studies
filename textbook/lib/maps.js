@@ -71,7 +71,10 @@ export function makeProjection(b) {
     proj = geoMercator().fitExtent([[2, 2], [W - 2, H - 2]], box);
     proj.clipExtent([[-12, -12], [W + 12, H + 12]]);
     const a = proj.invert([0, 0]), c = proj.invert([W, H]);
-    vb = [a[0], c[1], c[0], a[1]];
+    // 그림 가장자리가 날짜 변경선(180°)을 넘으면 경도가 반대편 값으로 돌아오므로 이어 붙인다
+    // (그대로 두면 범위 폭이 음수가 되어 축척 막대가 깨지고 경위도 숫자가 1°마다 겹쳐 찍힘)
+    const west = a[0] > w ? a[0] - 360 : a[0], east = c[0] < e ? c[0] + 360 : c[0];
+    vb = [west, c[1], east, a[1]];
   }
   return { proj, W, H, world, vb };
 }
