@@ -19,6 +19,7 @@ import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini } from './mmx.js';
 import { MMAPS, mmapFace, m1Back } from './mmap.js';
+import { MAXIS, maxiFront, maxiBack } from './maxi.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
@@ -213,6 +214,14 @@ if (args.includes('mmapfinal')) {
     const sheet = (inner) => `<section class="sheet" style="background:${C1[v.n].bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
     const divs = [sheet(mmapTitlePage(v)), ...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
     await emit(`MINIMAP-${v.subject}-속표지간지-도련`, doc(divs, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+  }
+}
+// MAXIMIN 실전 모의고사 앞·뒷표지 시안: node cover/build-cover.mjs maxi [G1 …] → out/cover/MAXI-<후보>-<이름>-앞표지·뒷표지
+if (args.includes('maxi')) {
+  const ks = args.filter((a) => MAXIS[a]);
+  for (const k of ks.length ? ks : Object.keys(MAXIS)) {
+    await emit(`MAXI-${k}-${MAXIS[k][0]}-앞표지`, doc([maxiFront(k)]), { scale: 1 });
+    await emit(`MAXI-${k}-${MAXIS[k][0]}-뒷표지`, doc([maxiBack(k)]), { scale: 1 });
   }
 }
 // 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback

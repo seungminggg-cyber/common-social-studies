@@ -54,3 +54,14 @@ export const MMAP = {
     { id: 't2', n: 2, subject: '통합사회2', kind: '통합사회2 개념서' },
   ],
 };
+
+// ── MAXIMIN 실전 모의고사 10회 (강사 2026-11-07) ──
+// 최저점(MIN)을 만점(MAX)으로. 시리즈 공통: 어두운 바탕 + 직접 그린 네온 로고. 색은 실전 느낌의 진한 빨강·금색.
+export const MAXI = {
+  title: 'MAXIMIN',
+  brand: '승민T 통합사회',
+  kind: '통합사회 실전 모의고사 10회',
+  subject: '통합사회1 + 통합사회2',
+  exam: '2028 수능 대비 · 2022 개정 교육과정',
+  meaning: '최저점(MIN)을 만점(MAX)으로',
+};
