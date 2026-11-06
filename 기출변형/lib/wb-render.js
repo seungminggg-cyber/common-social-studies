@@ -24,7 +24,7 @@ function conceptLabel(q, unit) {
 }
 
 // 문항 하나 (opts.mock: 모의고사 — 난이도·개념 대신 배점)
-export function questionHtml(q, n, { unit, mock } = {}) {
+export function questionHtml(q, n, { unit, mock, teacher } = {}) {
   const short = q.choices.every((c) => String(c).length <= 9);
   const data = (q.data || []).map((d) => block(d)).join('');
   const bogi = q.bogi
@@ -37,13 +37,16 @@ export function questionHtml(q, n, { unit, mock } = {}) {
   const head = mock
     ? `<div class="q-head"><span class="q-no">${n}</span></div>`
     : `<div class="q-head"><span class="q-no">${two(n)}</span><span class="q-lv lv-${esc(q.level)}">${esc(q.level)}</span><span class="q-meta">${conceptLabel(q, unit)}${q.type ? `<span class="q-type">${esc(q.type)}</span>` : ''}</span></div>`;
-  return `<div class="row row-q" data-qid="${esc(q.id)}"><div class="main"><div class="q${mock ? ' q-mock' : ''}">
+  const explain = `<div class="q-explain"><b>${teacher ? `${mock ? n : two(n)}번 ` : ''}정답 ${CIRCLED[q.answer - 1]}</b> ${inl(q.explain)}${q.note ? `<span class="aq-note"><b>보충 설명</b> ${inl(q.note)}</span>` : ''}</div>`;
+  // 교사용: 해설을 문항 아래 따로 된 줄로 둔다(data-keep="card"). 한 단에 함께 들어가면 붙여 두고,
+  // 문항+해설이 한 단보다 길면 해설만 다음 단으로 넘어간다(예전에는 한 덩어리라 단 아래로 넘쳤음).
+  return `<div class="row row-q" data-qid="${esc(q.id)}"${teacher ? ' data-keep="card"' : ''}><div class="main"><div class="q${mock ? ' q-mock' : ''}">
     ${head}
     <div class="q-stem">${inl(q.stem)}${pts}</div>
     ${data ? `<div class="q-data">${data}</div>` : ''}
     ${bogi}${choices}
-    <div class="q-explain"><b>정답 ${CIRCLED[q.answer - 1]}</b> ${inl(q.explain)}${q.note ? `<span class="aq-note"><b>보충 설명</b> ${inl(q.note)}</span>` : ''}</div>
-  </div></div></div>`;
+    ${teacher ? '' : explain}
+  </div></div></div>${teacher ? `<div class="row row-qx"><div class="main"><div class="q q-x">${explain}</div></div></div>` : ''}`;
 }
 
 const lvCount = (qs) => LEVELS.map((l) => `${l} ${qs.filter((q) => q.level === l).length}`).join(' · ');
@@ -101,7 +104,7 @@ export function renderUnits(sets, { title, edition, mode }) {
     units.forEach(({ unit, qs }, k) => {
       const attrs = `data-tab="${esc(book.chapter.no)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${unit.no} ${unit.title}`)}"`;
       const top = `<div class="top">${k === 0 ? chapterHead(book, units) : ''}${unitBand(unit, qs)}</div>`;
-      sections.push(`<section class="flow" data-kind="exam" data-unit="${esc(unit.key)}"${k === 0 ? ' data-nosoft="1"' : ''} ${attrs}>${top}${qs.map((q, i) => questionHtml(q, i + 1, { unit })).join('\n')}</section>`);
+      sections.push(`<section class="flow" data-kind="exam" data-unit="${esc(unit.key)}"${k === 0 ? ' data-nosoft="1"' : ''} ${attrs}>${top}${qs.map((q, i) => questionHtml(q, i + 1, { unit, teacher: mode === 'teacher' })).join('\n')}</section>`);
     });
   }
   return page(sections, { title, mode });
@@ -117,7 +120,7 @@ export function renderMocks(mocks, { title, edition, mode }) {
       <div class="wb-mock-l"><span>2022 개정 · 통합사회</span><b>실전 모의고사 ${m.no}회</b></div>
       <div class="wb-mock-r"><span>${esc(m.range)}</span><span>25문항 · 50점 · 권장 시간 30분</span><span>표시 없는 문항은 2점</span></div>
     </div></div>`;
-    sections.push(`<section class="flow" data-kind="mock" ${attrs}>${head}${m.questions.map((q, i) => questionHtml(q, i + 1, { mock: true })).join('\n')}</section>`);
+    sections.push(`<section class="flow" data-kind="mock" ${attrs}>${head}${m.questions.map((q, i) => questionHtml(q, i + 1, { mock: true, teacher: mode === 'teacher' })).join('\n')}</section>`);
   }
   return page(sections, { title, mode });
 }
