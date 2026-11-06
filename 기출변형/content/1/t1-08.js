@@ -222,8 +222,8 @@ export default [
       arrows: [
         { from: [35, 32], to: [12, 45], bend: -0.1, cls: 'k4' },
         { from: [10, 48], to: [-60, 5], bend: 0.18, cls: 'k4', label: '(다)' },
-        { from: [40, 22], to: [-2, 30], bend: -0.12, cls: 'k3', label: '(가)' },
-        { from: [45, 18], to: [108, -4], bend: 0.12, cls: 'k3' },
+        { from: [40, 22], to: [-2, 30], bend: -0.12, cls: 'k3' },
+        { from: [45, 18], to: [108, -4], bend: 0.12, cls: 'k3', label: '(가)' },
         { from: [85, 25], to: [102, 15], bend: 0.2, cls: 'k1' },
         { from: [85, 27], to: [114, 36], bend: -0.25, cls: 'k1', label: '(나)' },
         { from: [114, 36], to: [131, 35], bend: -0.2, cls: 'k1' },

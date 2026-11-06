@@ -9,6 +9,8 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const CIRCLED = ['①', '②', '③', '④', '⑤'];
 const GANADA = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ'];
 const two = (n) => String(n).padStart(2, '0');
+// 발문 속 '<보기>'가 줄 끝에서 '<'만 남고 갈라지지 않게 한 덩어리로 묶는다
+const keepBogi = (h) => h.replace(/(〈보기〉|&lt;보기&gt;|<보기>)/g, '<span style="white-space:nowrap">$1</span>');
 export const LEVELS = ['상', '중상', '중', '하'];
 
 // 문제 머리의 관련 개념: [2] → "개념 02 이름", [2, 5] → "개념 02·05"
@@ -42,7 +44,7 @@ export function questionHtml(q, n, { unit, mock, teacher } = {}) {
   // 문항+해설이 한 단보다 길면 해설만 다음 단으로 넘어간다(예전에는 한 덩어리라 단 아래로 넘쳤음).
   return `<div class="row row-q" data-qid="${esc(q.id)}"${teacher ? ' data-keep="card"' : ''}><div class="main"><div class="q${mock ? ' q-mock' : ''}">
     ${head}
-    <div class="q-stem">${inl(q.stem)}${pts}</div>
+    <div class="q-stem">${keepBogi(inl(q.stem))}${pts}</div>
     ${data ? `<div class="q-data">${data}</div>` : ''}
     ${bogi}${choices}
     ${teacher ? '' : explain}
