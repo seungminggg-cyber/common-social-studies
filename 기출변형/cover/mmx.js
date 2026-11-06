@@ -272,6 +272,7 @@ function neonLine(text, { cy, hMm }) {
   const wv = hi - lo, left = W / 2 - (wv * scale) / 2; // 보이는 관 기준 가운데
   return `<svg class="abs" style="left:${mm(left - pad * scale)};top:${mm(cy - 50 * scale - pad * scale)};overflow:visible" width="${mm((wv + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(wv + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
 }
+// 옛 뒷표지(대표 문장 + 회색 한 줄) — 강사가 2026-11-07 A안(x5BackMini 네온 글자)으로 바꿈
 function x5Back(v) {
   const { c, gx, gy } = X5MAZE;
   const [l1, l2] = MM.motto[1].lines;
@@ -305,7 +306,7 @@ export function x5BackMini(v, { plain = false, c = 9.5, logoW = 64, gap = 16, cy
 }
 
 export const MMX = { X1: '안장점', X2: '게임 트리', X3: '입체 행렬', X4: 'M 모노그램', X5: '네온 길' };
-const FN = { X1: [x1Front, x1Back, X1.bg], X2: [x2Front, x2Back, X2.bg], X3: [x3Front, x3Back, X3.bg], X4: [x4Front, x4Back, X4.bg], X5: [x5Front, x5Back, X5.bg] };
+const FN = { X1: [x1Front, x1Back, X1.bg], X2: [x2Front, x2Back, X2.bg], X3: [x3Front, x3Back, X3.bg], X4: [x4Front, x4Back, X4.bg], X5: [x5Front, (v) => x5BackMini(v), X5.bg] };
 export function mmxFace(k, side, v) {
   const [fr, bk, bg] = FN[k];
   return `<section class="sheet" style="background:${bg}"><div class="t" style="overflow:visible">${side === 'front' ? fr(v) : bk(v)}</div></section>`;
