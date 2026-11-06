@@ -78,8 +78,8 @@ function cover({ title, sub, edition, parts }) {
 }
 
 // 차례: [{ label, items: [[이름, 문항 수, id]] }]
-function toc(groups) {
-  return `<section class="flow" data-kind="toc" data-head-left="승민T 통합사회 <b>기출변형 문제집</b>" data-head-right="차례"><div class="top"><div class="band band-answers"><span class="band-title">차례</span></div></div>${groups
+function toc(groups, headLeft = '승민T 통합사회 <b>기출변형 문제집</b>') {
+  return `<section class="flow" data-kind="toc" data-head-left="${esc(headLeft)}" data-head-right="차례"><div class="top"><div class="band band-answers"><span class="band-title">차례</span></div></div>${groups
     .map((g) => `<div class="row" data-keep="next"><div class="main"><h3 class="wb-toc-h">${esc(g.label)}</h3></div></div><div class="row"><div class="main"><table class="wb-toc">${g.items
       .map(([name, n, id]) => `<tr><td>${esc(name)}</td><td class="n">${n}문항</td><td class="pg" data-pg="${esc(id)}"></td></tr>`)
       .join('')}</table></div></div>`)
@@ -90,7 +90,9 @@ function toc(groups) {
 
 // ── 단원별 문제 ──
 // sets: [{ unit: UNITS[key], qs: [...] }] (책 순서)
-export function renderUnits(sets, { title, edition, mode }) {
+// mm(선택): MINIMAX 완성본 — { headLeft, title() → 속표지 HTML, subject(과목) → 과목 간지 HTML, chapter(대단원 key) → 대단원 간지 HTML }
+//   과목 간지는 짝수 쪽(data-even), 대단원 간지는 홀수 쪽(data-odd) → 둘이 펼침면. 옛 안쪽 표지 대신 MINIMAX 속표지.
+export function renderUnits(sets, { title, edition, mode, mm = null }) {
   const sections = [];
   const byBook = [];
   for (const s of sets) {
@@ -99,9 +101,15 @@ export function renderUnits(sets, { title, edition, mode }) {
     else byBook.push({ book: BOOKS[s.unit.book], units: [s] });
   }
   const total = sets.reduce((a, s) => a + s.qs.length, 0);
-  sections.push(cover({ title, sub: `2022 개정 교육과정 · 수능 대비 · 단원별 ${total}문항`, edition, parts: [...new Set(byBook.map((b) => b.book.subject))] }));
-  sections.push(toc(byBook.map((b) => ({ label: `${b.book.subject} ${b.book.chapter.no}. ${b.book.chapter.title}`, items: b.units.map((s) => [`${s.unit.no} ${s.unit.title}`, s.qs.length, `u-${s.unit.key}`]) }))));
+  if (mm?.title) sections.push(`<section class="flow" data-kind="mmtitle"><div class="top">${mm.title()}</div></section>`); // MINIMAX 속표지
+  if (!mm) sections.push(cover({ title, sub: `2022 개정 교육과정 · 수능 대비 · 단원별 ${total}문항`, edition, parts: [...new Set(byBook.map((b) => b.book.subject))] }));
+  sections.push(toc(byBook.map((b) => ({ label: `${b.book.subject} ${b.book.chapter.no}. ${b.book.chapter.title}`, items: b.units.map((s) => [`${s.unit.no} ${s.unit.title}`, s.qs.length, `u-${s.unit.key}`]) })), mm?.headLeft));
+  const subStart = new Set(byBook.filter((b, bi) => bi === 0 || byBook[bi - 1].book.subject !== b.book.subject).map((b) => b.book.key)); // 과목이 시작하는 대단원
   for (const { book, units } of byBook) {
+    if (mm) {
+      if (subStart.has(book.key)) sections.push(`<section class="flow" data-kind="mmsub" data-even="1"><div class="top">${mm.subject(book.subject)}</div></section>`);
+      sections.push(`<section class="flow" data-kind="mmdiv" data-odd="1" data-tab="${esc(book.chapter.no)}"><div class="top">${mm.chapter(book.key)}</div></section>`);
+    }
     const headLeft = `${esc(book.subject)} <b>${esc(book.chapter.no)}. ${esc(book.chapter.title)}</b>`;
     units.forEach(({ unit, qs }, k) => {
       const attrs = `data-tab="${esc(book.chapter.no)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${unit.no} ${unit.title}`)}"`;
