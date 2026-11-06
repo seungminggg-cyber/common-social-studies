@@ -63,6 +63,10 @@ export const TITLE_FONTS = {
   hahmlet: { label: '함렛 Black', face: `${TTF_DIR}/Hahmlet-Black.ttf`, family: 'Hahmlet Black', weight: 900, scale: 0.94, spacing: -0.03, box: { family: FONT.dotum, weight: 700 } },
   noto: { label: '본명조(Noto Serif KR) Black', css: `${NM}/@fontsource/noto-serif-kr/900.css`, family: 'Noto Serif KR', weight: 900, scale: 0.94, spacing: -0.02, box: { family: FONT.dotum, weight: 700 } },
   bhs: { label: '검은고딕(Black Han Sans)', css: `${NM}/@fontsource/black-han-sans/400.css`, family: 'Black Han Sans', weight: 400, scale: 1.12, spacing: 0, box: { family: 'Black Han Sans', weight: 400, spacing: 0.08 } },
+  // 4차(조준경 바탕, 강사: '차분하지만 임팩트 있게, 본문과 어울리게')
+  dotum: { label: 'KoPub 돋움 Bold(본문 머리 글꼴)', family: FONT.dotum, weight: 700, scale: 1, spacing: -0.045, box: { family: FONT.dotum, weight: 700 } },
+  noto7: { label: '본명조 Bold', css: `${NM}/@fontsource/noto-serif-kr/700.css`, family: 'Noto Serif KR', weight: 700, scale: 0.97, spacing: -0.035, box: { family: FONT.dotum, weight: 700 } },
+  plex: { label: 'IBM Plex Sans KR Bold', css: `${NM}/@fontsource/ibm-plex-sans-kr/700.css`, family: 'IBM Plex Sans KR', weight: 700, scale: 0.98, spacing: -0.04, box: { family: 'IBM Plex Sans KR', weight: 700, spacing: 0.04 } },
 };
 export const titleFontLinks = () =>
   Object.values(TITLE_FONTS).filter((f) => f.css).map((f) => `<link rel="stylesheet" href="file://${f.css}">`).join('') +

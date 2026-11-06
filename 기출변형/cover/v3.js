@@ -298,3 +298,6 @@ export function face3(n, side, v, font) {
   font = font || d.font || 'kopub';
   return `<section class="sheet" style="background:${d.bg}"><div class="t" style="overflow:visible">${d[side](v, TITLE_FONTS[font])}</div></section>`;
 }
+
+// 4차 시안(v4.js)이 다시 쓰는 조각
+export { svg, bgRect, cutSq, T, WORD, blurb, backFoot, crosshair, mix, tint, shade, ramp, f2, mm, TOTAL, D1 };

@@ -11,6 +11,7 @@ import { vol, spineMm, PAGES } from './series.js';
 import { front2, back2, spread2, divider2, subject2, DESIGNS, DIVIDER_CSS } from './v2.js';
 import { chapters } from './book-data.js';
 import { V3, face3 } from './v3.js';
+import { V4, face4 } from './v4.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -105,6 +106,15 @@ if (args.includes('v3')) {
   for (const n of ns.length ? ns : Object.keys(V3)) {
     await emit(`3차-${n}-${V3[n].name}-앞표지`, doc([face3(n, 'front', vol('02'))]));
     await emit(`3차-${n}-${V3[n].name}-뒷표지`, doc([face3(n, 'back', vol('02'))]));
+  }
+}
+// 4차 시안: 3차 '1 조준경' 바탕 후보 3개(A 본문형 · B 명조형 · C 계기형) — 앞표지·뒷표지
+//   node cover/build-cover.mjs v4 [A B C]
+if (args.includes('v4')) {
+  const ks = args.filter((a) => V4[a] && a.length === 1);
+  for (const k of ks.length ? ks : Object.keys(V4)) {
+    await emit(`4차-${k}-${V4[k].name}-앞표지`, doc([face4(k, 'front', vol('02'))]));
+    await emit(`4차-${k}-${V4[k].name}-뒷표지`, doc([face4(k, 'back', vol('02'))]));
   }
 }
 await browser.close();
