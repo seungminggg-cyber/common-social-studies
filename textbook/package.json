@@ -14,6 +14,7 @@
     "@fontsource/nanum-pen-script": "5.1.1",
     "@fontsource/noto-serif-kr": "5.1.1",
     "@tabler/icons": "^3.19.0",
+    "d3-contour": "^4.0.2",
     "d3-geo": "^3.1.1",
     "font-kopubworld": "1.0.3",
     "pretendard": "1.3.9",

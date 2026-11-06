@@ -40,3 +40,17 @@ export const mmSeries = () => {
   const seen = new Set();
   return MM_VOLUMES.filter((v) => !seen.has(v.no) && seen.add(v.no));
 };
+
+// ── MINIMAP 개념서 (강사 2026-11-07) ──
+// 작은 지도 한 장에서 온 세상을 다 보듯, 이 개념서에서 시작해 만점의 초석을 다진다.
+// 통합사회1·2 두 권: 디자인은 같고 색만 다르다.
+export const MMAP = {
+  title: 'MINIMAP',
+  brand: '승민T 통합사회',
+  exam: '2028 수능 대비 · 2022 개정 교육과정',
+  meaning: '작은 지도에서 온 세상을 보듯, 이 개념서에서 만점의 초석을 다진다',
+  vols: [
+    { id: 't1', n: 1, subject: '통합사회1', kind: '통합사회1 개념서' },
+    { id: 't2', n: 2, subject: '통합사회2', kind: '통합사회2 개념서' },
+  ],
+};

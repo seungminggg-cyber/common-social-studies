@@ -18,6 +18,8 @@ import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini } from './mmx.js';
+import { MMAPS, mmapFace } from './mmap.js';
+import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
@@ -187,6 +189,13 @@ if (args.includes('mmx')) {
   for (const k of ks.length ? ks : Object.keys(MMX)) {
     await emit(`MMX-${k}-${MMX[k]}-앞표지`, doc([mmxFace(k, 'front', mmVol('02'))]));
     await emit(`MMX-${k}-${MMX[k]}-뒷표지`, doc([mmxFace(k, 'back', mmVol('02'))]));
+  }
+}
+// MINIMAP 개념서 앞표지 후보: node cover/build-cover.mjs mmap [M1 …]  → out/cover/MMAP-<후보>-<이름>-통합사회1·2
+if (args.includes('mmap')) {
+  const ks = args.filter((a) => MMAPS[a]);
+  for (const k of ks.length ? ks : Object.keys(MMAPS)) {
+    for (const v of MMAP.vols) await emit(`MMAP-${k}-${MMAPS[k][0]}-${v.subject}`, doc([mmapFace(k, v)]), { scale: 1 });
   }
 }
 // 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback

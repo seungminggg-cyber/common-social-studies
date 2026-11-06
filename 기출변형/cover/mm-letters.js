@@ -1,5 +1,5 @@
 // MINIMAX 레터링 — 글꼴이 아니라 도형으로 직접 그린 로고 글자 (강사 요청 2026-11-07)
-// 글자 높이 100. M·I·N·A·X 다섯 글자만 있으면 된다.
+// 글자 높이 100. M·I·N·A·X(MINIMAX)·P(MINIMAP)·V(로마 숫자).
 //   s: 세로획 굵기, d: 사선획 가로 두께, wf: 글자 너비 배율, cut: 세로획 오른쪽 위 모서리 자름(상징)
 // 그리는 방식
 //   fill  — 면으로 채운 글자(굵기·너비·기울기로 성격을 바꿈)
@@ -38,6 +38,19 @@ function glyph(ch, { s = 18, d = 21, wf = 1, cut = 0 }) {
     const w = 84 * wf;
     return { w, polys: [[[0, 0], [d, 0], [w / 2 + d / 2, H], [w / 2 - d / 2, H]], [[w, 0], [w - d, 0], [w / 2 - d / 2, H], [w / 2 + d / 2, H]]], lines: [[[d / 2, 0], [w / 2, H], [w - d / 2, 0]]] };
   }
+  if (ch === 'P') {
+    // MINIMAP의 P(2026-11-07): 세로획 + 네모난 고리(오른쪽 두 모서리 자름). 고리는 구멍 있는 도형 { outer, inner }
+    const w = 70 * wf, by = 58, h = Math.max(4, s * 0.86), k = by * 0.24;
+    const outer = [[0, 0], [w - k, 0], [w, k], [w, by - k], [w - k, by], [0, by]];
+    const ik = Math.max(0, k - h * 0.6);
+    const inner = [[s, h], [w - s - ik, h], [w - s, h + ik], [w - s, by - h - ik], [w - s - ik, by - h], [s, by - h]];
+    const c = s / 2, kk = k * 0.75;
+    return {
+      w,
+      polys: [vrect(0), { outer, inner }],
+      lines: [[[c, H], [c, 0], [w - c - kk, 0], [w - c, kk], [w - c, by - kk], [w - c - kk, by], [c, by]]],
+    };
+  }
   if (ch === 'X') {
     const w = 84 * wf;
     return { w, polys: [[[0, 0], [d, 0], [w, H], [w - d, H]], [[w - d, 0], [w, 0], [d, H], [0, H]]], lines: [[[d / 2, 0], [w - d / 2, H]], [[w - d / 2, 0], [d / 2, H]]] };
@@ -58,9 +71,12 @@ export function layout(word, params, track = 10) {
   return { glyphs: out, width: x - track, height: 100 };
 }
 
+// 도형 하나 → SVG. 구멍 있는 도형 { outer, inner }은 evenodd 경로로
+const ring = (pts) => `M ${pts.map((p) => p.map((v) => +v.toFixed(2)).join(' ')).join(' L ')} Z`;
+export const polyEl = (p, extra = '') => (p.outer ? `<path fill-rule="evenodd" d="${ring(p.outer)} ${ring(p.inner)}" ${extra}/>` : `<polygon points="${P(p)}" ${extra}/>`);
 // SVG 조각(좌표 = 글자 높이 100 단위). 바깥 <svg>나 <g transform>은 부르는 쪽에서 씌운다.
 export function drawFill(lay, { color = '#fff', colors = null } = {}) {
-  return lay.glyphs.map((g, i) => `<g transform="translate(${+g.x.toFixed(2)} 0)" fill="${colors ? colors[i % colors.length] : color}">${g.polys.map((p) => `<polygon points="${P(p)}"/>`).join('')}</g>`).join('');
+  return lay.glyphs.map((g, i) => `<g transform="translate(${+g.x.toFixed(2)} 0)" fill="${colors ? colors[i % colors.length] : color}">${g.polys.map(polyEl).join('')}</g>`).join('');
 }
 // 단단한 입체(그림자가 아니라 같은 글자를 비스듬히 여러 번 겹쳐 두께를 냄)
 export function drawExtrude(lay, { color, side, steps = 8, dx = 1, dy = 1 }) {
