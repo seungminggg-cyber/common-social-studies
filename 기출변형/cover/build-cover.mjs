@@ -15,6 +15,8 @@ import { V4, face4 } from './v4.js';
 import { V5, face5 } from './v5.js';
 import { LETTER_STYLES } from './lettering.js';
 import { V7, face7 } from './v7.js';
+import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
+import { mmVol } from './mm-data.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -32,6 +34,26 @@ async function emit(name, html, { png = true, scale = 2 } = {}) {
   const page = await ctx.newPage();
   await page.goto(pathToFileURL(p).href);
   await page.evaluate(() => document.fonts.ready);
+  // 로고 맞춤: data-fit="폭(mm)"인 글자를 그 폭에 꼭 맞는 크기로(모든 권에서 같은 자리·같은 크기)
+  await page.evaluate(async () => {
+    const px = 96 / 25.4;
+    for (const el of document.querySelectorAll('[data-fit]')) {
+      for (let i = 0; i < 3; i++) {
+        const w = el.getBoundingClientRect().width;
+        el.style.fontSize = `${(parseFloat(getComputedStyle(el).fontSize) * parseFloat(el.dataset.fit) * px) / w}px`;
+      }
+    }
+    // MIN·MAX 밑줄: 로고 안 글자 묶음의 실제 폭에 맞춤
+    for (const u of document.querySelectorAll('[data-under]')) {
+      const box = u.parentElement.getBoundingClientRect();
+      const t = u.parentElement.querySelector(`.mm-${u.dataset.under}`);
+      if (!t) continue;
+      const r = t.getBoundingClientRect();
+      u.style.marginLeft = `${r.left - box.left}px`;
+      u.style.width = `${r.width}px`;
+    }
+    await document.fonts.ready;
+  });
   // 글꼴이 실제로 KoPub로 그려졌는지 확인(쓰인 굵기만 불러오므로, 불러오다 실패한 것만 경고)
   const bad = await page.evaluate(() => [...document.fonts].filter((f) => f.status === 'error').map((f) => `${f.family} ${f.weight}`));
   if (bad.length) console.warn(`[${name}] 글꼴 못 불러옴:`, bad.join(', '));
@@ -142,5 +164,18 @@ if (args.includes('v6')) {
 //   node cover/build-cover.mjs v7
 if (args.includes('v7')) {
   for (const [i, k] of Object.keys(V7).entries()) await emit(`7차-${i + 1}-${V7[k]}-앞표지`, doc([face7(k, vol('02'))]));
+}
+// MINIMAX 시리즈(2026-11-07): 앞표지 콘셉트 A·B·C(02권) + 로고 글꼴 비교 + 뒷표지(대표 문장 1안·2안) + 바탕별 확인(01·03·06)
+//   node cover/build-cover.mjs mm [A B C]
+if (args.includes('mm')) {
+  const cs = args.filter((a) => MM_CONCEPTS[a]);
+  const d = (pages) => doc(pages, { css: MM_CSS });
+  for (const c of cs.length ? cs : Object.keys(MM_CONCEPTS)) {
+    const tag = `MM-${c}-${MM_CONCEPTS[c]}`;
+    await emit(`${tag}-앞표지-02`, d([mmFront(mmVol('02'), c)]));
+    await emit(`${tag}-뒷표지-02`, d([mmBack(mmVol('02'), c, 1), mmBack(mmVol('02'), c, 2)]));
+    await emit(`${tag}-로고글꼴`, d(Object.keys(LOGO_FONTS).map((f) => mmFront(mmVol('02'), c, f))), { scale: 1 });
+    await emit(`${tag}-바탕별`, d(['01-t1', '03', '06'].map((id) => mmFront(mmVol(id), c))), { scale: 1 });
+  }
 }
 await browser.close();
