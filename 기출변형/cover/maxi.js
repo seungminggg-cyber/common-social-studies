@@ -290,3 +290,18 @@ export const MX_CSS = `
 .page[data-ch$="회"] .edge-tab span { writing-mode: vertical-rl; text-orientation: upright; font-size: 8pt; letter-spacing: 0; }
 ${Array.from({ length: 10 }, (_, i) => `.page[data-ch="${i + 1}회"] .edge-tab { top: ${tabTop(i + 1)}mm; height: 24mm; background: ${roundColor(i + 1)}; color: ${i + 1 >= 6 ? K.bg : '#fff'}; }`).join('\n')}
 `;
+
+// ───────────── 정답과 해설 별책 (강사 2026-11-07: "정답해설은 별책으로") ─────────────
+// 표지: 작은 계기판 + 네온 MAXIMIN + '정답과 해설'. 본문 첫 쪽(속표지)도 같은 그림.
+export function maxiAnswerInner(id = 'a') {
+  const img = MAXIS.G2[1](id);
+  const s = 0.56, iw = IW * s;
+  const L = logo(124, 150, `${id}nb`);
+  return `${full(`${bg}<g transform="translate(${f((W - iw) / 2)} 44) scale(${s})">${img.svg}</g>${L.g}`, img.defs + L.defs)}
+    ${TS(esc(MAXI.brand), { y: 13, size: 10, weight: 700, color: K.fg, ls: 0.02 })}
+    ${TS('정답과 해설', { x: 0, w: W, align: 'center', y: L.bottom + 9, size: 34, weight: 700, color: K.fg, ls: -0.01 })}
+    ${TS(`${esc(MAXI.kind)} · 별책`, { x: 0, w: W, align: 'center', y: L.bottom + 26, size: 14, weight: 300, color: K.sub })}
+    ${TS(esc(MAXI.exam), { right: M, y: 279, size: 8.6, color: K.sub })}`;
+}
+export const maxiAnswerFront = () => sheet(K.bg, maxiAnswerInner('a'));
+export const maxiAnswerTitlePage = () => wrap(maxiAnswerInner('at'));

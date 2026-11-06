@@ -139,10 +139,11 @@ export function renderMocks(mocks, { title, edition, mode, mx = null }) {
 
 // ── 정답과 해설 ──
 // groups: [{ id, title, sub, qs, unit?, mock? }]
-export function renderAnswers(groups, { title, edition }) {
-  const sections = [cover({ title: `${title} 정답과 해설`, sub: '빠른 정답 · 오답 선지까지 풀이', edition, parts: [] })];
-  const rows = [];
-  for (const g of groups) {
+// mx(선택, MAXIMIN 정답과 해설 별책): { cover(), headLeft } — 옛 표지 대신 별책 속표지, 회차마다 한 묶음(엄지 색인 '1회'…)
+export function renderAnswers(groups, { title, edition, mx = null }) {
+  const sections = [mx ? `<section class="flow" data-kind="mxtitle"><div class="top">${mx.cover()}</div></section>` : cover({ title: `${title} 정답과 해설`, sub: '빠른 정답 · 오답 선지까지 풀이', edition, parts: [] })];
+  const groupRows = (g) => {
+    const rows = [];
     rows.push(`<div class="row row-ah" data-keep="next"><div class="main"><div class="ans-unit"><b>${esc(g.no)}</b> ${esc(g.title)}</div></div></div>`);
     // 빠른 정답 (10개씩 한 줄)
     for (let i = 0; i < g.qs.length; i += 10) {
@@ -156,8 +157,11 @@ export function renderAnswers(groups, { title, edition }) {
       const lv = `<span class="aq-lv lv-${esc(q.level)}">${esc(q.level)}</span>`;
       rows.push(`<div class="row row-ae"><div class="main"><div class="ans-q"><div class="aq-h"><span class="aq-no">${two(i + 1)}</span><span class="aq-a">${CIRCLED[q.answer - 1]}</span>${lv}<span class="aq-meta">${meta}${q.type ? `${meta ? ' · ' : ''}${esc(q.type)}` : ''}</span></div><p>${inl(q.explain)}</p>${q.note ? `<div class="aq-note"><b>보충 설명 · 개념서 밖 내용</b> ${inl(q.note)}</div>` : ''}</div></div></div>`);
     });
-  }
-  sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="승민T 통합사회 <b>기출변형 문제집</b>" data-head-right="정답과 해설">${rows.join('\n')}</section>`);
+    return rows;
+  };
+  // 첫 묶음은 새 쪽에서(속표지 쪽은 그림이 쪽 전체를 덮으므로 이어 싣지 않는다)
+  if (mx) groups.forEach((g, gi) => sections.push(`<section class="flow" data-kind="answers"${gi === 0 ? ' data-nosoft="1"' : ''} data-tab="${esc(g.tab)}" data-head-left="${mx.headLeft}" data-head-right="${esc(g.no)} · ${esc(g.title)}">${groupRows(g).join('\n')}</section>`));
+  else sections.push(`<section class="flow" data-kind="answers" data-tab="답" data-head-left="승민T 통합사회 <b>기출변형 문제집</b>" data-head-right="정답과 해설">${groups.flatMap(groupRows).join('\n')}</section>`);
   return page(sections, { title: `${title} 정답과 해설`, mode: 'teacher' });
 }
 

@@ -18,7 +18,7 @@ import { renderUnits, renderMocks, renderAnswers } from './lib/wb-render.js';
 import { chapters } from './cover/book-data.js';
 import { mmVol } from './cover/mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage, MM_DIV_CSS } from './cover/mm-div.js';
-import { maxiTitlePage, maxiLogPage, maxiRoundPage, MX_CSS } from './cover/maxi.js';
+import { maxiTitlePage, maxiLogPage, maxiRoundPage, maxiAnswerTitlePage, MX_CSS } from './cover/maxi.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => { try { return require('playwright'); } catch { return require('/opt/node-tools/node_modules/playwright'); } })();
@@ -264,6 +264,13 @@ if (mxMode) {
     .replace(/@font-face \{ font-family: 'Pretendard Variable';[^}]*\}/, '')
     .replace('</head>', `<style>${faces}\n${MX_CSS}</style></head>`);
   await emit('MAXIMIN-본문', html);
+  // 정답과 해설 별책(강사 2026-11-07): 별책 속표지 + 회차마다 빠른 정답·해설. 회차 묶음은 쪽에 자리가 남으면 이어 싣는다.
+  LAYOUT.soft = ['answers'];
+  const groups = mocks.map((m) => ({ no: `${m.no}회`, tab: `${m.no}회`, title: m.range, qs: m.questions, mock: true }));
+  const ans = renderAnswers(groups, { title: 'MAXIMIN 실전 모의고사', edition: EDITION, mx: { cover: () => maxiAnswerTitlePage(), headLeft: '<b>MAXIMIN</b> 정답과 해설' } })
+    .replace(/@font-face \{ font-family: 'Pretendard Variable';[^}]*\}/, '')
+    .replace('</head>', `<style>${faces}\n${MX_CSS}</style></head>`);
+  await emit('MAXIMIN-정답과해설', ans);
   await browser.close();
   process.exit(failed ? 1 : 0);
 }

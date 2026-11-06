@@ -85,6 +85,21 @@ def main(no):
     prev = os.path.join(dst, f'0_완성본 미리보기(앞표지~뒷표지 {len(w.pages)}쪽).pdf')
     with open(prev, 'wb') as fh:
         w.write(fh)
+    # MAXIMIN 정답과 해설 별책(강사 2026-11-07): 별책 앞표지 + 별책 본문 + 뒷표지(본책과 같은 그림)
+    if no == 'maximin':
+        afront = os.path.join(dst, '5_정답과 해설 별책 앞표지(도련 3mm).pdf')
+        fix_boxes(os.path.join(cover, 'MAXIMIN-정답과해설-앞표지.pdf'), afront)
+        abody = os.path.join(OUT, '2', 'MAXIMIN-정답과해설.pdf')
+        shutil.copyfile(abody, os.path.join(dst, '6_정답과 해설 별책 본문(A4, 속표지 포함).pdf'))
+        w = PdfWriter()
+        for p in trimmed(afront):
+            w.add_page(p)
+        for p in PdfReader(abody).pages:
+            w.add_page(p)
+        for p in trimmed(files['2_뒷표지(도련 3mm).pdf']):
+            w.add_page(p)
+        with open(os.path.join(dst, f'0_정답과 해설 별책 미리보기({len(w.pages)}쪽).pdf'), 'wb') as fh:
+            w.write(fh)
     for name in sorted(os.listdir(dst)):
         if name.endswith('.pdf'):
             n = len(PdfReader(os.path.join(dst, name)).pages)

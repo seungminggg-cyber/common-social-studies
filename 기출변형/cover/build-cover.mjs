@@ -19,7 +19,7 @@ import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini } from './mmx.js';
 import { MMAPS, mmapFace, m1Back } from './mmap.js';
-import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, K as MXK } from './maxi.js';
+import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, maxiAnswerFront, K as MXK } from './maxi.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
@@ -235,6 +235,8 @@ if (args.includes('maxifinal')) {
   const sheet = (inner) => `<section class="sheet" style="background:${MXK.bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
   const pages = [sheet(maxiTitlePage()), ...mocks.map((m) => sheet(maxiRoundPage(m, { uid: `r${m.no}`, tab: true })))];
   await emit('MAXIMIN-속표지간지-도련', doc(pages, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+  // 정답과 해설 별책 앞표지(뒷표지는 본책과 같은 파일을 쓴다)
+  await emit('MAXIMIN-정답과해설-앞표지', doc([maxiAnswerFront()]));
 }
 // 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback
 if (args.includes('mmback')) {

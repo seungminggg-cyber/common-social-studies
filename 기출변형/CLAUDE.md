@@ -62,5 +62,5 @@
 - **MINIMAP 개념서**(2026-11-07, 강사가 고른 표지 = `cover/mmap.js`의 M1 '네온 지구', 간지 `cover/mmap-div.js`):
   `textbook`에서 `node build-book.mjs mm` (통합사회2는 `mm t2`) → 기출변형에서 `node cover/build-cover.mjs mmapfinal` → `python3 cover/assemble.py t1`(t2) → `out/MINIMAP-통합사회1-완성본/`.
 - **MAXIMIN 실전 모의고사 10회**(2026-11-07, 2차 모의고사, 강사가 고른 표지 = `cover/maxi.js`의 G2 계기판):
-  `node build.mjs 2 mock mx` → `node cover/build-cover.mjs maxifinal` → `python3 cover/assemble.py maximin` → `out/MAXIMIN-완성본/`.
+  `node build.mjs 2 mock mx`(본문 + 정답과 해설 별책) → `node cover/build-cover.mjs maxifinal` → `python3 cover/assemble.py maximin` → `out/MAXIMIN-완성본/`.
 - 뒷표지 대표 문장의 네온 글자는 `cover/mm-letters.js`의 HANGUL에 직접 그린 글자만 쓸 수 있다(새 글자는 그려 넣어야 함).
