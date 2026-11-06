@@ -14,6 +14,7 @@ import { V3, face3 } from './v3.js';
 import { V4, face4 } from './v4.js';
 import { V5, face5 } from './v5.js';
 import { LETTER_STYLES } from './lettering.js';
+import { V7, face7 } from './v7.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -136,5 +137,10 @@ if (args.includes('v6')) {
     await emit(`6차-${i + 1}-${LETTER_STYLES[k]}-앞표지`, doc([face5(k, 'front', vol('02'))]));
     await emit(`6차-${i + 1}-${LETTER_STYLES[k]}-뒷표지`, doc([face5(k, 'back', vol('02'))]));
   }
+}
+// 7차 시안: 제목 자리를 바꾼 후보 5개(세로 기둥·과녁 안·넘침·대각선·가운데 세로) — 앞표지
+//   node cover/build-cover.mjs v7
+if (args.includes('v7')) {
+  for (const [i, k] of Object.keys(V7).entries()) await emit(`7차-${i + 1}-${V7[k]}-앞표지`, doc([face7(k, vol('02'))]));
 }
 await browser.close();

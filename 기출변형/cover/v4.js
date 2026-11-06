@@ -131,4 +131,4 @@ export function face4(k, side, v, font) {
 }
 
 // 5차 시안(v5.js)이 다시 쓰는 조각
-export { NAVY, SUB, HOT, LIT, UNIT, rings, tabs, word, bullet, numBox, footRule, fade, FADE };
+export { NAVY, SUB, HOT, LIT, UNIT, RULE, rings, tabs, word, bullet, numBox, footRule, fade, FADE };

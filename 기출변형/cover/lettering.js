@@ -140,6 +140,22 @@ function drawStack(sk, o) {
 const DRAW = { block: drawBlock, slit: drawBlock, italic: drawBlock, stencil: drawStencil, multi: drawMulti, hicon: drawHicon, stack: drawStack };
 export const LETTER_STYLES = { block: '블록', stencil: '스텐실', multi: '다중선', hicon: '고대비', stack: '입체', slit: '조준선', italic: '기울임' };
 
+// 글자별 x 범위(세로로 쌓을 때 글자 하나씩 떼어 놓기 위해)
+export const GLYPH_X = [[0, 99], [106, 206], [213, 313]];
+
+// 세로쓰기: 세 글자를 위에서 아래로 쌓는다. wMm = 글자 한 자의 폭(mm), gap = 글자 사이(글자 높이 100 기준)
+export function wordmarkStacked({ style = 'block', color = '#fff', bg = '#17193B', hot = '#E8833A', wMm = 60, gap = 14 }) {
+  const sk = skeleton();
+  const o = { color, bg, hot };
+  const body = DRAW[style](sk, o);
+  const cw = 100, pad = 4, extraR = style === 'stack' ? 15 : 0;
+  const vbW = cw + pad * 2 + extraR, rowH = 100 + gap, vbH = rowH * 3 - gap + pad * 2 + extraR;
+  // 같은 그림을 세 번 그리되, 글자 하나씩만 보이게 잘라낸다
+  const rows = GLYPH_X.map(([x0, x1], i) => `<clipPath id="g${i}"><rect x="${x0 - 2}" y="-20" width="${x1 - x0 + 4 + extraR}" height="${140 + extraR}"/></clipPath><g clip-path="url(#g${i})" transform="translate(${pad - x0 + (cw - (x1 - x0)) / 2} ${pad + i * rowH})">${body}</g>`).join('');
+  const hMm = (wMm * vbH) / vbW;
+  return { svg: `<svg viewBox="0 0 ${vbW} ${vbH}" width="${wMm}mm" height="${hMm.toFixed(2)}mm" overflow="visible" xmlns="http://www.w3.org/2000/svg">${rows}</svg>`, hMm, rowMm: (wMm * rowH) / vbW };
+}
+
 // SVG 문자열. 폭 wMm(mm)로 그린다. color: 글자, bg: 바탕(과녁 속·틈), hot: 과녁 한가운데
 export function wordmark({ style = 'block', color = '#fff', bg = '#17193B', hot = '#E8833A', wMm = 150 }) {
   const sk = skeleton();
