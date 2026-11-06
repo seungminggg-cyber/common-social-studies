@@ -17,6 +17,7 @@ import { LETTER_STYLES } from './lettering.js';
 import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
+import { MMX, mmxFace } from './mmx.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -176,6 +177,15 @@ if (args.includes('mm')) {
     await emit(`${tag}-뒷표지-02`, d([mmBack(mmVol('02'), c, 1), mmBack(mmVol('02'), c, 2)]));
     await emit(`${tag}-로고글꼴`, d(Object.keys(LOGO_FONTS).map((f) => mmFront(mmVol('02'), c, f))), { scale: 1 });
     await emit(`${tag}-바탕별`, d(['01-t1', '03', '06'].map((id) => mmFront(mmVol(id), c))), { scale: 1 });
+  }
+}
+// MINIMAX 2차(화려한 색·직접 그린 로고·포인트 그림) 후보 5개 — 앞표지·뒷표지
+//   node cover/build-cover.mjs mmx [X1 … X5]
+if (args.includes('mmx')) {
+  const ks = args.filter((a) => MMX[a]);
+  for (const k of ks.length ? ks : Object.keys(MMX)) {
+    await emit(`MMX-${k}-${MMX[k]}-앞표지`, doc([mmxFace(k, 'front', mmVol('02'))]));
+    await emit(`MMX-${k}-${MMX[k]}-뒷표지`, doc([mmxFace(k, 'back', mmVol('02'))]));
   }
 }
 await browser.close();
