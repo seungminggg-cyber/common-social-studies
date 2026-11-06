@@ -48,3 +48,7 @@
 .wb-cover .cv-title { font-size: 40pt; line-height: 1.15; max-width: 105mm; }
 /* 모의고사 엄지 색인: '10회'처럼 세 글자도 들어가게 */
 .page[data-ch$="회"] .edge-tab { font-size: 7.6pt; letter-spacing: -.04em; }
+
+/* 보충 설명: 개념서 범위를 넘는 내용을 해설에서 자세히 */
+.aq-note { display: block; margin-top: 1.6mm; padding: 1.8mm 2.4mm; border-left: 1.4pt solid var(--c1, #1f1d1b); background: var(--c1-pale, #f7f5f2); font-size: 8.2pt; line-height: 1.65; }
+.aq-note b { color: var(--c1-dark, #1f1d1b); margin-right: 1.2mm; }

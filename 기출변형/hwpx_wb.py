@@ -87,6 +87,10 @@ def question(q, n, mock=False, color=TEAL):
         p = para(before=2)
         run(p, f"정답 {CIRCLED[q['answer'] - 1]}  ", size=8.6, color=ORANGE, bold=True)
         rich(p, q['explain'], size=8.6, color=ORANGE)
+        if q.get('note'):
+            p = para(before=1)
+            run(p, '보충 설명  ', size=8.4, color=NAVY, bold=True)
+            rich(p, q['note'], size=8.4)
     gap(12)
 
 
@@ -102,7 +106,11 @@ def answers(groups):
             p = para(before=2)
             chip(p, f'{i + 1:02d}', TEAL, size=8.5)
             run(p, f"  정답 {CIRCLED[q['answer'] - 1]}   {q.get('level', '')}", size=9, color=ORANGE, bold=True)
-            rich(para(after=3, spacing=160), q['explain'], size=8.8)
+            rich(para(after=1 if q.get('note') else 3, spacing=160), q['explain'], size=8.8)
+            if q.get('note'):
+                p = para(after=3, spacing=155)
+                run(p, '보충 설명(개념서 밖 내용)  ', size=8.4, color=NAVY, bold=True)
+                rich(p, q['note'], size=8.4)
     columns(1)
 
 
