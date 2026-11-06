@@ -141,6 +141,7 @@ function stack100(b) {
       const x0 = L + (acc / total) * pw;
       s += `<rect x="${r1(x0)}" y="${r1(yy + 3)}" width="${r1(w)}" height="${rowH - 6}" class="fl s${j + 1}"/>`;
       if (w > 26) s += text(x0 + w / 2, yy + rowH / 2 + 4, `${fmt(v)}`, { size: 11, anchor: 'middle', cls: `in s${j + 1}` });
+      else if (w > 13 && v) s += text(x0 + w / 2, yy + rowH / 2 + 3.5, `${fmt(v)}`, { size: 9, anchor: 'middle', cls: `in s${j + 1}` }); // 좁은 칸도 숫자를 작게라도
       acc += v;
     });
   });
