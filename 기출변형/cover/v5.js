@@ -44,6 +44,7 @@ function back(v, style) {
 
 export const V5 = { L1: '블록', L2: '조준선', L3: '기울임' };
 export function face5(k, side, v) {
-  const inner = side === 'front' ? front(v, STYLES[k]) : back(v, STYLES[k]);
+  const st = STYLES[k] || k; // L1~L3 또는 레터링 이름(block·stencil·multi·hicon·stack)
+  const inner = side === 'front' ? front(v, st) : back(v, st);
   return `<section class="sheet" style="background:${NAVY}"><div class="t" style="overflow:visible">${inner}</div></section>`;
 }

@@ -13,6 +13,7 @@ import { chapters } from './book-data.js';
 import { V3, face3 } from './v3.js';
 import { V4, face4 } from './v4.js';
 import { V5, face5 } from './v5.js';
+import { LETTER_STYLES } from './lettering.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
 
 const require = createRequire(import.meta.url);
@@ -125,6 +126,15 @@ if (args.includes('v5')) {
   for (const k of ks.length ? ks : Object.keys(V5)) {
     await emit(`5차-${k}-${V5[k]}-앞표지`, doc([face5(k, 'front', vol('02'))]));
     await emit(`5차-${k}-${V5[k]}-뒷표지`, doc([face5(k, 'back', vol('02'))]));
+  }
+}
+// 6차 시안: 레터링 후보 5개(블록·스텐실·다중선·고대비·입체), '정'을 키움 — 앞표지·뒷표지
+//   node cover/build-cover.mjs v6
+if (args.includes('v6')) {
+  const ks = ['block', 'stencil', 'multi', 'hicon', 'stack'];
+  for (const [i, k] of ks.entries()) {
+    await emit(`6차-${i + 1}-${LETTER_STYLES[k]}-앞표지`, doc([face5(k, 'front', vol('02'))]));
+    await emit(`6차-${i + 1}-${LETTER_STYLES[k]}-뒷표지`, doc([face5(k, 'back', vol('02'))]));
   }
 }
 await browser.close();
