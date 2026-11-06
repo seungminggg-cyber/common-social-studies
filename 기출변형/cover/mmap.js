@@ -43,9 +43,10 @@ const C1 = {
   1: { bg: '#061A2C', sea: '#0C2A47', neon: '#2BE4FF', hot: '#7CFFB2', fg: '#FFFFFF', sub: '#8FB3CF' },
   2: { bg: '#170A2B', sea: '#2A1247', neon: '#FF4FD8', hot: '#FFB443', fg: '#FFFFFF', sub: '#C2A6DC' },
 };
-function m1(v) {
-  const c = C1[v.n];
-  const cx = 105, cy = 104, R = 80, ctr = [127.5, 20];
+// 네온 지구본(앞·뒷표지 같은 그림, 크기만 다름). R: 반지름(mm). 선 굵기·빛 번짐은 크기에 맞춰 줄이되 너무 가늘어지지 않게
+function neonGlobe(c, { cx, cy, R }) {
+  const ctr = [127.5, 20];
+  const k = Math.max(R / 80, 0.55), q = (x) => f(x * k);
   const proj = d3.geoOrthographic().rotate([-ctr[0], -ctr[1]]).translate([cx, cy]).scale(R).clipAngle(90).precision(0.1);
   const w = world('50m');
   const landD = pathOf(proj, w.land), korD = pathOf(proj, KOR());
@@ -56,30 +57,46 @@ function m1(v) {
     const a = proj(SEOUL), b = proj([lon, lat]);
     grads += `<linearGradient id="a${i}" gradientUnits="userSpaceOnUse" x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}"><stop offset="0" stop-color="${c.hot}"/><stop offset="1" stop-color="${c.neon}"/></linearGradient>`;
     const d = pathOf(proj, { type: 'LineString', coordinates: [SEOUL, [lon, lat]] });
-    arcs += `<path d="${d}" fill="none" stroke="url(#a${i})" stroke-width="1.8" opacity=".45" filter="url(#gl)"/><path d="${d}" fill="none" stroke="url(#a${i})" stroke-width=".55"/>`;
-    dots += `<circle cx="${f(b[0])}" cy="${f(b[1])}" r="2.2" fill="${c.neon}" opacity=".45" filter="url(#gl)"/><circle cx="${f(b[0])}" cy="${f(b[1])}" r=".8" fill="#fff"/>`;
+    arcs += `<path d="${d}" fill="none" stroke="url(#a${i})" stroke-width="${q(1.8)}" opacity=".45" filter="url(#gl)"/><path d="${d}" fill="none" stroke="url(#a${i})" stroke-width="${q(0.55)}"/>`;
+    dots += `<circle cx="${f(b[0])}" cy="${f(b[1])}" r="${q(2.2)}" fill="${c.neon}" opacity=".45" filter="url(#gl)"/><circle cx="${f(b[0])}" cy="${f(b[1])}" r="${q(0.8)}" fill="#fff"/>`;
   });
   const [sx, sy] = proj(SEOUL);
-  const ping = [[2.6, 0.95], [5.4, 0.6], [8.6, 0.3]].map(([r, o]) => `<circle cx="${f(sx)}" cy="${f(sy)}" r="${r}" fill="none" stroke="${c.hot}" stroke-width=".45" opacity="${o}"/>`).join('') + `<circle cx="${f(sx)}" cy="${f(sy)}" r="1.1" fill="#fff"/>`;
-  const defs = `${blur('gl', 1.1)}${blur('gl3', 4)}${neonFilter('nb', 4)}
-    <radialGradient id="atm" cx="${cx}" cy="${cy}" r="${R + 16}" gradientUnits="userSpaceOnUse"><stop offset="${f(R / (R + 16))}" stop-color="${c.neon}" stop-opacity=".32"/><stop offset="1" stop-color="${c.neon}" stop-opacity="0"/></radialGradient>
-    <radialGradient id="body" cx="${cx - R * 0.35}" cy="${cy - R * 0.45}" r="${R * 1.6}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.sea}"/><stop offset="1" stop-color="${c.bg}"/></radialGradient>${grads}`;
-  const globe = `<circle cx="${cx}" cy="${cy}" r="${R + 16}" fill="url(#atm)"/><circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#body)"/>
-    <path d="${pathOf(proj, d3.geoGraticule().step([15, 15])())}" fill="none" stroke="${c.neon}" stroke-width=".2" opacity=".22"/>
+  const ping = [[2.6, 0.95], [5.4, 0.6], [8.6, 0.3]].map(([r, o]) => `<circle cx="${f(sx)}" cy="${f(sy)}" r="${q(r)}" fill="none" stroke="${c.hot}" stroke-width="${q(0.45)}" opacity="${o}"/>`).join('') + `<circle cx="${f(sx)}" cy="${f(sy)}" r="${q(1.1)}" fill="#fff"/>`;
+  const A = R + 16 * k; // 대기 빛
+  const defs = `${blur('gl', f(1.1 * k))}
+    <radialGradient id="atm" cx="${cx}" cy="${cy}" r="${f(A)}" gradientUnits="userSpaceOnUse"><stop offset="${f(R / A)}" stop-color="${c.neon}" stop-opacity=".32"/><stop offset="1" stop-color="${c.neon}" stop-opacity="0"/></radialGradient>
+    <radialGradient id="body" cx="${f(cx - R * 0.35)}" cy="${f(cy - R * 0.45)}" r="${f(R * 1.6)}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.sea}"/><stop offset="1" stop-color="${c.bg}"/></radialGradient>${grads}`;
+  const svg = `<circle cx="${cx}" cy="${cy}" r="${f(A)}" fill="url(#atm)"/><circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#body)"/>
+    <path d="${pathOf(proj, d3.geoGraticule().step(R < 50 ? [30, 30] : [15, 15])())}" fill="none" stroke="${c.neon}" stroke-width="${q(0.2)}" opacity=".22"/>
     <path d="${landD}" fill="${c.neon}" opacity=".09"/>
-    <path d="${landD}" fill="none" stroke="${c.neon}" stroke-width="1.5" opacity=".5" filter="url(#gl)"/>
-    <path d="${landD}" fill="none" stroke="${c.neon}" stroke-width=".42" stroke-linejoin="round"/>
-    <path d="${pathOf(proj, w.borders)}" fill="none" stroke="${c.neon}" stroke-width=".16" opacity=".45"/>
+    <path d="${landD}" fill="none" stroke="${c.neon}" stroke-width="${q(1.5)}" opacity=".5" filter="url(#gl)"/>
+    <path d="${landD}" fill="none" stroke="${c.neon}" stroke-width="${q(0.42)}" stroke-linejoin="round"/>
+    <path d="${pathOf(proj, w.borders)}" fill="none" stroke="${c.neon}" stroke-width="${q(0.16)}" opacity=".45"/>
     <path d="${korD}" fill="${c.hot}" opacity=".6" filter="url(#gl)"/><path d="${korD}" fill="${c.hot}"/>
     ${arcs}${dots}${ping}
-    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${c.neon}" stroke-width=".5" opacity=".7"/>`;
-  const lay = layout('MINIMAP', { s: 8, d: 9, wf: 1 }, 18);
-  const [lo, hi] = neonExtent(lay, 9);
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${c.neon}" stroke-width="${q(0.5)}" opacity=".7"/>`;
+  return { defs, svg, A };
+}
+const neonWord = () => { const lay = layout('MINIMAP', { s: 8, d: 9, wf: 1 }, 18); const [lo, hi] = neonExtent(lay, 9); return { lay, lo, hi }; };
+function m1(v) {
+  const c = C1[v.n];
+  const G = neonGlobe(c, { cx: 105, cy: 104, R: 80 });
+  const { lay, lo, hi } = neonWord();
   const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon }), { lo, hi, w: 160, top: 200, yTop: -4.5 });
-  return sheet(c.bg, `${full(bgRect(c.bg) + globe + L.g, defs)}
+  return sheet(c.bg, `${full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter('nb', 4))}
     ${brand(c.fg)}
     ${kindLine(v, c.fg, L.bottom + 8)}
     ${exam(c.sub)}`);
+}
+// 뒷표지(강사 2026-11-07 1번 '네온 지구' 고름): MINIMAX 뒷표지와 같은 짜임 — 문구 없이 작은 지구본 + 작은 네온 MINIMAP을 한 덩어리로 쪽 가운데
+export function m1Back(v, { R = 31, logoW = 64, gap = 16, cy = H / 2 } = {}) {
+  const c = C1[v.n];
+  const { lay, lo, hi } = neonWord();
+  const s = logoW / (hi - lo), logoH = (100 + 9) * s;
+  const top = cy - (2 * R + gap + logoH) / 2;
+  const G = neonGlobe(c, { cx: W / 2, cy: top + R, R });
+  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon }), { lo, hi, w: logoW, top: top + 2 * R + gap, yTop: -4.5 });
+  return sheet(c.bg, full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter('nb', 4)));
 }
 
 // ───────────── M2 게임 미니맵 ─────────────

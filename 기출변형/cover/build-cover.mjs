@@ -18,7 +18,7 @@ import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini } from './mmx.js';
-import { MMAPS, mmapFace } from './mmap.js';
+import { MMAPS, mmapFace, m1Back } from './mmap.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
@@ -196,6 +196,13 @@ if (args.includes('mmap')) {
   const ks = args.filter((a) => MMAPS[a]);
   for (const k of ks.length ? ks : Object.keys(MMAPS)) {
     for (const v of MMAP.vols) await emit(`MMAP-${k}-${MMAPS[k][0]}-${v.subject}`, doc([mmapFace(k, v)]), { scale: 1 });
+  }
+}
+// MINIMAP 1번(네온 지구) 앞·뒷표지: node cover/build-cover.mjs mmapfinal → out/cover/MINIMAP-통합사회1·2-앞표지·뒷표지
+if (args.includes('mmapfinal')) {
+  for (const v of MMAP.vols) {
+    await emit(`MINIMAP-${v.subject}-앞표지`, doc([mmapFace('M1', v)]));
+    await emit(`MINIMAP-${v.subject}-뒷표지`, doc([m1Back(v)]));
   }
 }
 // 뒷표지 시안(문구 없이 작은 미로 + 작은 MINIMAX): node cover/build-cover.mjs mmback
