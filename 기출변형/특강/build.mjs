@@ -7,14 +7,15 @@
 //
 // 결과: 기출변형/out/sp/*.pdf, out/sp/png/<이름>/, out/sp/<이름>.json(한글 파일용), out/sp/fig/<이름>/*.png
 import { createRequire } from 'node:module';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, readdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { FIGURE_TYPES } from '../../textbook/lib/figures.js';
 import { ensureTerrain } from '../../textbook/lib/terrain.js';
 import { renderAnswers } from '../lib/wb-render.js';
-import { renderLecture, TITLE } from './render.js';
-import { TYPES, ITEMS, OVERVIEW } from './content/analysis.js';
+import { renderLecture, practiceByChapter, TITLE } from './render.js';
+import { TYPES, ITEMS, OVERVIEW, CHAPTERS } from './content/analysis.js';
+import { BOOKS } from '../lib/units.js';
 
 const require = createRequire(import.meta.url);
 const { chromium } = (() => { try { return require('playwright'); } catch { return require('/opt/node-tools/node_modules/playwright'); } })();
@@ -27,11 +28,17 @@ const want = ['student', 'teacher', 'answers'].filter((k) => args.includes(k));
 const parts = want.length ? want : ['student', 'teacher', 'answers'];
 // intro·type: 1단(분석), exam·mock·answers: 2단(문항). 유형의 연습 문항은 분석이 끝난 쪽에 자리가 남으면 이어 싣는다.
 const LAYOUT = { cover: 1, toc: 1, intro: 1, type: 1, exam: 2, mock: 2, answers: 2, soft: ['exam', 'answers'], memoMin: 0.4, spreadMax: 9 };
-const paginateJs = readFileSync(join(ROOT, '../../textbook/lib/paginate.js'), 'utf8');
+// 쪽 메모 칸 안내 문구: 특강 책에서는 '-하자' 대신 '-한다' 말투로 (강사 요청 2026-11-07)
+const paginateJs = readFileSync(join(ROOT, '../../textbook/lib/paginate.js'), 'utf8')
+  .replace(/적어 보자\./g, '적어 본다.').replace(/적어 두자\./g, '적어 둔다.').replace(/정리해 보자\./g, '정리해 본다.');
 
 // 내용 모으기 (연습 문항 파일이 아직 없으면 빈 묶음)
 const load = async (f) => (existsSync(join(ROOT, 'content', f)) ? (await import(pathToFileURL(join(ROOT, 'content', f)).href)).default : null);
-for (const t of TYPES) t.qs = (await load(`p-${t.key}.js`)) || [];
+// 연습 문항: content/p-*.js 를 모두 모아 대단원(개념서 단원 순서)별로 나눈다
+const pFiles = readdirSync(join(ROOT, 'content')).filter((f) => /^p-\w+\.js$/.test(f)).sort();
+const allPractice = [];
+for (const f of pFiles) allPractice.push(...(await load(f)));
+const practice = practiceByChapter(CHAPTERS, allPractice);
 const set = (await load('set.js')) || { no: 1, range: '전 범위', questions: [] };
 
 // 문제집과 같은 그림 손질: 지도 범례·화살표 글씨 키우기, 기후 그래프 두 개씩
@@ -67,9 +74,9 @@ function numberFigures(root) {
   };
   walk(root);
 }
-const allQs = [...TYPES.flatMap((t) => t.qs), ...set.questions];
+const allQs = [...allPractice, ...set.questions];
 bigMapText(allQs);
-numberFigures([TYPES.map((t) => t.qs), set.questions]);
+numberFigures([CHAPTERS.map((c) => practice[c.key]), set.questions]); // 책에 싣는 순서 = 한글 파일 순서
 ensureTerrain(allQs);
 
 const browser = await chromium.launch();
@@ -125,18 +132,19 @@ async function emit(name, html, data) {
   await page.close();
 }
 
-const content = { TYPES, ITEMS, OVERVIEW, set };
-const data = { TYPES, ITEMS, OVERVIEW, set, title: TITLE };
+const content = { TYPES, ITEMS, OVERVIEW, CHAPTERS, practice, set };
+const data = { TYPES, ITEMS, OVERVIEW, CHAPTERS, practice, set, title: TITLE,
+  books: Object.fromEntries(CHAPTERS.map((c) => [c.key, { subject: BOOKS[c.key].subject, chapter: BOOKS[c.key].chapter, units: BOOKS[c.key].units.map((u) => ({ key: u.key, no: u.no, title: u.title })) }])) };
 if (parts.includes('student')) await emit('예시문항특강-학생용', renderLecture(content, { mode: 'student' }), data);
 if (parts.includes('teacher')) await emit('예시문항특강-교사용', renderLecture(content, { mode: 'teacher' }));
 if (parts.includes('answers')) {
   // 정답과 해설 별책: 수업 뒤 학생에게 나눠 준다(유형별 연습 + 쌍둥이 세트)
   const groups = [
-    ...TYPES.filter((t) => t.qs.length).map((t) => ({ no: `유형 ${t.no}`, tab: t.no, title: `${t.title.split(' — ')[0]} 연습 문항`, qs: t.qs })),
+    ...CHAPTERS.filter((c) => practice[c.key].length).map((c) => ({ no: `${BOOKS[c.key].subject} ${BOOKS[c.key].chapter.no}`, tab: `${c.key[1]}·${BOOKS[c.key].chapter.no}`, title: `${BOOKS[c.key].chapter.title} 연습 문항`, qs: practice[c.key] })),
     { no: '쌍둥이 세트', tab: '세트', title: set.range, qs: set.questions, mock: true },
   ];
   const coverHtml = () => `<div class="cover wb-cover sp-cover"><div class="cv-deco"><i></i><i></i><i></i></div><div class="cv-brand">승민T 통합사회 · 예비 고3 겨울 특강</div>
-    <div class="cv-title">${TITLE}<br>정답과 해설</div><div class="cv-sub">유형별 연습 문항 · 쌍둥이 세트 — 오답 선지까지 풀이</div><div class="cv-theme">별책</div><div class="cv-unit"></div></div>`;
+    <div class="cv-title">${TITLE}<br>정답과 해설</div><div class="cv-sub">단원별 연습 문항 · 쌍둥이 세트 — 오답 선지까지 풀이</div><div class="cv-theme">별책</div><div class="cv-unit"></div></div>`;
   LAYOUT.soft = ['answers'];
   const html = renderAnswers(groups, { title: TITLE, mx: { cover: coverHtml, headLeft: `승민T 통합사회 <b>${TITLE}</b> 정답과 해설` } })
     .replace('</head>', '<link rel="stylesheet" href="../../특강/sp.css"></head>').replace('class="theme-b', 'class="sp theme-b');

@@ -40,7 +40,7 @@ def sec(mark, title, color):
     run(p, '  ' + title, size=13.5, color=INK, bold=True)
 
 
-def item_card(no, it, color):
+def item_card(no, it, color, strat=None):
     form_bogi = any(w in it['form'] for w in ('보기', '적어도', '벤'))
     p = para(before=8, after=2)
     chip(p, f' 예시 {int(no):02d} ', color, size=10)
@@ -48,6 +48,8 @@ def item_card(no, it, color):
     p = para(after=3)
     refs = ' / '.join(f"{k[-2:]} 단원 개념 {'·'.join(f'{c:02d}' for c in cs)}" for k, cs in it['units'])
     run(p, f"{it['pts']}점 · {it['form']} · 개념서 {refs}", size=8, color=GRAY)
+    if strat:
+        run(p, f"    전략 {strat[0]} {strat[1]}", size=8.4, color=INK, bold=True)
     if TEACHER:
         run(p, f"    정답 {CIRCLED[it['ans'] - 1]}", size=9, color=RED, bold=True)
     else:
@@ -87,16 +89,16 @@ run(p, '승민T 통합사회 · 예비 고3 겨울 특강', size=10, color=GRAY)
 p = para(after=4)
 run(p, book['title'], size=24, color=INK, bold=True)
 p = para(after=10)
-n_practice = sum(len(t['qs']) for t in TYPES)
-run(p, f"2028학년도 수능 예시문항 25문항 · 유형별 전략 7 · 연습 {n_practice}문항 · 쌍둥이 세트 {len(SET['questions'])}문항" + (' · 교사용' if TEACHER else ' · 학생용'), size=10, color=GRAY)
+n_practice = sum(len(v) for v in book['practice'].values())
+run(p, f"2028학년도 수능 예시문항 25문항 · 풀이 전략 7 · 연습 {n_practice}문항 · 쌍둥이 세트 {len(SET['questions'])}문항" + (' · 교사용' if TEACHER else ' · 학생용'), size=10, color=GRAY)
 
 # 안내
 band('예시문항 25문항 한눈에', '2028학년도 대학수학능력시험 · 사회탐구 영역(통합사회)', color=NAVY, page_break=False)
 sec('1', '2028 수능 통합사회, 무엇이 달라졌나', NAVY)
 kv_rows([(f'{i + 1}. {k}', v) for i, (k, v) in enumerate(OV['trends'])], NAVY, key_w=24)
-sec('2', '25문항 지도 — 번호 · 배점 · 주제 · 형식 · 유형', NAVY)
+sec('2', '25문항 지도 — 번호 · 배점 · 주제 · 형식 · 풀이 전략', NAVY)
 type_of = {n: t['no'] for t in TYPES for n in t['items']}
-cols = ['번호', '배점', '주제', '형식', '유형'] + (['정답'] if TEACHER else [])
+cols = ['번호', '배점', '주제', '형식', '전략'] + (['정답'] if TEACHER else [])
 widths = [7, 7, 52, 22, 6] + ([6] if TEACHER else [])
 t = table(len(ITEMS) + 1, len(cols), widths)
 for c, h in enumerate(cols):
@@ -112,28 +114,42 @@ for r, (no, it) in enumerate(ITEMS.items()):
         rich(p, v, size=8.2)
 gap(6)
 
-# 유형별
+# 풀이 전략 7가지 (짧게)
+band('풀이 전략 7가지', '문항의 모양에 따라 푸는 법 · 뒤 문항 분석 카드의 “전략 NN”', color=NAVY)
 for ty in TYPES:
-    color = COLOR[ty['no']]
-    band(f"유형 {ty['no']}  {ty['title']}", '예시문항 ' + ' · '.join(f'{n}번' for n in ty['items']), color=color)
-    sec('A', '출제 의도 — 이 유형은 무엇을 재는가', color)
-    rich(para(after=4, spacing=170), ty['intent'], size=9.6)
-    sec('B', '풀이 순서 — 3단계 전략', color)
-    kv_rows([(f'STEP {i + 1} {a}', b) for i, (a, b) in enumerate(ty['steps'])], color, key_w=24)
-    sec('C', '예시문항 분석', color)
-    for n in ty['items']:
-        item_card(str(n), ITEMS[str(n)], color)
-    sec('D', '함정 선지는 이렇게 만들어진다', color)
-    kv_rows(ty['traps'], RED, key_w=24)
+    p = para(before=8, after=2)
+    chip(p, f" 전략 {ty['no']} ", NAVY, size=10)
+    run(p, '  ' + ty['title'].split(' — ')[0], size=12, color=INK, bold=True)
+    run(p, '   예시문항 ' + ' · '.join(f'{n}번' for n in ty['items']), size=8, color=GRAY)
+    rich(para(after=3, spacing=165), ty['intent'], size=9.2)
+    kv_rows([(f'STEP {i + 1} {a}', b) for i, (a, b) in enumerate(ty['steps'])] + [('함정 · ' + k, v) for k, v in ty['traps']], NAVY, key_w=26)
+    rich(para(after=4), '점검  ' + '  ☐ '.join([''] + ty['check']).strip(), size=8.6, color=GRAY)
+
+# 대단원(개념서 단원 순서)
+type_no = {n: (t['no'], t['title'].split(' — ')[0]) for t in TYPES for n in t['items']}
+CH = {'Ⅰ': '#1D6C74', 'Ⅱ': '#7D3566', 'Ⅲ': '#3C7A37', 'Ⅳ': '#B5651D', 'Ⅴ': '#234E8A'}
+for c in book['CHAPTERS']:
+    b = book['books'][c['key']]
+    color = CH[b['chapter']['no']]
+    ex = '예시문항 ' + ' · '.join(f'{n}번' for n in c['items']) if c['items'] else '예시문항 없음 · 학력평가 1번 단원'
+    band(f"{b['subject']} {b['chapter']['no']}. {b['chapter']['title']}", ex, color=color)
     p = para(after=2)
-    run(p, '풀고 나서 점검', size=9, color=color, bold=True)
-    for c in ty['check']:
-        rich(para(after=1), '☐ ' + c, size=9)
-    if ty['qs']:
-        lv = ' · '.join(f"{l} {sum(1 for q in ty['qs'] if q['level'] == l)}" for l in ('상', '중상', '중', '하'))
-        band(f"유형 {ty['no']} 연습 문항", f"{len(ty['qs'])}문항 · {lv}", color=color)
+    run(p, '중단원  ', size=8.4, color=color, bold=True)
+    run(p, ' · '.join(f"{u['no']} {u['title']}" for u in b['units']), size=8.4, color=GRAY)
+    p = para(before=2, after=1)
+    run(p, '출제 포인트', size=9.4, color=color, bold=True)
+    run(p, f"   전 범위 시험 4회(2028 예시문항 + 2026 고2 학력평가 3회) 100문항 중 {c['freq']}문항", size=8, color=GRAY)
+    for pt in c['points']:
+        rich(para(after=1, spacing=165), '· ' + pt, size=9)
+    gap(4)
+    for n in c['items']:
+        item_card(str(n), ITEMS[str(n)], color, type_no[n])
+    qs = book['practice'][c['key']]
+    if qs:
+        lv = ' · '.join(f"{l} {sum(1 for q in qs if q['level'] == l)}" for l in ('상', '중상', '중', '하'))
+        band(f"{b['chapter']['no']}단원 연습 문항", f"{len(qs)}문항 · {lv}", color=color)
         columns(2)
-        for i, q in enumerate(ty['qs']):
+        for i, q in enumerate(qs):
             question(q, i + 1, color=color)
         columns(1)
 
@@ -146,15 +162,19 @@ columns(1)
 
 if TEACHER:
     band('빠른 정답', '', color=NAVY)
-    for ty in TYPES:
+    for c in book['CHAPTERS']:
+        qs = book['practice'][c['key']]
+        if not qs:
+            continue
+        b = book['books'][c['key']]
         p = para(after=2)
-        run(p, f"유형 {ty['no']} 연습  ", size=9, bold=True)
-        run(p, '  '.join(f"{i + 1:02d} {CIRCLED[q['answer'] - 1]}" for i, q in enumerate(ty['qs'])), size=9, color=ORANGE)
+        run(p, f"{b['subject']} {b['chapter']['no']}단원 연습  ", size=9, bold=True)
+        run(p, '  '.join(f"{i + 1:02d} {CIRCLED[q['answer'] - 1]}" for i, q in enumerate(qs)), size=9, color=ORANGE)
     p = para(after=2)
     run(p, '쌍둥이 세트  ', size=9, bold=True)
     run(p, '  '.join(f"{i + 1:02d} {CIRCLED[q['answer'] - 1]}" for i, q in enumerate(SET['questions'])), size=9, color=ORANGE)
 else:
-    G['answers']([(f"유형 {t['no']} 연습 문항", t['qs']) for t in TYPES] + [('쌍둥이 세트', SET['questions'])])
+    G['answers']([(f"{book['books'][c['key']]['subject']} {book['books'][c['key']]['chapter']['no']}단원 연습 문항", book['practice'][c['key']]) for c in book['CHAPTERS'] if book['practice'][c['key']]] + [('쌍둥이 세트', SET['questions'])])
 
 report = doc.validate()
 print('형식 검사:', '통과' if getattr(report, 'ok', False) else report)

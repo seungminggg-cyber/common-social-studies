@@ -1,26 +1,25 @@
 /* 2028 예시문항 특강 교재 — 문제집(wb.css)·시안 H 위에 특강에만 있는 것을 더한다 */
 
-/* 유형별 색(엄지 색인): 인쇄 잉크 기준의 차분한 색 */
-.page[data-ch="안내"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
-.page[data-ch="01"] { --c1: #7d3566; --c1-dark: #5a2449; --c1-soft: #f2e5ee; --c1-line: #d6b3cb; --c1-pale: #faf4f8; }
-.page[data-ch="02"] { --c1: #5b3d8a; --c1-dark: #412b66; --c1-soft: #ece6f4; --c1-line: #c7b8de; --c1-pale: #f7f4fb; }
-.page[data-ch="03"] { --c1: #3c7a37; --c1-dark: #295626; --c1-soft: #e7f0e5; --c1-line: #b5d0b1; --c1-pale: #f4f8f3; }
-.page[data-ch="04"] { --c1: #234e8a; --c1-dark: #173562; --c1-soft: #e3e9f3; --c1-line: #aebfdb; --c1-pale: #f3f6fa; }
-.page[data-ch="05"] { --c1: #b5651d; --c1-dark: #844812; --c1-soft: #f6ebe0; --c1-line: #e2c3a4; --c1-pale: #fcf7f2; }
-.page[data-ch="06"] { --c1: #7a5a2e; --c1-dark: #574020; --c1-soft: #f1ebe2; --c1-line: #d5c4aa; --c1-pale: #f9f6f1; }
-.page[data-ch="07"] { --c1: #1d6c74; --c1-dark: #134a50; --c1-soft: #e3eeef; --c1-line: #a9c9cc; --c1-pale: #f2f7f7; }
-.page[data-ch="세트"], .page[data-ch="답"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
-.page[data-ch="안내"] .edge-tab { top: 22mm; }
-.page[data-ch="01"] .edge-tab { top: 46mm; }
-.page[data-ch="02"] .edge-tab { top: 70mm; }
-.page[data-ch="03"] .edge-tab { top: 94mm; }
-.page[data-ch="04"] .edge-tab { top: 118mm; }
-.page[data-ch="05"] .edge-tab { top: 142mm; }
-.page[data-ch="06"] .edge-tab { top: 166mm; }
-.page[data-ch="07"] .edge-tab { top: 190mm; }
-.page[data-ch="세트"] .edge-tab { top: 214mm; background: var(--ink); }
-.page[data-ch="답"] .edge-tab { top: 238mm; background: var(--ink); }
-.page[data-ch="안내"] .edge-tab, .page[data-ch="세트"] .edge-tab, .page[data-ch="답"] .edge-tab { font-size: 7.4pt; letter-spacing: -.04em; }
+/* 엄지 색인(단원 순서 구성, 2026-11-07): 대단원 색은 개념서(시안 H)와 같고, 통합사회1·2를 위치로 나눈다 */
+.page[data-ch$="Ⅰ"] { --c1: #1d6c74; --c1-dark: #134a50; --c1-soft: #e3eeef; --c1-line: #a9c9cc; --c1-pale: #f2f7f7; }
+.page[data-ch$="Ⅱ"] { --c1: #7d3566; --c1-dark: #5a2449; --c1-soft: #f2e5ee; --c1-line: #d6b3cb; --c1-pale: #faf4f8; }
+.page[data-ch$="Ⅲ"] { --c1: #3c7a37; --c1-dark: #295626; --c1-soft: #e7f0e5; --c1-line: #b5d0b1; --c1-pale: #f4f8f3; }
+.page[data-ch$="Ⅳ"] { --c1: #b5651d; --c1-dark: #844812; --c1-soft: #f6ebe0; --c1-line: #e2c3a4; --c1-pale: #fcf7f2; }
+.page[data-ch$="Ⅴ"] { --c1: #234e8a; --c1-dark: #173562; --c1-soft: #e3e9f3; --c1-line: #aebfdb; --c1-pale: #f3f6fa; }
+.page[data-ch="안내"], .page[data-ch="세트"], .page[data-ch="답"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+.sp .edge-tab { height: 19mm !important; font-size: 7.4pt !important; letter-spacing: -.04em; }
+.page[data-ch="안내"] .edge-tab { top: 20mm; }
+.page[data-ch="1·Ⅰ"] .edge-tab { top: 41mm; }
+.page[data-ch="1·Ⅱ"] .edge-tab { top: 62mm; }
+.page[data-ch="1·Ⅲ"] .edge-tab { top: 83mm; }
+.page[data-ch="1·Ⅳ"] .edge-tab { top: 104mm; }
+.page[data-ch="1·Ⅴ"] .edge-tab { top: 125mm; }
+.page[data-ch="2·Ⅰ"] .edge-tab { top: 146mm; }
+.page[data-ch="2·Ⅱ"] .edge-tab { top: 167mm; }
+.page[data-ch="2·Ⅲ"] .edge-tab { top: 188mm; }
+.page[data-ch="2·Ⅳ"] .edge-tab { top: 209mm; }
+.page[data-ch="2·Ⅴ"] .edge-tab { top: 230mm; }
+.page[data-ch="세트"] .edge-tab, .page[data-ch="답"] .edge-tab { top: 251mm; background: var(--ink); }
 
 /* 표지: 특강 이름이 길어 두 줄 */
 .sp-cover .cv-title { font-size: 32pt; line-height: 1.2; max-width: 90mm; }
@@ -86,3 +85,37 @@
 
 /* 빠른 정답 */
 .sp-q-l { font-weight: 700; font-size: 8.4pt; margin-bottom: 1mm; color: var(--ink); }
+
+/* 풀이 전략 카드 */
+.sp-strat { border-top: 1.2pt solid var(--ink); padding-top: 2mm; }
+.sp-strat-h { display: flex; align-items: center; gap: 3mm; margin-bottom: 1.6mm; }
+.sp-strat .sp-ex { background: var(--ink); }
+.sp-strat-i { margin: 0 0 1.6mm; font-size: 8.7pt; line-height: 1.7; color: var(--ink-2); }
+.sp-strat-steps { list-style: none; margin: 0 0 1.6mm; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 3mm; }
+.sp-strat-steps li { border-left: 1pt solid var(--rule); padding-left: 2mm; font-size: 8pt; line-height: 1.55; }
+.sp-strat-steps .n { display: block; font-size: 6.6pt; color: var(--red); font-weight: 700; letter-spacing: .06em; }
+.sp-strat-steps b { display: block; font-size: 8.4pt; margin-bottom: .4mm; }
+.sp-strat-steps span:last-child { color: var(--ink-2); }
+.sp-strat-tr { display: grid; grid-template-columns: 9mm 1fr; column-gap: 2mm; font-size: 8pt; line-height: 1.6; margin-bottom: 1mm; }
+.sp-strat-tr ul { list-style: none; margin: 0; padding: 0; }
+.sp-strat-tr li b { color: var(--red); margin-right: 1mm; }
+.sp-strat-ck { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6mm 4mm; font-size: 7.8pt; color: var(--ink-2); }
+.sp-strat-ck .sp-k { width: 9mm; }
+.sp-strat-ck span i { display: inline-block; width: 2.4mm; height: 2.4mm; border: .6pt solid var(--ink-2); margin-right: 1.2mm; vertical-align: -.3mm; }
+
+/* 분석 카드의 전략 표시 */
+.sp-tag { flex: none; font-size: 7.6pt; font-weight: 700; color: var(--ink); border: .6pt solid var(--ink); padding: .6mm 1.6mm; }
+.sp-tag em { font-style: normal; font-weight: 400; color: var(--ink-2); margin-left: 1mm; }
+
+/* 대단원 머리: 중단원 목록(예시문항이 나온 중단원은 진하게) + 출제 포인트 */
+.sp-chap ul.sp-units { list-style: none; margin: 2mm 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .6mm 5mm; font-size: 8.2pt; color: var(--gray); }
+.sp-chap ul.sp-units li b { margin-right: 1mm; }
+.sp-chap ul.sp-units li.on { color: var(--ink); font-weight: 700; }
+.sp-chap ul.sp-units li.on b { color: var(--c1); }
+.sp-point { border: .6pt solid var(--c1-line); background: var(--c1-pale); padding: 2.2mm 3mm; margin-bottom: 4mm; }
+.sp-point-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1mm; }
+.sp-point-h b { color: var(--c1-dark); font-size: 9pt; }
+.sp-point-h span { font-size: 7.4pt; color: var(--gray); }
+.sp-point-h em { font-style: normal; font-weight: 700; color: var(--c1-dark); }
+.sp-point ul { margin: 0; padding-left: 4mm; font-size: 8.6pt; line-height: 1.7; }
+.sp-toc td.no { width: 10mm; color: var(--gray); font-weight: 700; }
