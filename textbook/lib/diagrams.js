@@ -11,6 +11,8 @@
 //   econflow   { gov: true }                                           민간 경제의 순환 (가계·기업·시장)
 //   cultchange { items: [{ title, text }] ×3 }                          문화 변동의 양상 (동화·병존·융합)
 //   venn3      { sets: [이름×3], center, texts: [설명×3] }              세 원 (예: 지속가능발전)
+//   citymodel  { items: [{ key, title, text }] }                        도시 내부 구조 모식도(도심·부도심·주거·공업·개발 제한 구역·위성 도시)
+//              색은 우리나라 용도 지역 지도의 관례를 따른다(상업 분홍, 주거 노랑, 공업 보라, 녹지 초록)
 // 색은 대단원 색(--c1 계열)을 따르고, 아이콘은 lib/icons.js (Tabler Icons)
 import { icon, iconAt } from './icons.js';
 
@@ -52,6 +54,28 @@ export function diagram(b, inl) {
       }
       const list = b.rings.map((rg, i) => `<li style="--t:${tone(i)}"><span class="dg-dot">${esc(rg.short || String(i + 1))}</span><div><b>${T(rg.title)}</b>${rg.text ? `<span>${T(rg.text)}</span>` : ''}</div></li>`).join('');
       return `<div class="dg dg-concentric"><svg viewBox="0 0 200 200" class="dg-rings">${svg}</svg><ol class="dg-rlist">${b.label ? `<div class="dg-rlab">${T(b.label)}</div>` : ''}${list}</ol></div>`;
+    }
+    case 'citymodel': {
+      // 강사 2026-11-07: 도심·부도심·주거 지역 + 공업 지역을 한 그림에. 서울 지도(용도 색)와 같은 색을 쓴다.
+      const C = { cbd: '#d6336c', sub: '#f783ac', res: '#ffe066', ind: '#b197fc', gb: '#8ce99a', sat: '#dee2e6' };
+      const pt = (r, deg) => [100 + r * Math.cos((deg * Math.PI) / 180), 100 + r * Math.sin((deg * Math.PI) / 180)];
+      const wedge = (r0, r1_, a0, a1) => { const [x0, y0] = pt(r1_, a0), [x1, y1] = pt(r1_, a1), [x2, y2] = pt(r0, a1), [x3, y3] = pt(r0, a0);
+        return `M${r1(x0)},${r1(y0)} A${r1_},${r1_} 0 0 1 ${r1(x1)},${r1(y1)} L${r1(x2)},${r1(y2)} A${r0},${r0} 0 0 0 ${r1(x3)},${r1(y3)}Z`; };
+      let g = '';
+      g += `<circle cx="100" cy="100" r="92" fill="${C.gb}"/><circle cx="100" cy="100" r="82" fill="${C.res}"/>`; // 개발 제한 구역 띠, 주거 지역
+      g += `<path d="${wedge(44, 78, 192, 242)}" fill="${C.ind}"/><path d="${wedge(52, 78, 330, 352)}" fill="${C.ind}"/>`; // 공업 지역(강·철도·고속 도로 가)
+      g += `<circle cx="100" cy="100" r="44" fill="#fff3bf" stroke="#e8c547" stroke-width=".6" stroke-dasharray="2 1.5"/>`; // 중간 지역(주거·상업·공업 혼재)
+      g += `<path d="M2,128 C40,122 62,140 100,134 S160,112 198,118" fill="none" stroke="#4dabf7" stroke-width="4" stroke-linecap="round"/>`; // 강
+      for (const [r, a] of [[60, 20], [62, 150], [58, 275]]) { const [x, y] = pt(r, a); g += `<circle cx="${r1(x)}" cy="${r1(y)}" r="9" fill="${C.sub}" stroke="#fff" stroke-width="1.2"/><text x="${r1(x)}" y="${r1(y + 3.2)}" text-anchor="middle" class="dg-rlabel" style="font-size:8.5px">2</text>`; }
+      g += `<circle cx="100" cy="100" r="16" fill="${C.cbd}" stroke="#fff" stroke-width="1.4"/><text x="100" y="104" text-anchor="middle" class="dg-rlabel" style="fill:#fff">1</text>`;
+      for (const [x, y] of [[214, 40], [222, 150], [196, 206]]) g += `<circle cx="${x}" cy="${y}" r="10" fill="${C.sat}" stroke="#adb5bd" stroke-width=".8"/><text x="${x}" y="${y + 3.2}" text-anchor="middle" class="dg-rlabel" style="font-size:8.5px">6</text>`;
+      g += `<text x="74" y="78" text-anchor="middle" class="dg-rlabel" style="font-size:8.5px">3</text><text x="166" y="70" text-anchor="middle" class="dg-rlabel" style="font-size:8.5px">3</text>`;
+      { const [x, y] = pt(64, 217); g += `<text x="${r1(x)}" y="${r1(y + 3)}" text-anchor="middle" class="dg-rlabel" style="font-size:8.5px">4</text>`; }
+      g += `<text x="100" y="12" text-anchor="middle" class="dg-rlabel" style="font-size:8.5px">5</text>`;
+      const sw = { cbd: C.cbd, sub: C.sub, res: C.res, ind: C.ind, gb: C.gb, sat: C.sat };
+      const ink = { cbd: '#c2255c', sub: '#c2255c', res: '#9c7a00', ind: '#6741d9', gb: '#2b8a3e', sat: '#5c636a' }; // 제목 글자는 진한 색(연한 칸 색은 읽기 어려움)
+      const list = b.items.map((it, i) => `<li style="--t:${ink[it.key] || tone(i)}"><span class="dg-dot" style="background:${sw[it.key]};color:${['res', 'gb', 'sat'].includes(it.key) ? '#333' : '#fff'}">${i + 1}</span><div><b>${T(it.title)}</b>${it.text ? `<span>${T(it.text)}</span>` : ''}</div></li>`).join('');
+      return `<div class="dg dg-concentric dg-city"><svg viewBox="0 0 240 216" class="dg-rings">${g}</svg><ol class="dg-rlist">${b.label ? `<div class="dg-rlab">${T(b.label)}</div>` : ''}${list}</ol></div>`;
     }
     case 'triangle': {
       // 꼭짓점: 위(50,22) / 왼쪽 아래(16,66) / 오른쪽 아래(84,66). 위 꼭짓점 글자는 꼭짓점 위에, 아래 꼭짓점 글자는 아래에 둔다

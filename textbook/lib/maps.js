@@ -10,12 +10,16 @@
 //   style: 'terrain'(지형도) | 'political'(나라별 색) | 'thematic'(옅은 땅 + 주제 색, 기본)
 //   highlight: [{ country, cls, label, at, fill }]   나라 색칠 (cls: h1~h4, k1~k8, 또는 fill: '#색')
 //   choro: { data: { ISO3: 값 }, breaks: [...], colors: [...], title, labels }   단계 구분도
-//   markers: [{ lon, lat, label, pos, cls, ring, city }]   arrows: [{ from, to, bend, cls, label }]
+//   markers: [{ lon, lat, label, pos, cls, ring, city, shape }]   arrows: [{ from, to, bend, cls, label }]
+//     shape: 'star'(★, 예: 발상지) · 'square' · 'tri' — 점(●)과 다른 기호로 구분할 때
+//   subregions: { file: 'seoul-gu.json', fills: { 이름: '#색' }, base: '#색', names: true|[이름…], size, labelAt: { 이름: [경도, 위도] } }
+//     시·군·구처럼 작은 행정 구역을 색칠하고 이름을 쓴다(서울 자치구 = data/geo/seoul-gu.json, 통계청 2013)
+//   routes: [{ path: [[경도, 위도]…], cls, label, at: [경도, 위도], arrow }]  경유점을 차례로 지나는 매끄러운 선(항로처럼 바다로만 이어지게)
 //   labels: [{ at:[경도,위도], text, size, cls: 'sea'|'country'|'river'|'terr'|'region'|'soft'|'strong', rot }]
 //   seas: true(세계 지도 대양 이름 자동) | [[이름, 경도, 위도, 크기, 기울기]]
 //   rivers: false | 등급(1~9)   riverEmph: ['Mekong'](강조할 강, Natural Earth 영어 이름)   lakes: false | 등급   krRivers: 최소 유역(km²)   provinces: true(시·도 경계)
 //   borders: false(국경선 끄기)  deg: false(경위도 숫자 끄기)  north: false(방위표 끄기)  scale: false | km  frame: false
-//   legend: [{ cls, label } | { line: 'border'|'river'|'prov'|'mdl'|'warm'|'cold'|'wind', label } | { pin: 'k1', label }]
+//   legend: [{ cls, label } | { line: 'border'|'river'|'prov'|'mdl'|'warm'|'cold'|'wind', label } | { pin: 'k1', label } | { shape: 'star', pin: 'k1', label } | { ring: 'k3', label }]
 import { readFileSync, existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
@@ -203,6 +207,13 @@ export function drawMap(b, h) {
     if (hl.fill) s += `<path d="${path(f)}" fill="${hl.fill}" fill-opacity="${hl.opacity ?? (terrain ? 0.45 : 0.9)}"/>`;
     else s += `<path d="${path(f)}" class="hl ${hl.cls || 'h1'}${terrain ? ' tl' : ' solid'}"/>`;
   }
+  if (b.subregions) {
+    const sr = b.subregions;
+    for (const f of geo(sr.file).features) {
+      const fill = sr.fills?.[f.properties.name] || sr.base || '#f6f2e8';
+      s += `<path d="${path(f)}" fill="${fill}" stroke="#8f8578" stroke-width=".7" stroke-linejoin="round"/>`;
+    }
+  }
   if (b.provinces) for (const f of geo('kr-provinces.json').features) s += `<path d="${path(f)}" fill="none" stroke="${terrain ? 'rgba(88,64,110,.55)' : '#a395b3'}" stroke-width=".6" stroke-dasharray="3 1.6"/>`;
 
   // ── 4. 호수·강 ──
@@ -308,11 +319,31 @@ export function drawMap(b, h) {
     const [x, y] = proj(hl.at || geoCentroid(find(hl.country)));
     s += text(x, y + 4, hl.label, { size: 12, anchor: 'middle', cls: 'mapl', weight: 700 });
   }
+  if (b.subregions?.names) {
+    const sr = b.subregions;
+    for (const f of geo(sr.file).features) {
+      const n = f.properties.name;
+      if (Array.isArray(sr.names) && !sr.names.includes(n)) continue;
+      const [x, y] = proj(sr.labelAt?.[n] || geoCentroid(f));
+      s += text(x, y + 3.5, n, { size: sr.size || 9.5, anchor: 'middle', cls: 'mapl soft' });
+    }
+  }
   for (const l of b.labels || []) {
     const [x, y] = proj(l.at);
     s += lab(x, y, l.text, { size: l.size || 11.5, cls: l.cls || 'soft', rot: l.rot || 0, anchor: l.anchor || 'middle' });
   }
   // ── 7. 화살표·지점 ──
+  // 경로(routes): 경유점을 지나는 Catmull-Rom 곡선 → 3차 베지에. 실제 항로처럼 바다·해협을 차례로 지나게 경유점을 준다.
+  for (const r of b.routes || []) {
+    const pts = r.path.map((p) => proj(p)), t = r.tension ?? 1;
+    let d = `M${r1(pts[0][0])},${r1(pts[0][1])}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      d += `C${r1(p1[0] + ((p2[0] - p0[0]) / 6) * t)},${r1(p1[1] + ((p2[1] - p0[1]) / 6) * t)} ${r1(p2[0] - ((p3[0] - p1[0]) / 6) * t)},${r1(p2[1] - ((p3[1] - p1[1]) / 6) * t)} ${r1(p2[0])},${r1(p2[1])}`;
+    }
+    s += `<path d="${d}" class="arrow route ${r.cls || ''}"${r.arrow === false ? '' : ` marker-end="url(#${r.cls ? `ah-${r.cls}` : 'ah2'})"`}/>`;
+    if (r.label) { const [x, y] = proj(r.at || r.path[Math.floor(r.path.length / 2)]); s += text(x, y, r.label, { size: r.size || 11, anchor: 'middle', cls: 'mapl' }); }
+  }
   for (const a of b.arrows || []) {
     const [x1, y1] = proj(a.from), [x2, y2] = proj(a.to);
     const mx = (x1 + x2) / 2 - (y2 - y1) * (a.bend ?? 0.2), my = (y1 + y2) / 2 + (x2 - x1) * (a.bend ?? 0.2);
@@ -325,6 +356,7 @@ export function drawMap(b, h) {
       s += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${m.ring}" class="ring ${m.cls || ''}"/>`;
       if (m.ring <= 10 && m.dot !== false) s += `<circle cx="${r1(x)}" cy="${r1(y)}" r="3.6" class="pin ${m.cls || ''}"/>`;
     } else if (m.city) s += `<circle cx="${r1(x)}" cy="${r1(y)}" r="3.3" class="city"/>`;
+    else if (m.shape) s += shapeMark(m.shape, x, y, m.r || 6.5, `pin ${m.cls || ''}`);
     else s += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${m.r || 4.5}" class="pin ${m.cls || ''}"/>`;
     if (m.label) {
       const pos = m.pos || 'right', d = (m.ring || (m.city ? 4 : 6)) + 4;
@@ -371,7 +403,9 @@ export function drawMap(b, h) {
         if (it.line) {
           const st = { border: 'stroke="#8a4f8f" stroke-width="1.2" stroke-dasharray="5 2 1.5 2"', river: `stroke="${water}" stroke-width="1.8"`, prov: 'stroke="#7a6290" stroke-width=".9" stroke-dasharray="3 1.6"', mdl: 'stroke="#a61e4d" stroke-width="1.3" stroke-dasharray="6 2 1.5 2"', plate: 'stroke="#c92a2a" stroke-width="1.6"', warm: 'stroke="#e03131" stroke-width="2"', cold: 'stroke="#1971c2" stroke-width="2"', wind: 'stroke="#868e96" stroke-width="2" stroke-dasharray="5 3"' }[it.line];
           s += `<path d="M${r1(x)},${r1(y - 4)}h20" fill="none" ${st}/>`; x += 26;
-        } else if (it.pin) { s += `<circle cx="${r1(x + 5)}" cy="${r1(y - 4)}" r="4.2" class="pin ${it.pin}"/>`; x += 16; }
+        } else if (it.shape) { s += shapeMark(it.shape, x + 5, y - 4, 6, `pin ${it.pin || ''}`); x += 16; }
+        else if (it.ring) { s += `<circle cx="${r1(x + 5)}" cy="${r1(y - 4)}" r="5.2" class="ring ${it.ring}"/>`; x += 16; }
+        else if (it.pin) { s += `<circle cx="${r1(x + 5)}" cy="${r1(y - 4)}" r="4.2" class="pin ${it.pin}"/>`; x += 16; }
         else if (it.fill) { s += `<rect x="${r1(x)}" y="${r1(y - 9.5)}" width="11" height="11" rx="2" fill="${it.fill}" stroke="#8a96a3" stroke-width=".4"/>`; x += 16; }
         else { s += `<rect x="${r1(x)}" y="${r1(y - 9.5)}" width="11" height="11" rx="2" class="fl ${it.cls}${it.cls?.startsWith('h') ? ' hlbox' : ''}"/>`; x += 16; }
         s += text(x, y, it.label, { size, cls: 'lg' }); x += tw(it.label, size) + 12;
@@ -392,4 +426,13 @@ export function drawMap(b, h) {
   if (!world && b.frame !== false) s += `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" fill="none" stroke="#8796a5" stroke-width="1"/>`;
   if (world) s += `<path d="${gpath({ type: 'Sphere' })}" fill="none" stroke="#9fb6c8" stroke-width=".8"/>`;
   return { W, H, s };
+}
+
+// 지점 기호 모양: 별(★)·네모·세모 — 점(●)과 구분해 쓴다(예: 발상지 ★ / 성지 ●)
+function shapeMark(shape, x, y, r, cls) {
+  let pts;
+  if (shape === 'star') pts = Array.from({ length: 10 }, (_, i) => { const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r * 0.45 : r; return [x + rr * Math.cos(a), y + rr * Math.sin(a)]; });
+  else if (shape === 'tri') pts = [[x, y - r], [x + r * 0.9, y + r * 0.6], [x - r * 0.9, y + r * 0.6]];
+  else pts = [[x - r * 0.75, y - r * 0.75], [x + r * 0.75, y - r * 0.75], [x + r * 0.75, y + r * 0.75], [x - r * 0.75, y + r * 0.75]];
+  return `<polygon points="${pts.map(([a, b]) => `${r1(a)},${r1(b)}`).join(' ')}" class="${cls}"/>`;
 }

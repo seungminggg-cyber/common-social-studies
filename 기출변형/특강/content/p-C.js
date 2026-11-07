@@ -8,7 +8,7 @@ const PIN = (label, lon, lat, pos = 'right', ring = 9, size = 15) => ({ lon, lat
 export default [
   // ── 1. 예시 2번 쌍둥이: 원인 표 + 분포 지도 ──
   {
-    id: 'sp-C-01', unit: 't1-07', level: '중상', concept: [2, 4, 7], type: '지도 해석',
+    id: 'sp-C-01', unit: 't1-07', level: '중상', concept: [2, 4, 6], type: '지도 해석',
     src: '예시 2번 쌍둥이 — 사막화·열대림·해양 쓰레기 대신 산성비·오존층 파괴·산악 빙하 감소, 빈칸은 B의 원인',
     stem: '다음은 환경 문제에 대한 탐구 활동지의 일부이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [

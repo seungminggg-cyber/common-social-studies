@@ -149,12 +149,13 @@ export default {
     },
     {
       t: 'map', view: 'world', title: '세계 주요 종교의 발상지와 전파 경로 (개념도)', h: 300,
+      // 강사 2026-11-07: 발상지와 성지를 분명히 구분 → 이 지도는 발상지(★)만, 성지는 아래 '발상지와 성지' 지도에서 ●로
       markers: [
-        { lon: 35.2, lat: 31.8, label: '예루살렘', pos: 'left', size: 11 },
-        { lon: 39.8, lat: 21.4, label: '메카', pos: 'bottom', size: 11 },
-        { lon: 83, lat: 25.3, label: '바라나시', pos: 'top', size: 11 },
-        { lon: 85, lat: 24.7, label: '부다가야', pos: 'bottom', size: 11 },
+        { lon: 35.2, lat: 31.8, shape: 'star', cls: 'k4', label: '팔레스타인', pos: 'top', size: 10.5, dx: 30 },
+        { lon: 39.8, lat: 21.4, shape: 'star', cls: 'k3', label: '메카', pos: 'bottom', size: 10.5 },
+        { lon: 84, lat: 25.0, shape: 'star', cls: 'k1', label: '인도 북부', pos: 'bottom', size: 10.5 },
       ],
+      legend: [{ shape: 'star', pin: 'k6', label: '발상지' }, { line: 'cold', label: '전파 경로(색은 종교별)' }],
       arrows: [
         { from: [35, 32], to: [12, 45], bend: -0.1, cls: 'k4' },
         { from: [10, 48], to: [-60, 5], bend: 0.18, cls: 'k4', label: '크리스트교' },
@@ -296,14 +297,30 @@ export default {
     },
     {
       t: 'map', view: [-12, 8, 100, 52], title: '세계 주요 종교의 발상지와 성지', h: 300, style: 'terrain', rivers: 4,
+      // ★ 발상지(종교가 처음 생긴 곳) · ● 성지(신자들이 거룩하게 여겨 순례하는 곳) · ■ 종교의 중심지. 색은 종교(파랑 크리스트교, 초록 이슬람교, 주황 힌두교, 빨강 불교)
       markers: [
-        { lon: 35.2, lat: 31.8, label: '예루살렘(크리스트교·유대교·이슬람교)', pos: 'left' },
-        { lon: 39.8, lat: 21.4, label: '메카(이슬람교)', pos: 'right' },
-        { lon: 12.45, lat: 41.9, label: '바티칸(가톨릭교)', pos: 'top' },
-        { lon: 83, lat: 25.3, label: '바라나시(힌두교)', pos: 'top' },
-        { lon: 85, lat: 24.7, label: '부다가야(불교)', pos: 'bottom' },
+        { lon: 35.2, lat: 31.8, shape: 'star', cls: 'k4', label: '예루살렘', pos: 'left', size: 11.5 },
+        { lon: 39.8, lat: 21.4, shape: 'star', cls: 'k3', label: '메카', pos: 'left', size: 11.5 },
+        { lon: 39.6, lat: 24.5, cls: 'k3', label: '메디나', pos: 'right', size: 11.5 },
+        { lon: 12.45, lat: 41.9, shape: 'square', cls: 'k4', label: '바티칸', pos: 'top', size: 11.5 },
+        { lon: 85.0, lat: 24.7, shape: 'star', cls: 'k1', label: '부다가야', pos: 'bottom', size: 11.5 },
+        { lon: 83.0, lat: 25.3, cls: 'k2', label: '바라나시', pos: 'left', size: 11.5 },
+        { lon: 83.3, lat: 27.5, cls: 'k1', label: '룸비니', pos: 'top', size: 11.5 },
       ],
+      legend: [{ shape: 'star', pin: 'k6', label: '발상지' }, { pin: 'k6', label: '성지' }, { shape: 'square', pin: 'k6', label: '종교 중심지' },
+        { fill: '#1971c2', label: '크리스트교' }, { fill: '#2f9e44', label: '이슬람교' }, { fill: '#f08c00', label: '힌두교' }, { fill: '#e03131', label: '불교' }],
       source: '지도 자료: Natural Earth, 고도 AWS Terrain Tiles',
+    },
+    {
+      t: 'table', title: '주요 종교의 발상지와 성지 정리',
+      head: ['종교', '발상지 (처음 생긴 곳)', '대표 성지 (순례하는 곳)'], widths: [16, 40, 44],
+      rows: [
+        [{ text: '크리스트교', cls: 'em' }, '팔레스타인(예루살렘 일대)', '**예루살렘** · 가톨릭교의 중심지는 바티칸(교황청)'],
+        [{ text: '이슬람교', cls: 'em' }, '아라비아반도의 **메카**', '**메카**(최대 성지, 기도 방향·성지 순례), 메디나, 예루살렘'],
+        [{ text: '유대교', cls: 'em' }, '팔레스타인', '**예루살렘**'],
+        [{ text: '힌두교', cls: 'em' }, '인도(특정 창시자가 없음)', '갠지스강 가의 **바라나시**'],
+        [{ text: '불교', cls: 'em' }, '인도 북부(석가모니가 깨달음을 얻은 **부다가야** 일대)', '부다가야, 룸비니(석가모니 탄생지, 네팔)'],
+      ],
     },
 
     // ── D ──
@@ -327,7 +344,7 @@ export default {
       source: '지도 자료: Natural Earth',
     },
     {
-      t: 'table', title: '세계의 문화권 ① — 유럽·아프리카·서남아시아 쪽',
+      t: 'table', title: '세계의 문화권 ① — 유럽·아프리카·서남아시아',
       head: ['문화권', '주요 특징'], widths: [17, 83],
       rows: [
         [{ text: '유럽', cls: 'em' }, '**크리스트교**와 그리스·로마 문화가 바탕이며 민주주의와 자본주의의 기원지이다. 산업 혁명이 시작되어 일찍 산업화·도시화되었다.'],
@@ -340,7 +357,7 @@ export default {
       ],
     },
     {
-      t: 'table', title: '세계의 문화권 ② — 아시아·아메리카·오세아니아 쪽',
+      t: 'table', title: '세계의 문화권 ② — 아시아·아메리카·오세아니아',
       head: ['문화권', '주요 특징'], widths: [17, 83],
       rows: [
         [{ text: '동아시아', cls: 'em' }, '한국·중국·일본. **유교와 불교**, **한자**와 젓가락을 쓰는 문화. 계절풍 기후로 **벼농사**가 발달했다.'],
@@ -408,10 +425,6 @@ export default {
         '**D(북아메리카)** → 앵글로아메리카 문화권: 영어, 개신교, 이민자가 많은 다문화 사회',
         '함정: "C는 영어를 쓰고 개신교가 우세하다", "B는 이슬람교 신자 수가 세계에서 가장 많은 나라가 있다(→ 인도네시아는 섬 지역)" 같은 선지를 조심한다.',
       ],
-    },
-    {
-      t: 'tip',
-      text: '문화권 문제는 **종교로 거꾸로 찾기**가 빨라요. 돼지고기·술 금지·라마단 → 이슬람교 → 서남아시아·북부 아프리카(그리고 인도네시아!). 소고기 금지·갠지스강 → 힌두교 → 인도. 탁발 → 동남아 불교. 아메리카는 **위가 영어·개신교, 아래가 에스파냐어·가톨릭**이라고 기억하세요.',
     },
   ],
 

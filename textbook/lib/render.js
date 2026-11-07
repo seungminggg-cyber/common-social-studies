@@ -32,6 +32,7 @@ const GANADA = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ'];
 const two = (n) => String(n).padStart(2, '0');
 
 // ── 블록 하나 그리기 ─────────────────────────────
+const r2 = (v) => Math.round(v * 100) / 100;
 export function block(b) {
   switch (b.t) {
     case 'sec':
@@ -106,10 +107,12 @@ export function block(b) {
       return figure(b, inl);
     case 'figrow': {
       // 그림 여러 개를 가로로 나란히 (기후 그래프 비교 등). 한글 파일에는 줄 전체를 한 장의 그림으로 넣는다.
+      // sameHeight: 그림마다 가로·세로 비율대로 칸 너비를 나눠 높이를 같게(예: 세계 지도 + 유럽 지도)
       const foot = b.source || b.note
         ? `<div class="fig-foot">${b.note ? `<span class="fig-note">${inl(b.note)}</span>` : ''}${b.source ? `<span class="fig-src">${esc(b.source)}</span>` : ''}</div>` : '';
       return `<div class="figrow-wrap">${b.title ? `<div class="tbl-title">${inl(b.title)}</div>` : ''}<div class="figrow"${
-        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:repeat(${b.cols || b.items.length},1fr)">${b.items.map((x) => figure(x, inl)).join('')}</div>${foot}</div>`;
+        b._fig ? ` data-row="${b._fig}"` : ''} style="grid-template-columns:${
+        b.sameHeight ? b.items.map((x) => `${r2((x.w || 600) / (x.h || 300))}fr`).join(' ') : `repeat(${b.cols || b.items.length},1fr)`}">${b.items.map((x) => figure(x, inl)).join('')}</div>${foot}</div>`;
     }
     case 'hub':
       return `<div class="hub"><div class="hub-center"><span>${inl(b.center)}</span></div>${b.spokes
@@ -514,7 +517,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       ['한 장 정리', '중단원 끝 한 쪽에 개념별 핵심, 헷갈리지 말자, 시험 전 체크를 모았다. 시험 직전에 이 쪽만 다시 본다.'],
       ['개념 확인', 'O/X와 빈칸 채우기로 개념을 점검한다. 맞힌 개수를 학습 계획표에 적는다.'],
       ['수능형 문제', '문제마다 관련 개념 번호와 문제 유형, 난이도를 적었다. 틀리면 그 개념으로 돌아가 다시 읽는다. 해설은 별책.'],
-      ['정리 노트 · 승민T 한마디', '남는 칸에 핵심어를 다시 쓰거나 틀린 문제를 적는다. 승민T 한마디는 시험 직전에 다시 볼 한 줄 정리.'],
+      ['정리 노트', '남는 칸에 핵심어를 다시 쓰거나 틀린 문제를 적는다. 시험 직전에 다시 볼 한 줄 정리를 직접 만든다.'],
     ];
     add('guide', '', `<div class="top" id="guide"><div class="guide"><div class="band band-guide"><span class="band-title">이 책의 구성</span><span class="band-unit">이렇게 공부하세요</span></div>
       <ol class="guide-list">${GUIDE.map(([t, d], i) => `<li><span class="gd-n">${two(i + 1)}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
