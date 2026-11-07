@@ -78,16 +78,23 @@ export function mmapChapterPage(v, info, { keys = [], uid = 'c', tab = false, pa
 // 오른쪽 쪽(홀수): '대단원 Ⅰ' + 대단원 이름(크게, 밑에 가는 네온 선) + 중단원 표(쪽) + 대단원 핵심 개념 — 쪽 위아래 가운데에 모은다.
 // 접히는 쪽(제본 쪽) 20mm 안에는 글자를 두지 않는다.
 const GL = { cx: 96, cy: 176, R: 76 }; // 왼쪽 쪽 지구본 자리
-export function mmapChapterLeft(v, info, { uid = 'c' } = {}) {
+// 도련 낱장용 엄지 색인(본문에서는 쪽 나누기가 같은 자리에 그린다): side 'left'(왼쪽 쪽 바깥) · 'right'(오른쪽 쪽 바깥)
+const edgeTab = (info, side) => {
+  const ty = 38 + 30 * (info.k % 5);
+  const x = side === 'right' ? W - 6.5 : -B;
+  const tx = side === 'right' ? W - 6.5 : 0;
+  return `<div class="abs" style="left:${mm(x)};top:${mm(ty)};width:${mm(6.5 + B)};height:26mm;background:${CH[info.no]}"></div><div class="abs edge" style="left:${mm(tx)};top:${mm(ty)};width:6.5mm;height:26mm;display:flex;align-items:center;justify-content:center;font-family:'KoPub Batang','KoPubWorld Batang';font-weight:700;font-size:10pt;color:#fff">${info.no}</div>`;
+};
+export function mmapChapterLeft(v, info, { uid = 'c', tab = false } = {}) {
   const c = C1[v.n], col = UNIT_NEON[info.no];
   const G = neonGlobe({ ...c, neon: col, hot: mix(col, '#ffffff', 0.65), sea: mix(c.bg, col, 0.12) }, { ...GL, id: `g${uid}L` });
   return wrap(`${svgFull(c.bg, G.svg, G.defs)}
     ${T('대단원', { x: 22, y: 18, size: 12, weight: 700, color: col, ls: 0.2 })}
     ${neon(layoutRoman(info.no), { x: 22, y: 30, hMm: 58, glow: col, id: `n${uid}L` })}
-    ${T(`MINIMAP 개념서 · ${esc(v.subject)}`, { x: 16, y: 280, size: 8.6, color: c.sub })}`);
+    ${T(`MINIMAP 개념서 · ${esc(v.subject)}`, { x: 16, y: 280, size: 8.6, color: c.sub })}${tab ? edgeTab(info, 'left') : ''}`);
 }
 // align — 'center': 쪽 위아래 가운데 / 'top': 왼쪽 쪽의 '대단원'과 같은 높이에서 시작
-export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null, align = 'center' } = {}) {
+export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null, align = 'center', tab = false } = {}) {
   const c = C1[v.n], col = UNIT_NEON[info.no];
   const faint = mix(c.bg, '#ffffff', 0.16), sub = c.sub;
   const n = info.units.length, rowH = Math.min(15, 52 / n);
@@ -95,7 +102,7 @@ export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null, 
   const pg = (u) => (pages ? (pages[`u${u.no}`] ?? '') : `<i data-pg="u${esc(u.no)}" style="font-style:normal"></i>`);
   const rows = info.units.map((u) => `<tr><td style="${td}width:14mm;color:${col};font-weight:700">${esc(u.no)}</td><td style="${td}">${esc(u.title)}</td><td style="${td}text-align:right;width:20mm">${pg(u)}</td></tr>`).join('');
   const keyHtml = keys.length
-    ? `<div style="margin-top:${align === 'top' ? 16 : 12}mm"><div style="font-size:10.5pt;font-weight:700;color:${col};letter-spacing:.04em;margin-bottom:2.6mm">대단원 핵심 개념</div>
+    ? `<div style="margin-top:${align === 'top' ? 16 : 20}mm"><div style="font-size:10.5pt;font-weight:700;color:${col};letter-spacing:.04em;margin-bottom:2.6mm">대단원 핵심 개념</div>
       ${keys.map((k) => `<div style="display:flex;gap:2.6mm;font-size:12pt;line-height:1.5;color:${mix(sub, '#ffffff', 0.45)};margin-top:1.4mm"><span style="color:${col}">•</span><span>${inl(k, '#ffffff')}</span></div>`).join('')}</div>`
     : '';
   return wrap(`${svgFull(c.bg, '', '')}
@@ -109,7 +116,7 @@ export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null, 
         ${rows}
       </table>
       ${keyHtml}
-    </div>`);
+    </div>${tab ? edgeTab(info, 'right') : ''}`);
 }
 
 // 속표지(본문 첫 쪽) = 앞표지와 똑같은 그림(MINIMAX와 같은 방식)

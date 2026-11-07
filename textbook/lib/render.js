@@ -535,7 +535,12 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       const d = full.dividers?.[ch.chapter.no] || {};
       const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
       // 간지 (오른쪽 쪽). MINIMAP 완성본이면 MINIMAP 간지
-      if (mm?.chapter) add('mmdiv', `data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
+      // MINIMAP: 두 쪽 펼침 간지(왼쪽 쪽은 짝수 쪽에서 시작 → 펼쳤을 때 마주 보게)
+      if (mm?.chapterLeft) {
+        add('mmdiv', `data-even="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapterLeft(ch, ci, d)}</div>`);
+        add('mmdiv', `data-tab="${esc(ch.chapter.no)}"`, `<div class="top">${mm.chapterRight(ch, ci, d)}</div>`);
+      }
+      else if (mm?.chapter) add('mmdiv', `data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
       else add('divider', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}"><div class="divider">
         <div class="dv-bg">${esc(ch.chapter.no)}</div>
         <div class="dv-label">대단원 ${ci + 1}</div>

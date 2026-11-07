@@ -111,3 +111,5 @@
   이 모양은 MINIMAP 빌드(`build-book.mjs mm`, body.mmbook)에만 적용된다.
 - 책등(강사 고름): 'linemid' — 위 작은 네온 지구본, 네온 선, 가운데 MINIMAP 로고·책 이름(중간 크기), 네온 선, 아래 '승민T 통합사회'. 앞표지 왼쪽 위 '승민T 통합사회'는 뺌.
   표지만 다시 만들 때: `node cover/build-cover.mjs mmappaffy` → `python3 cover/paffy.py cover`. 책등 시안 비교는 `mmapspines [mid]`.
+- 대단원 간지 = **두 쪽 펼침**(강사 2026-11-07, 가 시안): 왼쪽 쪽(늘 짝수 쪽, `data-even`) 네온 번호 + 큰 지구본, 오른쪽 쪽 '대단원 Ⅰ'(18pt)·대단원 이름(46pt, 밑에 가는 네온 선)·중단원 표·핵심 개념을 쪽 가운데에(`mmap-div.js`의 mmapChapterLeft/Right).
+  시안 비교 `mmapdivspread [top]`. 인쇄소용 도련 낱장 간지도 10쪽. 결과: 통합사회1 266쪽, 통합사회2 265쪽(+빈 쪽 = 266), 책등 둘 다 15mm.

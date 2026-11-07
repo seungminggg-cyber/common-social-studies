@@ -59,7 +59,7 @@ def main(no):
         sub = '통합사회1' if no == 't1' else '통합사회2'
         tag = f'MINIMAP-{sub}'
         body = os.path.join(HERE, '..', '..', 'textbook', 'out', f'{tag}-본문.pdf')
-        ndiv = '5쪽'
+        ndiv = '10쪽'  # 두 쪽 펼침 간지 × 5
     elif no in ('x1', 'x2'):  # 합본 MINIMAX 기출분석 통합사회1·2 (2026-11-07)
         tag = f"MINIMAX-통합사회{no[1]}"
         body = os.path.join(OUT, 'vol', f'{tag}-본문.pdf')

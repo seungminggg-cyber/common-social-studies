@@ -206,7 +206,7 @@ if (args.includes('mmapfinal')) {
     await emit(`MINIMAP-${v.subject}-앞표지`, doc([mmapFace('M1', v)]));
     await emit(`MINIMAP-${v.subject}-뒷표지`, doc([m1Back(v)]));
     // 속표지 + 대단원 간지 5장(도련 3mm, 엄지 색인 포함). 표의 쪽 번호는 개념서 본문 빌드(textbook: node build-book.mjs mm)가 남긴 json
-    const { mmapTitlePage, mmapChapterPage, chapterInfo } = await import('./mmap-div.js');
+    const { mmapChapterLeft, mmapChapterRight, chapterInfo } = await import('./mmap-div.js');
     const { C1 } = await import('./mmap.js');
     const book = (await import(`../../textbook/content/_book/${v.id}.js`)).default;
     const pj = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-쪽.json`);
@@ -214,7 +214,12 @@ if (args.includes('mmapfinal')) {
     if (!pages) console.warn(`[${v.subject}] 쪽 번호 파일이 없어 간지 표의 쪽 칸이 비어 있습니다 → textbook에서 node build-book.mjs mm${v.n === 2 ? ' t2' : ''}`);
     const sheet = (inner) => `<section class="sheet" style="background:${C1[v.n].bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
     // 속표지는 빼고(2026-11-07 강사: 앞표지와 같은 그림이 두 번) 대단원 간지 5장만
-    const divs = [...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
+    // 두 쪽 펼침 간지(왼쪽 쪽 + 오른쪽 쪽) × 대단원 5개 = 10쪽
+    const divs = book.chapters.flatMap((ch, ci) => {
+      const info = chapterInfo(ch, ci);
+      return [sheet(mmapChapterLeft(v, info, { uid: `c${ci}`, tab: true })),
+        sheet(mmapChapterRight(v, info, { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages }))];
+    });
     await emit(`MINIMAP-${v.subject}-속표지간지-도련`, doc(divs, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
   }
 }

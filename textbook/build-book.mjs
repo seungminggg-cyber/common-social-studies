@@ -38,7 +38,7 @@ const jobs = mmMode ? ['student'] : picked.length ? picked : ['student', 'teache
 let mmOpt = null, mmHead = '';
 if (mmMode) {
   const COVER = join(ROOT, '../기출변형/cover');
-  const { mmapTitlePage, mmapChapterPage, chapterInfo, MMAP_DIV_CSS } = await import(pathToFileURL(join(COVER, 'mmap-div.js')).href);
+  const { mmapTitlePage, mmapChapterLeft, mmapChapterRight, chapterInfo, MMAP_DIV_CSS } = await import(pathToFileURL(join(COVER, 'mmap-div.js')).href);
   const { MMAP } = await import(pathToFileURL(join(COVER, 'mm-data.js')).href);
   const v = MMAP.vols.find((x) => x.subject === full.subject);
   // 인쇄용 글꼴: KoPub OTF·Pretendard 가변 글꼴은 PDF에 Type 3으로 들어가므로 TrueType으로 바꿔 쓴다(기출변형 cover/otf2ttf.py가 만든 것)
@@ -51,7 +51,12 @@ if (mmMode) {
     .concat([['Dotum', 300, 'Light'], ['Dotum', 500, 'Medium'], ['Dotum', 700, 'Bold'], ['Batang', 300, 'Light'], ['Batang', 500, 'Medium'], ['Batang', 700, 'Bold']].map(([fam, w, n]) => `@font-face{font-family:'KoPub ${fam}';font-weight:${w};src:url('file://${TTF}/KoPubWorld-${fam}-${n}.ttf');}`))
     .join('\n');
   mmHead = `<style>${faces}\n${MMAP_DIV_CSS}</style>`;
-  mmOpt = { title: () => mmapTitlePage(v), chapter: (ch, ci, d) => mmapChapterPage(v, chapterInfo(ch, ci), { keys: d.keys || [], uid: `c${ci}` }) };
+  // 대단원 간지는 두 쪽 펼침(2026-11-07 강사): 왼쪽 쪽 = 네온 번호 + 지구본, 오른쪽 쪽 = 대단원 이름·중단원 표·핵심 개념
+  mmOpt = {
+    title: () => mmapTitlePage(v),
+    chapterLeft: (ch, ci) => mmapChapterLeft(v, chapterInfo(ch, ci), { uid: `c${ci}` }),
+    chapterRight: (ch, ci, d) => mmapChapterRight(v, chapterInfo(ch, ci), { keys: d.keys || [], uid: `c${ci}` }),
+  };
 }
 
 // 시안 B 배치 (개념 1단, 개념 확인 1단, 수능형 문제·정답 2단)
