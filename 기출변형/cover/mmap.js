@@ -85,9 +85,9 @@ export function m1Inner(v, id = '') {
   const G = neonGlobe(c, { cx: 105, cy: 104, R: 80, id });
   const { lay, lo, hi } = neonWord();
   const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: 160, top: 200, yTop: -4.5 });
-  // 왼쪽 위 '승민T 통합사회'는 뺀다(2026-11-07 강사). 출판사 이름은 책등 아래에 있다
+  // 왼쪽 위 '승민T 통합사회'는 뺀다(2026-11-07 강사). 출판사 이름은 책등 아래에 있다. 책 이름 줄은 로고와 13mm 띄움(강사)
   return `${full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter(`${id}nb`, 4))}
-    ${kindLine(v, c.fg, L.bottom + 8)}
+    ${kindLine(v, c.fg, L.bottom + 13)}
     ${exam(c.sub)}`;
 }
 const m1 = (v) => sheet(C1[v.n].bg, m1Inner(v));
@@ -129,7 +129,8 @@ export function m1Spine(v, S, id = 's', style = 'top') {
   const gsvg = G.svg.replace(/<circle[^>]*url\(#[^)]*atm\)[^>]*\/>/, `<circle cx="${f(A)}" cy="${f(A)}" r="${f(R + 0.9)}" fill="${c.neon}" opacity=".35" filter="url(#${id}ggl)"/>`);
   const globe = `<svg style="width:${f(2 * A)}mm;height:${f(2 * A)}mm;margin:0 ${f(-(A - R) + 1)}mm;flex:none;overflow:visible" viewBox="0 0 ${f(2 * A)} ${f(2 * A)}" xmlns="http://www.w3.org/2000/svg"><defs>${G.defs}</defs>${gsvg}</svg>`;
   const fill = '<span style="flex:1"></span>';
-  const line = (dir) => `<span style="flex:1;height:.45mm;border-radius:.3mm;background:linear-gradient(${dir}, ${c.hot}, ${c.neon} 45%, ${c.neon}00);box-shadow:0 0 1.2mm ${c.neon}"></span>`;
+  // 네온 선: 번짐 없이 가는 한 줄(강사 2026-11-07)
+  const line = () => `<span style="flex:1;height:.3mm;background:${c.neon}"></span>`;
   if (style === 'line' || mid) return box(`${globe}${line('90deg')}${logo}${title}${line('270deg')}${brand}`, mid ? 6.5 : 6);
   return box(`${globe}${fill}${logo}${title}${fill}${brand}`, big ? 7 : 6);
 }
@@ -413,7 +414,7 @@ function m5(v) {
   const L = placeWord(drawExtrude(lay, { color: c.fg, side: c.side, steps: 10, dx: 0.8, dy: 0.8 }), { lo: 0, hi: lay.width + 8, w: 182, top: 28 });
   return sheet(c.bg, `${full(`${bgRect(c.bg)}${shadow}${panels}${pin}${L.g}`, defs)}
     ${brand(c.fg)}
-    ${kindLine(v, c.fg, L.bottom + 8)}
+    ${kindLine(v, c.fg, L.bottom + 13)}
     ${exam(c.sub)}`);
 }
 
