@@ -1,5 +1,5 @@
 // MINIMAX 레터링 — 글꼴이 아니라 도형으로 직접 그린 로고 글자 (강사 요청 2026-11-07)
-// 글자 높이 100. M·I·N·A·X(MINIMAX)·P(MINIMAP)·V(로마 숫자).
+// 글자 높이 100. M·I·N·A·X(MINIMAX)·P(MINIMAP)·V(로마 숫자)·E·O(EXAMINE·NOMINEE).
 //   s: 세로획 굵기, d: 사선획 가로 두께, wf: 글자 너비 배율, cut: 세로획 오른쪽 위 모서리 자름(상징)
 // 그리는 방식
 //   fill  — 면으로 채운 글자(굵기·너비·기울기로 성격을 바꿈)
@@ -50,6 +50,24 @@ function glyph(ch, { s = 18, d = 21, wf = 1, cut = 0 }) {
       polys: [vrect(0), { outer, inner }],
       lines: [[[c, H], [c, 0], [w - c - kk, 0], [w - c, kk], [w - c, by - kk], [w - c - kk, by], [c, by]]],
     };
+  }
+  if (ch === 'E') {
+    // EXAMINE·NOMINEE의 E(2026-11-07): 세로획 + 가로 세 줄(가운데는 조금 짧게)
+    const w = 64 * wf, h = Math.max(4, s * 0.86), mx = w * 0.86, c = s / 2;
+    const bar = (y0, x1) => [[s - 0.5, y0], [x1, y0], [x1, y0 + h], [s - 0.5, y0 + h]];
+    return {
+      w,
+      polys: [vrect(0), bar(0, w), bar((H - h) / 2, mx), bar(H - h, w)],
+      lines: [[[w - 3, 0], [c, 0], [c, H], [w - 3, H]], [[c, 50], [mx - 3, 50]]],
+    };
+  }
+  if (ch === 'O') {
+    // NOMINEE의 O: 모서리를 자른 네모 고리(P의 고리·숫자 0과 같은 짜임)
+    const w = 84 * wf, k = 22, h = Math.max(4, s * 0.86), c = s / 2, kk = k * 0.8;
+    const outer = [[k, 0], [w - k, 0], [w, k], [w, H - k], [w - k, H], [k, H], [0, H - k], [0, k]];
+    const ik = Math.max(0, k - h * 0.6);
+    const inner = [[s + ik, h], [w - s - ik, h], [w - s, h + ik], [w - s, H - h - ik], [w - s - ik, H - h], [s + ik, H - h], [s, H - h - ik], [s, h + ik]];
+    return { w, polys: [{ outer, inner }], lines: [[[c + kk, 0], [w - c - kk, 0], [w - c, kk], [w - c, H - kk], [w - c - kk, H], [c + kk, H], [c, H - kk], [c, kk], [c + kk, 0]]] };
   }
   if (ch === 'X') {
     const w = 84 * wf;

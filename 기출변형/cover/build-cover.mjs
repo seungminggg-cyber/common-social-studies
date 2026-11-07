@@ -20,6 +20,7 @@ import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini } from './mmx.js';
 import { MMAPS, mmapFace, m1Back } from './mmap.js';
 import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, maxiAnswerFront, K as MXK } from './maxi.js';
+import { EXNS } from './exn.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
 import { FONT_IS_TTF, TITLE_FONTS } from './tokens.js';
@@ -223,6 +224,11 @@ if (args.includes('maxi')) {
     await emit(`MAXI-${k}-${MAXIS[k][0]}-앞표지`, doc([maxiFront(k)]), { scale: 1 });
     await emit(`MAXI-${k}-${MAXIS[k][0]}-뒷표지`, doc([maxiBack(k)]), { scale: 1 });
   }
+}
+// 2028 수능 예시문항 분석서 앞표지 후보: node cover/build-cover.mjs exn [E1 … N5] → out/cover/EXN-<후보>-<제목>-<이름>
+if (args.includes('exn')) {
+  const ks = args.filter((a) => EXNS[a]);
+  for (const k of ks.length ? ks : Object.keys(EXNS)) await emit(`EXN-${k}-${EXNS[k][0]}-${EXNS[k][1]}`, doc([EXNS[k][2]()]), { scale: 1 });
 }
 // MAXIMIN 완성본(인쇄용 낱장, 강사 2026-11-07 2번 계기판): 앞·뒷표지 + 속표지·회차 간지 10장(도련 3mm, 엄지 색인)
 //   본문은 build.mjs 2 mock mx
