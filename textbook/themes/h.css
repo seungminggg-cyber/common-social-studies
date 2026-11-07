@@ -321,3 +321,13 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 /* 블록 사이·문제 사이 간격 조금 좁게 */
 .mmbook .slot > .row + .row { margin-top: 3.5mm; }
 .mmbook .region-exam .slot > .row + .row { margin-top: 5mm; }
+/* '이 책의 구성' 쪽을 꽉 채운다: 12개 항목 칸을 쪽 높이에 맞춰 늘리고 글씨를 키운다 */
+.mmbook .guide-list { flex: 1; grid-auto-rows: 1fr; gap: 0 8mm; margin-top: 1mm; }
+.mmbook .guide-list li { gap: 4mm; padding: 3.6mm 0 2mm; border-top-width: 1.1pt; }
+.mmbook .gd-n { width: 9.5mm; height: 9.5mm; font-size: 10pt; }
+.mmbook .guide-list b { font-size: 12pt; }
+.mmbook .guide-list p { margin-top: 1.4mm; font-size: 9.6pt; line-height: 1.7; }
+.mmbook .guide-flow.gf3 { margin-top: 4mm; display: flex; align-items: stretch; gap: 3mm; padding: 3.5mm 0; font-size: 9.6pt; line-height: 1.55; }
+.mmbook .gf3 > div { flex: 1 1 auto; }
+.mmbook .gf3 > div span { display: block; font-size: 12pt; margin-bottom: 1mm; }
+.mmbook .gf3 > i { flex: none; align-self: center; font-style: normal; font-weight: 800; font-size: 13pt; color: var(--ans); }
