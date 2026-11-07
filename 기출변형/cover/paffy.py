@@ -58,21 +58,25 @@ def main():
             with open(c1, 'wb') as fh: w.write(fh)
             cdst = os.path.join(OUT, 'paffy', f'MINIMAP {sub} 표지(펼침, 책등 {S:g}mm).pdf')
             outline(c1, cdst)
-            # 2) 내지: 홀수면 빈 쪽 하나
-            # 쪽 크기는 정확히 A4(210×297mm)로(크롬 PDF는 209.9mm)
-            r = PdfReader(body)
-            w = PdfWriter()
-            A4 = RectangleObject([0, 0, 210 * PT, 297 * PT])
-            for p in r.pages:
-                p.mediabox = A4; p.cropbox = A4; p.trimbox = A4; p.bleedbox = A4
-                w.add_page(p)
-            if len(r.pages) % 2:
-                w.add_blank_page(width=210 * PT, height=297 * PT)
-            b1 = os.path.join(tmp, 'body.pdf')
-            with open(b1, 'wb') as fh: w.write(fh)
-            bdst = os.path.join(OUT, 'paffy', f'MINIMAP {sub} 내지({len(w.pages)}쪽).pdf')
-            outline(b1, bdst)
-        for f in (cdst, bdst):
+            # 2) 내지: 홀수면 빈 쪽 하나 (python3 cover/paffy.py cover 이면 표지만 다시 만든다)
+            bdst = None
+            if 'cover' in sys.argv[1:]:
+                pass
+            else:
+                # 쪽 크기는 정확히 A4(210×297mm)로(크롬 PDF는 209.9mm)
+                r = PdfReader(body)
+                w = PdfWriter()
+                A4 = RectangleObject([0, 0, 210 * PT, 297 * PT])
+                for p in r.pages:
+                    p.mediabox = A4; p.cropbox = A4; p.trimbox = A4; p.bleedbox = A4
+                    w.add_page(p)
+                if len(r.pages) % 2:
+                    w.add_blank_page(width=210 * PT, height=297 * PT)
+                b1 = os.path.join(tmp, 'body.pdf')
+                with open(b1, 'wb') as fh: w.write(fh)
+                bdst = os.path.join(OUT, 'paffy', f'MINIMAP {sub} 내지({len(w.pages)}쪽).pdf')
+                outline(b1, bdst)
+        for f in [x for x in (cdst, bdst) if x]:
             rr = PdfReader(f)
             sizes = {(round(float(p.mediabox.width) / PT, 1), round(float(p.mediabox.height) / PT, 1)) for p in rr.pages}
             print(f'{os.path.basename(f)}: {len(rr.pages)}쪽, 크기 {sizes}, 남은 글꼴 {fonts_left(f)}개, {os.path.getsize(f) / 1e6:.1f}MB')

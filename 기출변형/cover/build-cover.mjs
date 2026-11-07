@@ -219,7 +219,7 @@ if (args.includes('mmapfinal')) {
   }
 }
 // MINIMAP 펼침 표지(Paffy 견본 주문용, 2026-11-07): node cover/build-cover.mjs mmappaffy
-//   뒷표지 + 책등 + 앞표지 한 장. Paffy 규격: 표지 한 면 213mm(210 + 바깥 도련 3), 높이 303mm(297 + 도련 3×2),
+//   뒷표지 + 책등 + 앞표지 한 장(책등은 강사가 고른 'linemid' — 네온 선 + 중간 크기). Paffy 규격: 표지 한 면 213mm(210 + 바깥 도련 3), 높이 303mm(297 + 도련 3×2),
 //   책등 = 내지 두께 × 쪽수 ÷ 2를 0.5mm 단위로 올림(미색 모조플러스 100g = 0.11mm, 홀수 쪽은 1쪽 더함).
 //   쪽수는 textbook/out/MINIMAP-<과목>-본문.pdf에서 센다(먼저 textbook에서 node build-book.mjs mm [t2]).
 if (args.includes('mmappaffy')) {
@@ -232,7 +232,7 @@ if (args.includes('mmappaffy')) {
     const pages = n % 2 ? n + 1 : n;
     const S = spineOf(pages);
     console.log(`${v.subject}: 본문 ${n}쪽 → ${pages}쪽 기준, 책등 ${S}mm, 표지 ${213 * 2 + S} × 303mm`);
-    await emit(`MINIMAP-${v.subject}-펼침표지-${S}mm`, doc([m1Spread(v, S)], { w: 420 + S }).replace('<body>', `<body data-spine="${S}">`), { scale: 1 });
+    await emit(`MINIMAP-${v.subject}-펼침표지-${S}mm`, doc([m1Spread(v, S, 'linemid')], { w: 420 + S }).replace('<body>', `<body data-spine="${S}">`), { scale: 1 });
   }
 }
 // 책등 시안 비교(2026-11-07 강사: 책등 가운데가 허전함): node cover/build-cover.mjs mmapspines → out/cover/MINIMAP-책등시안-<style>.pdf

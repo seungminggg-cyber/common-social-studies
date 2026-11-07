@@ -85,8 +85,8 @@ export function m1Inner(v, id = '') {
   const G = neonGlobe(c, { cx: 105, cy: 104, R: 80, id });
   const { lay, lo, hi } = neonWord();
   const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: 160, top: 200, yTop: -4.5 });
+  // 왼쪽 위 '승민T 통합사회'는 뺀다(2026-11-07 강사). 출판사 이름은 책등 아래에 있다
   return `${full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter(`${id}nb`, 4))}
-    ${brand(c.fg)}
     ${kindLine(v, c.fg, L.bottom + 8)}
     ${exam(c.sub)}`;
 }
