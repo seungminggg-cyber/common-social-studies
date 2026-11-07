@@ -247,10 +247,10 @@ if (args.includes('mmapdivspread')) {
       const info = chapterInfo(ch, ci), keys = book.dividers?.[ch.chapter.no]?.keys || [];
       return `<section class="sheet" style="background:#000"><div class="t" style="overflow:visible">
         <div class="abs" style="left:0;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterLeft(v, info, { uid: `c${ci}` })}</div>
-        <div class="abs" style="left:210mm;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterRight(v, info, { keys, uid: `c${ci}`, pages })}</div>
+        <div class="abs" style="left:210mm;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterRight(v, info, { keys, uid: `c${ci}`, pages, align: args.includes('top') ? 'top' : 'center' })}</div>
         <div class="abs" style="left:209.85mm;top:0;width:.3mm;height:297mm;background:#888"></div></div></section>`;
     });
-    await emit(`MINIMAP-${v.subject}-펼침간지-시안`, doc(sheets, { w: 420, css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+    await emit(`MINIMAP-${v.subject}-펼침간지-시안${args.includes('top') ? '-위' : ''}`, doc(sheets, { w: 420, css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
   }
 }
 // 책등 시안 비교(2026-11-07 강사: 책등 가운데가 허전함): node cover/build-cover.mjs mmapspines → out/cover/MINIMAP-책등시안-<style>.pdf

@@ -74,23 +74,20 @@ export function mmapChapterPage(v, info, { keys = [], uid = 'c', tab = false, pa
 }
 
 // ── 두 쪽 펼침 간지(2026-11-07 강사: "간지는 두 쪽으로") ──
-// 왼쪽 쪽(짝수): 대단원 번호(네온) + 크게 빛나는 지구본. 서울에서 오른쪽으로 뻗은 가는 네온 선이 가운데 접히는 곳을 넘어
-// 오른쪽 쪽(홀수)의 대단원 이름 밑줄이 된다. 오른쪽 쪽: 대단원 이름 + 중단원 표(쪽) + 대단원 핵심 개념.
+// 왼쪽 쪽(짝수): 대단원 번호(네온) + 크게 빛나는 지구본.
+// 오른쪽 쪽(홀수): '대단원 Ⅰ' + 대단원 이름(크게, 밑에 가는 네온 선) + 중단원 표(쪽) + 대단원 핵심 개념 — 쪽 위아래 가운데에 모은다.
 // 접히는 쪽(제본 쪽) 20mm 안에는 글자를 두지 않는다.
-const SEOUL_Y = (cy, R) => cy - R * (Math.cos(20 * Math.PI / 180) * Math.sin(37.57 * Math.PI / 180) - Math.sin(20 * Math.PI / 180) * Math.cos(37.57 * Math.PI / 180) * Math.cos(0.52 * Math.PI / 180));
 const GL = { cx: 96, cy: 176, R: 76 }; // 왼쪽 쪽 지구본 자리
-const LINE_Y = f(SEOUL_Y(GL.cy, GL.R)); // 두 쪽을 잇는 선의 높이(서울 높이)
 export function mmapChapterLeft(v, info, { uid = 'c' } = {}) {
   const c = C1[v.n], col = UNIT_NEON[info.no];
   const G = neonGlobe({ ...c, neon: col, hot: mix(col, '#ffffff', 0.65), sea: mix(c.bg, col, 0.12) }, { ...GL, id: `g${uid}L` });
-  const sx = GL.cx - 0.5;
-  const line = `<line x1="${f(sx)}" y1="${LINE_Y}" x2="${W + B}" y2="${LINE_Y}" stroke="${col}" stroke-width=".3"/>`;
-  return wrap(`${svgFull(c.bg, G.svg + line, G.defs)}
+  return wrap(`${svgFull(c.bg, G.svg, G.defs)}
     ${T('대단원', { x: 22, y: 18, size: 12, weight: 700, color: col, ls: 0.2 })}
     ${neon(layoutRoman(info.no), { x: 22, y: 30, hMm: 58, glow: col, id: `n${uid}L` })}
     ${T(`MINIMAP 개념서 · ${esc(v.subject)}`, { x: 16, y: 280, size: 8.6, color: c.sub })}`);
 }
-export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null } = {}) {
+// align — 'center': 쪽 위아래 가운데 / 'top': 왼쪽 쪽의 '대단원'과 같은 높이에서 시작
+export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null, align = 'center' } = {}) {
   const c = C1[v.n], col = UNIT_NEON[info.no];
   const faint = mix(c.bg, '#ffffff', 0.16), sub = c.sub;
   const n = info.units.length, rowH = Math.min(15, 52 / n);
@@ -98,17 +95,16 @@ export function mmapChapterRight(v, info, { keys = [], uid = 'c', pages = null }
   const pg = (u) => (pages ? (pages[`u${u.no}`] ?? '') : `<i data-pg="u${esc(u.no)}" style="font-style:normal"></i>`);
   const rows = info.units.map((u) => `<tr><td style="${td}width:14mm;color:${col};font-weight:700">${esc(u.no)}</td><td style="${td}">${esc(u.title)}</td><td style="${td}text-align:right;width:20mm">${pg(u)}</td></tr>`).join('');
   const keyHtml = keys.length
-    ? `<div style="margin-top:12mm"><div style="font-size:10.5pt;font-weight:700;color:${col};letter-spacing:.04em;margin-bottom:2.6mm">대단원 핵심 개념</div>
-      ${keys.map((k) => `<div style="display:flex;gap:2.6mm;font-size:11.5pt;line-height:1.5;color:${mix(sub, '#ffffff', 0.45)};margin-top:1.4mm"><span style="color:${col}">•</span><span>${inl(k, '#ffffff')}</span></div>`).join('')}</div>`
+    ? `<div style="margin-top:${align === 'top' ? 16 : 12}mm"><div style="font-size:10.5pt;font-weight:700;color:${col};letter-spacing:.04em;margin-bottom:2.6mm">대단원 핵심 개념</div>
+      ${keys.map((k) => `<div style="display:flex;gap:2.6mm;font-size:12pt;line-height:1.5;color:${mix(sub, '#ffffff', 0.45)};margin-top:1.4mm"><span style="color:${col}">•</span><span>${inl(k, '#ffffff')}</span></div>`).join('')}</div>`
     : '';
-  const line = `<line x1="${-B}" y1="${LINE_Y}" x2="${W - 22}" y2="${LINE_Y}" stroke="${col}" stroke-width=".3"/><circle cx="${W - 22}" cy="${LINE_Y}" r=".9" fill="${col}"/>`;
-  return wrap(`${svgFull(c.bg, line, '')}
-    <div class="abs" style="left:22mm;bottom:${mm(H - LINE_Y + 6)};width:166mm;font-family:${SANS};color:#fff">
-      <div style="font-size:12pt;font-weight:700;color:${col};letter-spacing:.2em;margin-bottom:3mm">대단원 ${esc(info.no)}</div>
-      <div style="font-size:36pt;font-weight:700;line-height:1.15;letter-spacing:-.025em">${esc(info.title)}</div>
-    </div>
-    <div class="abs" style="left:22mm;top:${mm(LINE_Y + 8)};width:166mm;font-family:${SANS};color:#fff">
-      <table style="width:100%;border-collapse:collapse;font-size:13pt">
+  return wrap(`${svgFull(c.bg, '', '')}
+    <div class="abs" style="left:22mm;top:${align === 'top' ? '17mm' : '24mm'};width:166mm;height:${align === 'top' ? '256mm' : '249mm'};display:flex;flex-direction:column;justify-content:${align === 'top' ? 'flex-start' : 'center'};font-family:${SANS};color:#fff">
+      <div style="padding-bottom:7mm;border-bottom:.3mm solid ${col}">
+        <div style="font-size:18pt;font-weight:700;color:${col};letter-spacing:.18em;margin-bottom:4mm">대단원 ${esc(info.no)}</div>
+        <div style="font-size:46pt;font-weight:700;line-height:1.15;letter-spacing:-.03em">${esc(info.title)}</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13.5pt;margin-top:${align === 'top' ? 16 : 10}mm">
         <tr style="font-size:10pt;color:${sub}"><td colspan="2" style="padding-bottom:2.4mm;border-bottom:1pt solid ${col}">중단원</td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${col}">쪽</td></tr>
         ${rows}
       </table>
