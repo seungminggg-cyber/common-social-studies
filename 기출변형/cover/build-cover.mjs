@@ -2,6 +2,7 @@
 //   node cover/build-cover.mjs fronts        앞표지 다듬은 안 A·B·C (02권) + 바탕별 비교(02·03·06)
 // 결과: out/cover/*.pdf, out/cover/png/*.png  (out/은 커밋하지 않음)
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -18,7 +19,7 @@ import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini, setX5Palette } from './mmx.js';
-import { MMAPS, mmapFace, m1Back } from './mmap.js';
+import { MMAPS, mmapFace, m1Back, m1Spread } from './mmap.js';
 import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, maxiAnswerFront, K as MXK } from './maxi.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
@@ -214,6 +215,23 @@ if (args.includes('mmapfinal')) {
     const sheet = (inner) => `<section class="sheet" style="background:${C1[v.n].bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
     const divs = [sheet(mmapTitlePage(v)), ...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
     await emit(`MINIMAP-${v.subject}-속표지간지-도련`, doc(divs, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+  }
+}
+// MINIMAP 펼침 표지(Paffy 견본 주문용, 2026-11-07): node cover/build-cover.mjs mmappaffy
+//   뒷표지 + 책등 + 앞표지 한 장. Paffy 규격: 표지 한 면 213mm(210 + 바깥 도련 3), 높이 303mm(297 + 도련 3×2),
+//   책등 = 내지 두께 × 쪽수 ÷ 2를 0.5mm 단위로 올림(미색 모조플러스 100g = 0.11mm, 홀수 쪽은 1쪽 더함).
+//   쪽수는 textbook/out/MINIMAP-<과목>-본문.pdf에서 센다(먼저 textbook에서 node build-book.mjs mm [t2]).
+if (args.includes('mmappaffy')) {
+  const THICK = 0.11; // 미색 모조플러스 100g (Paffy /v1.0/books/public/options의 paperThickness)
+  const spineOf = (pages) => { const a = (THICK * pages) / 2; return a - Math.floor(a) <= 0.5 ? Math.floor(a) + 0.5 : Math.ceil(a); };
+  for (const v of MMAP.vols) {
+    const pdf = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-본문.pdf`);
+    if (!existsSync(pdf)) { console.error(`본문 PDF가 없습니다: ${pdf}`); continue; }
+    const n = +execFileSync('pdfinfo', [pdf], { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1];
+    const pages = n % 2 ? n + 1 : n;
+    const S = spineOf(pages);
+    console.log(`${v.subject}: 본문 ${n}쪽 → ${pages}쪽 기준, 책등 ${S}mm, 표지 ${213 * 2 + S} × 303mm`);
+    await emit(`MINIMAP-${v.subject}-펼침표지-${S}mm`, doc([m1Spread(v, S)], { w: 420 + S }).replace('<body>', `<body data-spine="${S}">`), { scale: 1 });
   }
 }
 // MAXIMIN 실전 모의고사 앞·뒷표지 시안: node cover/build-cover.mjs maxi [G1 …] → out/cover/MAXI-<후보>-<이름>-앞표지·뒷표지

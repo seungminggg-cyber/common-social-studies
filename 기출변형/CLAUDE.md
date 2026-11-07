@@ -99,3 +99,10 @@
 
 바뀐 문항 검수 순서: `changed.mjs --ids` → 그 문항을 읽고 고침 → `check`·`explain-check --ids`·`note-check`·`dup-check` → `build.mjs <차수> order` → 빌드 → `page-check --only <id들>`(전체도 한 번) → 걸린 쪽만 PNG로 눈 확인 → 한글 파일 → `hwpx-check`.
 
+## Paffy 견본 주문 파일 (2026-11-07, MINIMAP 개념서 1·2권)
+- Paffy(대성전산 교재 제작 플랫폼) 규격(사이트 프로그램·공개 옵션에서 확인): A4, 표지 한 면 213mm(210 + 바깥 도련 3) × 303mm(297 + 도련 3×2),
+  펼침 표지 = 뒷표지 + 책등 + 앞표지 한 장. 책등 = 내지 두께 × 쪽수 ÷ 2를 0.5mm 단위로 올림(미색 모조플러스 100g = 0.11mm, 80g = 0.09mm),
+  무선 제본은 짝수 쪽(홀수면 끝 백지), 49쪽 이상. 자동 검수: 쪽 크기 같음·글자 윤곽선·Acrobat PDF 여부·주석 없음(권장 CMYK).
+- 만들기: textbook에서 `node build-book.mjs mm`, `mm t2` → 기출변형에서 `node cover/build-cover.mjs mmappaffy`(본문 쪽수로 책등 계산, 책등 디자인 `cover/mmap.js`의 m1Spine)
+  → `python3 cover/paffy.py`(표지 크기 정확히, 내지 A4·짝수 쪽, Ghostscript로 글자 윤곽선) → `out/paffy/`(커밋하지 않음).
+- 첫 견본(2026-11-07): 통합사회1 내지 274쪽(273 + 빈 쪽) 책등 15.5mm, 통합사회2 270쪽 책등 15mm. 색은 RGB 그대로(인쇄소가 변환), 내지는 도련 없는 A4.

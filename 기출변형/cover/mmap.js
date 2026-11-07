@@ -92,14 +92,43 @@ export function m1Inner(v, id = '') {
 }
 const m1 = (v) => sheet(C1[v.n].bg, m1Inner(v));
 // 뒷표지(강사 2026-11-07 1번 '네온 지구' 고름): MINIMAX 뒷표지와 같은 짜임 — 문구 없이 작은 지구본 + 작은 네온 MINIMAP을 한 덩어리로 쪽 가운데
-export function m1Back(v, { R = 31, logoW = 64, gap = 16, cy = H / 2 } = {}) {
+// id: 한 문서에 앞·뒷표지를 함께 그릴 때(펼침 표지) 그림 이름이 겹치지 않게 붙이는 앞글자
+export function m1BackInner(v, { R = 31, logoW = 64, gap = 16, cy = H / 2 } = {}, id = '') {
   const c = C1[v.n];
   const { lay, lo, hi } = neonWord();
   const s = logoW / (hi - lo), logoH = (100 + 9) * s;
   const top = cy - (2 * R + gap + logoH) / 2;
-  const G = neonGlobe(c, { cx: W / 2, cy: top + R, R });
-  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon }), { lo, hi, w: logoW, top: top + 2 * R + gap, yTop: -4.5 });
-  return sheet(c.bg, full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter('nb', 4)));
+  const G = neonGlobe(c, { cx: W / 2, cy: top + R, R, id });
+  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: logoW, top: top + 2 * R + gap, yTop: -4.5 });
+  return full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter(`${id}nb`, 4));
+}
+export const m1Back = (v, o = {}) => sheet(C1[v.n].bg, m1BackInner(v, o));
+
+// 책등(S mm, 2026-11-07 Paffy 견본용): 글자는 위에서 아래로 읽게 90° 돌림(글자 머리가 앞표지 쪽).
+// 위부터 네온 MINIMAP · 책 이름, 맨 아래 승민T 통합사회. 접히는 선에서 2mm 안쪽만 쓰도록 글자 높이를 책등 폭에 맞춘다.
+export function m1Spine(v, S, id = 's') {
+  const c = C1[v.n];
+  const { lay, lo, hi } = neonWord();
+  const logoH = Math.min(S * 0.42, 7.2), logoW = (logoH / 109) * (hi - lo);
+  const svgH = logoH + 1.2;
+  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: logoW, top: 0.6, yTop: -4.5, cx: logoW / 2 + 1.5 });
+  const logo = `<svg style="width:${f(logoW + 3)}mm;height:${f(svgH)}mm;overflow:visible;flex:none" viewBox="0 0 ${f(logoW + 3)} ${f(svgH)}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter(`${id}nb`, 4)}</defs>${L.g}</svg>`;
+  const titlePt = f(Math.min(S * 0.78, 12.5)), brandPt = f(Math.min(S * 0.55, 8.6));
+  return `<div class="abs" style="left:${S}mm;top:${B}mm;width:${H}mm;height:${S}mm;transform-origin:0 0;transform:rotate(90deg);display:flex;align-items:center;gap:7mm;padding:0 16mm">
+    ${logo}
+    <span style="font-family:'KoPub Dotum';font-weight:700;font-size:${titlePt}pt;color:${c.fg};letter-spacing:-.01em;white-space:nowrap;line-height:1">${esc(v.kind)}</span>
+    <span style="margin-left:auto;font-family:'KoPub Dotum';font-weight:700;font-size:${brandPt}pt;color:${c.sub};letter-spacing:.02em;white-space:nowrap;line-height:1">${esc(MMAP.brand)}</span>
+  </div>`;
+}
+// 펼침 표지 한 장(뒷표지 + 책등 + 앞표지). 재단선 기준 폭 = 210 + S + 210, 도련 3mm는 doc()이 둘레에 붙인다.
+// 뒷·앞표지 그림의 안쪽 도련(3mm)은 책등 밑에 깔리고, 책등 칸이 그 위를 덮는다.
+export function m1Spread(v, S) {
+  const c = C1[v.n];
+  return `<section class="sheet" style="background:${c.bg}"><div class="t" style="overflow:visible">
+    <div class="abs" style="left:0;top:0;width:${W}mm;height:${H}mm">${m1BackInner(v, {}, 'b')}</div>
+    <div class="abs" style="left:${mm(W + S)};top:0;width:${W}mm;height:${H}mm">${m1Inner(v, 'f')}</div>
+    <div class="abs" style="left:${mm(W)};top:-${B}mm;width:${mm(S)};height:${H + 2 * B}mm;background:${c.bg};overflow:hidden">${m1Spine(v, S)}</div>
+  </div></section>`;
 }
 
 // ───────────── M2 게임 미니맵 ─────────────
