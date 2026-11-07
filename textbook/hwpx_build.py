@@ -39,6 +39,9 @@ TEXT_W = PAGE_W - M_LEFT - M_RIGHT          # 본문 폭(mm)
 COL_GAP = 8
 COL_W = (TEXT_W - COL_GAP) / 2              # 2단일 때 한 단 폭(mm)
 
+# 개념서로 직접 실행할 때만 True. 문제집(기출변형/hwpx_wb.py)은 이 파일 앞부분을 '__name__ = hwpx_lib'로 빌려 쓰므로
+# 2026-11-07 개념서 피드백(그림 설명 글씨·출처 크기, 개념 더하기 이름표, 열쇠말 칸 폭)은 문제집에 적용되지 않는다.
+TEXTBOOK = __name__ == '__main__'
 src, out = sys.argv[1], sys.argv[2]
 TEACHER = len(sys.argv) > 3 and sys.argv[3] == 'teacher'
 book = json.load(open(src, encoding='utf-8'))
@@ -190,7 +193,11 @@ def side_note(s):
         return
     t = table(1, 2, [22, 78])
     p = cell(t, 0, 0, fill=NOTE, pad=(3.5, 1, 2.2, 2.2))
-    chip(p, '개념 더하기', NAVY, size=7)
+    # 개념서: 이름표와 제목의 글자 시작점을 맞추려고 형광펜 이름표(앞뒤 빈칸) 대신 색 글자로
+    if TEXTBOOK:
+        run(p, '개념 더하기', size=7.5, color=TEAL, bold=True)
+    else:
+        chip(p, '개념 더하기', NAVY, size=7)
     run(cell_para(t, 0, 0, before=1), s.get('title', ''), size=9, color=NAVY, bold=True)
     p = cell(t, 0, 1, fill=NOTE, pad=(2, 3.5, 2.2, 2.2))
     items = s.get('items') or [s['text']]
@@ -199,7 +206,10 @@ def side_note(s):
 
 
 def kv(rows):
-    t = table(len(rows), 3, [1.3, 15.5, 83.2])
+    # 열쇠말 칸은 가장 긴 열쇠말이 한 줄에 들어가는 폭으로(개념어가 두 줄로 쪼개지지 않게)
+    longest = max(len(re.sub(r'\*\*|==|__|\[\[|\]\]', '', k)) for k, _ in rows)
+    kw = min(34.0, max(15.5, (longest * 3.0 + 9) / TEXT_W * 100)) if TEXTBOOK else 15.5
+    t = table(len(rows), 3, [1.3, kw, 98.7 - kw])
     for r, (k, v) in enumerate(rows):
         last = r == len(rows) - 1
         sides = () if last else ('bottom',)
@@ -235,10 +245,11 @@ def _layout(rows):
 
 def foot(b, width_mm=TEXT_W):
     """그림·표 아래 설명과 출처"""
+    # 개념서: 자료 해석은 검정 글씨로 조금 크게, 출처는 아주 작게(2026-11 강사 피드백)
     if b.get('note'):
-        rich(para(after=0.5), b['note'], size=8, color=GRAY)
+        rich(para(after=0.5), b['note'], size=8.8 if TEXTBOOK else 8, color=INK if TEXTBOOK else GRAY)
     if b.get('source'):
-        run(para(align='RIGHT', after=2), b['source'], size=7.8, color=GRAY)
+        run(para(align='RIGHT', after=2), b['source'], size=6.5 if TEXTBOOK else 7.8, color=GRAY)
 
 
 def plain_table(b, width_mm=TEXT_W, head_fill=TEAL_SOFT, head_color=TEAL_DARK, size=9.2, boxed=False):
@@ -379,14 +390,15 @@ def source(b):
 def example(b):
     """해석 연습: 머리 줄 + (문제 설명) + 자료 표 + STEP 을 한 표에 (표 안에 표를 넣지 않는다)"""
     d = b['data']
-    if d['t'] in FIGS or d['t'] == 'figrow':  # 자료가 그림이면: 머리 줄 → 그림 → STEP
+    multi_head = d['t'] == 'table' and isinstance((d.get('head') or [None])[0], list)
+    if d['t'] in FIGS or d['t'] == 'figrow' or multi_head:  # 자료가 그림이거나 여러 줄 머리 표면: 머리 줄 → 자료 → STEP
         t = table(1, 1, [100])
         p = cell(t, 0, 0, fill=TEAL_SOFT, pad=(4.5, 4.5, 2, 2))
         chip(p, '해석 연습', TEAL, size=8)
         run(p, '   ' + b['title'], size=10, color=NAVY, bold=True)
         if b.get('stem'):
             rich(para(before=2, after=1), b['stem'], size=9, color=GRAY)
-        figure(d) if d['t'] in FIGS else block(d)
+        figure(d) if d['t'] in FIGS else (plain_table(d, boxed=True) if multi_head else block(d))
         for i, st in enumerate(b['steps']):
             x = para(before=1.2, left=2)
             chip(x, f'STEP {i+1}', TEAL_SOFT, TEAL, size=7.5)

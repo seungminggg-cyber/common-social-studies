@@ -25,12 +25,12 @@ const r1 = (n) => Math.round(n * 10) / 10;
 const tw = (s, size) =>
   [...String(s)].reduce((w, ch) => w + (/[ᄀ-ᇿ㄰-㆏가-힯一-鿿]/.test(ch) ? 1 : /[A-Z%]/.test(ch) ? 0.66 : 0.55), 0) * size;
 
-function text(x, y, s, { size = 12, anchor = 'start', cls = '', weight, baseline } = {}) {
+function text(x, y, s, { size = 12, anchor = 'start', cls = '', weight, baseline, fill } = {}) {
   const lines = String(s).split('\n');
   const dy0 = baseline === 'middle' ? -((lines.length - 1) * size * 1.2) / 2 : 0;
   return lines
     .map((ln, i) => `<text x="${r1(x)}" y="${r1(y + dy0 + i * size * 1.2)}" font-size="${size}" text-anchor="${anchor}"${
-      baseline === 'middle' ? ' dominant-baseline="middle"' : ''}${weight ? ` font-weight="${weight}"` : ''} class="${cls}">${esc(ln)}</text>`)
+      baseline === 'middle' ? ' dominant-baseline="middle"' : ''}${weight ? ` font-weight="${weight}"` : ''}${fill ? ` style="fill:${fill}"` : ''} class="${cls}">${esc(ln)}</text>`)
     .join('');
 }
 
@@ -100,8 +100,9 @@ function bar(b) {
 function hbar(b) {
   const cats = b.categories, ser = b.series[0];
   const rowH = b.rowH || 26;
-  const labW = Math.max(...cats.map((c) => tw(c, 12))) + 16;
+  const labW = b.labW || Math.max(...cats.map((c) => tw(c, 12))) + 16; // labW: 여러 그래프의 막대 시작점을 맞출 때
   const W = b.w || 600, T = 18, B = b.x?.label || b.axis ? 30 : 10, H = T + rowH * cats.length + B;
+  const vf = (v) => (b.digits != null ? Number(v).toFixed(b.digits) : fmt(v)); // digits: 값 글씨의 소수 자리(6 → 6.0)
   const L = labW, R = 56, pw = W - L - R;
   const x = b.x || {};
   const max = x.max ?? Math.max(...ser.values), min = x.min ?? 0;
@@ -116,7 +117,7 @@ function hbar(b) {
     const hl = (b.highlight || []).includes(i) ? ' hl' : '';
     s += text(L - 10, yy + rowH / 2 + 4, c, { size: 12, anchor: 'end', cls: `cat${hl}` });
     s += `<rect x="${L}" y="${r1(yy + rowH * 0.18)}" width="${r1(sx(ser.values[i]) - L)}" height="${r1(rowH * 0.64)}" rx="2" class="fl s1${hl}"/>`;
-    s += text(sx(ser.values[i]) + 6, yy + rowH / 2 + 4, fmt(ser.values[i]) + (b.valueSuffix || ''), { size: 11, cls: `val${hl}` });
+    s += text(sx(ser.values[i]) + 6, yy + rowH / 2 + 4, vf(ser.values[i]) + (b.valueSuffix || ''), { size: 11, cls: `val${hl}` });
   });
   s += `<line x1="${L}" y1="${T - 4}" x2="${L}" y2="${H - B + 2}" class="axis"/>`;
   if (x.label) s += text(W - R + 50, H - 4, x.label, { size: 11, anchor: 'end', cls: 'axl' });
@@ -162,7 +163,32 @@ function smoothPath(pts) {
   return d;
 }
 
+// 곡선을 촘촘한 점으로(두 선 사이 칠하기·차이 선 계산용). smoothPath와 같은 베지어를 따라간다
+function samplePts(pts, smooth) {
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1 = smooth && pts.length >= 3 ? [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6] : p1;
+    const c2 = smooth && pts.length >= 3 ? [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6] : p2;
+    for (let k = 0; k < 24; k++) {
+      const t = k / 24, u = 1 - t;
+      out.push([0, 1].map((d) => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d]));
+    }
+  }
+  out.push(pts[pts.length - 1]);
+  return out;
+}
+const yAt = (sm, x) => {
+  for (let i = 1; i < sm.length; i++) {
+    const [x0, y0] = sm[i - 1], [x1, y1] = sm[i];
+    if ((x >= x0 && x <= x1) || (x <= x0 && x >= x1)) return x1 === x0 ? y0 : y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
+  }
+  return null;
+};
+
 // ── 꺾은선 / 개념 곡선 ──
+// between(2026-11, 인구 변천 모형): { a: 0, b: 1, pos: { label, x, y }, neg: { label, x, y }, rate: { name, end, endDy, color } }
+//   a선이 b선보다 위인 곳은 초록(pos), 아래인 곳은 빨강(neg)으로 칠하고, rate를 주면 a − b 값을 점선으로 그린다(y.min < 0이면 0 기준선)
 // x: { min, max, ticks:[값 또는 {v, label}], label }  (min/max가 없으면 categories 순서대로)
 // series: [{ name, values:[...] 또는 points:[[x,y]...], dash, smooth, marker, end: '끝 이름표' }]
 // schematic: true → 숫자 없이 축 화살표만 (개념 그래프)
@@ -205,7 +231,43 @@ function line(b) {
     const v = typeof t === 'object' ? t.v : t, lab = typeof t === 'object' ? t.label : fmt(t);
     s += text(sx(v), T + ph + 17, lab, { size: 11, anchor: 'middle', cls: 'tick' });
   }
-  if (schem && !cats) s += text(L - 6, T + ph + 14, '0', { size: 11, anchor: 'end', cls: 'tick' });
+  if (schem && !cats && ymin >= 0) s += text(L - 6, T + ph + 14, '0', { size: 11, anchor: 'end', cls: 'tick' });
+  // 두 선 사이 칠하기 + 차이(a − b) 선
+  if (b.between) {
+    const bw = b.between;
+    const ptsOf = (ser) => (ser.points || ser.values.map((v, i) => [i, v])).map(([a, v]) => [sx(a), sy(v)]);
+    const A = b.series[bw.a ?? 0], Bs = b.series[bw.b ?? 1];
+    const sa = samplePts(ptsOf(A), A.smooth || b.smooth), sb = samplePts(ptsOf(Bs), Bs.smooth || b.smooth);
+    const x0 = Math.max(sa[0][0], sb[0][0]), x1 = Math.min(sa[sa.length - 1][0], sb[sb.length - 1][0]);
+    const COL = { pos: bw.pos?.color || '#2f9e44', neg: bw.neg?.color || '#e03131' };
+    let run = null; const polys = [];
+    const flush = () => { if (run && run.top.length > 1) polys.push(run); run = null; };
+    for (let x = x0; x <= x1 + 0.01; x += 1) {
+      const ya = yAt(sa, x), yb = yAt(sb, x);
+      if (ya == null || yb == null) continue;
+      const sign = ya <= yb ? 'pos' : 'neg'; // 화면 좌표: 작을수록 위
+      if (!run || run.sign !== sign) { const prev = run; flush(); run = { sign, top: [], bot: [] }; if (prev) { const m = (ya + yb) / 2; run.top.push([x - 0.5, m]); run.bot.push([x - 0.5, m]); } }
+      run.top.push([x, Math.min(ya, yb)]); run.bot.push([x, Math.max(ya, yb)]);
+    }
+    flush();
+    for (const pl of polys) {
+      const d = 'M' + pl.top.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L') + 'L' + pl.bot.reverse().map((p) => `${r1(p[0])},${r1(p[1])}`).join('L') + 'Z';
+      s += `<path d="${d}" fill="${COL[pl.sign]}" fill-opacity=".2" stroke="none"/>`;
+    }
+    for (const k of ['pos', 'neg']) if (bw[k]?.label) s += text(sx(bw[k].x), sy(bw[k].y), bw[k].label, { size: bw[k].size || 11.5, anchor: bw[k].anchor || 'middle', fill: COL[k], weight: 700 });
+    if (ymin < 0) {
+      s += `<line x1="${L}" y1="${r1(sy(0))}" x2="${L + pw}" y2="${r1(sy(0))}" class="ref"/>`;
+      s += text(L - 6, sy(0) + 4, '0', { size: 11, anchor: 'end', cls: 'tick' });
+    }
+    if (bw.rate) {
+      const inv = (py) => ymin + ((T + ph - py) / ph) * (ymax - ymin);
+      const rp = [];
+      for (let x = x0; x <= x1 + 0.01; x += 2) { const ya = yAt(sa, x), yb = yAt(sb, x); if (ya != null && yb != null) rp.push([x, sy(inv(ya) - inv(yb))]); }
+      const rc = bw.rate.color || '#5f3dc4';
+      s += `<path d="M${rp.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L')}" fill="none" stroke="${rc}" stroke-width="2.2" stroke-dasharray="6 3.5"/>`;
+      if (bw.rate.end) { const p = rp[rp.length - 1]; s += text(p[0] + 6, p[1] + 4 + (bw.rate.endDy || 0), bw.rate.end, { size: 11, fill: rc, weight: 700 }); }
+    }
+  }
   // 선
   b.series.forEach((ser, j) => {
     const pts = (ser.points || ser.values.map((v, i) => [i, v])).map(([a, v]) => [sx(a), sy(v)]);

@@ -245,8 +245,9 @@
     exam: ['틀린 문제 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'],
     answers: ['틀린 문제 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'],
   };
+  // LAYOUT.memoPrompt === false 면 칸 이름 옆 회색 안내 문구를 넣지 않는다(개념서, 2026-11 강사 피드백)
   const memoHtml = (label, prompt) =>
-    `<div class="memo"><div class="memo-head"><span class="memo-tag">${label}</span><span class="memo-q">${prompt}</span></div><div class="memo-lines"></div></div>`;
+    `<div class="memo"><div class="memo-head"><span class="memo-tag">${label}</span>${L.memoPrompt === false ? '' : `<span class="memo-q">${prompt}</span>`}</div><div class="memo-lines"></div></div>`;
 
   // 2단 영역이 쪽 아래를 많이 남기고 끝나면, 두 단 아래에 쪽 너비의 '오답 노트' 칸을 넣는다.
   function fillWide(page) {
@@ -304,6 +305,34 @@
     for (const r of starts) r.style.marginTop = `${parseFloat(getComputedStyle(r).marginTop) + extra}px`;
   }
 
+  // 개념서(LAYOUT.keepTerms): 문제 속 표의 짧은 칸(nw 표시)이 두 줄로 꺾였으면 한 줄로 묶어 본다.
+  // 표가 상자보다 넓어지거나 단이 넘치면 그 칸은 되돌린다(2026-11 강사 피드백 — 개념어가 쪼개지지 않게).
+  function keepTerms() {
+    if (!L.keepTerms) return;
+    const lines = (el) => {
+      const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      const mids = []; let lh = 0;
+      for (let n = w.nextNode(); n; n = w.nextNode()) {
+        if (!n.textContent.trim()) continue;
+        const r = document.createRange(); r.selectNodeContents(n);
+        for (const x of r.getClientRects()) if (x.width > 1) { mids.push(x.top + x.height / 2); lh = Math.max(lh, x.height); }
+      }
+      mids.sort((a, b) => a - b);
+      let k = mids.length ? 1 : 0;
+      for (let i = 1; i < mids.length; i++) if (mids[i] - mids[i - 1] > lh * 0.6) k++;
+      return k;
+    };
+    // 한 표 안의 꺾인 칸을 한꺼번에 묶어 보고, 넘치면 모두 되돌린다(일부만 묶으면 칸 너비가 들쭉날쭉해짐)
+    document.querySelectorAll('.page .q-data table.tbl').forEach((t) => {
+      const box = t.parentElement, slot = t.closest('.slot');
+      const cells = [...t.querySelectorAll('.nw')].filter((x) => lines(x) > 1);
+      if (!cells.length) return;
+      cells.forEach((c) => c.classList.add('nwx'));
+      const bad = t.getBoundingClientRect().width > box.getBoundingClientRect().width + 1 || (slot && slot.scrollHeight > slot.clientHeight + 1);
+      if (bad) cells.forEach((c) => c.classList.remove('nwx'));
+    });
+  }
+
   function finish() {
     document.querySelectorAll('.region[data-end]').forEach((r) => {
       if (r === r.parentElement.lastElementChild) balance(r);
@@ -313,6 +342,7 @@
         r.style.height = `${Math.ceil(usedBottom(r) - r.getBoundingClientRect().top)}px`;
       }
     });
+    keepTerms();
     [...document.querySelectorAll('.page')].forEach((p, k) => { fillPage(p, k); fillWide(p); });
     // 차례·간지·학습 계획표의 쪽 번호 채우기
     document.querySelectorAll('[data-pg]').forEach((el) => {

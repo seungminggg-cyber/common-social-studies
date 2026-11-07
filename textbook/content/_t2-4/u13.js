@@ -4,7 +4,7 @@
 // 남북 합의 문서는 원문 대신 핵심 내용을 정리함
 
 const EAST_ASIA_MAP = {
-  t: 'map', view: [103, 4, 152, 49], title: '동아시아의 영토 분쟁 지역과 독도', h: 400, width: 70, style: 'terrain',
+  t: 'map', view: [103, 4, 152, 49], title: '동아시아의 영토 분쟁 지역과 독도', h: 400, width: 70, style: 'terrain', keepNext: true, // 아래 '동아시아의 영토 분쟁' 표와 같은 쪽에
   markers: [
     { lon: 147.0, lat: 44.2, label: '쿠릴 열도 남부', pos: 'top', cls: 'k2', ring: 8.5 },
     { lon: 123.5, lat: 25.75, label: '센카쿠 열도(댜오위다오)', pos: 'right', cls: 'k2', ring: 8.5 },

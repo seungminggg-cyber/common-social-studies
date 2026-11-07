@@ -292,3 +292,24 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .q-meta { min-width: 0; }
 /* 개념·유형 표시가 한 줄에 다 안 들어가면 통째로 다음 줄(오른쪽 정렬)로 */
 .q-head { flex-wrap: wrap; row-gap: .6mm; }
+
+/* ── 개념서에만(body.tb, 문제집에는 적용 안 함) — 2026-11-07 강사 피드백 ── */
+/* 그림·표 아래: 자료 해석은 검정 글씨로 조금 크게, 그림 폭 전체를 쓴다. 출처는 아주 작게 아래 줄 오른쪽에 */
+.tb .fig-foot { display: block; margin-top: 1.5mm; }
+.tb .fig-note { display: block; font-size: 8.3pt; line-height: 1.6; color: var(--ink); }
+.tb .fig-note b { color: var(--ink); }
+.tb .fig-src { display: block; max-width: none; margin: .3mm 0 0; text-align: right; font-size: 5.8pt; line-height: 1.3; color: #9a948e; }
+.tb .ph-cap { color: var(--ink); }
+/* 날개 '개념 더하기': 옆 본문 높이의 가운데에 놓고, 이름표와 제목의 글자 시작점을 맞춘다 */
+.tb .region-concept .row.has-side > .side { align-self: center; }
+.tb .note-head { align-items: flex-start; }
+.tb .note-tag, .tb .note-title { display: block; margin: 0; padding: 0; text-indent: 0; }
+.tb .note-title { margin-left: .15mm; }
+/* 개념어가 두 줄로 쪼개지지 않게: 짧은 굵은 글씨(핵심어)·표의 짧은 칸은 한 줄로 */
+.tb b.nw, .tb .tbl .nw, .tb .kv th { white-space: nowrap; }
+/* 표 머리 칸도 그 열의 정렬(가운데)을 따른다. 해석 연습 표는 칸이 가운데 정렬이므로 머리도 가운데 */
+.tb .tbl th.hal-center, .tb .ex-body .tbl thead th:not(:first-child) { text-align: center; }
+.tb .q-data .tbl-wrap .tbl tbody td.al-center { text-align: center; }
+.tb .side b.nw, .tb .ph-cap b.nw, .tb .q-data b.nw { white-space: normal; } /* 좁은 날개·사진 설명·문제 자료 칸에서는 넘치지 않게 원래대로 */
+.tb .q-data .tbl .nw { white-space: normal; } /* 문제 속 표는 2단의 좁은 칸이라 한 줄 묶기를 하지 않는다(표가 상자 밖으로 넘치지 않게) */
+.tb .q-data .tbl .nw.nwx { white-space: nowrap; } /* 쪽 나누기 뒤 넘치지 않는 것을 확인한 칸만 한 줄로(paginate.js keepTerms) */

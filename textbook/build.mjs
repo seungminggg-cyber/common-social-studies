@@ -35,7 +35,8 @@ export const THEMES = {
   f: { name: '시안 F · 기출 데이터형', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
   g: { name: '시안 G · 기출 데이터형(차분한 판)', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'] } },
   // 시안 H: 큰 빈 곳(쪽의 40% 이상)만 정리 노트로 채우고, 나머지는 여백으로 고르게 나눈다
-  h: { name: '시안 H · 편집 디자인형', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['check', 'exam'], memoMin: 0.4, spreadMax: 9 } },
+  // 개념 확인은 늘 새 쪽에서, 정리 노트 옆 안내 문구 없음(2026-11 강사 피드백)
+  h: { name: '시안 H · 편집 디자인형', layout: { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['exam'], memoMin: 0.4, spreadMax: 9, memoPrompt: false, keepTerms: true } },
 };
 
 const args = process.argv.slice(2);

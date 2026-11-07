@@ -374,7 +374,7 @@ export default {
     {
       level: '중',
       stem: '표는 세 지역 A~C의 특성을 나타낸 것이다. A~C에 대한 설명으로 옳은 것은? (단, A~C는 경기, 세종, 전북 중 하나이다.)',
-      data: [{ t: 'table', head: ['구분', 'A', 'B', 'C'], widths: [40, 20, 20, 20], align: [null, 'center', 'center', 'center'], rows: [
+      data: [{ t: 'table', head: ['구분', 'A', 'B', 'C'], widths: [43, 19, 19, 19], align: [null, 'center', 'center', 'center'], rows: [
         ['총인구', '가장 많음', '가장 적음', '중간'],
         ['논 면적', '중간', '가장 좁음', '가장 넓음'],
         ['주택 중 아파트 비율', '중간', '가장 높음', '가장 낮음'],

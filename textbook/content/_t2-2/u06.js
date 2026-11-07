@@ -346,7 +346,7 @@ export default {
       level: '중',
       stem: '다음 자료에 대한 설명으로 옳은 것만을 <보기>에서 고른 것은?',
       data: [{
-        t: 'table', head: ['구분', '면적', '인구', '1,000대 기업', '의료 기관'], widths: [20, 20, 20, 20, 20], align: [null, 'center', 'center', 'center', 'center'],
+        t: 'table', head: ['구분', '면적', '인구', '1,000대 기업', '의료 기관'], widths: [15, 16, 16, 28, 25], align: [null, 'center', 'center', 'center', 'center'],
         rows: [
           ['수도권', '12.1', '50.3', '74.2', '50.9'],
           ['비수도권', '87.9', '49.7', '25.8', '49.1'],

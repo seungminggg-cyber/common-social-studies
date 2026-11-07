@@ -1394,7 +1394,7 @@ const book = {
         {
           level: '하',
           stem: '다음 표를 보고 추론한 내용으로 옳은 것은?',
-          data: [{ t: 'table', head: ['나라', '민주주의 지수 순위', '세계 행복 순위'], widths: [34, 33, 33], align: [null, 'center', 'center'], rows: [
+          data: [{ t: 'table', head: ['나라', '민주주의 지수 순위', '세계 행복 순위'], widths: [22, 39, 39], align: [null, 'center', 'center'], rows: [
             ['노르웨이', '1위', '7위'], ['아이슬란드', '3위', '3위'], ['핀란드', '5위', '1위'],
           ] }],
           choices: [

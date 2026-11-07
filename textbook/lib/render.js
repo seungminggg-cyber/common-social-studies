@@ -19,10 +19,12 @@ function blank(ans) {
 }
 
 // 문장 안 표시법: [[빈칸]] **굵게** ==형광펜== __밑줄__
+// 짧은 굵은 글씨(핵심어, 공백 포함 14자 이하)에는 nw 표시 → 개념서 CSS가 한 줄로 묶는다(개념어가 두 줄로 쪼개지지 않게)
+const nwTerm = (t) => [...t.replace(/<[^>]+>/g, '').replace(/&\w+;/g, '_')].length <= 14 && /[\s·(]/.test(t);
 export function inl(s) {
   return esc(s)
     .replace(/\[\[(.+?)\]\]/g, (_, a) => blank(a))
-    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\*\*(.+?)\*\*/g, (_, t) => `<b${nwTerm(t) ? ' class="nw"' : ''}>${t}</b>`)
     .replace(/==(.+?)==/g, '<mark>$1</mark>')
     .replace(/__(.+?)__/g, '<u>$1</u>');
 }
@@ -53,10 +55,13 @@ export function block(b) {
     case 'table': {
       // 칸: 글자 또는 { text, rs(세로 합치기), cs(가로 합치기), cls: 'hl'(노랑) | 'em'(굵게) | 'hatch'(빗금 빈칸), align }
       // head: ['a','b'] 한 줄 또는 [['a',{text:'b',cs:2}],['c','d']] 여러 줄
-      const cellHtml = (c, tag, align) => {
+      // 짧은 칸(공백 포함 12자 이하, 띄어쓰기 있음)은 nw 표시 → 개념서에서 한 줄로. hal: 머리 칸도 그 열의 정렬을 따름(개념서만)
+      const cellHtml = (c, tag, align, hal) => {
         const o = c && typeof c === 'object' ? c : { text: c };
         const at = [o.rs > 1 ? ` rowspan="${o.rs}"` : '', o.cs > 1 ? ` colspan="${o.cs}"` : ''].join('');
-        const cls = [o.cls, (o.align || align) ? `al-${o.align || align}` : ''].filter(Boolean).join(' ');
+        const plain = String(o.text ?? '').replace(/\*\*|==|__|\[\[|\]\]/g, '');
+        const cls = [o.cls, (o.align || align) ? `al-${o.align || align}` : '', hal ? `hal-${hal}` : '',
+          [...plain].length <= 12 && /[\s·(]/.test(plain) ? 'nw' : ''].filter(Boolean).join(' ');
         return `<${tag}${at}${cls ? ` class="${cls}"` : ''}>${inl(o.text ?? '')}</${tag}>`;
       };
       const grid = (rows) => {
@@ -79,7 +84,7 @@ export function block(b) {
       const rowHead = b.rowHeader !== false;
       const cols = (b.widths || []).map((w) => `<col style="width:${w}%">`).join('');
       const thead = headRows.length
-        ? `<thead>${grid(headRows).map((row) => `<tr>${row.map(({ cell }) => cellHtml(cell, 'th')).join('')}</tr>`).join('')}</thead>` : '';
+        ? `<thead>${grid(headRows).map((row) => `<tr>${row.map(({ cell, col }) => cellHtml(cell, 'th', null, (cell && typeof cell === 'object' && cell.cs > 1) ? null : al[col])).join('')}</tr>`).join('')}</thead>` : '';
       const tbody = `<tbody>${grid(b.rows).map((row) => `<tr>${row
         .map(({ cell, col }) => cellHtml(cell, col === 0 && rowHead ? 'th' : 'td', al[col]))
         .join('')}</tr>`).join('')}</tbody>`;
@@ -252,7 +257,8 @@ function summaryHtml(u) {
 function row(b) {
   if (b.t === 'thinker') return thinkerRows(b);
   if (b.t === 'photo' && !b.items.some((it) => hasPhoto(it.src))) return ''; // 사진을 아직 못 받았으면 건너뜀
-  const keep = b.t === 'sec' || b.t === 'concept' ? ' data-keep="next"' : '';
+  // keepNext: 다음 블록과 같은 쪽에 두기(예: 지도와 그 지도를 정리한 표)
+  const keep = b.t === 'sec' || b.t === 'concept' || b.keepNext ? ' data-keep="next"' : '';
   return `<div class="row row-${b.t}${b.side ? ' has-side' : ''}${b._inc ? ' in-cc' : ''}"${keep}><div class="main">${block(b)}</div>${note(b.side)}</div>`;
 }
 
@@ -425,7 +431,7 @@ ${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} tb">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
@@ -509,7 +515,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
       ['단원 첫머리', '핵심 질문, 수능 포인트, 이 단원에서 배울 개념과 출제 빈도를 먼저 보고 시작한다.'],
       ['개념 번호와 출제 빈도', `중단원을 개념 01, 02 …로 나눴다. 별은 최근 기출 9회에서 그 개념이 나온 정도: ★ 기본 개념, ★★ 빈출, ★★★ 최다 빈출.`],
-      ['개념 정리 · 빈칸', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어. 번호 빈칸의 정답은 그 쪽 맨 아래 띠에 있다.`],
+      ['개념 정리 · 빈칸', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b class="nw">굵은 글씨</b>는 핵심어. 번호 빈칸의 정답은 그 쪽 맨 아래 띠에 있다.`],
       ['날개 · 개념 더하기', '본문 옆 날개에 용어 뜻, 헷갈리는 개념, 사진을 두었다. 본문을 읽고 날개로 한 번 더 확인한다.'],
       ['이렇게 나온다', '개념이 끝날 때마다 기출 선지 모양의 문장을 O/X로 판단한다. 틀린 문장에는 이유를 적어 두었다.'],
       ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
@@ -599,7 +605,7 @@ ${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/
 ${theme === 'd' || theme === 'h' ? '<link rel="stylesheet" href="../themes/d-book.css">' : ''}
 ${theme === 'h' ? '<link rel="stylesheet" href="../themes/h-book.css">' : ''}
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part} tb">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
