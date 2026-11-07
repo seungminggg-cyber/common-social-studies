@@ -9,7 +9,7 @@ export const MM = {
   // 뒷표지 대표 문장 아래 회색 한 줄(강사 2026-11-07: 뒷표지는 대표 문장 + 이 한 줄만)
   backLine: 'MINIMAX - 가장 효율적인 통합사회',
   exam: '2028 수능 대비 · 2022 개정 교육과정',
-  total: '07',
+  total: '06',
   desc: ['기출 문항이 묻는 방식은 그대로 살리고,', '문장과 자료는 모두 새로 썼습니다.'],
   // 뒷표지 대표 문장 두 안(강사가 고름)
   motto: {
@@ -22,15 +22,19 @@ export const MM = {
 };
 
 // kind: 표지의 책 종류 줄, short: 시리즈 순서 줄에 쓰는 이름, subject: 과목 줄
+// 2026-11-07 강사: 기본편·심화편을 과목별 두 권으로 합침(02 기출분석 통합사회1·2, 중단원마다 STEP 1 기본 → STEP 2 심화).
+//   legacy: 합치기 전 기본편·심화편 — 옛 빌드(build.mjs 1|2 units mm)·옛 표지 시안용으로만 남기고 시리즈 줄에는 넣지 않는다.
 export const MM_VOLUMES = [
   { id: '01-t1', no: '01', kind: '통합사회 개념', short: '개념', subject: '통합사회1', ground: 'paper' },
   { id: '01-t2', no: '01', kind: '통합사회 개념', short: '개념', subject: '통합사회2', ground: 'paper' },
-  { id: '02', no: '02', kind: '통합사회 기출분석 · 기본편', short: '기출분석 기본편', subject: '통합사회1 + 통합사회2', ground: 'paper' },
-  { id: '03', no: '03', kind: '통합사회 기출분석 · 심화편', short: '기출분석 심화편', subject: '통합사회1 + 통합사회2', ground: 'gray' },
-  { id: '04', no: '04', kind: '통합사회 수특분석', short: '수특분석', subject: '통합사회1 + 통합사회2', ground: 'gray' },
-  { id: '05', no: '05', kind: '통합사회 수완분석', short: '수완분석', subject: '통합사회1 + 통합사회2', ground: 'gray' },
-  { id: '06', no: '06', kind: '통합사회 실전 모의고사', short: '실전 모의고사', subject: '통합사회1 + 통합사회2', ground: 'ink' },
-  { id: '07', no: '07', kind: '통합사회 파이널', short: '파이널', subject: '통합사회1 + 통합사회2', ground: 'ink' },
+  { id: '02-t1', no: '02', kind: '통합사회 기출분석', short: '기출분석', subject: '통합사회1', ground: 'paper', pal: 1 },
+  { id: '02-t2', no: '02', kind: '통합사회 기출분석', short: '기출분석', subject: '통합사회2', ground: 'paper', pal: 2 },
+  { id: '03', no: '03', kind: '통합사회 수특분석', short: '수특분석', subject: '통합사회1 + 통합사회2', ground: 'gray' },
+  { id: '04', no: '04', kind: '통합사회 수완분석', short: '수완분석', subject: '통합사회1 + 통합사회2', ground: 'gray' },
+  { id: '05', no: '05', kind: '통합사회 실전 모의고사', short: '실전 모의고사', subject: '통합사회1 + 통합사회2', ground: 'ink' },
+  { id: '06', no: '06', kind: '통합사회 파이널', short: '파이널', subject: '통합사회1 + 통합사회2', ground: 'ink' },
+  { id: '02', no: '02', kind: '통합사회 기출분석 · 기본편', short: '기출분석 기본편', subject: '통합사회1 + 통합사회2', ground: 'paper', legacy: true },
+  { id: '03-old', no: '03', kind: '통합사회 기출분석 · 심화편', short: '기출분석 심화편', subject: '통합사회1 + 통합사회2', ground: 'gray', legacy: true },
 ];
 export const mmVol = (id) => MM_VOLUMES.find((v) => v.id === id);
 // 뒷표지 위쪽 이름: "MINIMAX 기출분석 · 기본편"
@@ -38,7 +42,7 @@ export const mmName = (v) => `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
 // 시리즈 순서(01 개념은 한 번만)
 export const mmSeries = () => {
   const seen = new Set();
-  return MM_VOLUMES.filter((v) => !seen.has(v.no) && seen.add(v.no));
+  return MM_VOLUMES.filter((v) => !v.legacy && !seen.has(v.no) && seen.add(v.no));
 };
 
 // ── MINIMAP 개념서 (강사 2026-11-07) ──

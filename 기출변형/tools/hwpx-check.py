@@ -12,8 +12,11 @@ here = os.path.dirname(os.path.abspath(__file__))
 out = os.path.join(here, '..', 'out', ed)
 norm = lambda s: re.sub(r'[\s*‘’“”"\'·]', '', s)
 bad = 0
-for n in ['단원별-통합사회1', '단원별-통합사회2', '모의고사']:
-    src = os.path.join(out, f'{n}-학생용.json')
+# vol: 합본 MINIMAX 기출분석 통합사회1·2(build.mjs vol t1|t2 → hwpx_wb.py) — JSON·HTML 이름이 '-본문'
+vol = ed == 'vol'
+for n in (['MINIMAX-통합사회1', 'MINIMAX-통합사회2'] if vol else ['단원별-통합사회1', '단원별-통합사회2', '모의고사']):
+    suf = '-본문' if vol else '-학생용'
+    src = os.path.join(out, f'{n}{suf}.json')
     if not os.path.exists(src):
         continue
     qs, top = [], []
@@ -29,7 +32,7 @@ for n in ['단원별-통합사회1', '단원별-통합사회2', '모의고사']:
             for v in x:
                 walk(v, inrow)
     walk(json.load(open(src, encoding='utf-8')))
-    hids = re.findall(r'data-qid="([^"]+)"', open(os.path.join(out, f'{n}-학생용.html'), encoding='utf-8').read())
+    hids = re.findall(r'data-qid="([^"]+)"', open(os.path.join(out, f'{n}{suf}.html'), encoding='utf-8').read())
     for kind in ['', '-교사용']:
         path = os.path.join(out, f'{n}{kind}.hwpx')
         if not os.path.exists(path):

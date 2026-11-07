@@ -2,6 +2,7 @@
 
     python3 cover/assemble.py 02      (기출변형 폴더에서. 먼저 build-cover.mjs mmfinal, build.mjs 1 units mm)
     python3 cover/assemble.py maximin MAXIMIN 실전 모의고사(먼저 build.mjs 2 mock mx, build-cover.mjs maxifinal)
+    python3 cover/assemble.py x1      합본 MINIMAX 기출분석 통합사회1(x2 = 통합사회2). 먼저 build.mjs vol t1, build-cover.mjs mmvol t1
     python3 cover/assemble.py t1      MINIMAP 개념서 통합사회1(t2 = 통합사회2). 먼저 textbook에서 build-book.mjs mm [t2],
                                       그다음 build-cover.mjs mmapfinal
 
@@ -59,6 +60,10 @@ def main(no):
         tag = f'MINIMAP-{sub}'
         body = os.path.join(HERE, '..', '..', 'textbook', 'out', f'{tag}-본문.pdf')
         ndiv = '6쪽'
+    elif no in ('x1', 'x2'):  # 합본 MINIMAX 기출분석 통합사회1·2 (2026-11-07)
+        tag = f"MINIMAX-통합사회{no[1]}"
+        body = os.path.join(OUT, 'vol', f'{tag}-본문.pdf')
+        ndiv = '7쪽'
     else:  # MINIMAX 기출분석
         ed = '1' if no == '02' else '2'
         tag = f'MINIMAX-{no}'
@@ -85,6 +90,9 @@ def main(no):
     prev = os.path.join(dst, f'0_완성본 미리보기(앞표지~뒷표지 {len(w.pages)}쪽).pdf')
     with open(prev, 'wb') as fh:
         w.write(fh)
+    # 합본 정답과 해설(별책 본문, 첫 쪽이 속표지)
+    if no in ('x1', 'x2'):
+        shutil.copyfile(os.path.join(OUT, 'vol', f'{tag}-정답과해설.pdf'), os.path.join(dst, '5_정답과 해설 별책(A4, 속표지 포함).pdf'))
     # MAXIMIN 정답과 해설 별책(강사 2026-11-07): 별책 앞표지 + 별책 본문 + 뒷표지(본책과 같은 그림)
     if no == 'maximin':
         afront = os.path.join(dst, '5_정답과 해설 별책 앞표지(도련 3mm).pdf')

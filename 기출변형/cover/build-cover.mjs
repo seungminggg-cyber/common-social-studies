@@ -17,7 +17,7 @@ import { LETTER_STYLES } from './lettering.js';
 import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
-import { MMX, mmxFace, x5BackMini } from './mmx.js';
+import { MMX, mmxFace, x5BackMini, setX5Palette } from './mmx.js';
 import { MMAPS, mmapFace, m1Back } from './mmap.js';
 import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, maxiAnswerFront, K as MXK } from './maxi.js';
 import { MMAP } from './mm-data.js';
@@ -180,7 +180,7 @@ if (args.includes('mm')) {
     await emit(`${tag}-앞표지-02`, d([mmFront(mmVol('02'), c)]));
     await emit(`${tag}-뒷표지-02`, d([mmBack(mmVol('02'), c, 1), mmBack(mmVol('02'), c, 2)]));
     await emit(`${tag}-로고글꼴`, d(Object.keys(LOGO_FONTS).map((f) => mmFront(mmVol('02'), c, f))), { scale: 1 });
-    await emit(`${tag}-바탕별`, d(['01-t1', '03', '06'].map((id) => mmFront(mmVol(id), c))), { scale: 1 });
+    await emit(`${tag}-바탕별`, d(['01-t1', '03-old', '05'].map((id) => mmFront(mmVol(id), c))), { scale: 1 });
   }
 }
 // MINIMAX 2차(화려한 색·직접 그린 로고·포인트 그림) 후보 5개 — 앞표지·뒷표지
@@ -248,10 +248,10 @@ if (args.includes('mmback')) {
 // MINIMAX 완성본(인쇄용 낱장): 앞표지·뒷표지·간지 12장(도련 3mm). 본문은 build.mjs <차수> units mm
 //   node cover/build-cover.mjs mmfinal [2]   (2 = 03 심화편 데이터)
 if (args.includes('mmfinal')) {
-  const v = mmVol(args.includes('2') ? '03' : '02');
+  const v = mmVol(args.includes('2') ? '03-old' : '02');
   const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
   const tag = `MINIMAX-${v.no}`;
-  const chs = await chapters(v.no === '03' ? '2' : '1');
+  const chs = await chapters(v.id === '03-old' ? '2' : '1');
   const sheet = (inner) => `<section class="sheet" style="background:#0B1026"><div class="t" style="overflow:visible">${inner}</div></section>`;
   const pages = [sheet(mmTitlePage(v))]; // 속표지 + 간지 12장(본문 순서)
   for (const sub of ['통합사회1', '통합사회2']) {
@@ -262,5 +262,24 @@ if (args.includes('mmfinal')) {
   await emit(`${tag}-앞표지`, doc([mmxFace('X5', 'front', v)]));
   await emit(`${tag}-뒷표지`, doc([mmxFace('X5', 'back', v)]));
   await emit(`${tag}-속표지간지-도련`, doc(pages, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+}
+// 합본 MINIMAX 기출분석 통합사회1·2(2026-11-07, 기본편 + 심화편 → 과목별 두 권): 앞표지·뒷표지·속표지 + 과목 간지 + 대단원 간지 5장(도련 3mm)
+//   node cover/build-cover.mjs mmvol [t1|t2]   (본문은 node build.mjs vol t1|t2 — 간지 숫자가 같은 데이터에서 나온다)
+//   통합사회1 = 남색·하늘 네온, 통합사회2 = 보라·분홍 네온(MINIMAP과 같은 짝)
+if (args.includes('mmvol')) {
+  for (const subj of ['t1', 't2'].filter((x) => args.includes(x) || !args.some((a) => a === 't1' || a === 't2'))) {
+    const v = mmVol(`02-${subj}`);
+    setX5Palette(v.pal);
+    const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
+    const tag = `MINIMAX-${v.subject}`;
+    const chs = (await chapters('vol')).filter((ch) => ch.subject === v.subject);
+    const { X5 } = await import('./mmx.js');
+    const sheet = (inner) => `<section class="sheet" style="background:${X5.bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
+    const pages = [sheet(mmTitlePage(v)), sheet(mmSubjectPage(v.subject, chs, { name, uid: 's0' }))];
+    for (const ch of chs) pages.push(sheet(mmChapterPage(ch, { name, uid: `c${pages.length}`, tab: true })));
+    await emit(`${tag}-앞표지`, doc([mmxFace('X5', 'front', v)]));
+    await emit(`${tag}-뒷표지`, doc([mmxFace('X5', 'back', v)]));
+    await emit(`${tag}-속표지간지-도련`, doc(pages, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+  }
 }
 await browser.close();

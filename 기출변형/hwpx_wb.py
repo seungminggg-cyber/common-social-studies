@@ -6,6 +6,7 @@ build.mjs가 먼저 out/<차수>/<이름>.json 과 그림(out/<차수>/fig/<이�
   python3 hwpx_wb.py out/1/단원별-통합사회1-학생용.json out/1/단원별-통합사회1.hwpx           # 학생용
   python3 hwpx_wb.py out/1/단원별-통합사회1-학생용.json out/1/단원별-통합사회1-교사용.hwpx teacher   # 정답·해설을 문제 아래에
   python3 hwpx_wb.py out/1/모의고사-학생용.json out/1/모의고사.hwpx
+  python3 hwpx_wb.py out/vol/MINIMAX-통합사회1-본문.json out/vol/MINIMAX-통합사회1.hwpx [teacher]   # 합본(2026-11-07)
 """
 import os
 import sys
@@ -117,6 +118,19 @@ def answers(groups):
     columns(1)
 
 
+STEP_NAME = {1: '기본', 2: '심화'}
+CH_OF = {'t1-1': 'Ⅰ', 't1-2': 'Ⅱ', 't1-3': 'Ⅲ', 't1-4': 'Ⅳ', 't1-5': 'Ⅴ', 't2-1': 'Ⅰ', 't2-2': 'Ⅱ', 't2-3': 'Ⅲ', 't2-4': 'Ⅳ', 't2-5': 'Ⅴ'}
+
+
+def mock_section(m, page_break):
+    band(f"실전 모의고사 {m['no']}회", f"{m['range']} · 25문항 · 50점 · 표시 없는 문항은 2점", color=NAVY, page_break=page_break)
+    columns(2)
+    for i, q in enumerate(m['questions']):
+        question(q, i + 1, mock=True)
+    columns(1)
+    groups.append((f"모의고사 {m['no']}회 ({m['range']})", m['questions']))
+
+
 doc.paragraphs[0].text = ''
 doc.page.set_page_number(position='BOTTOM_CENTER')
 groups = []
@@ -133,15 +147,34 @@ if book['kind'] == 'units':
             question(q, i + 1, color=color)
         columns(1)
         groups.append((f"{sub} {u['no']} {u['title']}", s['qs']))
+elif book['kind'] == 'vol':  # 합본: 중단원마다 STEP 1 기본 → STEP 2 심화(번호 이어짐), 권 끝에 실전 모의고사
+    doc.page.set_header(text=f"승민T 통합사회 {book['name']} {book['subject']}")
+    for k, s in enumerate(book['sets']):
+        u = s['unit']
+        ch = CH_OF[u['book']]
+        color = CH_COLOR[ch]
+        qs_all = [q for st in s['steps'] for q in st['qs']]
+        band(f"{u['no']} {u['title']}", f"{book['subject']} {ch} · {len(qs_all)}문항", color=color, page_break=k > 0)
+        columns(2)
+        n = 0
+        for st in s['steps']:
+            if not st['qs']:
+                continue
+            p = para(before=4 if n else 0, after=3)
+            chip(p, f"STEP {st['step']}", color, size=9)
+            run(p, f"  {STEP_NAME[st['step']]}", size=11, color=color, bold=True)
+            run(p, f"   {len(st['qs'])}문항", size=8, color=GRAY)
+            for q in st['qs']:
+                n += 1
+                question(q, n, color=color)
+        columns(1)
+        groups.append((f"{book['subject']} {u['no']} {u['title']}", qs_all))
+    for m in book['mocks']:
+        mock_section(m, True)
 else:
     doc.page.set_header(text=f"승민T 통합사회 실전 모의고사 {book['ed']}차")
     for k, m in enumerate(book['mocks']):
-        band(f"실전 모의고사 {m['no']}회", f"{m['range']} · 25문항 · 50점 · 표시 없는 문항은 2점", color=NAVY, page_break=k > 0)
-        columns(2)
-        for i, q in enumerate(m['questions']):
-            question(q, i + 1, mock=True)
-        columns(1)
-        groups.append((f"모의고사 {m['no']}회 ({m['range']})", m['questions']))
+        mock_section(m, k > 0)
 if not TEACHER:
     answers(groups)
 

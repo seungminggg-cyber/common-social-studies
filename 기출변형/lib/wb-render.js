@@ -57,6 +57,12 @@ function unitBand(unit, qs) {
   return `<div class="band band-exam wb-band" id="u-${esc(unit.key)}"><span class="band-title">${esc(unit.no)} ${esc(unit.title)}</span><span class="band-sub">${qs.length}문항 · ${lvCount(qs)}</span></div>`;
 }
 
+// 합본의 단계 머리(2026-11-07): 중단원 안에서 STEP 1 기본(1차 문항) → STEP 2 심화(2차 문항). 다음 문항과 같은 단에 놓는다.
+export const STEP_NAME = { 1: '기본', 2: '심화' };
+function stepHead(step, qs) {
+  return `<div class="row row-step" data-keep="next" data-step="${step}"><div class="main"><div class="wb-step"><b>STEP ${step}</b><span>${STEP_NAME[step]}</span><i>${qs.length}문항 · ${lvCount(qs)}</i></div></div></div>`;
+}
+
 // 대단원 첫머리(간지 대신 첫 쪽 위에 얹는 머리): 중단원 목록과 문항 수
 function chapterHead(book, units) {
   return `<div class="wb-chap">
@@ -78,21 +84,38 @@ function cover({ title, sub, edition, parts }) {
 }
 
 // 차례: [{ label, items: [[이름, 문항 수, id]] }]
-function toc(groups, headLeft = '승민T 통합사회 <b>기출변형 문제집</b>') {
+function toc(groups, headLeft = '승민T 통합사회 <b>기출변형 문제집</b>', howto = true) {
   return `<section class="flow" data-kind="toc" data-head-left="${esc(headLeft)}" data-head-right="차례"><div class="top"><div class="band band-answers"><span class="band-title">차례</span></div></div>${groups
     .map((g) => `<div class="row" data-keep="next"><div class="main"><h3 class="wb-toc-h">${esc(g.label)}</h3></div></div><div class="row"><div class="main"><table class="wb-toc">${g.items
       .map(([name, n, id]) => `<tr><td>${esc(name)}</td><td class="n">${n}문항</td><td class="pg" data-pg="${esc(id)}"></td></tr>`)
       .join('')}</table></div></div>`)
-    .join('')}<div class="row"><div class="main"><p class="wb-howto">${inl(
+    .join('')}${howto ? `<div class="row"><div class="main"><p class="wb-howto">${inl(
     '**문제 머리 읽는 법** — 번호 옆 글자는 난이도(**상 · 중상 · 중 · 하**), 오른쪽은 개념서의 관련 개념 번호와 문제 유형이다. 틀린 문제는 개념서의 같은 개념 번호로 돌아가 복습한다. 정답과 해설은 별책에 있다.',
-  )}</p></div></div></section>`;
+  )}</p></div></div>` : ''}</section>`;
+}
+
+// 합본의 '이 책의 구성'(차례 다음 쪽): 두 단계, 문제 머리 읽는 법, 실전 모의고사, 정답과 해설
+function guide(sets, mocks, headLeft) {
+  const n = (st) => sets.reduce((a, s) => a + (s.steps.find((x) => x.step === st)?.qs.length || 0), 0);
+  const item = (k, t, body) => `<div class="row"><div class="main"><div class="wb-guide-i"><div class="wb-guide-k">${k}</div><div><h3>${t}</h3>${body}</div></div></div></div>`;
+  return `<section class="flow" data-kind="toc" data-head-left="${headLeft}" data-head-right="이 책의 구성"><div class="top"><div class="band band-answers"><span class="band-title">이 책의 구성</span></div></div>
+  ${item('1', '중단원마다 두 단계', `<div class="wb-guide-steps">
+    <div><div class="wb-step"><b>STEP 1</b><span>기본</span><i>${n(1)}문항</i></div><p>${inl('기출 문항이 묻는 방식을 익히는 문항이다. 개념서로 중단원을 공부한 바로 뒤에 푼다.')}</p></div>
+    <div><div class="wb-step"><b>STEP 2</b><span>심화</span><i>${n(2)}문항</i></div><p>${inl('**중상·상** 위주. 자료가 길고 선지 함정이 많은 문항으로 실전 감각을 기른다. 2회독·숙제용으로도 좋다.')}</p></div>
+  </div><p>${inl('문항 번호는 중단원 안에서 STEP 1부터 STEP 2까지 이어진다. 두 단계는 같은 자료·같은 선지를 되풀이하지 않는다.')}</p>`)}
+  ${item('2', '문제 머리 읽는 법', `<p>${inl('번호 옆 글자는 난이도(**상 · 중상 · 중 · 하**), 오른쪽은 개념서의 관련 개념 번호와 문제 유형이다. 틀린 문제는 개념서의 같은 개념 번호로 돌아가 복습한다.')}</p>`)}
+  ${mocks.length ? item('3', `실전 모의고사 ${mocks.length}회`, `<p>${inl(`책 끝에 실었다. 한 회는 25문항 · 50점 · 권장 시간 30분이다. 범위: ${mocks.map((m) => `${m.no}회 ${m.range}`).join(', ')}.`)}</p>`) : ''}
+  ${item(mocks.length ? '4' : '3', '정답과 해설 (별책)', `<p>${inl('빠른 정답과 함께 오답 선지마다 틀린 이유를 풀었다. 개념서 범위를 조금 넘는 내용은 **보충 설명**으로 자세히 적었다.')}</p>`)}
+</section>`;
 }
 
 // ── 단원별 문제 ──
 // sets: [{ unit: UNITS[key], qs: [...] }] (책 순서)
 // mm(선택): MINIMAX 완성본 — { headLeft, title() → 속표지 HTML, subject(과목) → 과목 간지 HTML, chapter(대단원 key) → 대단원 간지 HTML }
 //   과목 간지는 짝수 쪽(data-even), 대단원 간지는 홀수 쪽(data-odd) → 둘이 펼침면. 옛 안쪽 표지 대신 MINIMAX 속표지.
-export function renderUnits(sets, { title, edition, mode, mm = null }) {
+// sets의 원소에 steps([{ step, qs }])가 있으면 합본: 단계 머리를 넣고 문항 번호는 중단원 안에서 이어진다.
+// mocks(선택, 합본): 권 끝에 싣는 실전 모의고사(엄지 색인 '모의').
+export function renderUnits(sets, { title, edition, mode, mm = null, mocks = [] }) {
   const sections = [];
   const byBook = [];
   for (const s of sets) {
@@ -103,7 +126,11 @@ export function renderUnits(sets, { title, edition, mode, mm = null }) {
   const total = sets.reduce((a, s) => a + s.qs.length, 0);
   if (mm?.title) sections.push(`<section class="flow" data-kind="mmtitle"><div class="top">${mm.title()}</div></section>`); // MINIMAX 속표지
   if (!mm) sections.push(cover({ title, sub: `2022 개정 교육과정 · 수능 대비 · 단원별 ${total}문항`, edition, parts: [...new Set(byBook.map((b) => b.book.subject))] }));
-  sections.push(toc(byBook.map((b) => ({ label: `${b.book.subject} ${b.book.chapter.no}. ${b.book.chapter.title}`, items: b.units.map((s) => [`${s.unit.no} ${s.unit.title}`, s.qs.length, `u-${s.unit.key}`]) })), mm?.headLeft));
+  const tocGroups = byBook.map((b) => ({ label: `${b.book.subject} ${b.book.chapter.no}. ${b.book.chapter.title}`, items: b.units.map((s) => [`${s.unit.no} ${s.unit.title}`, s.qs.length, `u-${s.unit.key}`]) }));
+  if (mocks.length) tocGroups.push({ label: '실전 모의고사', items: mocks.map((m) => [`${m.no}회 · ${m.range}`, m.questions.length, `m-${m.no}`]) });
+  const merged = sets.some((x) => x.steps);
+  sections.push(toc(tocGroups, mm?.headLeft, !merged));
+  if (merged) sections.push(guide(sets, mocks, mm?.headLeft || ''));
   const subStart = new Set(byBook.filter((b, bi) => bi === 0 || byBook[bi - 1].book.subject !== b.book.subject).map((b) => b.book.key)); // 과목이 시작하는 대단원
   for (const { book, units } of byBook) {
     if (mm) {
@@ -111,13 +138,27 @@ export function renderUnits(sets, { title, edition, mode, mm = null }) {
       sections.push(`<section class="flow" data-kind="mmdiv" data-odd="1" data-tab="${esc(book.chapter.no)}"><div class="top">${mm.chapter(book.key)}</div></section>`);
     }
     const headLeft = `${esc(book.subject)} <b>${esc(book.chapter.no)}. ${esc(book.chapter.title)}</b>`;
-    units.forEach(({ unit, qs }, k) => {
+    units.forEach(({ unit, qs, steps }, k) => {
       const attrs = `data-tab="${esc(book.chapter.no)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${unit.no} ${unit.title}`)}"`;
       const top = `<div class="top">${k === 0 ? chapterHead(book, units) : ''}${unitBand(unit, qs)}</div>`;
-      sections.push(`<section class="flow" data-kind="exam" data-unit="${esc(unit.key)}"${k === 0 ? ' data-nosoft="1"' : ''} ${attrs}>${top}${qs.map((q, i) => questionHtml(q, i + 1, { unit, teacher: mode === 'teacher' })).join('\n')}</section>`);
+      let n = 0;
+      const one = (q) => questionHtml(q, ++n, { unit, teacher: mode === 'teacher' });
+      const body = steps ? steps.filter((st) => st.qs.length).map((st) => stepHead(st.step, st.qs) + st.qs.map(one).join('\n')).join('\n') : qs.map(one).join('\n');
+      sections.push(`<section class="flow" data-kind="exam" data-unit="${esc(unit.key)}"${k === 0 ? ' data-nosoft="1"' : ''} ${attrs}>${top}${body}</section>`);
     });
   }
+  for (const m of mocks) sections.push(mockSection(m, { mode, tab: '모의', headLeft: mm?.headLeft }));
   return page(sections, { title, mode });
+}
+
+// 모의고사 한 회(머리 + 25문항). tab: 엄지 색인 글자(기본 'n회'), headLeft: 쪽 머리 왼쪽
+function mockSection(m, { mode, tab = `${m.no}회`, headLeft = '승민T 통합사회 <b>실전 모의고사</b>' }) {
+  const attrs = `data-tab="${esc(tab)}" data-head-left="${headLeft}" data-head-right="${esc(`실전 모의고사 ${m.no}회 · ${m.range}`)}"`;
+  const head = `<div class="top" id="m-${m.no}"><div class="wb-mock">
+      <div class="wb-mock-l"><span>2022 개정 · 통합사회</span><b>실전 모의고사 ${m.no}회</b></div>
+      <div class="wb-mock-r"><span>${esc(m.range)}</span><span>25문항 · 50점 · 권장 시간 30분</span><span>표시 없는 문항은 2점</span></div>
+    </div></div>`;
+  return `<section class="flow" data-kind="mock" ${attrs}>${head}${m.questions.map((q, i) => questionHtml(q, i + 1, { mock: true, teacher: mode === 'teacher' })).join('\n')}</section>`;
 }
 
 // ── 모의고사 ──
@@ -161,7 +202,7 @@ export function renderAnswers(groups, { title, edition, mx = null }) {
         : '';
       // 모의고사는 배점·단원만(유형까지 넣으면 머리 줄이 두 줄로 꺾임)
       const lv = `<span class="aq-lv lv-${esc(q.level)}">${esc(q.level)}</span>`;
-      rows.push(`<div class="row row-ae"><div class="main"><div class="ans-q"><div class="aq-h"><span class="aq-no">${two(i + 1)}</span><span class="aq-a">${CIRCLED[q.answer - 1]}</span>${lv}<span class="aq-meta">${meta}${q.type && !g.mock ? `${meta ? ' · ' : ''}${esc(q.type)}` : ''}</span></div><p>${inl(q.explain)}</p>${q.note ? `<div class="aq-note"><b>보충 설명 · 개념서 밖 내용</b> ${inl(q.note)}</div>` : ''}</div></div></div>`);
+      rows.push(`<div class="row row-ae"><div class="main"><div class="ans-q"><div class="aq-h"><span class="aq-no">${two(i + 1)}</span><span class="aq-a">${CIRCLED[q.answer - 1]}</span>${lv}<span class="aq-meta">${meta}${q._step && !g.mock ? `STEP ${q._step} ${STEP_NAME[q._step]}` : ''}${q.type && !g.mock ? `${meta || q._step ? ' · ' : ''}${esc(q.type)}` : ''}</span></div><p>${inl(q.explain)}</p>${q.note ? `<div class="aq-note"><b>보충 설명 · 개념서 밖 내용</b> ${inl(q.note)}</div>` : ''}</div></div></div>`);
     });
     return rows;
   };

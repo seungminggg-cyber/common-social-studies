@@ -63,3 +63,19 @@
 .slot .wb-band { display: block; margin-bottom: 4mm; }
 .slot .wb-band .band-title { display: block; font-size: 12.5pt; line-height: 1.35; }
 .slot .wb-band .band-sub { display: block; margin: 1.2mm 0 0 7.4mm; font-size: 8pt; }
+
+/* 합본(2026-11-07): 중단원 안의 단계 머리 — STEP 1 기본 → STEP 2 심화. 단원 색 굵은 선 + 번호 상자 */
+.wb-step { display: flex; align-items: center; gap: 2.2mm; border-top: 1.4pt solid var(--c1); padding-top: 1.6mm; margin-bottom: 1mm; font-family: var(--sans-h); }
+.wb-step b { background: var(--c1); color: #fff; font-size: 8.4pt; letter-spacing: .06em; padding: .5mm 1.8mm; }
+.wb-step span { font-size: 11pt; font-weight: 700; color: var(--c1-dark); }
+.wb-step i { margin-left: auto; font-style: normal; font-size: 7.6pt; color: var(--gray); }
+/* 합본 권 끝 실전 모의고사: 엄지 색인 '모의'(Ⅴ 아래 자리, 먹색) */
+.page[data-ch="모의"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+.page[data-ch="모의"] .edge-tab { top: 188mm; background: var(--ink); }
+.page[data-ch="모의"] .edge-tab span { writing-mode: vertical-rl; text-orientation: upright; font-size: 8.6pt; letter-spacing: .1em; }
+/* 합본 '이 책의 구성' */
+.wb-guide-i { display: grid; grid-template-columns: 9mm 1fr; column-gap: 4mm; padding: 4mm 0 5mm; border-bottom: .5pt solid var(--line, #d9d4ce); }
+.wb-guide-k { font-family: var(--serif-h); font-size: 20pt; font-weight: 700; color: var(--teal, #1d6c74); line-height: 1; }
+.wb-guide-i h3 { margin: 0 0 2mm; font-family: var(--serif-h); font-size: 12.5pt; }
+.wb-guide-i p { margin: 1.4mm 0 0; font-size: 9.2pt; line-height: 1.7; }
+.wb-guide-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin: 1mm 0 2mm; --c1: #1d6c74; --c1-dark: #134a50; }

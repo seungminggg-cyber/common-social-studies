@@ -76,6 +76,11 @@ export function mmTitlePage(v) {
   return wrap(x5Front(v));
 }
 
+// 정답과 해설 별책 속표지(합본, 2026-11-07): 앞표지와 같은 그림, 과목 줄에 '정답과 해설'
+export function mmAnswerTitlePage(v) {
+  return wrap(x5Front({ ...v, subject: `${v.subject} 정답과 해설` }));
+}
+
 // 본문 빌드에 넣을 CSS: 간지 쪽은 머리글·쪽 번호를 숨기고, 표지와 같은 글꼴 변수를 쓴다
 export const MM_DIV_CSS = `
 .page-mmdiv .page-head, .page-mmdiv .page-foot, .page-mmsub .page-head, .page-mmsub .page-foot, .page-mmsub .edge-tab,

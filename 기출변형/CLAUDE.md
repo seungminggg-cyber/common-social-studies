@@ -71,6 +71,16 @@
   `node build.mjs 2 mock mx`(본문 + 정답과 해설 별책) → `node cover/build-cover.mjs maxifinal` → `python3 cover/assemble.py maximin` → `out/MAXIMIN-완성본/`.
 - 뒷표지 대표 문장의 네온 글자는 `cover/mm-letters.js`의 HANGUL에 직접 그린 글자만 쓸 수 있다(새 글자는 그려 넣어야 함).
 
+## MINIMAX 합본 — 과목별 두 권 (강사 결정 2026-11-07)
+- 강사: "기본편과 심화편을 나누는 게 의미가 있나, 섞어서 한 권으로" → **MINIMAX 기출분석 통합사회1 · 통합사회2** 두 권(개념서 MINIMAP 1·2와 짝). 기본편(02)·심화편(03)은 더 만들지 않는다(옛 빌드 명령은 남겨 둠).
+- 권 안: 중단원마다 **STEP 1 기본(1차 문항) → STEP 2 심화(2차 문항)**, 문항 번호는 중단원 안에서 이어진다. 차례 다음 쪽 '이 책의 구성'. 권 끝에 1차 실전 모의고사(통합사회1 권 1회 = 1차 m1, 통합사회2 권 1~3회 = 1차 m2·m3·m4, 엄지 색인 '모의'). 정답과 해설은 별책(STEP 표시). MAXIMIN(2차 모의고사 10회)은 따로.
+- 문항 파일(`content/1`, `content/2`)과 문항 id는 그대로. 합본 순서는 `content/order-vol.json`(단계마다 실제 높이로 단을 채움) — 문항을 고치거나 더하면 `node build.mjs vol order` 다시.
+- 표지·간지: '네온 길' 그대로, 글자만 '통합사회 기출분석 / 통합사회1(2)'. 통합사회1 = 남색·하늘 네온, 통합사회2 = 보라·분홍 네온(`cover/mmx.js` X5_PAL, MINIMAP과 같은 짝).
+- 만들기: `node build.mjs vol order`(문항이 바뀐 때만) → `node build.mjs vol t1 [teacher]`(t2) → `out/vol/MINIMAX-통합사회1-본문.pdf`(178쪽)·`-정답과해설.pdf`(49쪽)·`-교사용.pdf`
+  → `node cover/build-cover.mjs mmvol` → `python3 cover/assemble.py x1`(x2) → `out/MINIMAX-통합사회1-완성본/`
+  → 한글 `python3 -I hwpx_wb.py out/vol/MINIMAX-통합사회1-본문.json out/vol/MINIMAX-통합사회1.hwpx [teacher]` → `python3 -I tools/hwpx-check.py vol`
+  · 쪽 검사 `node tools/page-check.mjs --dir out/vol`. 통합사회2: 본문 215쪽 · 정답과 해설 65쪽.
+
 ## 다음 검수 방식 (강사 결정 2026-11-06)
 - **바뀐 문항만 검수한다.** 1,350문항 전체 검수는 2차 검수(main `893eeb8`)로 끝났다. 다음부터는 그 뒤에 바뀌거나 새로 생긴 문항만 본다(`git diff 893eeb8 -- 기출변형/content`에서 문항 id를 뽑음). 검수가 끝나면 이 기준 커밋을 새로 적는다.
 - **그림 확인은 프로그램 검사부터.** 쪽 그림에서 글자가 그림·단 밖으로 나감, 글자 겹침, 단 아래 넘침, 큰 빈 단, 너무 작은 글씨를 먼저 자동으로 찾는다. 눈으로는 검사에 걸린 쪽과 바뀐 문항이 있는 쪽만 본다.

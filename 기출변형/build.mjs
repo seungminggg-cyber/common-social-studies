@@ -5,6 +5,7 @@
 //   node build.mjs 1 mock png        1차 모의고사만, 쪽 그림(PNG)까지
 //   node build.mjs 2 teacher         교사용(정답 표시·해설이 문제 아래)도 함께
 //   node build.mjs 1 book t1         단원별을 책(t1 = 통합사회1, t2 = 통합사회2)으로 나눠 만들기
+//   node build.mjs vol t1            합본 MINIMAX 기출분석 통합사회1(기본편 + 심화편, 2026-11-07) — 아래 '합본' 참고
 //
 // 결과: out/<차수>/*.pdf, out/<차수>/png/, out/<차수>/<이름>.json(한글 파일용), out/<차수>/fig/<이름>/*.png
 import { createRequire } from 'node:module';
@@ -13,11 +14,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { FIGURE_TYPES } from '../textbook/lib/figures.js';
 import { ensureTerrain } from '../textbook/lib/terrain.js';
-import { UNITS } from './lib/units.js';
+import { BOOKS, UNITS } from './lib/units.js';
 import { renderUnits, renderMocks, renderAnswers } from './lib/wb-render.js';
 import { chapters } from './cover/book-data.js';
 import { mmVol } from './cover/mm-data.js';
-import { mmSubjectPage, mmChapterPage, mmTitlePage, MM_DIV_CSS } from './cover/mm-div.js';
+import { mmSubjectPage, mmChapterPage, mmTitlePage, mmAnswerTitlePage, MM_DIV_CSS } from './cover/mm-div.js';
+import { setX5Palette } from './cover/mmx.js';
 import { maxiTitlePage, maxiLogPage, maxiRoundPage, maxiAnswerTitlePage, MX_CSS } from './cover/maxi.js';
 
 const require = createRequire(import.meta.url);
@@ -35,7 +37,9 @@ const teacher = args.includes('teacher');
 const mmMode = args.includes('mm');
 // mx: MAXIMIN 완성본 본문(2차 모의고사 10회) — 속표지·차례와 성적 기록표·회차 간지 + 인쇄용 TrueType 글꼴
 const mxMode = args.includes('mx');
-const OUT = join(ROOT, 'out', ed);
+// vol: 합본(기본편 + 심화편을 과목별 한 권으로, 2026-11-07) → out/vol/
+const volMode = args.includes('vol');
+const OUT = join(ROOT, 'out', volMode ? 'vol' : ed);
 mkdirSync(join(OUT, 'png'), { recursive: true });
 const EDITION = ed === '1' ? '1차 · 겨울방학 특강판' : '2차 · 심화(중상·상)판';
 // soft: 단원이 끝난 쪽에 자리가 남으면 다음 단원을 이어서 싣는다(대단원 첫 단원은 새 쪽). 순서 정하기(order)에서는 끔.
@@ -155,7 +159,7 @@ async function emit(name, html, data) {
     }
     for (const el of await page.$$('.figrow[data-row]')) await el.screenshot({ path: join(dir, `${await el.getAttribute('data-row')}.png`) });
   }
-  console.log(`${name}: ${pages}쪽 → out/${ed}/${name}.pdf`);
+  console.log(`${name}: ${pages}쪽 → out/${volMode ? "vol" : ed}/${name}.pdf`);
   await page.close();
 }
 
@@ -197,7 +201,8 @@ async function measure(sets) {
       band[key] = r.getBoundingClientRect().height;
       r.remove();
     });
-    return { gap, h, H, cap, band };
+    const st = document.querySelector('.row-step'); // 합본의 단계 머리
+    return { gap, h, H, cap, band, step: st ? st.getBoundingClientRect().height : 0 };
   });
   await page.close();
   rmSync(htmlPath, { force: true });
@@ -243,6 +248,138 @@ function packOrder(sets, m) {
     order[unit.key] = out.map((q) => q.id);
   }
   return order;
+}
+
+// ── 합본(강사 2026-11-07: "기본편과 심화편을 나누는 게 의미가 있나, 섞어서 한 권으로") ──
+//   과목별 두 권: MINIMAX 기출분석 통합사회1 · 통합사회2. 중단원마다 STEP 1 기본(1차 문항) → STEP 2 심화(2차 문항),
+//   문항 번호는 중단원 안에서 이어진다. 권 끝에 1차 실전 모의고사(통합사회1 권: 통합사회1 범위 1회 / 통합사회2 권: 통합사회2 범위 1회 + 전 범위 2회, 권마다 1회부터).
+//   node build.mjs vol order            → content/order-vol.json(단계마다 실제 높이를 재서 단을 꼭 맞게 채우는 순서)
+//   node build.mjs vol t1 [teacher] [png] → out/vol/MINIMAX-통합사회1-본문.pdf · -정답과해설.pdf (· -교사용.pdf) + 한글 파일용 JSON
+//   문항 파일(content/1·2)은 그대로 — 1차·2차 문항 id도 그대로다.
+const VOL_ORDER = join(ROOT, 'content', 'order-vol.json');
+const VOL_MOCKS = { t1: [1], t2: [2, 3, 4] };
+const edOrders = {};
+const edOrder = (e) => (edOrders[e] ??= existsSync(join(ROOT, 'content', e, 'order.json')) ? JSON.parse(readFileSync(join(ROOT, 'content', e, 'order.json'), 'utf8')) : {});
+async function loadVol(subj, raw = false) {
+  const vo = !raw && existsSync(VOL_ORDER) ? JSON.parse(readFileSync(VOL_ORDER, 'utf8')) : {};
+  const out = [];
+  for (const k of Object.keys(UNITS).filter((x) => x.startsWith(subj) && (raw || !only.length || only.includes(x)))) {
+    const steps = [];
+    for (const [e, step] of [['1', 1], ['2', 2]]) {
+      const f = join(ROOT, 'content', e, `${k}.js`);
+      if (!existsSync(f)) continue;
+      const mod = (await import(pathToFileURL(f).href)).default;
+      const qs = (mod.questions || mod).map((q) => ({ ...q, _step: step }));
+      const ord = (!raw && vo[k]?.[step]) || edOrder(e)[k];
+      if (ord) { const pos = new Map(ord.map((id, i) => [id, i])); qs.sort((a, b) => (pos.get(a.id) ?? 1e9) - (pos.get(b.id) ?? 1e9)); }
+      steps.push({ step, qs });
+    }
+    out.push({ unit: UNITS[k], steps, qs: steps.flatMap((x) => x.qs) });
+  }
+  return out;
+}
+async function loadVolMocks(subj) {
+  const out = [];
+  for (const [i, no] of VOL_MOCKS[subj].entries()) {
+    const m = (await import(pathToFileURL(join(ROOT, 'content', '1', 'mock', `m${no}.js`)).href)).default;
+    out.push({ ...m, no: i + 1, orig: m.no, questions: m.questions.map((q) => ({ ...q })) });
+  }
+  return out;
+}
+// packOrder와 같은 방식 + 단계 머리(다음 문항과 같은 단). 결과: { 't1-01': { 1: [id…], 2: [id…] } }
+function packOrderVol(sets, m) {
+  const { gap, h, H, cap, band, step: stepH } = m;
+  const order = {};
+  const SOFT = 0.28;
+  let R = 0, col = 2, colCap = H;
+  const newPage = (c) => { col = 0; colCap = c; R = c; };
+  const nextCol = () => { if (col === 0) { col = 1; R = colCap; } else newPage(H); };
+  const g = () => (R < colCap ? gap : 0);
+  let prevBook = null;
+  for (const { unit, steps } of sets) {
+    const first = unit.book !== prevBook;
+    prevBook = unit.book;
+    const fitsAny = (list, extra) => list.some((q) => h[q.id] + extra <= R + 1);
+    if (first) newPage(cap[unit.key]);
+    else if (col === 0 || R > colCap * SOFT) {
+      if (R < colCap * SOFT) nextCol();
+      R -= band[unit.key] + g();
+      if (!fitsAny(steps[0].qs, stepH + 2 * gap)) { nextCol(); R -= band[unit.key]; }
+    } else newPage(cap[unit.key]);
+    order[unit.key] = {};
+    for (const { step, qs } of steps) {
+      if (!fitsAny(qs, stepH + g() + gap)) nextCol(); // 단계 머리만 단 아래에 남지 않게
+      R -= stepH + g();
+      let left = [...qs];
+      const out = [];
+      let lastLv = null;
+      const fits = (q) => h[q.id] + g() <= R + 1;
+      const pick = () => {
+        const ok = left.filter(fits);
+        if (!ok.length) return null;
+        const best = Math.max(...ok.map((q) => h[q.id]));
+        const near = ok.filter((q) => h[q.id] >= best - 45);
+        return near.find((q) => q.level !== lastLv) || near[0];
+      };
+      const put = (q) => { R -= h[q.id] + g(); out.push(q); lastLv = q.level; left = left.filter((x) => x !== q); };
+      while (left.length) {
+        const q = pick();
+        if (q) { put(q); continue; }
+        if (R >= colCap - 1) { put([...left].sort((a, b) => h[b.id] - h[a.id])[0]); continue; }
+        nextCol();
+      }
+      order[unit.key][step] = out.map((q) => q.id);
+    }
+  }
+  return order;
+}
+if (volMode) {
+  if (args.includes('order')) {
+    const order = {};
+    for (const subj of ['t1', 't2']) {
+      const vs = await loadVol(subj, true);
+      Object.assign(order, packOrderVol(vs, await measure(vs)));
+    }
+    writeFileSync(VOL_ORDER, JSON.stringify(order, null, 1) + '\n');
+    console.log(`합본 문항 순서 저장: content/order-vol.json (${Object.keys(order).length}개 단원)`);
+    await browser.close();
+    process.exit(0);
+  }
+  const subj = sub || 't1';
+  const SUBJ = subj === 't1' ? '통합사회1' : '통합사회2';
+  const vsets = await loadVol(subj);
+  const vmocks = only.length ? [] : await loadVolMocks(subj);
+  bigMapText(vsets.map((x) => x.qs));
+  bigMapText(vmocks);
+  numberFigures([vsets.map((x) => x.qs), vmocks]); // 권 하나에 그림 번호 한 줄(본문과 모의고사가 같은 문서)
+  ensureTerrain([...vsets.flatMap((x) => x.qs), ...vmocks.flatMap((m) => m.questions)]);
+  const v = mmVol(`02-${subj}`);
+  setX5Palette(v.pal); // 통합사회1 남색 · 통합사회2 보라
+  const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
+  const chs = await chapters('vol');
+  const faces = printFaces();
+  const css = `${faces}\n${MM_DIV_CSS}\n.page-mxtitle .page-head, .page-mxtitle .page-foot, .page-mxtitle .edge-tab { visibility: hidden; }\n.page-mxtitle .mm-page { --mm-sans: 'KoPubWorld Dotum'; }`;
+  const fix = (h) => h.replace(/@font-face \{ font-family: 'Pretendard Variable';[^}]*\}/, '').replace('</head>', `<style>${css}</style></head>`);
+  let uid = 0;
+  const mm = {
+    headLeft: `<b>${name}</b> ${SUBJ}`,
+    title: () => mmTitlePage(v),
+    subject: (x) => mmSubjectPage(x, chs.filter((c) => c.subject === x), { name, uid: `s${uid++}` }),
+    chapter: (key) => mmChapterPage(chs.find((c) => c.key === key), { name, uid: `c${uid++}` }),
+  };
+  const base = `MINIMAX-${SUBJ}${only.length ? `-${only.join('_')}` : ''}`;
+  const vtitle = `${name} ${SUBJ}`;
+  const data = { kind: 'vol', subject: SUBJ, name, sets: vsets.map((x) => ({ unit: x.unit, steps: x.steps })), mocks: vmocks };
+  await emit(`${base}-본문`, fix(renderUnits(vsets, { title: vtitle, edition: '', mode: 'student', mm, mocks: vmocks })), data);
+  if (teacher) await emit(`${base}-교사용`, fix(renderUnits(vsets, { title: `${vtitle} 교사용`, edition: '', mode: 'teacher', mm, mocks: vmocks })));
+  LAYOUT.soft = ['answers'];
+  const groups = [
+    ...vsets.map((x) => ({ no: x.unit.no, tab: BOOKS[x.unit.book].chapter.no, title: x.unit.title, qs: x.qs })),
+    ...vmocks.map((m) => ({ no: `실전 모의고사 ${m.no}회`, tab: '모의', title: m.range, qs: m.questions, mock: true })),
+  ];
+  await emit(`${base}-정답과해설`, fix(renderAnswers(groups, { title: vtitle, edition: '', mx: { cover: () => mmAnswerTitlePage(v), headLeft: `<b>${name}</b> ${SUBJ} 정답과 해설` } })));
+  await browser.close();
+  process.exit(failed ? 1 : 0);
 }
 
 const title = `기출변형 문제집 ${ed}차`;
@@ -299,7 +436,7 @@ if (mxMode) {
 }
 if (mmMode) {
   const faces = printFaces();
-  const v = mmVol(ed === '1' ? '02' : '03');
+  const v = mmVol(ed === '1' ? '02' : '03-old');
   const name = `MINIMAX ${v.kind.replace(/^통합사회 /, '')}`;
   const chs = await chapters(ed);
   let uid = 0;

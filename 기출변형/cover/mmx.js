@@ -215,6 +215,13 @@ function x4Back(v) {
 
 // ═════════ X5 네온 길 ═════════
 export const X5 = { bg: '#0B1026', wall: '#26306B', cyan: '#29E3FF', pink: '#FF3EC8', fg: '#FFFFFF', sub: '#8C95C9', faint: '#2A3260' };
+// 권 색(2026-11-07 기본편·심화편 → 과목별 두 권): 통합사회1 = 남색·하늘 네온(원래 X5), 통합사회2 = 보라·분홍 네온(MINIMAP 통합사회2와 같은 색).
+//   cyan = 로고·과목 글자 네온과 미로 길의 시작 색, pink = 미로 길의 끝 색. 표지·간지 HTML을 만들기 전에 setX5Palette(n)을 부른다.
+export const X5_PAL = {
+  1: { bg: '#0B1026', wall: '#26306B', cyan: '#29E3FF', pink: '#FF3EC8', sub: '#8C95C9', faint: '#2A3260' },
+  2: { bg: '#170A2B', wall: '#3D2168', cyan: '#FF4FD8', pink: '#FFB443', sub: '#C2A6DC', faint: '#3A1F5E' },
+};
+export const setX5Palette = (n = 1) => Object.assign(X5, X5_PAL[n] || X5_PAL[1]);
 // 칸 격자 위의 벽과 가장 짧은 길. (gx, gy): 왼쪽 위, c: 칸 크기(mm)
 const PATH = [[0, 8], [0, 6], [2, 6], [2, 4], [1, 4], [1, 2], [3, 2], [3, 1], [5, 1], [5, 3], [6, 3], [6, 0]];
 const WALLS = [[[0, 7], [1, 7]], [[1, 5], [1, 7]], [[2, 7], [4, 7]], [[3, 4], [3, 6]], [[0, 3], [2, 3]], [[2, 1], [2, 3]], [[4, 2], [4, 5]], [[4, 5], [6, 5]], [[5, 6], [5, 8]], [[1, 1], [2, 1]], [[6, 1], [6, 2]], [[3, 0], [4, 0]]];
@@ -255,7 +262,7 @@ export function x5Front(v) {
   const LOGO_W = 160, LX = (W - LOGO_W) / 2;
   const scale = LOGO_W / (hi - lo);
   const pad = 30, vbx = lo - pad, vbw = hi - lo + 2 * pad, vby = -pad, vbh = 100 + 2 * pad, top = 199;
-  const logo = `<svg class="abs" style="left:${mm(LX - pad * scale)};top:${mm(top - pad * scale)};overflow:visible" width="${mm(vbw * scale)}" height="${mm(vbh * scale)}" viewBox="${f(vbx)} ${vby} ${f(vbw)} ${vbh}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
+  const logo = `<svg class="abs" style="left:${mm(LX - pad * scale)};top:${mm(top - pad * scale)};overflow:visible" width="${mm(vbw * scale)}" height="${mm(vbh * scale)}" viewBox="${f(vbx)} ${vby} ${f(vbw)} ${vbh}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w, glow: X5.cyan })}</svg>`;
   const below = top + 100 * scale + X5NEON.w * scale / 2 + 9; // 로고 바닥 아래
   return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(2.2))}
   ${T(esc(MM.brand), { y: 13, size: 10, weight: 700, color: X5.fg, ls: 0.02 })}
@@ -270,7 +277,7 @@ function neonLine(text, { cy, hMm }) {
   const [lo, hi] = neonExtent(lay, X5NEON.w);
   const scale = hMm / 100, pad = 30;
   const wv = hi - lo, left = W / 2 - (wv * scale) / 2; // 보이는 관 기준 가운데
-  return `<svg class="abs" style="left:${mm(left - pad * scale)};top:${mm(cy - 50 * scale - pad * scale)};overflow:visible" width="${mm((wv + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(wv + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
+  return `<svg class="abs" style="left:${mm(left - pad * scale)};top:${mm(cy - 50 * scale - pad * scale)};overflow:visible" width="${mm((wv + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(wv + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w, glow: X5.cyan })}</svg>`;
 }
 // 옛 뒷표지(대표 문장 + 회색 한 줄) — 강사가 2026-11-07 A안(x5BackMini 네온 글자)으로 바꿈
 function x5Back(v) {
@@ -299,7 +306,7 @@ export function x5BackMini(v, { plain = false, c = 9.5, logoW = 64, gap = 16, cy
     word = T('MINIMAX', { x: 0, w: W, align: 'center', y: ly - 1.2, size: 17, weight: 700, color: X5.fg, ls: 0.42, extra: 'padding-left:0.42em;' });
   } else {
     const pad = 30, LX = (W - logoW) / 2, t = ly + (X5NEON.w / 2) * scale;
-    word = `<svg class="abs" style="left:${mm(LX - pad * scale)};top:${mm(t - pad * scale)};overflow:visible" width="${mm((hi - lo + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(hi - lo + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w })}</svg>`;
+    word = `<svg class="abs" style="left:${mm(LX - pad * scale)};top:${mm(t - pad * scale)};overflow:visible" width="${mm((hi - lo + 2 * pad) * scale)}" height="${mm((100 + 2 * pad) * scale)}" viewBox="${f(lo - pad)} ${-pad} ${f(hi - lo + 2 * pad)} ${100 + 2 * pad}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: X5NEON.w, glow: X5.cyan })}</svg>`;
   }
   return `${svgFull(`${rectBg(X5.bg)}${maze(gx, gy, c)}`, ng(1.2))}
   ${word}`;
