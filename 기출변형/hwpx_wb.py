@@ -18,6 +18,7 @@ LIB = os.path.join(HERE, '..', 'textbook', 'hwpx_build.py')
 code = open(LIB, encoding='utf-8').read().split('# ── 문서 만들기')[0]
 G = {'__file__': LIB, '__name__': 'hwpx_lib'}
 exec(compile(code, LIB, 'exec'), G)
+G['UL_COLOR'] = '#000000'  # 문제집 밑줄은 검정(강사 요청 2026-11-07)
 doc, para, run, rich, chip, table, cell, gap, band, columns, data_box = (
     G[k] for k in ('doc', 'para', 'run', 'rich', 'chip', 'table', 'cell', 'gap', 'band', 'columns', 'data_box'))
 book, TEACHER, CIRCLED, GANADA, pp = G['book'], G['TEACHER'], G['CIRCLED'], G['GANADA'], G['pp']
@@ -33,6 +34,9 @@ _data_box = data_box
 def data_box(items):
     """개념서 data_box에 목록(ul) 자료를 더한다: 테두리 상자 안에 한 줄씩"""
     for d in items:
+        if d['t'] == 'p' and d.get('right'):  # 글쓴이·출처 줄: 상자 밖 오른쪽에 한 줄
+            rich(para(align='RIGHT', after=2), d['text'], size=8.6)
+            continue
         if d['t'] == 'table':
             # 문제 자료 표는 칸마다 글자 가운데 (강사 요청 2026-11-06)
             d = {**d, 'align': ['center'] * 20}

@@ -113,7 +113,7 @@ def rich(p, text, size=10, color=INK, bold=False, font=FONT):
         elif part.startswith('=='):
             run(p, part[2:-2], size=size, color=color, bold=bold, font=font, highlight=HL)
         elif part.startswith('__'):
-            run(p, part[2:-2], size=size, color=color, bold=bold, font=font, underline=True, underline_color=ORANGE)
+            run(p, part[2:-2], size=size, color=color, bold=bold, font=font, underline=True, underline_color=globals().get('UL_COLOR', ORANGE))  # 문제집은 UL_COLOR=검정
         else:
             run(p, part, size=size, color=color, bold=bold, font=font)
 

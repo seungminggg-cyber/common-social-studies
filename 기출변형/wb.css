@@ -79,3 +79,6 @@
 .wb-guide-i h3 { margin: 0 0 2mm; font-family: var(--serif-h); font-size: 12.5pt; }
 .wb-guide-i p { margin: 1.4mm 0 0; font-size: 9.2pt; line-height: 1.7; }
 .wb-guide-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin: 1mm 0 2mm; --c1: #1d6c74; --c1-dark: #134a50; }
+
+/* 강사 요청(2026-11-07): 문제집의 밑줄은 모두 검정(개념서 테마의 색 밑줄을 덮어씀). '옳지 않은 것'의 '않은'도 같은 밑줄 */
+body.wb u { text-decoration-color: #000; text-decoration-thickness: 1px; }

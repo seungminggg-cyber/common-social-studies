@@ -337,3 +337,4 @@ th, td { padding: 0; vertical-align: middle; }
 /* 시안 H에서만 보이는 문제 머리 덧붙임·문항 수 요약 */
 .q-dots, .q-meta, .band-sub { display: none; }
 .sec-mark:empty { display: none; }
+.p.p-right { text-align: right; } /* 자료의 글쓴이·출처 줄 (한 줄, 오른쪽) */

@@ -288,7 +288,7 @@ export function drawMap(b, h) {
     const lons = world ? [-180, -90, 0, 90, 180].map((x) => x + (b.center || 0)) : [vb[0], (vb[0] + vb[2]) / 2, vb[2]];
     const d = gpath({ type: 'LineString', coordinates: lons.map((lo) => [lo, pl.lat]) });
     if (d) s += `<path d="${d}" class="eq"/>`;
-    if (pl.label) { const [lx, ly] = proj([world ? (b.center || 0) - 170 : vb[0] + span * 0.01, pl.lat]); s += text(lx + 2, ly - 4, pl.label, { size: 10.5, cls: 'mapl soft' }); }
+    if (pl.label) { const [lx, ly] = proj([world ? (b.center || 0) - 170 : vb[0] + span * 0.01, pl.lat]); s += text(lx + 2, ly - 4, pl.label, { size: pl.size || 10.5, cls: 'mapl soft' }); }
   }
   if (b.equator) {
     const eq = gpath({ type: 'LineString', coordinates: [-180, -90, 0, 90, 180].map((x) => [x + (b.center || 0), 0]) });

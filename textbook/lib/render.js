@@ -41,7 +41,7 @@ export function block(b) {
       return `<h3 class="item"><span class="item-no">${esc(b.no)}</span><span class="item-title">${inl(b.title)}</span></h3>`
         + (b.body || []).map(block).join('');
     case 'p':
-      return `<p class="p${b.serif ? ' serif' : ''}">${inl(b.text)}</p>`;
+      return `<p class="p${b.serif ? ' serif' : ''}${b.right ? ' p-right' : ''}">${inl(b.text)}</p>`; // right: 오른쪽 맞춤(글쓴이 표시 등)
     case 'ul':
       return `<ul class="ul">${b.items.map((x) => `<li>${inl(x)}</li>`).join('')}</ul>`;
     case 'ol':
