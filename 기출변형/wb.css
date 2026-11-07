@@ -97,9 +97,10 @@ body.wbc .q .bogi { font-size: 8.3pt; line-height: 1.55; padding: 2.2mm 2.8mm 1.
 body.wbc .q .choices { font-size: 8.5pt; row-gap: .3mm; }
 body.wbc .q .choices.len-tiny { display: grid; grid-template-columns: repeat(5, 1fr); }
 body.wbc .q .choices.len-half:not(.short) { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 2mm; }
-body.wbc .q .q-data .fig-body > svg { width: 88%; margin: 0 auto; display: block; }
-body.wbc .q .q-data .fig-diagram .fig-body > svg, body.wbc .q .q-data .fig-venn .fig-body > svg { width: 75%; }
-body.wbc .q .q-data .fig-diagram .dg > svg { max-width: 72% !important; }
+/* 그림 줄이기는 모의고사만(단원 문항은 그림 속 글씨가 5pt 아래로 작아져서 그대로 둠) */
+body.wbc .q-mock .q-data .fig-body > svg { width: 88%; margin: 0 auto; display: block; }
+body.wbc .q-mock .q-data .fig-diagram .fig-body > svg, body.wbc .q-mock .q-data .fig-venn .fig-body > svg { width: 75%; }
+body.wbc .q-mock .q-data .fig-diagram .dg > svg { max-width: 72% !important; }
 body.wbc .q .q-data .tbl th, body.wbc .q .q-data .tbl td { padding-top: .9mm !important; padding-bottom: .9mm !important; }
 body.wbc .q .dialog .dl-row + .dl-row { margin-top: .5mm; }
 /* 모의고사: 문항 번호를 발문 첫 줄 앞에(수능처럼), 회차 머리 줄이기 */
