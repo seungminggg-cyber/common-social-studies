@@ -213,7 +213,8 @@ if (args.includes('mmapfinal')) {
     const pages = existsSync(pj) ? JSON.parse(readFileSync(pj, 'utf8')) : null;
     if (!pages) console.warn(`[${v.subject}] 쪽 번호 파일이 없어 간지 표의 쪽 칸이 비어 있습니다 → textbook에서 node build-book.mjs mm${v.n === 2 ? ' t2' : ''}`);
     const sheet = (inner) => `<section class="sheet" style="background:${C1[v.n].bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
-    const divs = [sheet(mmapTitlePage(v)), ...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
+    // 속표지는 빼고(2026-11-07 강사: 앞표지와 같은 그림이 두 번) 대단원 간지 5장만
+    const divs = [...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
     await emit(`MINIMAP-${v.subject}-속표지간지-도련`, doc(divs, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
   }
 }

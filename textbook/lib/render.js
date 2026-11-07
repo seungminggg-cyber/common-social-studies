@@ -467,8 +467,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         `${bandTop('answers', `${ch.chapter.no}. ${ch.chapter.title}`)}${ch.units.map((u, i) => answerRows(u, starts[i])).join('\n')}`);
     });
   } else {
-    // 표지 (MINIMAP 완성본이면 표지와 같은 그림의 속표지)
-    if (mm?.title) add('mmtitle', '', `<div class="top">${mm.title()}</div>`);
+    // 표지. MINIMAP 완성본은 앞표지를 따로 인쇄하므로 같은 그림의 속표지를 넣지 않는다(2026-11-07 강사: 같은 앞표지가 두 번)
+    if (mm) { /* 속표지 없음 */ }
     else add('cover', '', `<div class="top"><div class="cover">
       <div class="cv-brand">승민T 통합사회</div>
       <div class="cv-title">개념서</div>
@@ -477,7 +477,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <ul class="cv-chapters">${chapterList}</ul>
     </div></div>`);
     // 표지 뒤: 이 책의 주인 (+ 특강 진도표가 있으면 함께)
-    const sc = full.schedule;
+    const sc = mm ? null : full.schedule; // MINIMAP 완성본은 특강 진도표 없이 '이 책의 주인'만(2026-11-07 강사)
     if (sc) add('owner', '', `<div class="top"><div class="owner owner-plan">
       <div class="ow-box ow-compact"><div class="ow-title">이 책의 주인</div><div class="ow-grid">
         <div class="ow-line"><span>학교</span><i></i></div><div class="ow-line"><span>학년 · 반</span><i></i></div>
@@ -503,14 +503,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <div class="ow-note">이 책의 설명·자료·문제는 승민T 통합사회 수업을 위해 새로 쓴 것입니다. 사상가의 글은 원전을 새로 옮기거나 요지만 정리했고,
       그래프와 지도의 출처는 각 그림 아래에 적었습니다. "개념도"는 원리를 보여 주려고 단순하게 그린 그림, "가상 자료"는 실제 값이 아닌 연습용 자료입니다.</div>
     </div></div>`);
-    // 차례
-    const tocUnits = (ch) => unitsOf(ch).map((u) => `<li class="toc-u"><span class="toc-no">${esc(u.no)}</span><span class="toc-t">${esc(u.title)}</span>
-        <span class="toc-sub">${u.summary ? `한 장 정리 <i data-pg="s${esc(u.no)}"></i> · ` : ''}개념 확인 <i data-pg="c${esc(u.no)}"></i> · 수능형 문제 <i data-pg="e${esc(u.no)}"></i></span><span class="toc-dots"></span><span class="toc-pg" data-pg="u${esc(u.no)}"></span></li>`).join('');
-    add('toc', '', `<div class="top"><div class="toc"><div class="toc-head"><span class="toc-title">차례</span><span class="toc-en">CONTENTS</span></div>
-      <ul class="toc-list"><li class="toc-guide"><span class="toc-t">이 책의 구성</span><span class="toc-dots"></span><span class="toc-pg" data-pg="guide"></span></li>
-      ${chapters.map((ch, i) => `<li class="toc-ch"><span class="toc-chno">${esc(ch.chapter.no)}</span><span class="toc-t">${esc(ch.chapter.title)}</span><span class="toc-dots"></span><span class="toc-pg" data-pg="ch${i}"></span></li>${tocUnits(ch)}`).join('')}
-      </ul><div class="toc-foot">별책 · 정답과 해설</div></div></div>`);
-    // 이 책의 구성
+    // 이 책의 구성 (차례보다 앞, 2026-11-07 강사)
     const GUIDE = [
       ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
       ['단원 첫머리', '핵심 질문, 수능 포인트, 이 단원에서 배울 개념과 출제 빈도를 먼저 보고 시작한다.'],
@@ -530,6 +523,13 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <div class="guide-flow"><span>1회독</span> 개념을 읽으며 빈칸 채우기와 이렇게 나온다 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 한 장 정리·오답 노트 다시 보기</div>
     </div></div>`);
 
+    // 차례
+    const tocUnits = (ch) => unitsOf(ch).map((u) => `<li class="toc-u"><span class="toc-no">${esc(u.no)}</span><span class="toc-t">${esc(u.title)}</span>
+        <span class="toc-sub">${u.summary ? `한 장 정리 <i data-pg="s${esc(u.no)}"></i> · ` : ''}개념 확인 <i data-pg="c${esc(u.no)}"></i> · 수능형 문제 <i data-pg="e${esc(u.no)}"></i></span><span class="toc-dots"></span><span class="toc-pg" data-pg="u${esc(u.no)}"></span></li>`).join('');
+    add('toc', '', `<div class="top"><div class="toc"><div class="toc-head"><span class="toc-title">차례</span><span class="toc-en">CONTENTS</span></div>
+      <ul class="toc-list"><li class="toc-guide"><span class="toc-t">이 책의 구성</span><span class="toc-dots"></span><span class="toc-pg" data-pg="guide"></span></li>
+      ${chapters.map((ch, i) => `<li class="toc-ch"><span class="toc-chno">${esc(ch.chapter.no)}</span><span class="toc-t">${esc(ch.chapter.title)}</span><span class="toc-dots"></span><span class="toc-pg" data-pg="ch${i}"></span></li>${tocUnits(ch)}`).join('')}
+      </ul><div class="toc-foot">별책 · 정답과 해설</div></div></div>`);
     chapters.forEach((ch, ci) => {
       const d = full.dividers?.[ch.chapter.no] || {};
       const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
@@ -542,7 +542,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         <div class="dv-title">${esc(ch.chapter.title)}</div>
         ${d.lead ? `<div class="dv-lead">${inl(d.lead)}</div>` : ''}
         <ol class="dv-units">${unitsOf(ch).map((u) => `<li><b>${esc(u.no)}</b><span>${esc(u.title)}</span><i data-pg="u${esc(u.no)}"></i></li>`).join('')}</ol>
-        ${d.keys ? `<div class="dv-keys"><div class="dv-kt">이 대단원에서 꼭 잡을 것</div><ul>${d.keys.map((k) => `<li>${inl(k)}</li>`).join('')}</ul></div>` : ''}
+        ${d.keys ? `<div class="dv-keys"><div class="dv-kt">대단원 핵심 개념</div><ul>${d.keys.map((k) => `<li>${inl(k)}</li>`).join('')}</ul></div>` : ''}
       </div></div>`);
       // 간지 뒷면: 학습 계획표
       const rows = unitsOf(ch).map((u) => {
@@ -553,7 +553,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         <div class="band band-plan"><span class="band-title">학습 계획표</span><span class="band-unit"><b>${esc(ch.chapter.no)}</b> ${esc(ch.chapter.title)}</span></div>
         <table class="plan-t"><thead><tr><th>중단원</th><th>쪽</th><th>1회독</th><th>2회독</th><th>개념 확인</th><th>수능형 문제</th></tr></thead><tbody>${rows}</tbody></table>
         <ul class="plan-how"><li><b>1회독</b> 개념 정리를 읽고 빈칸을 채운 날을 적는다.</li><li><b>2회독</b> 개념 확인·수능형 문제를 다시 푼 날을 적는다.</li><li>맞힌 개수가 80%가 안 되는 중단원은 시험 전에 한 번 더 본다.</li></ul>
-        <div class="memo plan-memo"><div class="memo-head"><span class="memo-tag">나의 목표</span><span class="memo-q">이 대단원을 마치면 꼭 설명할 수 있어야 할 것을 적어 보자.</span></div><div class="memo-lines"></div></div>
+        <div class="memo plan-memo"><div class="memo-head"><span class="memo-tag">나의 목표</span></div><div class="memo-lines"></div></div>
       </div></div>`);
       // 중단원들 (수능형 문제 번호는 대단원마다 01부터)
       let qNo = 1;

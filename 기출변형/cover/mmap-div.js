@@ -1,7 +1,7 @@
 // MINIMAP 개념서 속표지·대단원 간지 (강사 요청 2026-11-07: "속표지와 간지 만들어줘")
 // 표지(1번 '네온 지구')와 같은 디자인 — MINIMAX 간지(mm-div.js)와 같은 짜임:
 //   속표지(본문 첫 쪽) = 앞표지와 똑같은 그림
-//   대단원 간지(홀수 쪽) = 단원 색 네온 번호(Ⅰ~Ⅴ) + 단원 색으로 빛나는 지구본 + 대단원 이름 + 중단원 표(개념 수·쪽) + 꼭 잡을 것
+//   대단원 간지(홀수 쪽) = 단원 색 네온 번호(Ⅰ~Ⅴ) + 단원 색으로 빛나는 지구본 + 대단원 이름 + 중단원 표(쪽) + 대단원 핵심 개념
 // 같은 HTML을 두 곳에서 쓴다: 표지 빌드(도련 3mm 낱장, build-cover.mjs mmapfinal)와 개념서 본문 빌드(textbook/build-book.mjs mm).
 // 위치는 쪽(재단선) 기준 mm. 글꼴: 표지 빌드는 'KoPub Dotum', 본문 빌드는 MMAP_DIV_CSS가 --mm-sans를 'KoPubWorld Dotum'으로.
 import { CH, BLEED } from './tokens.js';
@@ -39,7 +39,7 @@ export function chapterInfo(ch, k) {
   return { no: ch.chapter.no, title: ch.chapter.title, k, units, concepts: units.reduce((a, u) => a + u.concepts, 0), exam: units.reduce((a, u) => a + u.exam, 0) };
 }
 
-// 대단원 간지. v: MMAP.vols의 한 권, info: chapterInfo, keys: '꼭 잡을 것'(**굵게**), pages: { 'u01': 12 … }(도련 낱장용; 본문에서는 쪽 나누기가 data-pg를 채운다)
+// 대단원 간지. v: MMAP.vols의 한 권, info: chapterInfo, keys: '대단원 핵심 개념'(**굵게**), pages: { 'u01': 12 … }(도련 낱장용; 본문에서는 쪽 나누기가 data-pg를 채운다)
 export function mmapChapterPage(v, info, { keys = [], uid = 'c', tab = false, pages = null } = {}) {
   const c = C1[v.n], col = UNIT_NEON[info.no];
   const faint = mix(c.bg, '#ffffff', 0.16), sub = c.sub;
@@ -47,9 +47,9 @@ export function mmapChapterPage(v, info, { keys = [], uid = 'c', tab = false, pa
   const rowH = Math.min(24, 66 / n); // 표 한 줄 높이(mm): 중단원 2개 24 · 3개 22 · 4개 16.5
   const td = `height:${mm(rowH)};padding:0;border-bottom:.35pt solid ${faint};vertical-align:middle;`;
   const pg = (u) => (pages ? (pages[`u${u.no}`] ?? '') : `<i data-pg="u${esc(u.no)}" style="font-style:normal"></i>`);
-  const rows = info.units.map((u) => `<tr><td style="${td}width:14mm;color:${col};font-weight:700">${esc(u.no)}</td><td style="${td}">${esc(u.title)}</td><td style="${td}text-align:right;color:${sub};width:24mm">개념 ${u.concepts}</td><td style="${td}text-align:right;width:20mm">${pg(u)}</td></tr>`).join('');
+  const rows = info.units.map((u) => `<tr><td style="${td}width:14mm;color:${col};font-weight:700">${esc(u.no)}</td><td style="${td}">${esc(u.title)}</td><td style="${td}text-align:right;width:20mm">${pg(u)}</td></tr>`).join('');
   const keyHtml = keys.length
-    ? `<div style="margin-top:9mm"><div style="font-size:10.5pt;font-weight:700;color:${col};letter-spacing:.04em;margin-bottom:2.6mm">이 대단원에서 꼭 잡을 것</div>
+    ? `<div style="margin-top:9mm"><div style="font-size:10.5pt;font-weight:700;color:${col};letter-spacing:.04em;margin-bottom:2.6mm">대단원 핵심 개념</div>
       ${keys.map((k) => `<div style="display:flex;gap:2.6mm;font-size:11.5pt;line-height:1.5;color:${mix(sub, '#ffffff', 0.45)};margin-top:1.2mm"><span style="color:${col}">•</span><span>${inl(k, '#ffffff')}</span></div>`).join('')}</div>`
     : '';
   // 지구본: 단원 색으로 빛나게(우리나라는 흰빛)
@@ -65,9 +65,8 @@ export function mmapChapterPage(v, info, { keys = [], uid = 'c', tab = false, pa
     ${neon(layoutRoman(info.no), { x: 22, y: 44, hMm: 56, glow: col, id: `n${uid}` })}
     <div class="abs" style="left:22mm;top:124mm;width:166mm;font-family:${SANS};color:#fff">
       <div style="font-size:36pt;font-weight:700;line-height:1.15;letter-spacing:-.025em">${esc(info.title)}</div>
-      <div style="font-size:14pt;color:${sub};margin-top:2.6mm">${n}개 중단원 · 개념 ${info.concepts}개 · 수능형 문제 ${info.exam}문항</div>
       <table style="width:100%;border-collapse:collapse;font-size:13pt;margin-top:10mm">
-        <tr style="font-size:10pt;color:${sub}"><td colspan="2" style="padding-bottom:2.4mm;border-bottom:1pt solid ${col}">중단원</td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${col}">개념 수</td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${col}">쪽</td></tr>
+        <tr style="font-size:10pt;color:${sub}"><td colspan="2" style="padding-bottom:2.4mm;border-bottom:1pt solid ${col}">중단원</td><td style="text-align:right;padding-bottom:2.4mm;border-bottom:1pt solid ${col}">쪽</td></tr>
         ${rows}
       </table>
       ${keyHtml}

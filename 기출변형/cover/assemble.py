@@ -59,7 +59,7 @@ def main(no):
         sub = '통합사회1' if no == 't1' else '통합사회2'
         tag = f'MINIMAP-{sub}'
         body = os.path.join(HERE, '..', '..', 'textbook', 'out', f'{tag}-본문.pdf')
-        ndiv = '6쪽'
+        ndiv = '5쪽'
     elif no in ('x1', 'x2'):  # 합본 MINIMAX 기출분석 통합사회1·2 (2026-11-07)
         tag = f"MINIMAX-통합사회{no[1]}"
         body = os.path.join(OUT, 'vol', f'{tag}-본문.pdf')
@@ -74,7 +74,7 @@ def main(no):
     files = {
         f'1_앞표지(도련 3mm).pdf': os.path.join(cover, f'{tag}-앞표지.pdf'),
         f'2_뒷표지(도련 3mm).pdf': os.path.join(cover, f'{tag}-뒷표지.pdf'),
-        f'4_속표지·간지(도련 3mm, {ndiv}).pdf': os.path.join(cover, f'{tag}-속표지간지-도련.pdf'),
+        (f'4_대단원 간지(도련 3mm, {ndiv}).pdf' if no in ('t1', 't2') else f'4_속표지·간지(도련 3mm, {ndiv}).pdf'): os.path.join(cover, f'{tag}-속표지간지-도련.pdf'),
     }
     for name, src in files.items():
         fix_boxes(src, os.path.join(dst, name))
