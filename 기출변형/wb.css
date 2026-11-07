@@ -82,3 +82,28 @@
 
 /* 강사 요청(2026-11-07): 문제집의 밑줄은 모두 검정(개념서 테마의 색 밑줄을 덮어씀). '옳지 않은 것'의 '않은'도 같은 밑줄 */
 body.wb u { text-decoration-color: #000; text-decoration-thickness: 1px; }
+
+/* ── 쪽수 줄이기 7쪽안 (강사 선택 2026-11-07, 시험 기록 참고/진행.md) ──
+   문제집(MAXIMIN·MINIMAX, body.wbc)에만. 특강 교재(body.sp)는 그대로.
+   MAXIMIN 7회 12쪽 → 7쪽: 글자 8.7pt·줄 간격 1.6, 상자 안쪽 여백, 문항 번호를 발문 앞에(모의고사),
+   짧은 선지는 한 줄에 5개·2개씩, 쪽 바깥 여백(단 폭 83 → 88.5mm), 그림 88%·표 칸 여백 */
+body.wbc .page:has(.region-mock), body.wbc .page:has(.region-exam) {
+  --m-top: 10mm; --m-out: 12mm; --m-in: 14mm; --m-bottom: 8mm; --col-gap: 7mm; --head-h: 7mm;
+}
+body.wbc .q { font-size: 8.7pt; line-height: 1.6; }
+body.wbc .q .q-stem { margin-bottom: 1.4mm; }
+body.wbc .q .q-data { font-size: 8.3pt; line-height: 1.58; padding: 2mm 2.8mm; margin-bottom: 1.8mm; }
+body.wbc .q .bogi { font-size: 8.3pt; line-height: 1.55; padding: 2.2mm 2.8mm 1.8mm; margin: 3.2mm 0 1.8mm; }
+body.wbc .q .choices { font-size: 8.5pt; row-gap: .3mm; }
+body.wbc .q .choices.len-tiny { display: grid; grid-template-columns: repeat(5, 1fr); }
+body.wbc .q .choices.len-half:not(.short) { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 2mm; }
+body.wbc .q .q-data .fig-body > svg { width: 88%; margin: 0 auto; display: block; }
+body.wbc .q .q-data .fig-diagram .fig-body > svg, body.wbc .q .q-data .fig-venn .fig-body > svg { width: 75%; }
+body.wbc .q .q-data .fig-diagram .dg > svg { max-width: 72% !important; }
+body.wbc .q .q-data .tbl th, body.wbc .q .q-data .tbl td { padding-top: .9mm !important; padding-bottom: .9mm !important; }
+body.wbc .q .dialog .dl-row + .dl-row { margin-top: .5mm; }
+/* 모의고사: 문항 번호를 발문 첫 줄 앞에(수능처럼), 회차 머리 줄이기 */
+body.wbc .q-mock .q-head { float: left; margin: .25mm 1.8mm 0 0; }
+body.wbc .q-mock .q-no { min-width: 6.4mm; height: 5mm; font-size: 9.4pt; }
+body.wbc .wb-mock { padding: 2mm 0 1.8mm; margin-bottom: 3mm; }
+body.wbc .wb-mock-l b { font-size: 17pt; }

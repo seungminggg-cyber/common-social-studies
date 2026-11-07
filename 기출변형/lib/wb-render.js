@@ -231,7 +231,7 @@ function page(sections, { title, mode }) {
 <link rel="stylesheet" href="../../../textbook/themes/h.css">
 <link rel="stylesheet" href="../../wb.css">
 </head>
-<body class="theme-b theme-d theme-h wb mode-${mode}">
+<body class="theme-b theme-d theme-h wb wbc mode-${mode}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = __LAYOUT__;</script>
