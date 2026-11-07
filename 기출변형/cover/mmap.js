@@ -105,18 +105,19 @@ export function m1BackInner(v, { R = 31, logoW = 64, gap = 16, cy = H / 2 } = {}
 export const m1Back = (v, o = {}) => sheet(C1[v.n].bg, m1BackInner(v, o));
 
 // 책등(S mm, 2026-11-07 Paffy 견본용): 글자는 위에서 아래로 읽게 90° 돌림(글자 머리가 앞표지 쪽).
-// style — 'top': 로고·책 이름은 위, 출판사 이름은 아래(첫 견본) / 'center': 맨 위 작은 지구본, 가운데 로고·책 이름, 맨 아래 출판사
+// style — 'linemid': 'line'과 같고 로고·책 이름 크기는 'line'과 'big'의 중간(강사 고름) / 'top': 로고·책 이름은 위, 출판사 이름은 아래(첫 견본) / 'center': 맨 위 작은 지구본, 가운데 로고·책 이름, 맨 아래 출판사
 //         'big': 'center'에서 로고를 크게 / 'line': 'center' 사이를 표지의 비행선처럼 가는 네온 선으로 이음
 // 접히는 선에서 2mm 안쪽만 쓰도록 글자 높이를 책등 폭에 맞춘다.
 export function m1Spine(v, S, id = 's', style = 'top') {
   const c = C1[v.n];
   const { lay, lo, hi } = neonWord();
-  const big = style === 'big';
-  const logoH = big ? Math.min(S * 0.6, 9.5) : Math.min(S * 0.42, 7.2), logoW = (logoH / 109) * (hi - lo);
+  const big = style === 'big', mid = style === 'linemid'; // linemid: 'line'에 글자·로고를 'line'과 'big'의 중간 크기로(2026-11-07 강사)
+  const sizeOf = (a, b) => (big ? b : mid ? (a + b) / 2 : a);
+  const logoH = sizeOf(Math.min(S * 0.42, 7.2), Math.min(S * 0.6, 9.5)), logoW = (logoH / 109) * (hi - lo);
   const svgH = logoH + 1.2;
   const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: logoW, top: 0.6, yTop: -4.5, cx: logoW / 2 + 1.5 });
   const logo = `<svg style="width:${f(logoW + 3)}mm;height:${f(svgH)}mm;overflow:visible;flex:none" viewBox="0 0 ${f(logoW + 3)} ${f(svgH)}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter(`${id}nb`, 4)}</defs>${L.g}</svg>`;
-  const titlePt = f(Math.min(S * (big ? 0.85 : 0.78), big ? 13.5 : 12.5)), brandPt = f(Math.min(S * 0.55, 8.6));
+  const titlePt = f(sizeOf(Math.min(S * 0.78, 12.5), Math.min(S * 0.85, 13.5))), brandPt = f(Math.min(S * 0.55, 8.6));
   const title = `<span style="font-family:'KoPub Dotum';font-weight:700;font-size:${titlePt}pt;color:${c.fg};letter-spacing:-.01em;white-space:nowrap;line-height:1;flex:none">${esc(v.kind)}</span>`;
   const brand = `<span style="font-family:'KoPub Dotum';font-weight:700;font-size:${brandPt}pt;color:${c.sub};letter-spacing:.02em;white-space:nowrap;line-height:1;flex:none">${esc(MMAP.brand)}</span>`;
   const box = (inner, gap = 7) => `<div class="abs" style="left:${S}mm;top:${B}mm;width:${H}mm;height:${S}mm;transform-origin:0 0;transform:rotate(90deg);display:flex;align-items:center;gap:${gap}mm;padding:0 16mm">${inner}</div>`;
@@ -129,7 +130,7 @@ export function m1Spine(v, S, id = 's', style = 'top') {
   const globe = `<svg style="width:${f(2 * A)}mm;height:${f(2 * A)}mm;margin:0 ${f(-(A - R) + 1)}mm;flex:none;overflow:visible" viewBox="0 0 ${f(2 * A)} ${f(2 * A)}" xmlns="http://www.w3.org/2000/svg"><defs>${G.defs}</defs>${gsvg}</svg>`;
   const fill = '<span style="flex:1"></span>';
   const line = (dir) => `<span style="flex:1;height:.45mm;border-radius:.3mm;background:linear-gradient(${dir}, ${c.hot}, ${c.neon} 45%, ${c.neon}00);box-shadow:0 0 1.2mm ${c.neon}"></span>`;
-  if (style === 'line') return box(`${globe}${line('90deg')}${logo}${title}${line('270deg')}${brand}`, 6);
+  if (style === 'line' || mid) return box(`${globe}${line('90deg')}${logo}${title}${line('270deg')}${brand}`, mid ? 6.5 : 6);
   return box(`${globe}${fill}${logo}${title}${fill}${brand}`, big ? 7 : 6);
 }
 // 펼침 표지 한 장(뒷표지 + 책등 + 앞표지). 재단선 기준 폭 = 210 + S + 210, 도련 3mm는 doc()이 둘레에 붙인다.

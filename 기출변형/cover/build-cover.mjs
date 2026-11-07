@@ -237,7 +237,7 @@ if (args.includes('mmappaffy')) {
 }
 // 책등 시안 비교(2026-11-07 강사: 책등 가운데가 허전함): node cover/build-cover.mjs mmapspines → out/cover/MINIMAP-책등시안-<style>.pdf
 if (args.includes('mmapspines')) {
-  for (const v of MMAP.vols) for (const st of ['top', 'center', 'big', 'line'])
+  for (const v of MMAP.vols) for (const st of (args.includes('mid') ? ['line', 'linemid', 'big'] : ['top', 'center', 'big', 'line']))
     await emit(`MINIMAP-${v.subject}-책등시안-${st}`, doc([m1Spread(v, 14.5, st)], { w: 434.5 }).replace('<body>', '<body data-spine="14.5">'), { scale: 1 });
 }
 // MAXIMIN 실전 모의고사 앞·뒷표지 시안: node cover/build-cover.mjs maxi [G1 …] → out/cover/MAXI-<후보>-<이름>-앞표지·뒷표지
