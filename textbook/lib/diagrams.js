@@ -11,6 +11,8 @@
 //   econflow   { gov: true }                                           민간 경제의 순환 (가계·기업·시장)
 //   cultchange { items: [{ title, text }] ×3 }                          문화 변동의 양상 (동화·병존·융합)
 //   venn3      { sets: [이름×3], center, texts: [설명×3] }              세 원 (예: 지속가능발전)
+//   yesno      { start, tree, legend }                                 예/아니요 순서도(사상가 입장 탐구 등)
+//              tree: { q: 'A', yes: 노드|'갑의 입장', no: 노드|'을의 입장' } — 예는 아래로(실선), 아니요는 오른쪽으로(점선)
 //   citymodel  { items: [{ key, title, text }] }                        도시 내부 구조 모식도(도심·부도심·주거·공업·개발 제한 구역·위성 도시)
 //              색은 우리나라 용도 지역 지도의 관례를 따른다(상업 분홍, 주거 노랑, 공업 보라, 녹지 초록)
 // 색은 대단원 색(--c1 계열)을 따르고, 아이콘은 lib/icons.js (Tabler Icons)
@@ -54,6 +56,63 @@ export function diagram(b, inl) {
       }
       const list = b.rings.map((rg, i) => `<li style="--t:${tone(i)}"><span class="dg-dot">${esc(rg.short || String(i + 1))}</span><div><b>${T(rg.title)}</b>${rg.text ? `<span>${T(rg.text)}</span>` : ''}</div></li>`).join('');
       return `<div class="dg dg-concentric"><svg viewBox="0 0 200 200" class="dg-rings">${svg}</svg><ol class="dg-rlist">${b.label ? `<div class="dg-rlab">${T(b.label)}</div>` : ''}${list}</ol></div>`;
+    }
+    case 'yesno': {
+      // 2026-11-07: 평가원 생활과 윤리·스타강사 모의고사의 '사상가 입장 순서도' 형식. 마름모 = 판단 내용(A·B·C 또는 짧은 질문), 네모 = 출발 조건, 물결 상자 = 입장
+      const CW = 150, RH = 74, PADX = 14, PADY = 10, DW = 118, DH = 46, TW = 118, TH = 34;
+      const width = (n) => (typeof n === 'string' || !n ? 1 : width(n.yes) + (n.no ? width(n.no) : 0));
+      const items = [];
+      const place = (n, col, row) => {
+        if (!n) return null;
+        const me = { n, col, row };
+        items.push(me);
+        if (typeof n !== 'string') { me.y = place(n.yes, col, row + 1); me.no = n.no ? place(n.no, col + width(n.yes), row + 1) : null; }
+        return me;
+      };
+      const root = place(b.tree, 0, 1);
+      const cols = width(b.tree), rows = Math.max(...items.map((i) => i.row)) + 1;
+      const W = PADX * 2 + cols * CW + (b.legend === false ? 0 : 150), H = PADY * 2 + rows * RH - 18;
+      const cx = (c) => PADX + c * CW + CW / 2, cy = (r) => PADY + r * RH + DH / 2;
+      const wrap = (t, n) => { const out = []; let line = ''; for (const w of String(t).split(' ')) { if ((line + ' ' + w).trim().length > n && line) { out.push(line); line = w; } else line = (line + ' ' + w).trim(); } if (line) out.push(line); return out; };
+      const txt = (x, y, t, n, size = 11, w = 400) => { const ls = wrap(t, n); return ls.map((l, i) => `<text x="${r1(x)}" y="${r1(y + (i - (ls.length - 1) / 2) * (size + 2) + size * 0.35)}" text-anchor="middle" style="font-size:${size}px;font-weight:${w}" class="yn-t">${esc(l)}</text>`).join(''); };
+      let g = '';
+      // 출발 조건
+      const sx0 = cx(0), sy0 = PADY + 4;
+      g += `<rect x="${r1(sx0 - 66)}" y="${sy0}" width="132" height="${TH + 6}" class="yn-start"/>` + txt(sx0, sy0 + (TH + 6) / 2, b.start || '', 12, 10.5);
+      g += `<line x1="${r1(sx0)}" y1="${r1(sy0 + TH + 6)}" x2="${r1(sx0)}" y2="${r1(cy(1) - DH / 2 - 2)}" class="yn-a" marker-end="url(#ynah)"/>`;
+      for (const it of items) {
+        const x = cx(it.col), y = cy(it.row);
+        if (typeof it.n === 'string') {
+          // 입장(물결 아래 변 상자)
+          const w = TW, h = TH, x0 = x - w / 2, y0 = y - h / 2;
+          g += `<path d="M${r1(x0)},${r1(y0)} h${w} v${h - 4} q${-w / 4},6 ${-w / 2},0 t${-w / 2},0 z" class="yn-end"/>` + txt(x, y - 1, it.n, 10, 11, 700);
+          continue;
+        }
+        g += `<polygon points="${r1(x)},${r1(y - DH / 2)} ${r1(x + DW / 2)},${r1(y)} ${r1(x)},${r1(y + DH / 2)} ${r1(x - DW / 2)},${r1(y)}" class="yn-q"/>` + txt(x, y, it.n.q, 9, it.n.q.length <= 2 ? 13 : 10, it.n.q.length <= 2 ? 700 : 400);
+        if (it.y) { // 예: 아래로
+          const ty = typeof it.y.n === 'string' ? cy(it.y.row) - TH / 2 : cy(it.y.row) - DH / 2;
+          g += `<line x1="${r1(x)}" y1="${r1(y + DH / 2)}" x2="${r1(x)}" y2="${r1(ty - 2)}" class="yn-a" marker-end="url(#ynah)"/>` + `<text x="${r1(x + 6)}" y="${r1((y + DH / 2 + ty) / 2 + 4)}" class="yn-l">예</text>`;
+        }
+        if (it.no) { // 아니요: 오른쪽으로 갔다가 아래로(점선)
+          const nx = cx(it.no.col), ty = typeof it.no.n === 'string' ? cy(it.no.row) - TH / 2 : cy(it.no.row) - DH / 2;
+          g += `<path d="M${r1(x + DW / 2)},${r1(y)} H${r1(nx)} V${r1(ty - 2)}" class="yn-a yn-no" marker-end="url(#ynah)"/>` + `<text x="${r1((x + DW / 2 + nx) / 2)}" y="${r1(y - 5)}" text-anchor="middle" class="yn-l">아니요</text>`;
+        }
+      }
+      if (b.legend !== false) {
+        const lx = PADX + cols * CW + 14, ly = PADY + 6;
+        g += `<rect x="${lx - 6}" y="${ly - 4}" width="140" height="92" class="yn-lg"/><text x="${lx + 64}" y="${ly + 8}" text-anchor="middle" class="yn-l">(범 례)</text>`;
+        const rowsL = [['start', '출발 조건'], ['q', '판단 내용'], ['a', '판단 방향'], ['end', '사상가의 입장']];
+        rowsL.forEach(([k, lab], i) => {
+          const y = ly + 26 + i * 18, x = lx + 4;
+          g += k === 'start' ? `<rect x="${x}" y="${y - 6}" width="22" height="11" class="yn-start"/>`
+            : k === 'q' ? `<polygon points="${x + 11},${y - 7} ${x + 23},${y} ${x + 11},${y + 7} ${x - 1},${y}" class="yn-q"/>`
+            : k === 'a' ? `<line x1="${x}" y1="${y}" x2="${x + 22}" y2="${y}" class="yn-a" marker-end="url(#ynah)"/>`
+            : `<path d="M${x},${y - 6} h22 v9 q-5.5,4 -11,0 t-11,0 z" class="yn-end"/>`;
+          g += `<text x="${x + 32}" y="${y + 4}" class="yn-l" style="text-anchor:start">${lab}</text>`;
+        });
+      }
+      const defs = `<defs><marker id="ynah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#495057"/></marker></defs>`;
+      return `<div class="dg dg-yesno"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W * 1.1}px;display:block;margin:0 auto">${defs}<style>.yn-start,.yn-q,.yn-end,.yn-lg{fill:#fff;stroke:#495057;stroke-width:1.1}.yn-lg{stroke:#adb5bd}.yn-a{stroke:#495057;stroke-width:1.2;fill:none}.yn-no{stroke-dasharray:4 3}.yn-l{font-size:10.5px;fill:#343a40}.yn-t{fill:#212529}</style>${g}</svg></div>`;
     }
     case 'citymodel': {
       // 강사 2026-11-07: 도심·부도심·주거 지역 + 공업 지역을 한 그림에. 서울 지도(용도 색)와 같은 색을 쓴다.

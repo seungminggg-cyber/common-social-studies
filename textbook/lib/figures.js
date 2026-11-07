@@ -247,10 +247,19 @@ function scatter(b) {
     s += text(sx(l.x) + dx, sy(l.y) + dy, l.text, { size: l.size || 12.5, anchor: an, cls: 'cat', weight: 700 });
   }
   const all = [];
-  b.groups.forEach((g, j) => g.points.forEach(([a, v]) => {
+  // 거품 그래프(2026-11-07): b.bubble = { max, rMax(px), legend: [값…], unit, title } → 점 [x, y, 크기] 의 넓이가 크기에 비례
+  const bub = b.bubble, rOf = (v) => (bub ? Math.max(2.5, (bub.rMax || 26) * Math.sqrt(Math.max(0, v) / bub.max)) : 4.2);
+  b.groups.forEach((g, j) => g.points.forEach(([a, v, z]) => {
     all.push([a, v]);
-    s += `<circle cx="${r1(sx(a))}" cy="${r1(sy(v))}" r="4.2" class="dot s${j + 1}"/>`;
+    s += bub
+      ? `<circle cx="${r1(sx(a))}" cy="${r1(sy(v))}" r="${r1(rOf(z ?? 0))}" class="dot s${j + 1}" fill-opacity=".35" stroke-width="1.4"/><circle cx="${r1(sx(a))}" cy="${r1(sy(v))}" r="2" class="dot s${j + 1}"/>`
+      : `<circle cx="${r1(sx(a))}" cy="${r1(sy(v))}" r="4.2" class="dot s${j + 1}"/>`;
   }));
+  if (bub?.legend) {
+    const rm = rOf(Math.max(...bub.legend)), bx = L + pw - rm - 48, by = T + 6 + 2 * rm;
+    if (bub.title) s += text(bx, T - 4, bub.title, { size: 10.5, anchor: 'middle', cls: 'lg' });
+    for (const v of bub.legend) { const r = rOf(v); s += `<circle cx="${r1(bx)}" cy="${r1(by - r)}" r="${r1(r)}" fill="none" stroke="#868e96" stroke-width=".9"/>` + text(bx + rm + 6, by - 2 * r + 4, `${fmt(v)}${bub.unit || ''}`, { size: 9.5, cls: 'lg' }); }
+  }
   if (b.trend) {
     const n = all.length, mx = all.reduce((t, p) => t + p[0], 0) / n, my = all.reduce((t, p) => t + p[1], 0) / n;
     const k = all.reduce((t, p) => t + (p[0] - mx) * (p[1] - my), 0) / all.reduce((t, p) => t + (p[0] - mx) ** 2, 0);
