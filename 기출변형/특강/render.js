@@ -115,7 +115,8 @@ function strategies(TYPES) {
 }
 
 // ── 예시문항 분석 카드 (한 문항 = 한 덩어리) ──
-function itemCard(no, it, t, teacher) {
+// orig: 강의용(평가원 원문 그림 폴더). 있으면 원문을 왼쪽에, 풀이를 오른쪽에 둔다(핵심 자료 요약·묻는 것은 원문으로 대신함).
+function itemCard(no, it, t, teacher, orig) {
   const form = /보기|적어도|벤/.test(it.form) ? 'bogi' : 'choice';
   const label = (i) => (form === 'bogi' ? GANADA[i] : CIRCLED[i]);
   const judge = teacher
@@ -124,25 +125,30 @@ function itemCard(no, it, t, teacher) {
     : '';
   return `<div class="row row-item sp-card-row" data-keep="card" id="ex-${no}"><div class="main"><div class="sp-card">
     <div class="sp-card-h"><span class="sp-ex"><small>예시</small>${two(no)}</span><div class="sp-card-t"><b>${inl(it.topic)}</b><span>${esc(it.pts)}점 · ${esc(it.form)} · 개념서 ${esc(conceptRef(it.units))}</span></div><span class="sp-tag">전략 ${t.no}<em>${esc(shortTitle(t))}</em></span>${teacher ? `<span class="sp-ans">정답 ${CIRCLED[it.ans - 1]}</span>` : '<span class="sp-ans mine">내 답 <i></i></span>'}</div>
-    <div class="sp-grid">
+    ${orig ? `<div class="sp-orig-wrap"><figure class="sp-orig"><img src="file://${orig}/ex-${two(no)}.png" alt="예시 ${no}번 원문"><figcaption>2028학년도 수능 예시문항 ${no}번 원문 · 저작권: 한국교육과정평가원</figcaption></figure>
+    <div class="sp-side"><div class="sp-grid sp-grid-side">
+      <div class="sp-k em">결정적 단서</div><div class="sp-v em">${inl(it.clue)}</div>
+      <div class="sp-k">풀이 순서</div><div class="sp-v"><ol class="sp-steps">${it.steps.map((s) => `<li>${inl(s)}</li>`).join('')}</ol></div>
+      <div class="sp-k red">함정 선지</div><div class="sp-v"><ul class="sp-traps">${it.traps.map(([n, w]) => `<li><b>${esc(n)}</b> ${inl(w)}</li>`).join('')}</ul></div>
+    </div>${judge}</div></div>` : `<div class="sp-grid">
       <div class="sp-k">핵심 자료</div><div class="sp-v">${inl(it.data)}</div>
       <div class="sp-k">묻는 것</div><div class="sp-v">${inl(it.ask)}</div>
       <div class="sp-k em">결정적 단서</div><div class="sp-v em">${inl(it.clue)}</div>
       <div class="sp-k">풀이 순서</div><div class="sp-v"><ol class="sp-steps">${it.steps.map((s) => `<li>${inl(s)}</li>`).join('')}</ol></div>
       <div class="sp-k red">함정 선지</div><div class="sp-v"><ul class="sp-traps">${it.traps.map(([n, w]) => `<li><b>${esc(n)}</b> ${inl(w)}</li>`).join('')}</ul></div>
-    </div>${judge}
+    </div>${judge}`}
   </div></div></div>`;
 }
 
 // ── 대단원 하나: 머리(출제 포인트) + 분석 카드 (1단) → 연습 문항 (2단) ──
-function chapterSections(c, TYPES, ITEMS, qs, teacher) {
+function chapterSections(c, TYPES, ITEMS, qs, teacher, orig) {
   const b = BOOKS[c.key];
   const attrs = `data-tab="${esc(tabOf(c.key))}" data-head-left="${esc(`${b.subject} <b>${b.chapter.no}. ${b.chapter.title}</b>`)}" data-head-right="${esc(TITLE)}"`;
   const exUnits = new Set(c.items.flatMap((n) => ITEMS[n].units.map(([k]) => k)));
   const top = `<div class="top" id="c-${c.key}"><div class="sp-open sp-chap"><div class="sp-open-no">${esc(b.chapter.no)}</div><div class="sp-open-t"><span>${esc(b.subject)} · ${c.items.length ? `예시문항 ${c.items.map((n) => `${n}번`).join(' · ')}` : '예시문항 없음 · 학력평가 1번 단원'}</span><h1>${esc(b.chapter.title)}</h1>
     <ul class="sp-units">${b.units.map((u) => `<li class="${exUnits.has(u.key) ? 'on' : ''}"><b>${esc(u.no)}</b> ${esc(u.title)}</li>`).join('')}</ul></div></div>
     <div class="sp-point"><div class="sp-point-h"><b>출제 포인트</b><span>전 범위 시험 4회(2028 예시문항 + 2026 고2 학력평가 3회) 100문항 중 <em>${c.freq}문항</em></span></div><ul>${c.points.map((p) => `<li>${inl(p)}</li>`).join('')}</ul></div></div>`;
-  const cards = c.items.map((n) => itemCard(n, ITEMS[n], typeOf(TYPES, n), teacher));
+  const cards = c.items.map((n) => itemCard(n, ITEMS[n], typeOf(TYPES, n), teacher, orig));
   const out = [`<section class="flow" data-kind="type" ${attrs}>${top}${cards.join('\n')}</section>`];
   if (qs.length) {
     const lv = ['상', '중상', '중', '하'].map((l) => `${l} ${qs.filter((q) => q.level === l).length}`).join(' · ');
@@ -178,22 +184,22 @@ export function practiceByChapter(CHAPTERS, all) {
   return out;
 }
 
-export function renderLecture({ TYPES, ITEMS, OVERVIEW, CHAPTERS, practice, set }, { mode }) {
+export function renderLecture({ TYPES, ITEMS, OVERVIEW, CHAPTERS, practice, set }, { mode, orig = null }) {
   const teacher = mode === 'teacher';
   const nPractice = Object.values(practice).reduce((a, l) => a + l.length, 0);
   const sections = [cover({
     title: TITLE,
     sub: '개념서 단원 순서 · 풀이 전략 → 문항 분석 → 함정 선지 → 같은 단원 연습',
-    edition: teacher ? '교사용 · 판서 노트와 해설 포함' : '학생용',
+    edition: `${orig ? '강의용 · 평가원 원문 수록 · ' : ''}${teacher ? '교사용 · 판서 노트와 해설 포함' : '학생용'}`,
     parts: ['2028학년도 수능 예시문항 25문항', `풀이 전략 7 · 연습 ${nPractice} · 쌍둥이 세트 ${set.questions.length}`],
   })];
   sections.push(toc(CHAPTERS, practice, set.questions.length));
   sections.push(intro(TYPES, ITEMS, OVERVIEW, teacher));
   sections.push(strategies(TYPES));
-  for (const c of CHAPTERS) sections.push(...chapterSections(c, TYPES, ITEMS, practice[c.key], teacher));
+  for (const c of CHAPTERS) sections.push(...chapterSections(c, TYPES, ITEMS, practice[c.key], teacher, orig));
   sections.push(setSection(set, teacher));
   if (teacher) sections.push(quick(CHAPTERS, practice, set));
-  return page(sections, { title: `${TITLE}${teacher ? ' (교사용)' : ''}`, mode });
+  return page(sections, { title: `${TITLE}${orig ? ' 강의용' : ''}${teacher ? ' (교사용)' : ''}`, mode });
 }
 
 export function page(sections, { title, mode }) {

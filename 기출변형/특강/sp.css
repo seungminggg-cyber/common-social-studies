@@ -119,3 +119,12 @@
 .sp-point-h em { font-style: normal; font-weight: 700; color: var(--c1-dark); }
 .sp-point ul { margin: 0; padding-left: 4mm; font-size: 8.6pt; line-height: 1.7; }
 .sp-toc td.no { width: 10mm; color: var(--gray); font-weight: 700; }
+
+/* 강의용: 평가원 원문(왼쪽) + 풀이(오른쪽) */
+.sp-orig-wrap { display: grid; grid-template-columns: 108mm 1fr; column-gap: 5mm; align-items: start; }
+.sp-orig { margin: 0; border: .6pt solid var(--rule); padding: 2mm; }
+.sp-orig img { display: block; width: 100%; height: auto; }
+.sp-orig figcaption { margin-top: 1.2mm; font-size: 6.4pt; color: var(--gray); text-align: right; }
+.sp-grid-side { grid-template-columns: 1fr; row-gap: .6mm; }
+.sp-grid-side .sp-k { padding-top: 1.4mm; }
+.sp-orig-wrap > div > .sp-judge { margin-top: 2.4mm; }

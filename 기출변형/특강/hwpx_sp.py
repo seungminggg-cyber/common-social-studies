@@ -6,6 +6,7 @@
 
   python3 특강/hwpx_sp.py out/sp/예시문항특강-학생용.json out/sp/예시문항특강-학생용.hwpx
   python3 특강/hwpx_sp.py out/sp/예시문항특강-학생용.json out/sp/예시문항특강-교사용.hwpx teacher
+  강의용(평가원 원문 그림 수록, `build.mjs lecture` 뒤): out/sp/예시문항특강-강의용-학생용.json 으로 같은 방식
 """
 import os
 
@@ -54,7 +55,16 @@ def item_card(no, it, color, strat=None):
         run(p, f"    정답 {CIRCLED[it['ans'] - 1]}", size=9, color=RED, bold=True)
     else:
         run(p, '    내 답 (     )', size=9, color=GRAY)
-    rows = [('핵심 자료', it['data']), ('묻는 것', it['ask']), ('결정적 단서', it['clue']),
+    ORIG = book.get('orig')  # 강의용: 평가원 원문 그림을 넣고, 핵심 자료 요약·묻는 것은 뺀다
+    if ORIG:
+        path = os.path.join(ORIG, f'ex-{int(no):02d}.png')
+        pw, ph = G['G']['png_size'](path)
+        w = 112
+        with open(path, 'rb') as f:
+            doc.add_picture(f.read(), 'png', width_mm=w, height_mm=w * ph / pw, align='CENTER')
+        p = para(after=3, align='RIGHT')
+        run(p, f'2028학년도 수능 예시문항 {int(no)}번 원문 · 저작권: 한국교육과정평가원', size=7, color=GRAY)
+    rows = ([] if ORIG else [('핵심 자료', it['data']), ('묻는 것', it['ask'])]) + [('결정적 단서', it['clue']),
             ('풀이 순서', '\n'.join(f'{i + 1}) {s}' for i, s in enumerate(it['steps']))),
             ('함정 선지', '\n'.join(f'{n} {w}' for n, w in it['traps']))]
     t = table(len(rows), 2, [17, 83])
@@ -81,7 +91,7 @@ def item_card(no, it, color, strat=None):
 
 doc.paragraphs[0].text = ''
 doc.page.set_page_number(position='BOTTOM_CENTER')
-doc.page.set_header(text=f"승민T 통합사회 {book['title']}" + (' (교사용)' if TEACHER else ''))
+doc.page.set_header(text=f"승민T 통합사회 {book['title']}" + (' 강의용' if book.get('orig') else '') + (' (교사용)' if TEACHER else ''))
 
 # 표지 대신 첫 쪽 머리
 p = para(after=2)

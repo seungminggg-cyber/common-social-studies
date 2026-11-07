@@ -4,6 +4,7 @@
 //   node 특강/build.mjs            학생용 + 교사용 + 정답과 해설(별책)
 //   node 특강/build.mjs png        쪽 그림(PNG)까지
 //   node 특강/build.mjs student    학생용만 (teacher, answers도 같은 방식)
+//   SP_ORIG=<원문 그림 폴더> node 특강/build.mjs lecture   강의용(평가원 원문 수록) 학생용·교사용만
 //
 // 결과: 기출변형/out/sp/*.pdf, out/sp/png/<이름>/, out/sp/<이름>.json(한글 파일용), out/sp/fig/<이름>/*.png
 import { createRequire } from 'node:module';
@@ -135,6 +136,16 @@ async function emit(name, html, data) {
 const content = { TYPES, ITEMS, OVERVIEW, CHAPTERS, practice, set };
 const data = { TYPES, ITEMS, OVERVIEW, CHAPTERS, practice, set, title: TITLE,
   books: Object.fromEntries(CHAPTERS.map((c) => [c.key, { subject: BOOKS[c.key].subject, chapter: BOOKS[c.key].chapter, units: BOOKS[c.key].units.map((u) => ({ key: u.key, no: u.no, title: u.title })) }])) };
+// 강의용(2026-11-07 강사 요청): 평가원 예시문항 원문 그림을 분석 카드에 넣는다.
+//   SP_ORIG=<crop-orig.py가 만든 그림 폴더> node 특강/build.mjs lecture
+//   원문 저작권은 한국교육과정평가원 — 그림 폴더와 결과물(out/)은 저장소에 올리지 않는다.
+if (args.includes('lecture')) {
+  const orig = process.env.SP_ORIG;
+  if (!orig || !existsSync(join(orig, 'ex-01.png'))) { console.error('SP_ORIG에 원문 그림 폴더를 주세요 (python3 -I 특강/crop-orig.py <문제지 PDF> <폴더>)'); process.exit(1); }
+  await emit('예시문항특강-강의용-학생용', renderLecture(content, { mode: 'student', orig }), { ...data, orig });
+  await emit('예시문항특강-강의용-교사용', renderLecture(content, { mode: 'teacher', orig }));
+  if (!want.length) { await browser.close(); process.exit(failed ? 1 : 0); }
+}
 if (parts.includes('student')) await emit('예시문항특강-학생용', renderLecture(content, { mode: 'student' }), data);
 if (parts.includes('teacher')) await emit('예시문항특강-교사용', renderLecture(content, { mode: 'teacher' }));
 if (parts.includes('answers')) {
