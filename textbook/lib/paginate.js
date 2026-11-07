@@ -176,11 +176,16 @@
       // 새 쪽에서 시작할까, 앞 쪽에 이어 붙일까? (LAYOUT.soft 에 적힌 부분만 이어 붙인다)
       let placed = false;
       if (pg && (L.soft || []).includes(kind) && !sec.dataset.nosoft) { // data-nosoft: 언제나 새 쪽에서 시작
+        // softRegion: 앞이 두 단이면 두 단 높이를 먼저 맞춘 뒤 남은 자리를 잰다(왼쪽 단부터 채워 꽉 찬 것처럼 보이지 않게)
+        if ((L.softRegion || []).includes(kind) && pg.slots.length === 2) balance(pg.region);
         const cur = pg.slots[pg.i];
         const curLast = cur.lastElementChild;
         const curRoom = cur.getBoundingClientRect().bottom - (curLast ? curLast.getBoundingClientRect().bottom : cur.getBoundingClientRect().top);
         const sameCols = pg.slots.length === n && !pg.region.style.height;
-        if (sameCols && (pg.i < n - 1 || curRoom > cur.clientHeight * (L.softMin || 0.28))) {
+        // LAYOUT.softRegion에 적힌 부분은 앞 단에 이어 담지 않고, 같은 쪽 아래에 쪽 폭 전체의 새 영역으로 시작한다
+        // (예: 두 단 개념 확인 뒤의 '수능형 문제' 띠가 반쪽 폭으로 끼지 않게)
+        const ownRegion = (L.softRegion || []).includes(kind);
+        if (sameCols && !ownRegion && (pg.i < n - 1 || curRoom > cur.clientHeight * (L.softMin || 0.28))) {
           // 단 수가 같고 다음 단이 비어 있으면, 그 단에 제목부터 이어서 담는다.
           if (top) {
             const r = document.createElement('div');

@@ -106,3 +106,6 @@
 - 만들기: textbook에서 `node build-book.mjs mm`, `mm t2` → 기출변형에서 `node cover/build-cover.mjs mmappaffy`(본문 쪽수로 책등 계산, 책등 디자인 `cover/mmap.js`의 m1Spine)
   → `python3 cover/paffy.py`(표지 크기 정확히, 내지 A4·짝수 쪽, Ghostscript로 글자 윤곽선) → `out/paffy/`(커밋하지 않음).
 - 첫 견본(2026-11-07): 통합사회1 내지 274쪽(273 + 빈 쪽) 책등 15.5mm, 통합사회2 270쪽 책등 15mm. 색은 RGB 그대로(인쇄소가 변환), 내지는 도련 없는 A4.
+- 2차(2026-11-07 밤, 강사): 속표지·특강 진도표·학습 계획표 빼기, 이 책의 구성 → 차례 순, 간지 문구 정리, 쪽수 줄이기(간지 오른쪽 고정 해제, 날개 없는 글 쪽 폭 전체,
+  간격 줄임, 개념 확인 2단 + 수능형 문제 띠는 쪽 폭 전체로 이어 붙임 `softRegion`) → 통합사회1 259쪽(+빈 쪽 = 260, 책등 14.5mm), 통합사회2 258쪽(14.5mm).
+  이 모양은 MINIMAP 빌드(`build-book.mjs mm`, body.mmbook)에만 적용된다.

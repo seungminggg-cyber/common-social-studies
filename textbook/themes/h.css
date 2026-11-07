@@ -313,3 +313,11 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .tb .side b.nw, .tb .ph-cap b.nw, .tb .q-data b.nw { white-space: normal; } /* 좁은 날개·사진 설명·문제 자료 칸에서는 넘치지 않게 원래대로 */
 .tb .q-data .tbl .nw { white-space: normal; } /* 문제 속 표는 2단의 좁은 칸이라 한 줄 묶기를 하지 않는다(표가 상자 밖으로 넘치지 않게) */
 .tb .q-data .tbl .nw.nwx { white-space: nowrap; } /* 쪽 나누기 뒤 넘치지 않는 것을 확인한 칸만 한 줄로(paginate.js keepTerms) */
+
+/* ── MINIMAP 완성본(body.mmbook)만: 내용은 그대로 두고 쪽수 줄이기(2026-11-07 강사) ── */
+/* 날개(개념 더하기)가 없는 문단·목록은 쪽 폭 전체로 */
+.mmbook .region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv):not(.has-side) { display: block; }
+.mmbook .region-concept .row:is(.row-p, .row-ul, .row-ol, .row-item, .row-kv):not(.has-side) > .side.empty { display: none; }
+/* 블록 사이·문제 사이 간격 조금 좁게 */
+.mmbook .slot > .row + .row { margin-top: 3.5mm; }
+.mmbook .region-exam .slot > .row + .row { margin-top: 5mm; }

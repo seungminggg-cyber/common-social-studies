@@ -505,7 +505,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     </div></div>`);
     // 이 책의 구성 (차례보다 앞, 2026-11-07 강사)
     const GUIDE = [
-      ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
+      mm ? ['간지', '대단원을 시작하기 전에 중단원 목록과 대단원 핵심 개념을 먼저 확인한다.']
+        : ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
       ['단원 첫머리', '핵심 질문, 수능 포인트, 이 단원에서 배울 개념과 출제 빈도를 먼저 보고 시작한다.'],
       ['개념 번호와 출제 빈도', `중단원을 개념 01, 02 …로 나눴다. 별은 최근 기출 9회에서 그 개념이 나온 정도: ★ 기본 개념, ★★ 빈출, ★★★ 최다 빈출.`],
       ['개념 정리 · 빈칸', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b class="nw">굵은 글씨</b>는 핵심어. 번호 빈칸의 정답은 그 쪽 맨 아래 띠에 있다.`],
@@ -514,7 +515,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
       ['그래프 · 지도 · 자료 읽기', '수능 자료와 같은 모양으로 그렸다. 그림 아래의 설명과 출처, "개념도·가상 자료" 표시를 함께 읽는다.'],
       ['한 장 정리', '중단원 끝 한 쪽에 개념별 핵심, 헷갈리지 말자, 시험 전 체크를 모았다. 시험 직전에 이 쪽만 다시 본다.'],
-      ['개념 확인', 'O/X와 빈칸 채우기로 개념을 점검한다. 맞힌 개수를 학습 계획표에 적는다.'],
+      ['개념 확인', `O/X와 빈칸 채우기로 개념을 점검한다.${mm ? ' 틀린 문항은 그 개념으로 돌아가 다시 읽는다.' : ' 맞힌 개수를 학습 계획표에 적는다.'}`],
       ['수능형 문제', '문제마다 관련 개념 번호와 문제 유형, 난이도를 적었다. 틀리면 그 개념으로 돌아가 다시 읽는다. 해설은 별책.'],
       ['정리 노트', '남는 칸에 핵심어를 다시 쓰거나 틀린 문제를 적는다. 시험 직전에 다시 볼 한 줄 정리를 직접 만든다.'],
     ];
@@ -534,7 +535,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       const d = full.dividers?.[ch.chapter.no] || {};
       const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
       // 간지 (오른쪽 쪽). MINIMAP 완성본이면 MINIMAP 간지
-      if (mm?.chapter) add('mmdiv', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
+      if (mm?.chapter) add('mmdiv', `data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
       else add('divider', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}"><div class="divider">
         <div class="dv-bg">${esc(ch.chapter.no)}</div>
         <div class="dv-label">대단원 ${ci + 1}</div>
@@ -544,7 +545,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         <ol class="dv-units">${unitsOf(ch).map((u) => `<li><b>${esc(u.no)}</b><span>${esc(u.title)}</span><i data-pg="u${esc(u.no)}"></i></li>`).join('')}</ol>
         ${d.keys ? `<div class="dv-keys"><div class="dv-kt">대단원 핵심 개념</div><ul>${d.keys.map((k) => `<li>${inl(k)}</li>`).join('')}</ul></div>` : ''}
       </div></div>`);
-      // 간지 뒷면: 학습 계획표
+      // 간지 뒷면: 학습 계획표 (MINIMAP 완성본은 쪽수를 줄이려고 뺀다, 2026-11-07 강사)
+      if (!mm) {
       const rows = unitsOf(ch).map((u) => {
         const nc = (u.check?.ox?.length || 0) + (u.check?.blank?.length || 0);
         return `<tr><td class="pl-u"><b>${esc(u.no)}</b> ${esc(u.title)}</td><td class="pl-pg" data-pg="u${esc(u.no)}"></td><td>월 &nbsp;&nbsp; 일</td><td>월 &nbsp;&nbsp; 일</td><td>&nbsp;&nbsp;&nbsp; / ${nc}</td><td>&nbsp;&nbsp;&nbsp; / ${u.exam?.length || 0}</td></tr>`;
@@ -555,6 +557,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         <ul class="plan-how"><li><b>1회독</b> 개념 정리를 읽고 빈칸을 채운 날을 적는다.</li><li><b>2회독</b> 개념 확인·수능형 문제를 다시 푼 날을 적는다.</li><li>맞힌 개수가 80%가 안 되는 중단원은 시험 전에 한 번 더 본다.</li></ul>
         <div class="memo plan-memo"><div class="memo-head"><span class="memo-tag">나의 목표</span></div><div class="memo-lines"></div></div>
       </div></div>`);
+      }
       // 중단원들 (수능형 문제 번호는 대단원마다 01부터)
       let qNo = 1;
       for (const u of ch.units) {
@@ -605,7 +608,7 @@ ${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/
 ${theme === 'd' || theme === 'h' ? '<link rel="stylesheet" href="../themes/d-book.css">' : ''}
 ${theme === 'h' ? '<link rel="stylesheet" href="../themes/h-book.css">' : ''}
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part} tb">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part} tb${mm ? ' mmbook' : ''}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>

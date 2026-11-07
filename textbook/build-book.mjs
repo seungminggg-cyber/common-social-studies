@@ -56,7 +56,8 @@ if (mmMode) {
 
 // 시안 B 배치 (개념 1단, 개념 확인 1단, 수능형 문제·정답 2단)
 // 개념 확인은 늘 새 쪽에서 시작(개념 부분과 나눔), 정리 노트·오답 노트 옆 안내 문구는 뺀다(2026-11 강사 피드백)
-const layout = { concept: 1, summary: 1, check: 1, exam: 2, answers: 2, credits: 2, soft: ['exam'], memoPrompt: false, keepTerms: true, ...(theme === 'h' ? { memoMin: 0.4, spreadMax: 9 } : {}) };
+// MINIMAP 완성본(mm)은 쪽수를 줄이려고 개념 확인을 두 단으로(새 쪽에서 시작하는 것은 같음, 2026-11-07 강사)
+const layout = { concept: 1, summary: 1, check: mmMode ? 2 : 1, exam: 2, answers: 2, credits: 2, soft: ['exam'], ...(mmMode ? { softRegion: ['exam'] } : {}), memoPrompt: false, keepTerms: true, ...(theme === 'h' ? { memoMin: 0.4, spreadMax: 9 } : {}) };
 const NAMES = { student: '개념서-학생용', teacher: '개념서-교사용', answers: '정답과해설' };
 const paginateJs = readFileSync(join(ROOT, 'lib/paginate.js'), 'utf8');
 
