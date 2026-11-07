@@ -235,6 +235,24 @@ if (args.includes('mmappaffy')) {
     await emit(`MINIMAP-${v.subject}-펼침표지-${S}mm`, doc([m1Spread(v, S, 'linemid')], { w: 420 + S }).replace('<body>', `<body data-spine="${S}">`), { scale: 1 });
   }
 }
+// 두 쪽 펼침 간지 시안(2026-11-07 강사): node cover/build-cover.mjs mmapdivspread → out/cover/MINIMAP-<과목>-펼침간지-시안.pdf
+//   왼쪽 쪽 + 오른쪽 쪽을 한 장에 나란히(가운데 회색 선 = 접히는 곳)
+if (args.includes('mmapdivspread')) {
+  const { mmapChapterLeft, mmapChapterRight, chapterInfo } = await import('./mmap-div.js');
+  for (const v of MMAP.vols) {
+    const book = (await import(`../../textbook/content/_book/${v.id}.js`)).default;
+    const pj = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-쪽.json`);
+    const pages = existsSync(pj) ? JSON.parse(readFileSync(pj, 'utf8')) : null;
+    const sheets = book.chapters.map((ch, ci) => {
+      const info = chapterInfo(ch, ci), keys = book.dividers?.[ch.chapter.no]?.keys || [];
+      return `<section class="sheet" style="background:#000"><div class="t" style="overflow:visible">
+        <div class="abs" style="left:0;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterLeft(v, info, { uid: `c${ci}` })}</div>
+        <div class="abs" style="left:210mm;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterRight(v, info, { keys, uid: `c${ci}`, pages })}</div>
+        <div class="abs" style="left:209.85mm;top:0;width:.3mm;height:297mm;background:#888"></div></div></section>`;
+    });
+    await emit(`MINIMAP-${v.subject}-펼침간지-시안`, doc(sheets, { w: 420, css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+  }
+}
 // 책등 시안 비교(2026-11-07 강사: 책등 가운데가 허전함): node cover/build-cover.mjs mmapspines → out/cover/MINIMAP-책등시안-<style>.pdf
 if (args.includes('mmapspines')) {
   for (const v of MMAP.vols) for (const st of (args.includes('mid') ? ['line', 'linemid', 'big'] : ['top', 'center', 'big', 'line']))
