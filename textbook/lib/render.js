@@ -521,8 +521,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
     ];
     add('guide', '', `<div class="top" id="guide"><div class="guide"><div class="band band-guide"><span class="band-title">이 책의 구성</span><span class="band-unit">이렇게 공부하세요</span></div>
       <ol class="guide-list">${GUIDE.map(([t, d], i) => `<li><span class="gd-n">${two(i + 1)}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
-      ${mm // MINIMAP 완성본: 공부 순서를 세 칸으로(쪽을 꽉 채우게, 2026-11-07 강사)
-        ? '<div class="guide-flow gf3"><div><span>1회독</span>개념을 읽으며 빈칸 채우기와 이렇게 나온다</div><i>→</i><div><span>2회독</span>개념 확인과 수능형 문제 풀기</div><i>→</i><div><span>시험 직전</span>한 장 정리·오답 노트 다시 보기</div></div>'
+      ${mm // MINIMAP 완성본: 공부 순서 줄 없이 12개 항목만(2026-11-07 강사)
+        ? ''
         : '<div class="guide-flow"><span>1회독</span> 개념을 읽으며 빈칸 채우기와 이렇게 나온다 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 한 장 정리·오답 노트 다시 보기</div>'}
     </div></div>`);
 

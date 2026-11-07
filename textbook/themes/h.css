@@ -327,7 +327,3 @@ mark { background: linear-gradient(transparent 62%, var(--c1-soft) 62%); }
 .mmbook .gd-n { width: 9.5mm; height: 9.5mm; font-size: 10pt; }
 .mmbook .guide-list b { font-size: 12pt; }
 .mmbook .guide-list p { margin-top: 1.4mm; font-size: 9.6pt; line-height: 1.7; }
-.mmbook .guide-flow.gf3 { margin-top: 4mm; display: flex; align-items: stretch; gap: 3mm; padding: 3.5mm 0; font-size: 9.6pt; line-height: 1.55; }
-.mmbook .gf3 > div { flex: 1 1 auto; }
-.mmbook .gf3 > div span { display: block; font-size: 12pt; margin-bottom: 1mm; }
-.mmbook .gf3 > i { flex: none; align-self: center; font-style: normal; font-weight: 800; font-size: 13pt; color: var(--ans); }
