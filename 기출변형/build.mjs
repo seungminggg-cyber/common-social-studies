@@ -462,7 +462,10 @@ if (args.includes('order')) {
   process.exit(0);
 }
 const sets = what === 'mock' ? [] : await loadUnits();
-const mocks = what === 'units' || only.length || sub ? [] : await loadMocks();
+let mocks = what === 'units' || only.length || sub ? [] : await loadMocks();
+// 쪽수 줄이기 시험(2026-11-07): MX_ONLY=7(그 회차만), MX_CSS=<css 파일>(덧붙일 CSS), MX_NAME=<결과 이름>, MX_NOANS=1(해설 빼기)
+const MXT = { only: process.env.MX_ONLY, css: process.env.MX_CSS, name: process.env.MX_NAME, noAns: !!process.env.MX_NOANS };
+if (MXT.only) mocks = mocks.filter((m) => MXT.only.split(',').includes(String(m.no)));
 bigMapText(sets.map((s) => s.qs));
 bigMapText(mocks);
 cleanLabels(sets.map((s) => s.qs));
@@ -489,8 +492,9 @@ if (mxMode) {
   const mx = { headLeft: '<b>MAXIMIN</b> 실전 모의고사', title: () => maxiTitlePage(), log: () => maxiLogPage(mocks), round: (m) => maxiRoundPage(m, { uid: `r${m.no}` }) };
   const html = renderMocks(mocks, { title: 'MAXIMIN 실전 모의고사', edition: EDITION, mode: 'student', mx })
     .replace(/@font-face \{ font-family: 'Pretendard Variable';[^}]*\}/, '')
-    .replace('</head>', `<style>${faces}\n${MX_CSS}</style></head>`);
-  await emit('MAXIMIN-본문', html);
+    .replace('</head>', `<style>${faces}\n${MX_CSS}</style>${MXT.css ? `<style>${readFileSync(MXT.css, 'utf8')}</style>` : ''}</head>`);
+  await emit(MXT.name || 'MAXIMIN-본문', html);
+  if (MXT.noAns) { await browser.close(); process.exit(failed ? 1 : 0); }
   // 정답과 해설 별책(강사 2026-11-07): 별책 속표지 + 회차마다 빠른 정답·해설. 회차 묶음은 쪽에 자리가 남으면 이어 싣는다.
   LAYOUT.soft = ['answers'];
   const groups = mocks.map((m) => ({ no: `${m.no}회`, tab: `${m.no}회`, title: m.range, qs: m.questions, mock: true }));

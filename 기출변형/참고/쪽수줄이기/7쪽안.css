@@ -1,0 +1,24 @@
+/* v1: 글자 크기·줄 간격·상자 안 여백 */
+.wb .q-mock { font-size: 8.7pt; line-height: 1.6; }
+.wb .q-mock .q-stem { margin-bottom: 1.4mm; }
+.wb .q-mock .q-data { font-size: 8.3pt; line-height: 1.58; padding: 2mm 2.8mm; margin-bottom: 1.8mm; }
+.wb .q-mock .bogi { font-size: 8.3pt; line-height: 1.55; padding: 2.2mm 2.8mm 1.8mm; margin: 3.2mm 0 1.8mm; }
+.wb .q-mock .choices { font-size: 8.5pt; row-gap: .3mm; }
+/* v2: 문항 번호를 발문 첫 줄 앞에(수능처럼), 회차 머리 줄이기 */
+.wb .q-mock .q-head { float: left; margin: .25mm 1.8mm 0 0; }
+.wb .q-mock .q-no { min-width: 6.4mm; height: 5mm; font-size: 9.4pt; }
+.wb .wb-mock { padding: 2mm 0 1.8mm; margin-bottom: 3mm; }
+.wb .wb-mock-l b { font-size: 17pt; }
+/* v3: 짧은 선지는 한 줄에 다섯 개, 조금 긴 선지는 두 개씩 */
+.wb .q-mock .choices.len-tiny { display: grid; grid-template-columns: repeat(5, 1fr); }
+.wb .q-mock .choices.len-half:not(.short) { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 2mm; }
+/* v4: 쪽 여백·단 사이 줄이기(단 폭 83 → 88.5mm) */
+:root { --m-top: 10mm; --m-out: 12mm; --m-in: 14mm; --m-bottom: 8mm; --col-gap: 7mm; --head-h: 7mm; }
+/* v5: 그림 줄이기(그림 88%, 순서도·벤 다이어그램 75%), 표 칸 여백 줄이기 */
+.wb .q-mock .q-data .fig-body > svg { width: 88%; margin: 0 auto; display: block; }
+.wb .q-mock .q-data .fig-diagram .fig-body > svg, .wb .q-mock .q-data .fig-venn .fig-body > svg { width: 75%; }
+.wb .q-mock .q-data .tbl th, .wb .q-mock .q-data .tbl td { padding-top: .9mm !important; padding-bottom: .9mm !important; }
+.wb .q-mock .dialog .dl-row + .dl-row { margin-top: .5mm; }
+/* 순서도(예/아니요) 그림 줄이기 */
+.wb .q-mock .q-data .fig-diagram .dg > svg { max-width: 64% !important; }
+.wb .q-mock .q-data .fig-diagram .dg > svg { max-width: 72% !important; }

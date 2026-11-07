@@ -32,7 +32,10 @@ export function questionHtml(q, n, { unit, mock, teacher } = {}) {
   const bogi = q.bogi
     ? `<div class="bogi"><div class="bogi-t"><span>보기</span></div><ul>${q.bogi.map((x, i) => `<li><b>${GANADA[i]}.</b> <span>${inl(x)}</span></li>`).join('')}</ul></div>`
     : '';
-  const choices = `<ol class="choices${short ? ' short' : ''}">${q.choices
+  // 선지 길이 표시(쪽수 줄이기 시험용): len-tiny = 한 줄에 다섯 개, len-half = 두 개씩 놓을 수 있는 길이
+  const maxLen = Math.max(...q.choices.map((c) => String(c).replace(/\*\*|__/g, '').length));
+  const lenCls = maxLen <= 6 ? ' len-tiny' : maxLen <= 13 ? ' len-half' : '';
+  const choices = `<ol class="choices${short ? ' short' : ''}${lenCls}">${q.choices
     .map((c, i) => `<li class="${q.answer === i + 1 ? 'ok' : ''}"><span class="cn">${CIRCLED[i]}</span><span>${inl(c)}</span></li>`)
     .join('')}</ol>`;
   const pts = mock && q.points && q.points !== 2 ? ` <span class="q-pts">[${q.points}점]</span>` : '';
