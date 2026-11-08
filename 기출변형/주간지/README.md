@@ -51,5 +51,5 @@ node 주간지/build.mjs jakjeon 1 [png]   # → 주간지/out/작전고-1주차
 | 계산여고 | 주간지 · 계산여고 | claude/weekly-gyesan | session_01QqEa98WBnA5oetZEWDATQh |
 | 서운고 | 주간지 · 서운고 | claude/weekly-seoun | session_01QqEa9CGiXNFPEeBjAyfJds |
 | 인천국제고 | 주간지 · 인천국제고 | claude/weekly-inguk | session_01QqEa9ARsP6krFyyfNnBLFm |
-- 조정 채팅(작전고 1주차 견본을 만든 채팅, 브랜치 claude/practical-lamport-a7zkp4)이 강사의 견본 수정 사항을 받아
+- **조정 채팅 = '주간지 · 조정 채팅 (디자인·견본 수정)'**(session_01QqEa98Z8tj8bZXnLwjd2Cn, 2026-11-09부터 — 앞 조정 채팅은 대화가 길어져 넘김), 브랜치 claude/practical-lamport-a7zkp4. 이 채팅이 강사의 견본 수정 사항을 받아
   ① 이 README의 '강사가 정한 규칙'에 적고 ② 위 5개 채팅에 메시지(send_message)로 보낸다. 각 채팅은 공통 브랜치를 merge해 반영한다.
