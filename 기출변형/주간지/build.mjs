@@ -24,7 +24,8 @@ const args = process.argv.slice(2);
 const school = args[0] || 'jakjeon';
 const week = +(args[1] || 1);
 const wantPng = args.includes('png');
-const STYLE = (args.find((a) => /^s\d$/.test(a)) || '').slice(1); // 디자인 시안 번호(없으면 기본)
+const STYLE_ARG = (args.find((a) => /^s\d$/.test(a)) || '').slice(1); // 비교용 시안 번호(s1~s4)
+const STYLE = STYLE_ARG || '1'; // 강사 확정(2026-11-08): 시안 1(실전 띠형)이 기본 디자인
 const OUT = join(ROOT, 'out');
 mkdirSync(OUT, { recursive: true });
 
@@ -274,7 +275,7 @@ function answersSection() {
   return `<section class="flow" data-kind="answers" data-tab="답" data-head-left="${headLeft}" data-head-right="정답과 해설"><div class="top"><div class="band band-answers"><span class="band-title">정답과 해설</span><span class="band-sub">WEEK ${two(week)} · ${esc(W.school)}</span></div></div>${rows.join('\n')}</section>`;
 }
 
-const name = `${W.school}-${week}주차${STYLE ? `-시안${STYLE}` : ''}`;
+const name = `${W.school}-${week}주차${STYLE_ARG ? `-시안${STYLE_ARG}` : ''}`;
 const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), answersSection()]; return `<!doctype html>
 <html lang="ko"><head>
 <meta charset="utf-8">
