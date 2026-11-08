@@ -87,6 +87,7 @@ function bigMapText(root) {
     }
     // 기후 그래프·인구 피라미드 글씨 1.2배, 지도 경위도 숫자·방위표 키우기(쪽 검사 작은 글씨, 2026-11-08)
     if (x.t === 'chart' && ['climate', 'climdev', 'pyramid'].includes(x.kind) && !x.fs) x.fs = 1.2;
+    if (x.t === 'map' && (x.view === 'world' || !x.view) && !x.seaScale) x.seaScale = 1.15;
     if (x.t === 'map' && !x.degSize) x.degSize = Math.max(8.5, Math.round((x.w || 600) * 0.026 * 10) / 10);
     // 인구 피라미드를 한 줄에 셋 이상 놓으면 글씨가 3pt대 → 두 개씩
     if (x.t === 'figrow' && x.items.length >= 3 && x.items.every((i) => i.kind === 'pyramid') && !x.cols) x.cols = 2;

@@ -312,7 +312,7 @@ export function drawMap(b, h) {
         if (Math.abs(dt) < 90 && Math.abs(dt) < Math.abs(dl)) continue;
       }
     }
-    const [x, y] = proj([lo, la]); s += lab(x, y + sz * 0.35, n, { size: sz, cls: 'sea', rot });
+    const [x, y] = proj([lo, la]); const ssz = sz * (b.seaScale || 1); s += lab(x, y + ssz * 0.35, n, { size: ssz, cls: 'sea', rot }); // seaScale: 문제집 빌드에서 대양 이름 키움
   }
   for (const hl of b.highlight || []) {
     if (!hl.label || ALIAS[hl.country] === null) continue;
