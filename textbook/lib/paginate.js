@@ -267,7 +267,7 @@
     box.style.height = `${Math.ceil(used)}px`;
     const memo = document.createElement('div');
     memo.className = 'region-memo';
-    memo.innerHTML = memoHtml('오답 노트', PROMPTS[kind][0]);
+    memo.innerHTML = memoHtml(L.memoTitle || '오답 노트', PROMPTS[kind][0]);
     region.appendChild(memo);
   }
 
