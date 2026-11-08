@@ -110,3 +110,8 @@ body.wbc .q-mock .q-head { float: left; margin: .25mm 1.8mm 0 0; }
 body.wbc .q-mock .q-no { min-width: 6.4mm; height: 5mm; font-size: 9.4pt; }
 body.wbc .wb-mock { padding: 2mm 0 1.8mm; margin-bottom: 3mm; }
 body.wbc .wb-mock-l b { font-size: 17pt; }
+/* 정답과 해설도 쪽수 줄이기(2026-11-08): 여백·글자·간격을 문제 쪽과 비슷하게 */
+body.wbc .page:has(.region-answers) { --m-top: 10mm; --m-out: 12mm; --m-in: 14mm; --m-bottom: 8mm; --col-gap: 7mm; --head-h: 7mm; }
+body.wbc .ans-q { font-size: 8pt; line-height: 1.58; }
+body.wbc .ans-q .aq-note { font-size: 7.7pt; line-height: 1.55; padding: 1.4mm 2mm; margin-top: 1.2mm; }
+body.wbc .region-answers .slot > .row + .row { margin-top: 2.6mm; }
