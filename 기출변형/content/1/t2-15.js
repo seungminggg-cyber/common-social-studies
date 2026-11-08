@@ -48,7 +48,7 @@ export default [
     id: 't2-15-1-003', level: '중상', concept: [2], type: '지도 해석', src: '2026.3 고2 16번·2026.6 고2 17번 유형',
     stem: '지도는 두 화석 에너지 (가), (나)의 생산 상위 3개국을 나타낸 것이다. (가), (나)에 대한 설명으로 옳은 것은? (단, (가), (나)는 각각 석탄, 천연가스 중 하나이다.)',
     data: [{
-      t: 'map', view: 'world', h: 270,
+      t: 'map', view: 'world', h: 216, w: 480,
       highlight: [
         { country: 'CHN', cls: 'h1' }, { country: 'IND', cls: 'h1' }, { country: 'IDN', cls: 'h1' },
         { country: 'USA', cls: 'h2' }, { country: 'RUS', cls: 'h2' }, { country: 'IRN', cls: 'h2' },
@@ -70,7 +70,7 @@ export default [
     id: 't2-15-1-004', level: '상', concept: [2, 3], type: '그래프 해석', src: '2028 수능 예시 25번 유형',
     stem: '그래프는 네 나라의 1차 에너지 소비 구성을 나타낸 것이다. 이에 대한 설명으로 옳은 것만을 <보기>에서 고른 것은? (단, (가)~(라)는 각각 석유, 석탄, 천연가스, 원자력 중 하나이다.)',
     data: [{
-      t: 'chart', kind: 'stack100', rowH: 24, w: 420,
+      t: 'chart', kind: 'stack100', rowH: 24, w: 400,
       categories: ['중국', '러시아', '브라질', '프랑스'],
       series: [
         { name: '(가)', values: [18.5, 23.6, 37.3, 31.3] },
@@ -123,10 +123,10 @@ export default [
     data: [{
       t: 'map', view: [-30, 24, 35, 70], h: 300,
       markers: [
-        { lon: -19, lat: 64.8, label: 'A', pos: 'right' },
-        { lon: 7.5, lat: 61, label: 'B', pos: 'right' },
-        { lon: -6.9, lat: 30.9, label: 'C', pos: 'right' },
-        { lon: 6.5, lat: 55.8, label: 'D', pos: 'left' },
+        { lon: -19, lat: 64.8, label: 'A', pos: 'right', size: 15 },
+        { lon: 7.5, lat: 61, label: 'B', pos: 'right', size: 15 },
+        { lon: -6.9, lat: 30.9, label: 'C', pos: 'right', size: 15 },
+        { lon: 6.5, lat: 55.8, label: 'D', pos: 'left', size: 15 },
       ],
       note: 'A는 화산 지대, B는 빙하 침식으로 생긴 깊은 골짜기와 폭포가 많은 산지, C는 연중 맑은 날이 많은 사막 주변, D는 편서풍이 강하게 부는 바다이다.',
       source: '지도 자료: Natural Earth',

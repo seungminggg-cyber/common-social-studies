@@ -152,7 +152,7 @@ export default [
   {
     id: 't2-11-1-009', level: '상', concept: [4], type: '그래프 해석', src: '2025.10 고1 21번 유형 응용(기능별 입지 비율)',
     stem: '그래프는 다국적 기업 ○○사의 기능별 종사자가 있는 지역의 비율을 나타낸 것이다. 이에 대한 분석으로 옳은 것만을 <보기>에서 고른 것은?',
-    data: [{ t: 'chart', kind: 'stack100', title: '○○사 기능별 종사자의 지역 분포', w: 420,
+    data: [{ t: 'chart', kind: 'stack100', title: '○○사 기능별 종사자의 지역 분포', w: 380,
       categories: ['본사', '연구소', '생산 공장'],
       series: [{ name: '본국(한국)', values: [100, 55, 15] }, { name: '기타 선진국', values: [0, 40, 25] }, { name: '개발 도상국', values: [0, 5, 60] }],
       source: '가상 자료' }],

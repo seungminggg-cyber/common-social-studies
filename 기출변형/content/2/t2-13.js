@@ -130,7 +130,7 @@ export default [
   {
     id: 't2-13-2-008', level: '중상', concept: [6, 5], type: '지도 해석', src: '2026.3 고2 4번 유형 응용(독도 · 지도)',
     stem: '다음 지도와 자료에 대한 설명으로 옳은 것만을 <보기>에서 고른 것은?',
-    data: [{ t: 'map', view: [129.4, 34.9, 134.2, 38.3], h: 250, w: 420, style: 'terrain', palette: 'soft', rivers: false,
+    data: [{ t: 'map', view: [129.4, 34.9, 134.2, 38.3], h: 202, w: 340, style: 'terrain', palette: 'soft', rivers: false,
       markers: [
         { lon: 130.87, lat: 37.5, label: '울릉도', pos: 'top', cls: 'k3' },
         { lon: 131.87, lat: 37.24, label: '독도', pos: 'right', cls: 'k8' },
