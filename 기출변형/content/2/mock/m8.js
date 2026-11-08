@@ -416,9 +416,9 @@ export default {
         { t: 'chart', kind: 'pie', donut: true, w: 400, h: 170, center: 't시점', slices: [
           { label: 'A', value: 55 }, { label: 'B', value: 5 }, { label: 'C', value: 15 }, { label: 'D', value: 25 },
         ], note: '(단위: %)' },
-        { t: 'table', head: ['상품', 'A', 'B', 'C', 'D'], widths: [36, 16, 16, 16, 16], align: ['center', 'center', 'center', 'center', 'center'], rows: [
-          ['t+1시점 평가액(만 원)', '1,188', '114', '303', '515'],
-        ] },
+        { t: 'table', head: ['구분', 'A', 'B', 'C', 'D'], widths: [36, 16, 16, 16, 16], align: ['center', 'center', 'center', 'center', 'center'], rows: [
+          ['t+1시점 평가액', '1,188', '114', '303', '515'],
+        ], note: '(단위: 만 원)' },
       ],
       bogi: [
         'A는 만기가 정해져 있으며, 예금자 보호 제도의 적용을 받지 않는다.',

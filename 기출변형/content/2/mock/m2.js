@@ -142,6 +142,7 @@ export default {
       stem: '그래프의 (가)~(다)는 지도에 표시된 A~C 지역의 월평균 기온을 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
       data: [
         { t: 'map', view: 'world', center: 40, w: 420, h: 210,
+          seas: [['대 서 양', -40, 30, 13], ['인 도 양', 76, -22, 13], ['태 평 양', 168, 2, 14]],
           parallels: [{ lat: 0, label: '적도(0°)', size: 12 }],
           markers: [
             { lon: -78.5, lat: -0.2, label: 'A', pos: 'right', r: 4.2, size: 15 },
@@ -319,6 +320,7 @@ export default {
           ['(다)', '2015년에 맺어졌으며, 지구 평균 기온의 상승 폭을 산업화 이전보다 2℃보다 훨씬 낮게 유지하는 것을 목표로 한다.'],
         ] },
         { t: 'map', view: 'world', center: 40, w: 420, h: 210,
+          seas: [['대 서 양', -40, 30, 13], ['인 도 양', 76, -22, 13], ['태 평 양', 168, 2, 14]],
           parallels: [{ lat: 0, label: '적도(0°)', size: 12 }],
           markers: [
             { lon: 50.66, lat: 36.9, label: 'A', pos: 'bottom', r: 4.2, size: 15 },
