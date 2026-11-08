@@ -413,7 +413,7 @@ export default {
       stem: '다음 자료에 대한 옳은 분석만을 <보기>에서 고른 것은? (단, A~D는 각각 요구불 예금, 정기 예금, 채권, 주식 중 하나이며, 각 금융 상품의 일반적인 특징을 가진다. 수익률(%) = (t+1시점 평가액 − t시점 평가액) ÷ t시점 평가액 × 100, 구성 비율(%) = 상품의 평가액 ÷ 평가액 합계 × 100이다.)',
       data: [
         { t: 'p', text: '갑은 t시점에 금융 상품 A~D에 모두 2,000만 원을 나누어 투자하고, 추가 투자나 인출 없이 t+1시점까지 보유하였다. 네 상품의 수익률은 모두 양(+)의 값이었으며, 주식, 채권, 정기 예금, 요구불 예금 순으로 높았다. 그래프는 t시점의 구성 비율을, 표는 t+1시점의 평가액을 나타낸 것이다.' },
-        { t: 'chart', kind: 'pie', donut: true, w: 260, center: 't시점', slices: [
+        { t: 'chart', kind: 'pie', donut: true, w: 400, h: 170, center: 't시점', slices: [
           { label: 'A', value: 55 }, { label: 'B', value: 5 }, { label: 'C', value: 15 }, { label: 'D', value: 25 },
         ], note: '(단위: %)' },
         { t: 'table', head: ['상품', 'A', 'B', 'C', 'D'], widths: [36, 16, 16, 16, 16], align: ['center', 'center', 'center', 'center', 'center'], rows: [
