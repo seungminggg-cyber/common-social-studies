@@ -209,7 +209,7 @@ export default {
       src: '2027학년도 6월 모평 세계지리 18번 형식(1월·7월 평균 기온 산점도로 북반구 서안 해양성·지중해성, 남반구 지중해성·온난 습윤 지역 판별, 옳지 않은 것) · 거품 크기로 7월 강수량을 더함',
       stem: '그래프는 지도에 표시된 A~D 지역의 1월과 7월 평균 기온, 7월 강수량을 나타낸 것이다. (가)~(라) 지역에 대한 설명으로 옳지 않은 것은?',
       data: [
-        { t: 'map', view: 'world', center: 10, w: 420, h: 210,
+        { t: 'map', view: 'world', w: 420, h: 210, seas: [['태 평 양', -135, 18, 11], ['대 서 양', -38, 22, 11], ['인 도 양', 78, -22, 11]],
           parallels: [{ lat: 0, label: '적도(0°)', size: 12 }],
           markers: [
             { lon: -6.26, lat: 53.35, label: 'A', pos: 'left', r: 4.2, size: 15 },
@@ -471,7 +471,7 @@ export default {
           '(가) 이주민은 자기 나라의 언어와 관습을 버리고 이 사회의 언어와 생활 방식을 익혀야 한다. 여러 문화가 녹아들어 하나의 문화로 합쳐질 때 사회가 안정된다.',
           '(나) 어느 한 문화가 중심이 되어 다른 문화를 흡수해서는 안 된다. 여러 문화가 저마다의 정체성을 지닌 채 대등하게 어우러질 때 사회가 풍요로워진다.',
         ] },
-        { t: 'chart', kind: 'scatter', schematic: true, zero: true, w: 330, h: 250,
+        { t: 'chart', kind: 'scatter', schematic: true, zero: true, w: 330, h: 215,
           x: { min: -2, max: 2, label: '문화 간 대등한 공존 강조 →' },
           y: { min: -2, max: 2, label: '↑ 주류 문화로의 통합 강조' },
           groups: [{ name: '위치', points: [[0, 0], [1.2, 1.2], [-1.2, 1.2], [1.2, -1.2], [-1.2, -1.2], [0, -1.5]] }],
@@ -496,13 +496,13 @@ export default {
       src: '2027학년도 9월 모평 한국지리 10번 평가 요소(지도로 가린 지역의 인구 지표 비교) · 비율 × 인구 계산 · 설계표의 도심·주변 지역 주간 인구 지수는 7회 8번과 겹쳐 대도시권·공업 도시·촌락 비교로 바꿈',
       stem: '표의 (가)~(다)는 지도에 표시된 A~C 시·군의 인구 지표를 순서 없이 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
       data: [
-        { t: 'map', view: [124.6, 33.0, 131.2, 38.7], w: 300, h: 300, width: 70, style: 'thematic', provinces: true, krRivers: 600, scale: false, north: false, deg: false,
+        { t: 'map', view: [124.6, 33.0, 131.2, 38.7], w: 300, h: 300, width: 56, style: 'thematic', provinces: true, krRivers: 600, scale: false, north: false, deg: false,
           markers: [
-            { lon: 129.31, lat: 35.54, label: 'A', pos: 'right', r: 4.2, size: 15 },
-            { lon: 126.8, lat: 37.66, label: 'B', pos: 'left', r: 4.2, size: 15 },
-            { lon: 128.7, lat: 36.35, label: 'C', pos: 'right', r: 4.2, size: 15 },
+            { lon: 129.31, lat: 35.54, label: 'A', pos: 'right', r: 5.5, size: 19 },
+            { lon: 126.8, lat: 37.66, label: 'B', pos: 'left', r: 5.5, size: 19 },
+            { lon: 128.7, lat: 36.35, label: 'C', pos: 'right', r: 5.5, size: 19 },
           ],
-          labels: [{ at: [127.25, 37.42], text: '서울', size: 11, cls: 'soft' }] },
+          labels: [{ at: [127.45, 37.38], text: '서울', size: 15, cls: 'soft' }] },
         { t: 'table', head: ['구분', '(가)', '(나)', '(다)'], widths: [40, 20, 20, 20], align: [null, 'center', 'center', 'center'], rows: [
           ['1975년 인구(만 명)', '20', '40', '20'],
           ['2025년 인구(만 명)', '5', '110', '105'],
