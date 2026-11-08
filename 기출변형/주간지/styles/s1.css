@@ -6,9 +6,9 @@
 .cv-name i { display: inline-block; width: 46mm; height: 5mm; border-bottom: .8pt solid currentColor; vertical-align: bottom; margin-left: 2mm; }
 .cv1 { background: var(--c1-dark); color: #fff; padding: 20mm 20mm 15mm; }
 .cv1 .cv-top { display: flex; justify-content: space-between; font-size: 9pt; font-weight: 600; letter-spacing: .14em; border-bottom: .8pt solid rgba(255,255,255,.45); padding-bottom: 3mm; }
-.cv1 .cv-week { margin-top: 20mm; line-height: .8; }
-.cv1 .cv-week span { display: block; font-size: 24pt; font-weight: 800; letter-spacing: .32em; color: rgba(255,255,255,.7); margin-bottom: 4mm; }
-.cv1 .cv-week b { display: block; font-size: 220pt; font-weight: 900; letter-spacing: -.06em; margin-left: -4mm; }
+.cv1 .cv-week { margin-top: 13mm; line-height: .8; }
+.cv1 .cv-week span { display: block; font-size: 20pt; font-weight: 800; letter-spacing: .32em; color: rgba(255,255,255,.7); margin-bottom: 4mm; }
+.cv1 .cv-week b { display: block; font-size: 180pt; font-weight: 900; letter-spacing: -.06em; margin-left: -4mm; }
 .cv1 .cv-school { margin-top: 10mm; display: flex; align-items: baseline; gap: 4mm; }
 .cv1 .cv-school b { font-size: 36pt; font-weight: 800; letter-spacing: -.02em; }
 .cv1 .cv-school span { font-size: 13pt; font-weight: 500; opacity: .9; }
@@ -60,7 +60,7 @@
 .cv1 { position: relative; overflow: hidden; }
 .cv1 > *:not(.cv-mark) { position: relative; }
 .cv-mark { position: absolute; font: 600 210pt/1 'Noto Serif KR', serif; color: rgba(255,255,255,.10); pointer-events: none; }
-.cv1 .cv-mark { right: 16mm; top: 98mm; }
+.cv1 .cv-mark { right: 14mm; top: 104mm; }
 .cv-top b { font-weight: 900; letter-spacing: .16em; margin-left: 1mm; }
 .cv-prog { display: flex; align-items: center; gap: 1.2mm; }
 .cv-prog span { margin-right: 1.6mm; font-weight: 800; letter-spacing: .1em; }
@@ -74,3 +74,13 @@
 .wk-s1 .region-day .region-slots::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: .6pt solid #aaa49d; }
 /* 목표 시간 */
 .wk-goal { font-style: normal; margin-left: 1.4mm; padding: 0 1.2mm; border: .5pt solid currentColor; font-size: 6.8pt; font-weight: 700; }
+
+/* 시리즈 이름 글자(표지 위) — MIN은 굵게, 뒤는 다른 톤 */
+.cv1 .cv-wm { margin-top: 13mm; }
+.wm { margin: 0; font-family: var(--disp); line-height: .9; letter-spacing: -.035em; white-space: nowrap; }
+.wm-one { font-size: 96pt; font-weight: 900; }
+.wm-one .wm-b { color: var(--c1-line); }
+.wm-two { font-size: 66pt; }
+.wm-two .wm-a { font-weight: 900; }
+.wm-two .wm-b { font-weight: 300; margin-left: 4mm; letter-spacing: .01em; }
+.cv1 .cv-wm p { margin: 3.4mm 0 0; font-size: 9.6pt; font-weight: 600; letter-spacing: .12em; color: rgba(255,255,255,.8); }

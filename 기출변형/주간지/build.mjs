@@ -26,6 +26,9 @@ const week = +(args[1] || 1);
 const wantPng = args.includes('png');
 const STYLE_ARG = (args.find((a) => /^s\d$/.test(a)) || '').slice(1); // 비교용 시안 번호(s1~s4)
 const STYLE = STYLE_ARG || '1'; // 강사 확정(2026-11-08): 시안 1(실전 띠형)이 기본 디자인
+// 시리즈 이름(정하는 중, 2026-11-08 후보 MINT · MIN WEEKLY): name=MINT 처럼 주면 그 이름으로 표지·쪽 머리를 만든다
+const NAME_ARG = (args.find((a) => a.startsWith('name=')) || '').slice(5);
+const SERIES = NAME_ARG || 'WEEKLY';
 const OUT = join(ROOT, 'out');
 mkdirSync(OUT, { recursive: true });
 
@@ -35,6 +38,8 @@ const CIRCLED = ['①', '②', '③', '④', '⑤'];
 
 // ── 내용 모으기 ──
 const W = (await import(pathToFileURL(join(ROOT, 'content', school, `w${week}.js`)).href)).default;
+const TAB_ARG = (args.find((a) => a.startsWith('tab=')) || '').slice(4); // 미리보기: 표지 대단원 색만 바꿔 보기
+if (TAB_ARG) W.tab = TAB_ARG;
 const CC = {};
 async function cc(unitKey) { // 개념서 개념 계획: 한 장 정리 + '이렇게 나온다'
   const book = UNITS[unitKey].book;
@@ -104,7 +109,7 @@ await ensureTerrain(all);
 
 // ── HTML ──
 const chapterNo = (u) => BOOKS[u.book].chapter.no;
-const headLeft = STYLE ? `<b>승민T WEEKLY</b> | ${esc(W.school)} ${week}주차` : `${esc(W.school)} 내신 주간지 <b>WEEK ${two(week)}</b>`;
+const headLeft = STYLE ? `<b>${esc(SERIES)}</b> | ${esc(W.school)} ${week}주차` : `${esc(W.school)} 내신 주간지 <b>WEEK ${two(week)}</b>`;
 
 function coverPage() {
   if (STYLE) return coverStyled();
@@ -148,9 +153,16 @@ function coverStyled() {
   const prog = `<div class="cv-prog"><span>WEEK ${week} / ${weeks}</span>${Array.from({ length: weeks }, (_, i) => `<i class="${i < week ? 'on' : ''}"></i>`).join('')}</div>`;
   const roman = /^[ⅠⅡⅢⅣⅤ]$/.test(W.tab || '') ? W.tab : '';
   const mark = roman ? `<div class="cv-mark" aria-hidden="true">${roman}</div>` : '';
+  // 시리즈 이름 글자: 앞의 MIN(승민T의 '민')을 굵게, 나머지는 다른 톤으로
+  const m = /^MIN\s*(.*)$/.exec(SERIES);
+  const wordmark = m
+    ? `<h1 class="wm ${/\s/.test(SERIES) ? 'wm-two' : 'wm-one'}"><span class="wm-a">MIN</span><span class="wm-b">${esc(m[1])}</span></h1>`
+    : `<h1 class="wm wm-one"><span class="wm-a">${esc(SERIES)}</span></h1>`;
+  const tagline = SERIES === 'MINT' ? 'MIN + T · 승민T의 학교별 내신 주간지' : '승민T의 학교별 내신 주간지';
   const body = {
     1: `<div class="cv cv1">${mark}
-      <div class="cv-top"><span>${brand} <b>WEEKLY</b></span>${prog}</div>
+      <div class="cv-top"><span>통합사회 내신 · 4주 완성</span>${prog}</div>
+      <div class="cv-wm">${wordmark}<p>${esc(tagline)}</p></div>
       <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
       <div class="cv-school"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span></div>
       <div class="cv-range">${esc(W.range)}</div>
@@ -275,7 +287,7 @@ function answersSection() {
   return `<section class="flow" data-kind="answers" data-tab="답" data-head-left="${headLeft}" data-head-right="정답과 해설"><div class="top"><div class="band band-answers"><span class="band-title">정답과 해설</span><span class="band-sub">WEEK ${two(week)} · ${esc(W.school)}</span></div></div>${rows.join('\n')}</section>`;
 }
 
-const name = `${W.school}-${week}주차${STYLE_ARG ? `-시안${STYLE_ARG}` : ''}`;
+const name = `${W.school}-${week}주차${STYLE_ARG ? `-시안${STYLE_ARG}` : ''}${NAME_ARG ? `-${NAME_ARG.replace(/\s+/g, '')}` : ''}${TAB_ARG ? `-${TAB_ARG}` : ''}`;
 const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), answersSection()]; return `<!doctype html>
 <html lang="ko"><head>
 <meta charset="utf-8">
