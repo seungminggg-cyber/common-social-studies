@@ -2,6 +2,7 @@
 //
 //   node 주간지/build.mjs jakjeon 1          작전고 1주차 → 주간지/out/작전고-1주차.pdf (문제 + 뒤쪽 정답과 해설)
 //   node 주간지/build.mjs jakjeon 1 png      쪽 그림(PNG)까지
+//   node 주간지/build.mjs jakjeon 1 s2 png   디자인 시안 2로(시안 1~4 비교용, 2026-11-08) → 작전고-1주차-시안2.pdf
 //
 // 한 주 = 표지(이번 주 계획표) → DAY 1~5 → 정답과 해설. (백지 테스트·오답 기록지는 강사 요청으로 뺌, 2026-11-08)
 // DAY마다: 개념 정리(개념서 '한 장 정리') → 개념 O/X(개념서 '이렇게 나온다') → 객관식 6 → 서답형 1.
@@ -23,6 +24,7 @@ const args = process.argv.slice(2);
 const school = args[0] || 'jakjeon';
 const week = +(args[1] || 1);
 const wantPng = args.includes('png');
+const STYLE = (args.find((a) => /^s\d$/.test(a)) || '').slice(1); // 디자인 시안 번호(없으면 기본)
 const OUT = join(ROOT, 'out');
 mkdirSync(OUT, { recursive: true });
 
@@ -104,6 +106,7 @@ const chapterNo = (u) => BOOKS[u.book].chapter.no;
 const headLeft = `${esc(W.school)} 내신 주간지 <b>WEEK ${two(week)}</b>`;
 
 function coverPage() {
+  if (STYLE) return coverStyled();
   const rows = days.map((d) => {
     const n = d.qs.length + (d.short ? 1 : 0);
     const name = d.title || `${d.unit.no} ${d.unit.title}`;
@@ -129,14 +132,72 @@ function coverPage() {
   </div></div></section>`;
 }
 
+// 디자인 시안 표지 (2026-11-08 비교용) — 1 브랜드형, 2 실용형, 3·4 섞은형
+function coverStyled() {
+  const name = (d) => d.title || `${d.unit.no} ${d.unit.title}`;
+  const plan = `<table class="wk-plan"><thead><tr><th>DAY</th><th>오늘 공부</th><th>분량</th><th>푼 날</th><th>맞은 개수</th><th>확인</th></tr></thead><tbody>${days.map((d) => `<tr><td class="d">${two(d.day)}</td><td class="u">${esc(name(d))}</td><td class="n">${d.ox ? `O/X ${d.ox.length} · ` : ''}${d.qs.length}문항</td><td></td><td></td><td></td></tr>`).join('')}</tbody></table>`;
+  const how = `<ol class="wk-how"><li>${inl('**개념 정리** 읽기 → **O/X**로 확인')}</li><li>${inl('**객관식** 시간 재고 풀기, 근거를 선지 옆에')}</li><li>${inl('책 뒤 **정답과 해설**로 채점, 틀린 문제 다시 풀기')}</li></ol>`;
+  const list = `<ol class="wk-list">${days.map((d) => `<li><b>DAY ${two(d.day)}</b><span>${esc(name(d))}</span></li>`).join('')}</ol>`;
+  const brand = '승민T 통합사회';
+  const sub = '학교별 내신 주간지';
+  const total = days.reduce((a, d) => a + d.qs.length, 0);
+  const msg = W.message ? `<div class="wk-msg">${inl(W.message)}</div>` : '';
+  const body = {
+    1: `<div class="cv cv1">
+      <div class="cv-top"><span>${brand}</span><span>${sub}</span></div>
+      <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
+      <div class="cv-school"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span></div>
+      <div class="cv-range">${esc(W.range)}</div>
+      <div class="cv-inside"><div class="cv-lab">THIS WEEK</div>${list}</div>
+      <div class="cv-foot"><span>개념 정리 · O/X · 객관식 ${total}문항 · 정답과 해설</span><span class="cv-name">이름 <i></i></span></div>
+    </div>`,
+    2: `<div class="cv cv2">
+      <div class="cv-top"><span>${brand} · ${sub}</span><span class="cv-name">이름 <i></i></span></div>
+      <div class="cv-head"><div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
+        <div class="cv-id"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span><em>${esc(W.range)}</em></div></div>
+      <h3 class="cv-h"><b>01</b>이번 주 계획표</h3>${plan}
+      <h3 class="cv-h"><b>02</b>이렇게 푼다 <i>하루 30분</i></h3>${how}
+      ${msg}
+    </div>`,
+    3: `<div class="cv cv3">
+      <div class="cv-hero">
+        <div class="cv-top"><span>${brand}</span><span>${sub}</span></div>
+        <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
+        <div class="cv-school"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span></div>
+        <div class="cv-range">${esc(W.range)}</div>
+      </div>
+      <div class="cv-lower">
+        <div class="cv-name">이름 <i></i></div>
+        <h3 class="cv-h">이번 주 계획표</h3>${plan}
+        <h3 class="cv-h">이렇게 푼다 <i>하루 30분</i></h3>${how}
+      </div>
+    </div>`,
+    4: `<div class="cv cv4">
+      <div class="cv-side">
+        <div class="cv-top">${brand}<br>${sub}</div>
+        <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
+        <div class="cv-range">${esc(W.range)}</div>
+      </div>
+      <div class="cv-main">
+        <div class="cv-school"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span></div>
+        <div class="cv-name">이름 <i></i></div>
+        <h3 class="cv-h">이번 주 계획표</h3>${plan}
+        <h3 class="cv-h">이렇게 푼다 <i>하루 30분</i></h3>${how}
+        ${msg}
+      </div>
+    </div>`,
+  }[STYLE];
+  return `<section class="flow" data-kind="cover" data-tab="${esc(W.tab)}"><div class="top">${body}</div></section>`;
+}
+
 function summaryBox(spec) {
   const s = spec.summary;
-  const items = (s.items || s.concepts).map((c) => `<div class="wk-c"><b>${esc(c.no)}</b><div><h4>${inl(c.title || '')}</h4>${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
+  const items = (s.items || s.concepts).map((c) => `<div class="wk-c"><div class="wk-c-h"><b>${esc(c.no)}</b><h4>${inl(c.title || '')}</h4></div><div class="wk-c-b">${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
   const traps = (s.traps || []).slice(0, 3).map(([a, b]) => `<li><b>${inl(a)}</b> ${inl(b)}</li>`).join('');
   return `<div class="wk-sum"><div class="wk-sec-t">개념 정리</div><p class="wk-core">${inl(s.core)}</p><div class="wk-grid">${items}</div>${traps ? `<div class="wk-traps"><span>헷갈리지 말자</span><ul>${traps}</ul></div>` : ''}</div>`;
 }
 function oxBox(ox) {
-  return `<div class="wk-ox"><div class="wk-sec-t">개념 O/X <i>맞으면 O, 틀리면 X에 동그라미</i></div><ol>${ox.map((o) => `<li><span class="t">${inl(o.text)}</span><span class="b">O · X</span></li>`).join('')}</ol></div>`;
+  return `<div class="wk-ox"><div class="wk-sec-t">개념 O/X <i>맞으면 O, 틀리면 X에 동그라미</i></div><ol>${ox.map((o) => `<li><span class="t">${inl(o.text)}</span><span class="b"><i>O</i><i>X</i></span></li>`).join('')}</ol></div>`;
 }
 const sepTop = (label, sub) => `<div class="wk-sep"><b>${label}</b>${sub ? `<i>${sub}</i>` : ''}</div>`;
 const sep = (label, sub) => `<div class="row row-sep" data-keep="next"><div class="main"><div class="wk-sep"><b>${label}</b>${sub ? `<i>${sub}</i>` : ''}</div></div></div>`;
@@ -158,7 +219,7 @@ function dayPage(d) {
   const title = d.title || `${unit.no} ${unit.title}`;
   const total = d.qs.length + (d.short ? 1 : 0) + (d.ox ? d.ox.length : 0);
   const top = `<div class="top" id="day-${d.day}"><div class="wk-day">
-      <div class="wk-day-no"><span>DAY</span><b>${d.day}</b></div>
+      <div class="wk-day-no"><span>DAY</span><b>${d.day}</b><em>${two(d.day)}</em></div>
       <div class="wk-day-t"><span>${esc(unit ? `${BOOKS[unit.book].subject} ${chapterNo(unit)}. ${BOOKS[unit.book].chapter.title}` : W.range)}</span><h2>${esc(title)}</h2></div>
       <div class="wk-day-log"><span>푼 날 <i></i>월 <i></i>일</span><span>걸린 시간 <i></i>분</span><span>맞은 개수 <i></i>/ ${total}</span></div>
     </div></div>`;
@@ -206,7 +267,7 @@ function answersSection() {
   return `<section class="flow" data-kind="answers" data-tab="답" data-head-left="${headLeft}" data-head-right="정답과 해설"><div class="top"><div class="band band-answers"><span class="band-title">정답과 해설</span><span class="band-sub">WEEK ${two(week)} · ${esc(W.school)}</span></div></div>${rows.join('\n')}</section>`;
 }
 
-const name = `${W.school}-${week}주차`;
+const name = `${W.school}-${week}주차${STYLE ? `-시안${STYLE}` : ''}`;
 const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), answersSection()]; return `<!doctype html>
 <html lang="ko"><head>
 <meta charset="utf-8">
@@ -221,9 +282,9 @@ const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), an
 <link rel="stylesheet" href="../../../../textbook/themes/base.css">
 <link rel="stylesheet" href="../../../../textbook/themes/h.css">
 <link rel="stylesheet" href="../../../wb.css">
-<link rel="stylesheet" href="../../weekly.css">
+<link rel="stylesheet" href="../../weekly.css">${STYLE ? `\n<link rel="stylesheet" href="../../styles/s${STYLE}.css">` : ''}
 </head>
-<body class="theme-b theme-d theme-h wb wbc wk mode-student">
+<body class="theme-b theme-d theme-h wb wbc wk${STYLE ? ` wk-s${STYLE}` : ''} mode-student">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, memoTitle: '풀이 메모', prompts: { day: ['계산 과정이나 헷갈린 선지를 적어 둔다.'] } })};</script>
@@ -257,7 +318,7 @@ async function layout() {
     const sep = document.querySelector('.row-sep'); 
     const full = Math.max(...[...document.querySelectorAll('.region-day .slot')].map((s) => s.clientHeight));
     const first = {};
-    document.querySelectorAll('[id^="dq-"]').forEach((t) => { first[t.id.slice(3)] = t.closest('.region').querySelector('.slot').clientHeight; });
+    document.querySelectorAll('[id^="dq-"], [id^="day-"]').forEach((t) => { first[t.id.replace(/^(dq|day)-/, '')] = t.closest('.region').querySelector('.slot').clientHeight; });
     return { rows, sep: sep ? h(sep) : 0, full, first };
   });
   await pg1.close();

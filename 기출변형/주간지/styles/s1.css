@@ -1,0 +1,56 @@
+/* 시안 1 · 실전 띠형 — 표지: 브랜드형(대단원 색 전면, 큰 회차 번호)
+   DAY 머리는 대단원 색 굵은 띠, 본문은 흰 바탕 + 검정 괘선(시험지 느낌), 문제 번호 검정 네모 */
+.wk-s1 { --disp: 'Pretendard Variable', sans-serif; }
+.wk-s1 .page-cover { padding: 0; }
+.cv { flex: 1; display: flex; flex-direction: column; font-family: var(--disp); }
+.cv-name i { display: inline-block; width: 46mm; height: 5mm; border-bottom: .8pt solid currentColor; vertical-align: bottom; margin-left: 2mm; }
+.cv1 { background: var(--c1-dark); color: #fff; padding: 20mm 20mm 15mm; }
+.cv1 .cv-top { display: flex; justify-content: space-between; font-size: 9pt; font-weight: 600; letter-spacing: .14em; border-bottom: .8pt solid rgba(255,255,255,.45); padding-bottom: 3mm; }
+.cv1 .cv-week { margin-top: 20mm; line-height: .8; }
+.cv1 .cv-week span { display: block; font-size: 24pt; font-weight: 800; letter-spacing: .32em; color: rgba(255,255,255,.7); margin-bottom: 4mm; }
+.cv1 .cv-week b { display: block; font-size: 220pt; font-weight: 900; letter-spacing: -.06em; margin-left: -4mm; }
+.cv1 .cv-school { margin-top: 10mm; display: flex; align-items: baseline; gap: 4mm; }
+.cv1 .cv-school b { font-size: 36pt; font-weight: 800; letter-spacing: -.02em; }
+.cv1 .cv-school span { font-size: 13pt; font-weight: 500; opacity: .9; }
+.cv1 .cv-range { align-self: flex-start; margin-top: 4mm; background: #fff; color: var(--c1-dark); font-size: 11.5pt; font-weight: 700; padding: 1.4mm 3.4mm; }
+.cv1 .cv-inside { margin-top: auto; border-top: 2.6pt solid #fff; padding-top: 4mm; display: grid; grid-template-columns: 30mm 1fr; }
+.cv1 .cv-lab { font-size: 9pt; font-weight: 800; letter-spacing: .2em; padding-top: .8mm; }
+.cv1 .wk-list { list-style: none; margin: 0; padding: 0; }
+.cv1 .wk-list li { display: grid; grid-template-columns: 19mm 1fr; font-size: 10.5pt; line-height: 1.95; border-bottom: .4pt solid rgba(255,255,255,.25); }
+.cv1 .wk-list b { font-weight: 800; color: rgba(255,255,255,.65); }
+.cv1 .cv-foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 7mm; font-size: 8.8pt; }
+
+/* DAY 머리: 대단원 색 띠 */
+.wk-s1 .wk-day { grid-template-columns: auto 1fr auto; align-items: stretch; column-gap: 5mm; background: var(--c1); color: #fff; border: 0; padding: 0 4mm 0 0; margin-bottom: 4mm; }
+.wk-s1 .wk-day-no { background: var(--ink); clip-path: none; padding: 2.4mm 4.2mm; display: flex; flex-direction: column; justify-content: center; }
+.wk-s1 .wk-day-no span { font-family: var(--disp); font-size: 7.4pt; letter-spacing: .24em; }
+.wk-s1 .wk-day-no b { display: none; }
+.wk-s1 .wk-day-no em { display: block; font: normal 900 27pt/1 var(--disp); letter-spacing: -.03em; }
+.wk-s1 .wk-day-t { align-self: center; padding: 2.6mm 0; }
+.wk-s1 .wk-day-t span { color: rgba(255,255,255,.78); font-size: 7.8pt; }
+.wk-s1 .wk-day-t h2 { font: 800 16pt/1.25 var(--disp); color: #fff; letter-spacing: -.02em; }
+.wk-s1 .wk-day-log { color: #fff; align-self: center; font-size: 7.6pt; }
+.wk-s1 .wk-day-log i { border-color: #fff; }
+
+/* 개념 정리: 흰 바탕 + 위아래 검정 괘선 */
+.wk-s1 .wk-sec-t { display: flex; align-items: center; gap: 1.8mm; font: 800 10pt var(--disp); color: var(--ink); }
+.wk-s1 .wk-sec-t::before { content: ''; width: 2.6mm; height: 2.6mm; background: var(--c1); }
+.wk-s1 .wk-sum { background: #fff; border: 0; border-top: 2pt solid var(--ink); border-bottom: .6pt solid var(--ink); padding: 2.4mm 0 2.2mm; }
+.wk-s1 .wk-core { font-size: 8.8pt; }
+.wk-s1 .wk-c-h b { font: 800 9.4pt var(--disp); color: var(--c1); }
+.wk-s1 .wk-c h4 { font: 700 8.6pt var(--disp); }
+.wk-s1 .wk-traps { border-top: 0; background: #f1efec; padding: 2mm 2.6mm; margin-top: 2.4mm; }
+.wk-s1 .wk-traps > span { font-family: var(--disp); font-weight: 800; }
+
+/* O/X: 네모 칸 */
+.wk-s1 .wk-ox li { grid-template-columns: 4.5mm 1fr 13mm; border-bottom: .4pt dotted var(--rule); padding-bottom: .8mm; }
+.wk-s1 .wk-ox li::before { color: var(--ink); font-family: var(--disp); font-weight: 800; }
+.wk-s1 .wk-ox li .b { display: flex; justify-content: flex-end; gap: 1mm; }
+.wk-s1 .wk-ox li .b i { display: inline-grid; place-items: center; width: 5mm; height: 5mm; border: .6pt solid var(--ink); font-size: 6.8pt; font-weight: 700; color: var(--gray); }
+.wk-s1 .wk-ox li .b i + i::before { content: none; }
+
+/* 객관식 띠 · 문제 번호 */
+.wk-s1 .wk-sep { background: var(--ink); color: #fff; border: 0; padding: 1mm 3mm; }
+.wk-s1 .wk-sep b { font: 800 9.6pt var(--disp); letter-spacing: .06em; }
+.wk-s1 .wk-sep i { color: rgba(255,255,255,.7); }
+.wk-s1 .q-no { background: var(--ink); font-family: var(--disp); font-weight: 800; }
