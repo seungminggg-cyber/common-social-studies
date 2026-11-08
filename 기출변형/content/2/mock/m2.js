@@ -499,7 +499,7 @@ export default {
       src: '2025학년도 9월 모평 한국지리 10번 평가 요소(도심·부도심·주거 지역 구의 주간 인구 지수와 학생 수) · 서울 자치구 지도(7회 8번과 다른 구·지표)',
       stem: '표의 (가)~(다)는 지도에 표시된 서울의 세 자치구 A~C의 주간 인구 지수와 초등학생 수를 순서 없이 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (주간 인구 지수 = 주간 인구 ÷ 상주인구 × 100)',
       data: [
-        { t: 'map', view: [126.8, 37.44, 127.15, 37.70], w: 420, h: 250, style: 'thematic', scale: false, north: false, deg: false, krRivers: 300,
+        { t: 'map', view: [126.84, 37.44, 127.19, 37.70], w: 420, h: 250, style: 'thematic', scale: false, north: false, deg: false, krRivers: 300,
           subregions: { file: 'seoul-gu.json', base: '#f5f1e8', fills: { 종로구: '#fcc98f', 영등포구: '#fcc98f', 도봉구: '#fcc98f' } },
           labels: [
             { at: [126.977, 37.597], text: 'A', size: 15, cls: 'region' },
