@@ -494,15 +494,14 @@ export default {
     {
       id: 'm2-1-21', unit: 't1-12', points: 2, level: '중상', concept: [1, 4, 6], type: '지도 해석',
       src: '2027학년도 9월 모평 한국지리 10번 평가 요소(지도로 가린 지역의 인구 지표 비교) · 비율 × 인구 계산 · 설계표의 도심·주변 지역 주간 인구 지수는 7회 8번과 겹쳐 대도시권·공업 도시·촌락 비교로 바꿈',
-      stem: '표의 (가)~(다)는 지도에 표시된 A~C 시·군의 인구 지표를 순서 없이 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
+      stem: '표의 (가)~(다)는 지도에 표시된 A~C 시·군의 인구 지표를 순서 없이 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (단, B는 서울과 맞닿아 있는 시이다.)',
       data: [
         { t: 'map', view: [124.6, 33.0, 131.2, 38.7], w: 300, h: 300, width: 56, style: 'thematic', provinces: true, krRivers: 600, scale: false, north: false, deg: false,
           markers: [
             { lon: 129.31, lat: 35.54, label: 'A', pos: 'right', r: 5.5, size: 19 },
             { lon: 126.8, lat: 37.66, label: 'B', pos: 'left', r: 5.5, size: 19 },
             { lon: 128.7, lat: 36.35, label: 'C', pos: 'right', r: 5.5, size: 19 },
-          ],
-          labels: [{ at: [127.45, 37.38], text: '서울', size: 15, cls: 'soft' }] },
+          ] },
         { t: 'table', head: ['구분', '(가)', '(나)', '(다)'], widths: [40, 20, 20, 20], align: [null, 'center', 'center', 'center'], rows: [
           ['1975년 인구(만 명)', '20', '40', '20'],
           ['2025년 인구(만 명)', '5', '110', '105'],
