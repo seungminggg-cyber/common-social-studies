@@ -44,7 +44,3 @@ node 주간지/build.mjs jakjeon 1 [png]   # → 주간지/out/작전고-1주차
 - 2026-11-08 작전고 1주차 견본 1차(22쪽) → 강사 의견 → 2차(20쪽): DAY = 학습지 주제 1~5, 객관식 33(학습지 문제 12 + 학습지 개념 새 문항 9 + 1차 문항 중 학습지에 맞는 12), 서답형 없음.
   작전고 학습지(12장): 개념 학습 노트 주제 1~5 + 기회비용 예시·연습(6~8쪽) + 무역 이론·연습(9~12쪽). 학습지 강조(필기): 외부 효과의 사적·사회적 비용/편익, 금리·환율·전쟁의 영향.
 
-## 채팅(세션) 목록 — 조정 채팅이 연락할 때 쓴다
-- 조정 채팅(지금): session_01QqEa98Z8tj8bZXnLwjd2Cn (브랜치 claude/practical-lamport-a7zkp4) · 앞 조정 채팅: session_01QqEa99Vg3ymf73wvz2Gmvn
-- 작전고: session_01QqEa98cT52m4sqi5Voe1yB (claude/weekly-jakjeon) · 계산여고: session_01QqEa98WBnA5oetZEWDATQh (claude/weekly-gyesan) · 서운고: session_01QqEa9CGiXNFPEeBjAyfJds (claude/weekly-seoun)
-- 계양고·인천국제고: 아직 보고를 받지 못함(받으면 여기 적기).
