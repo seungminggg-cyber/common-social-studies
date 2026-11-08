@@ -85,6 +85,9 @@ function bigMapText(root) {
       if (x.items.length >= 3 && !x.cols) x.cols = 2;
       for (const i of x.items) if (i.compact && !i.w) i.w = 240;
     }
+    // 기후 그래프·인구 피라미드 글씨 1.2배, 지도 경위도 숫자·방위표 키우기(쪽 검사 작은 글씨, 2026-11-08)
+    if (x.t === 'chart' && ['climate', 'climdev', 'pyramid'].includes(x.kind) && !x.fs) x.fs = 1.2;
+    if (x.t === 'map' && !x.degSize) x.degSize = Math.max(8.5, Math.round((x.w || 600) * 0.022 * 10) / 10);
     // 예/아니요 순서도 글씨 1.2배(검토 의견 2026-11-08)
     if (x.t === 'diagram' && x.kind === 'yesno' && !x.fs) x.fs = 1.2;
     if (x.t === 'map') {

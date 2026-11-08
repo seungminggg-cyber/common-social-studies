@@ -367,13 +367,13 @@ export function drawMap(b, h) {
   // ── 8. 경위도 숫자·방위표·축척 ──
   if (!world && b.deg !== false && style !== 'thematic-plain') {
     const ew = (v) => (v < 0 ? `${-v}°W` : `${v}°E`), ns = (v) => (v < 0 ? `${-v}°S` : v === 0 ? '0°' : `${v}°N`);
-    for (let lo = Math.ceil(vb[0] / step) * step; lo <= vb[2]; lo += step) { const [x] = proj([lo, vb[3]]); if (x > 24 && x < W - 52) s += text(x + 2, 10.5, ew(r1(lo)), { size: 8.5, cls: 'mdeg' }); }
-    for (let la = Math.ceil(vb[1] / step) * step; la <= vb[3]; la += step) { const [, y] = proj([vb[0], la]); if (y > 22 && y < H - 34) s += text(3, y - 3, ns(r1(la)), { size: 8.5, cls: 'mdeg' }); }
+    for (let lo = Math.ceil(vb[0] / step) * step; lo <= vb[2]; lo += step) { const [x] = proj([lo, vb[3]]); if (x > 24 && x < W - 52) s += text(x + 2, 10.5, ew(r1(lo)), { size: b.degSize || 8.5, cls: 'mdeg' }); }
+    for (let la = Math.ceil(vb[1] / step) * step; la <= vb[3]; la += step) { const [, y] = proj([vb[0], la]); if (y > 22 && y < H - 34) s += text(3, y - 3, ns(r1(la)), { size: b.degSize || 8.5, cls: 'mdeg' }); }
   }
   if (!world && b.north !== false) {
     const x = W - 19, y = 31;
     s += `<circle cx="${x}" cy="${y - 7}" r="12.5" fill="#fff" fill-opacity=".82"/><path d="M${x},${y - 17} L${x + 5.2},${y + 0.5} L${x},${y - 3.2} L${x - 5.2},${y + 0.5}Z" fill="#2b333b"/>`;
-    s += text(x, y - 21.5, 'N', { size: 8.5, anchor: 'middle', cls: 'mnorth', weight: 800 });
+    s += text(x, y - 21.5, 'N', { size: b.degSize || 8.5, anchor: 'middle', cls: 'mnorth', weight: 800 });
   }
   if (!world && b.scale !== false && (b.scale || span < 30)) {
     const lat = (vb[1] + vb[3]) / 2, kmPx = (span * 111.32 * Math.cos((lat * Math.PI) / 180)) / W;

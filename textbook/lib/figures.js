@@ -202,7 +202,7 @@ function line(b) {
   // x 눈금
   if (cats) cats.forEach((c, i) => (s += text(sx(i), T + ph + 17, c, { size: 11, anchor: 'middle', cls: 'tick' })));
   for (const t of xx.ticks || []) {
-    const v = typeof t === 'object' ? t.v : t, lab = typeof t === 'object' ? t.label : fmt(t);
+    const v = typeof t === 'object' ? t.v : t, lab = typeof t === 'object' ? t.label : (Number.isInteger(t) && t >= 1000 && t <= 2200 ? String(t) : fmt(t)); // 연도 눈금은 쉼표 없이
     s += text(sx(v), T + ph + 17, lab, { size: 11, anchor: 'middle', cls: 'tick' });
   }
   if (schem && !cats) s += text(L - 6, T + ph + 14, '0', { size: 11, anchor: 'end', cls: 'tick' });
@@ -312,6 +312,7 @@ function pie(b) {
 
 // ── 기후 그래프 (월평균 기온 꺾은선 + 월 강수량 막대) ──
 function climate(b) {
+  const tx = (x, y, t, o = {}) => text(x, y, t, { ...o, size: (o.size || 12) * (b.fs || 1) }); // fs: 글씨 배율(문제집 빌드에서 키움)
   const W = b.w || (b.compact ? 300 : 600), H = b.h || 260;
   const L = 40, R = 44, T = 30, B = 28, pw = W - L - R, ph = H - T - B;
   const tmin = b.tMin ?? -20, tmax = b.tMax ?? 30, pmax = b.pMax ?? 500;
@@ -319,20 +320,20 @@ function climate(b) {
   const band = pw / 12;
   let s = '';
   for (const v of ticks(tmin, tmax, b.tStep ?? 10)) {
-    s += `<line x1="${L}" y1="${r1(st(v))}" x2="${L + pw}" y2="${r1(st(v))}" class="grid"/>` + text(L - 5, st(v) + 4, fmt(v), { size: 10.5, anchor: 'end', cls: 'tick' });
+    s += `<line x1="${L}" y1="${r1(st(v))}" x2="${L + pw}" y2="${r1(st(v))}" class="grid"/>` + tx(L - 5, st(v) + 4, fmt(v), { size: 10.5, anchor: 'end', cls: 'tick' });
   }
   const nT = ticks(tmin, tmax, b.tStep ?? 10).length - 1;
-  for (let i = 0; i <= nT; i++) s += text(L + pw + 5, T + ph - (ph * i) / nT + 4, fmt(Math.round((pmax * i) / nT)), { size: 10.5, cls: 'tick' });
+  for (let i = 0; i <= nT; i++) s += tx(L + pw + 5, T + ph - (ph * i) / nT + 4, fmt(Math.round((pmax * i) / nT)), { size: 10.5, cls: 'tick' });
   if (tmin < 0 && tmax > 0) s += `<line x1="${L}" y1="${r1(st(0))}" x2="${L + pw}" y2="${r1(st(0))}" class="zero"/>`;
   b.precip.forEach((v, i) => (s += `<rect x="${r1(L + band * i + band * 0.18)}" y="${r1(sp(Math.min(v, pmax)))}" width="${r1(band * 0.64)}" height="${r1(T + ph - sp(Math.min(v, pmax)))}" class="fl s2 prec"/>`));
   const pts = b.temp.map((v, i) => [L + band * i + band / 2, st(v)]);
   s += `<path d="M${pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L')}" class="ln s3"/>`;
   pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="2.8" class="dot s3"/>`));
   s += `<line x1="${L}" y1="${T + ph}" x2="${L + pw}" y2="${T + ph}" class="axis"/>`;
-  for (const m of [1, 4, 7, 10, 12]) s += text(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
-  s += text(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + text(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
-  s += text(L + pw + 5, T + ph + 16, '(월)', { size: 10, cls: 'axl' }); // 12월 눈금 오른쪽
-  if (b.label) s += text(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
+  for (const m of [1, 4, 7, 10, 12]) s += tx(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
+  s += tx(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + tx(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
+  s += tx(L + pw + 5, T + ph + 16, '(월)', { size: 10, cls: 'axl' }); // 12월 눈금 오른쪽
+  if (b.label) s += tx(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
   return { W, H, s };
 }
 
@@ -340,6 +341,7 @@ function climate(b) {
 //   월 기온 편차 = 월평균 기온 - 연평균 기온 (꺾은선, 왼쪽 축)
 //   월 강수 편차 = 월 강수량 - 연 강수량/12 (막대, 오른쪽 축, 0 아래로도 그림)
 function climdev(b) {
+  const tx = (x, y, t, o = {}) => text(x, y, t, { ...o, size: (o.size || 12) * (b.fs || 1) }); // fs: 글씨 배율(문제집 빌드에서 키움)
   const W = b.w || 300, H = b.h || 210;
   const L = 40, R = 46, T = 30, B = 28, pw = W - L - R, ph = H - T - B;
   const tAvg = b.temp.reduce((a, v) => a + v, 0) / 12, pAvg = b.precip.reduce((a, v) => a + v, 0) / 12;
@@ -351,8 +353,8 @@ function climdev(b) {
   for (let i = -2; i <= 2; i++) {
     const y = T + ph / 2 - (i / 2) * (ph / 2);
     s += `<line x1="${L}" y1="${r1(y)}" x2="${L + pw}" y2="${r1(y)}" class="${i === 0 ? 'zero' : 'grid'}"/>`;
-    s += text(L - 5, y + 4, fmt((tr * i) / 2), { size: 10.5, anchor: 'end', cls: 'tick' });
-    s += text(L + pw + 5, y + 4, fmt((pr * i) / 2), { size: 10.5, cls: 'tick' });
+    s += tx(L - 5, y + 4, fmt((tr * i) / 2), { size: 10.5, anchor: 'end', cls: 'tick' });
+    s += tx(L + pw + 5, y + 4, fmt((pr * i) / 2), { size: 10.5, cls: 'tick' });
   }
   dp.forEach((v, i) => {
     const c = Math.max(-pr, Math.min(pr, v)), y0 = st(0), y1 = sp(c);
@@ -361,10 +363,10 @@ function climdev(b) {
   const pts = dt.map((v, i) => [L + band * i + band / 2, st(Math.max(-tr, Math.min(tr, v)))]);
   s += `<path d="M${pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join('L')}" class="ln s3"/>`;
   pts.forEach((p) => (s += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="2.8" class="dot s3"/>`));
-  for (const m of [1, 4, 7, 10, 12]) s += text(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
-  s += text(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + text(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
-  s += text(L + pw + 5, T + ph + 16, '(월)', { size: 10, cls: 'axl' }); // 12월 눈금 오른쪽
-  if (b.label) s += text(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
+  for (const m of [1, 4, 7, 10, 12]) s += tx(L + band * (m - 1) + band / 2, T + ph + 16, `${m}`, { size: 10.5, anchor: 'middle', cls: 'tick' });
+  s += tx(L - 5, T - 10, '(℃)', { size: 10.5, anchor: 'end', cls: 'axl' }) + tx(L + pw + 5, T - 10, '(mm)', { size: 10.5, cls: 'axl' });
+  s += tx(L + pw + 5, T + ph + 16, '(월)', { size: 10, cls: 'axl' }); // 12월 눈금 오른쪽
+  if (b.label) s += tx(L + 4, T - 10, b.label, { size: 12.5, cls: 'cat', weight: 700 });
   return { W, H, s };
 }
 
@@ -426,23 +428,24 @@ function radar(b) {
 // ── 인구 피라미드 ──
 // { kind:'pyramid', ages:['0~9',...(아래→위)], male:[%...], female:[%...], max: 12 }
 function pyramid(b) {
+  const tx = (x, y, t, o = {}) => text(x, y, t, { ...o, size: (o.size || 12) * (b.fs || 1) }); // fs: 글씨 배율(문제집 빌드에서 키움)
   const W = b.w || 300, H = b.h || 260;
   const n = b.ages.length, max = b.max || Math.max(...b.male, ...b.female);
   const T = 26, B = 24, mid = W / 2, lab = 34, half = (W - lab) / 2 - 10;
   const rowH = (H - T - B) / n;
   let s = '';
-  s += text(mid - lab / 2 - half / 2, T - 10, '남', { size: 11.5, anchor: 'middle', cls: 'cat', weight: 700 });
-  s += text(mid + lab / 2 + half / 2, T - 10, '여', { size: 11.5, anchor: 'middle', cls: 'cat', weight: 700 });
+  s += tx(mid - lab / 2 - half / 2, T - 10, '남', { size: 11.5, anchor: 'middle', cls: 'cat', weight: 700 });
+  s += tx(mid + lab / 2 + half / 2, T - 10, '여', { size: 11.5, anchor: 'middle', cls: 'cat', weight: 700 });
   b.ages.forEach((a, i) => {
     const y = H - B - (i + 1) * rowH;
     const wm = (b.male[i] / max) * half, wf = (b.female[i] / max) * half;
     s += `<rect x="${r1(mid - lab / 2 - wm)}" y="${r1(y + rowH * 0.1)}" width="${r1(wm)}" height="${r1(rowH * 0.8)}" class="fl s1"/>`;
     s += `<rect x="${r1(mid + lab / 2)}" y="${r1(y + rowH * 0.1)}" width="${r1(wf)}" height="${r1(rowH * 0.8)}" class="fl s3"/>`;
-    if (b.ageLabels !== false && (i % (b.labelEvery || 1) === 0)) s += text(mid, y + rowH * 0.5 + 4, a, { size: 9.5, anchor: 'middle', cls: 'tick' });
+    if (b.ageLabels !== false && (i % (b.labelEvery || 1) === 0)) s += tx(mid, y + rowH * 0.5 + 4, a, { size: 9.5, anchor: 'middle', cls: 'tick' });
   });
   s += `<line x1="${r1(mid - lab / 2)}" y1="${H - B}" x2="${r1(mid - lab / 2 - half)}" y2="${H - B}" class="axis"/>`;
   s += `<line x1="${r1(mid + lab / 2)}" y1="${H - B}" x2="${r1(mid + lab / 2 + half)}" y2="${H - B}" class="axis"/>`;
-  if (b.unit) s += text(W - 4, H - 6, b.unit, { size: 10, anchor: 'end', cls: 'tick' });
+  if (b.unit) s += tx(W - 4, H - 6, b.unit, { size: 10, anchor: 'end', cls: 'tick' });
   return { W, H, s };
 }
 
