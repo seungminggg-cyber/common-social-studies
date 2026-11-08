@@ -1,0 +1,84 @@
+/* 시안 4 · 섞은형(1 + 2) — 표지: 왼쪽 대단원 색 기둥 + 오른쪽 계획표
+   본문은 시안 2처럼 선과 여백, DAY 머리와 구분 띠는 시안 1처럼 검정으로 강하게 */
+.wk-s4 { --disp: 'Pretendard Variable', sans-serif; }
+.wk-s4 .page-cover { padding: 0; }
+.cv { flex: 1; display: flex; flex-direction: column; font-family: var(--disp); }
+.cv-name i { display: inline-block; width: 46mm; height: 5mm; border-bottom: .8pt solid currentColor; vertical-align: bottom; margin-left: 2mm; }
+.cv4 { flex-direction: row; }
+.cv4 .cv-side { width: 64mm; flex: none; background: var(--c1-dark); color: #fff; padding: 20mm 9mm 16mm 13mm; display: flex; flex-direction: column; }
+.cv4 .cv-top { font-size: 8.6pt; font-weight: 600; letter-spacing: .1em; line-height: 1.7; border-top: 2.4pt solid #fff; padding-top: 3mm; }
+.cv4 .cv-week { margin-top: auto; line-height: .8; }
+.cv4 .cv-week span { display: block; font-size: 15pt; font-weight: 800; letter-spacing: .34em; opacity: .75; margin-bottom: 3mm; }
+.cv4 .cv-week b { display: block; white-space: nowrap; font-size: 92pt; font-weight: 900; letter-spacing: -.06em; margin-left: -1.5mm; }
+.cv4 .cv-range { margin-top: 8mm; font-size: 9.6pt; line-height: 1.55; border-top: .6pt solid rgba(255,255,255,.5); padding-top: 3mm; }
+.cv4 .cv-main { flex: 1; padding: 22mm 15mm 14mm 12mm; display: flex; flex-direction: column; }
+.cv4 .cv-school b { display: block; font-size: 38pt; font-weight: 900; letter-spacing: -.03em; line-height: 1.05; }
+.cv4 .cv-school span { display: block; font-size: 12.5pt; color: var(--ink-2); margin-top: 2mm; }
+.cv4 .cv-name { margin: 9mm 0 2mm; font-size: 10pt; }
+.cv-h { display: flex; align-items: center; gap: 2.4mm; font: 800 12pt var(--disp); margin: 9mm 0 3mm; }
+.cv-h::before { content: ''; width: 3mm; height: 3mm; background: var(--c1); }
+.cv-h i { font-style: normal; font-weight: 400; font-size: 9pt; color: var(--gray); }
+.wk-s4 .wk-plan { font-size: 8.8pt; }
+.wk-s4 .wk-plan th { background: var(--ink); color: #fff; border: 0; font-weight: 700; padding: 1.4mm 1mm; }
+.wk-s4 .wk-plan td { border: 0; border-bottom: .4pt solid var(--rule); height: 12mm; }
+.wk-s4 .wk-plan td.d { color: var(--c1); font: 900 12pt var(--disp); width: 11mm; }
+.wk-s4 .wk-plan td:nth-child(n+4) { width: 13mm; }
+.wk-s4 .wk-plan td.n { width: 19mm; font-size: 7.6pt; }
+.wk-s4 .wk-plan td.u { font-size: 8.6pt; line-height: 1.35; }
+.wk-s4 .wk-how { font-size: 9.4pt; line-height: 1.85; }
+.wk-s4 .wk-msg { margin-top: auto; background: #f1efec; border-left: 0; border-top: 2.4pt solid var(--ink); padding: 3mm 4mm; font-size: 9pt; }
+
+/* DAY 머리: 검정 번호 칸 + 굵은 밑줄 */
+.wk-s4 .wk-day { grid-template-columns: auto 1fr auto; align-items: stretch; column-gap: 4.5mm; border-bottom: 2.6pt solid var(--ink); padding-bottom: 0; margin-bottom: 4mm; }
+.wk-s4 .wk-day-no { background: var(--ink); clip-path: none; padding: 1.8mm 3.6mm 2.2mm; display: flex; flex-direction: column; justify-content: flex-end; }
+.wk-s4 .wk-day-no span { font: 800 7pt var(--disp); letter-spacing: .26em; color: var(--c1-line); }
+.wk-s4 .wk-day-no b { display: none; }
+.wk-s4 .wk-day-no em { display: block; font: normal 900 28pt/.9 var(--disp); letter-spacing: -.04em; }
+.wk-s4 .wk-day-t { align-self: end; padding-bottom: 2.4mm; }
+.wk-s4 .wk-day-t span { color: var(--c1); font-weight: 700; }
+.wk-s4 .wk-day-t h2 { font: 800 17pt/1.25 var(--disp); letter-spacing: -.02em; }
+.wk-s4 .wk-day-log { align-self: end; padding-bottom: 2.4mm; }
+
+/* 개념 정리: 선과 여백 + 검정 이름표 */
+.wk-s4 .wk-sec-t { display: inline-block; background: var(--ink); color: #fff; font: 800 8.6pt var(--disp); padding: .5mm 2.6mm; letter-spacing: .04em; }
+.wk-s4 .wk-sec-t i { color: rgba(255,255,255,.7); }
+.wk-s4 .wk-sum { background: none; border: 0; border-bottom: .6pt solid var(--ink); padding: 0 0 2mm; }
+.wk-s4 .wk-core { font-size: 8.8pt; padding-left: 2.6mm; border-left: 2pt solid var(--c1); }
+.wk-s4 .wk-c { border-top: .4pt solid var(--rule); padding-top: 1mm; }
+.wk-s4 .wk-c-h b { top: 1mm; font: 900 9.6pt var(--disp); color: var(--c1); }
+.wk-s4 .wk-c h4 { font: 700 8.6pt var(--disp); }
+.wk-s4 .wk-traps { border-top: 0; background: #f1efec; padding: 2mm 2.6mm; margin-top: 2.4mm; }
+.wk-s4 .wk-traps > span { font-family: var(--disp); font-weight: 800; }
+
+/* O/X: 동그라미 칸 */
+.wk-s4 .wk-ox li::before { color: var(--ink); font-family: var(--disp); font-weight: 900; }
+.wk-s4 .wk-ox li .b { display: flex; justify-content: flex-end; gap: 1.2mm; }
+.wk-s4 .wk-ox li .b i { display: inline-grid; place-items: center; width: 5.2mm; height: 5.2mm; border: .6pt solid var(--ink-2); border-radius: 50%; font-size: 6.8pt; color: var(--gray); }
+.wk-s4 .wk-ox li .b i + i::before { content: none; }
+
+/* 객관식 띠 · 문제 번호(검정 숫자 + 색 밑줄) */
+.wk-s4 .wk-sep { border-bottom: 2pt solid var(--ink); }
+.wk-s4 .wk-sep b { font: 800 10.5pt var(--disp); }
+.wk-s4 .q-no { background: none; color: var(--ink); clip-path: none; font: 900 14pt/1 var(--disp); min-width: 0; height: auto; padding-bottom: .6mm; border-bottom: 2pt solid var(--c1); letter-spacing: -.03em; }
+
+/* ── 보완(2026-11-08, 강사가 모아 준 실제 주간지 참고) ── */
+/* 표지: 색 기둥에 대단원 번호 큰 윤곽 글자, 4주 진행 막대, 시리즈 이름 WEEKLY */
+.cv4 .cv-side { position: relative; overflow: hidden; }
+.cv4 .cv-side > *:not(.cv-mark) { position: relative; }
+.cv-mark { position: absolute; font: 600 150pt/1 'Noto Serif KR', serif; color: rgba(255,255,255,.10); pointer-events: none; }
+.cv4 .cv-mark { left: 6mm; top: 78mm; }
+.cv-top b { font-weight: 900; letter-spacing: .16em; }
+.cv-prog { display: flex; align-items: center; gap: 1mm; margin-top: 6mm; font-size: 8pt; }
+.cv-prog span { margin-right: 1.6mm; font-weight: 800; letter-spacing: .08em; }
+.cv-prog i { width: 5.6mm; height: 1.8mm; background: currentColor; opacity: .3; }
+.cv-prog i.on { opacity: 1; }
+/* 쪽 머리: 굵은 검정 밑줄 + 시리즈 이름 */
+.wk-s4 .page-head, .wk-s4 .page.even .page-head { border-bottom: 1.2pt solid var(--ink); color: var(--ink-2); }
+.wk-s4 .ph-left b { font-family: var(--disp); font-weight: 900; letter-spacing: .06em; }
+/* 문제 두 단 사이 세로선(시험지처럼) */
+.wk-s4 .region-day .region-slots { position: relative; }
+.wk-s4 .region-day .region-slots::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: .6pt solid #aaa49d; }
+/* 목표 시간 */
+.wk-goal { font-style: normal; margin-left: 1.4mm; padding: 0 1.2mm; background: var(--ink); color: #fff; font-size: 6.8pt; font-weight: 700; }
+.cv4 .cv-prog { flex-wrap: wrap; }
+.cv4 .cv-prog span { flex-basis: 100%; margin: 0 0 1.4mm; }

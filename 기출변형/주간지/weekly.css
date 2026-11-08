@@ -37,10 +37,13 @@
 .wk-sum { border: .6pt solid var(--c1-line); background: var(--c1-pale); padding: 2.4mm 3mm 2mm; margin-bottom: 3mm; }
 .wk-core { font-size: 8.6pt; margin: 0 0 2mm; line-height: 1.5; }
 .wk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4mm 5mm; }
-.wk-c { display: grid; grid-template-columns: 6mm 1fr; font-size: 7.9pt; line-height: 1.45; }
-.wk-c > b { color: var(--c1); font-family: var(--serif-h); font-size: 9pt; }
+.wk-c { position: relative; padding-left: 6mm; font-size: 7.9pt; line-height: 1.45; }
+.wk-c-h b { position: absolute; left: 0; top: 0; color: var(--c1); font-family: var(--serif-h); font-size: 9pt; }
 .wk-c h4 { margin: 0; font-size: 8.3pt; }
 .wk-c p { margin: 0; color: var(--ink-2); }
+.wk-day-no em { display: none; }
+.wk-ox li .b i { font-style: normal; }
+.wk-ox li .b i + i::before { content: ' · '; }
 .wk-traps { margin-top: 2mm; border-top: .4pt dashed var(--c1-line); padding-top: 1.6mm; display: grid; grid-template-columns: 20mm 1fr; font-size: 7.8pt; }
 .wk-traps > span { font-weight: 700; color: #a3361f; }
 .wk-traps ul { margin: 0; padding: 0; list-style: none; }

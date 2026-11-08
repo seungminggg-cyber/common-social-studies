@@ -1,0 +1,54 @@
+/* 시안 2 · 굵은 숫자·여백형 — 표지: 실용형(흰 바탕, 큰 회차 번호 + 계획표)
+   색칸 없이 굵은 선·큰 숫자·여백으로 나눔. 색은 숫자·짧은 밑줄·문제 번호에만 */
+.wk-s2 { --disp: 'Pretendard Variable', sans-serif; }
+.cv { flex: 1; display: flex; flex-direction: column; font-family: var(--disp); }
+.cv-name i { display: inline-block; width: 46mm; height: 5mm; border-bottom: .8pt solid currentColor; vertical-align: bottom; margin-left: 2mm; }
+.cv2 { padding: 4mm 2mm 0; }
+.cv2 .cv-top { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9pt; color: var(--gray); letter-spacing: .06em; padding-bottom: 2.4mm; border-bottom: .6pt solid var(--ink); }
+.cv2 .cv-top .cv-name { color: var(--ink); letter-spacing: 0; }
+.cv2 .cv-head { display: grid; grid-template-columns: auto 1fr; column-gap: 9mm; align-items: end; margin: 16mm 0 4mm; padding-bottom: 7mm; border-bottom: 3.2pt solid var(--ink); position: relative; }
+.cv2 .cv-head::after { content: ''; position: absolute; left: 0; bottom: -3.2pt; width: 44mm; height: 3.2pt; background: var(--c1); }
+.cv2 .cv-week span { display: block; font-size: 15pt; font-weight: 800; letter-spacing: .34em; color: var(--c1); margin-bottom: 2mm; }
+.cv2 .cv-week b { display: block; font-size: 136pt; font-weight: 900; line-height: .78; letter-spacing: -.06em; color: var(--c1); margin-left: -2mm; }
+.cv2 .cv-id b { display: block; font-size: 32pt; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.cv2 .cv-id span { display: block; font-size: 12.5pt; color: var(--ink-2); margin-top: 1.5mm; }
+.cv2 .cv-id em { display: block; font-style: normal; font-size: 10.5pt; color: var(--gray); margin-top: 3mm; }
+.cv-h { display: flex; align-items: baseline; gap: 2.6mm; font: 800 12.5pt var(--disp); margin: 10mm 0 3mm; }
+.cv-h b { color: var(--c1); font-weight: 900; }
+.cv-h i { font-style: normal; font-weight: 400; font-size: 9pt; color: var(--gray); }
+.wk-s2 .wk-plan { font-size: 9.2pt; }
+.wk-s2 .wk-plan th { background: none; color: var(--ink); border: 0; border-top: 1.6pt solid var(--ink); border-bottom: .8pt solid var(--ink); font-weight: 800; }
+.wk-s2 .wk-plan td { border: 0; border-bottom: .4pt solid var(--rule); height: 12mm; }
+.wk-s2 .wk-plan td.d { color: var(--c1); font: 900 13pt var(--disp); }
+.wk-s2 .wk-how { font-size: 9.6pt; line-height: 1.85; }
+.wk-s2 .wk-msg { background: none; border-left: 2.4pt solid var(--c1); padding: 1mm 0 1mm 4mm; margin-top: 9mm; }
+
+/* DAY 머리: 큰 두 자리 숫자 + 굵은 검정 밑줄 */
+.wk-s2 .wk-day { grid-template-columns: auto 1fr auto; column-gap: 5mm; align-items: end; border-bottom: 2.6pt solid var(--ink); padding-bottom: 2.6mm; margin-bottom: 4mm; position: relative; }
+.wk-s2 .wk-day::after { content: ''; position: absolute; left: 0; bottom: -2.6pt; width: 30mm; height: 2.6pt; background: var(--c1); }
+.wk-s2 .wk-day-no { background: none; color: var(--c1); clip-path: none; padding: 0; text-align: left; }
+.wk-s2 .wk-day-no span { font: 800 7.8pt var(--disp); letter-spacing: .3em; }
+.wk-s2 .wk-day-no b { display: none; }
+.wk-s2 .wk-day-no em { display: block; font: normal 900 42pt/.8 var(--disp); letter-spacing: -.05em; }
+.wk-s2 .wk-day-t h2 { font: 800 17pt/1.25 var(--disp); letter-spacing: -.02em; }
+
+/* 개념 정리: 색칸 없이 선으로 */
+.wk-s2 .wk-sec-t { font: 800 10pt var(--disp); color: var(--ink); }
+.wk-s2 .wk-sum { background: none; border: 0; padding: 0 0 1mm; }
+.wk-s2 .wk-core { font-size: 8.8pt; padding-left: 2.6mm; border-left: 2pt solid var(--c1); }
+.wk-s2 .wk-c { border-top: .4pt solid var(--rule); padding-top: 1mm; }
+.wk-s2 .wk-c-h b { top: 1mm; font: 900 9.6pt var(--disp); color: var(--c1); }
+.wk-s2 .wk-c h4 { font: 700 8.6pt var(--disp); }
+.wk-s2 .wk-traps { border-top: 1.2pt solid var(--ink); }
+.wk-s2 .wk-traps > span { font-family: var(--disp); font-weight: 800; }
+
+/* O/X: 동그라미 칸 */
+.wk-s2 .wk-ox li::before { font-family: var(--disp); font-weight: 900; }
+.wk-s2 .wk-ox li .b { display: flex; justify-content: flex-end; gap: 1.2mm; }
+.wk-s2 .wk-ox li .b i { display: inline-grid; place-items: center; width: 5.2mm; height: 5.2mm; border: .6pt solid var(--gray); border-radius: 50%; font-size: 6.8pt; color: var(--gray); }
+.wk-s2 .wk-ox li .b i + i::before { content: none; }
+
+/* 객관식 머리 · 문제 번호(색 숫자) */
+.wk-s2 .wk-sep { border-bottom: 1.6pt solid var(--ink); }
+.wk-s2 .wk-sep b { font: 800 11pt var(--disp); }
+.wk-s2 .q-no { background: none; color: var(--c1); clip-path: none; font: 900 15pt/1 var(--disp); min-width: 0; height: auto; letter-spacing: -.03em; }
