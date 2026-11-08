@@ -85,6 +85,8 @@ function bigMapText(root) {
       if (x.items.length >= 3 && !x.cols) x.cols = 2;
       for (const i of x.items) if (i.compact && !i.w) i.w = 240;
     }
+    // 예/아니요 순서도 글씨 1.2배(검토 의견 2026-11-08)
+    if (x.t === 'diagram' && x.kind === 'yesno' && !x.fs) x.fs = 1.2;
     if (x.t === 'map') {
       const s = Math.max(11, Math.round((x.w || 600) * 0.036 * 10) / 10);
       if (x.legend && !x.legendSize) x.legendSize = s;

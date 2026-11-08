@@ -74,7 +74,9 @@ export function diagram(b, inl) {
       const W = PADX * 2 + cols * CW + (b.legend === false ? 0 : 150), H = PADY * 2 + rows * RH - 18;
       const cx = (c) => PADX + c * CW + CW / 2, cy = (r) => PADY + r * RH + DH / 2;
       const wrap = (t, n) => { const out = []; let line = ''; for (const w of String(t).split(' ')) { if ((line + ' ' + w).trim().length > n && line) { out.push(line); line = w; } else line = (line + ' ' + w).trim(); } if (line) out.push(line); return out; };
-      const txt = (x, y, t, n, size = 11, w = 400) => { const ls = wrap(t, n); return ls.map((l, i) => `<text x="${r1(x)}" y="${r1(y + (i - (ls.length - 1) / 2) * (size + 2) + size * 0.35)}" text-anchor="middle" style="font-size:${size}px;font-weight:${w}" class="yn-t">${esc(l)}</text>`).join(''); };
+      // fs: 글씨 배율(문제집 빌드에서 1.2 — 순서도 글씨가 작다는 검토 의견 2026-11-08). 배율만큼 한 줄 글자 수를 줄여 상자 밖으로 안 나가게
+      const fs = b.fs || 1;
+      const txt = (x, y, t, n0, size0 = 11, w = 400) => { const size = size0 * fs, n = Math.max(4, Math.floor(n0 / fs)); const ls = wrap(t, n); return ls.map((l, i) => `<text x="${r1(x)}" y="${r1(y + (i - (ls.length - 1) / 2) * (size + 2) + size * 0.35)}" text-anchor="middle" style="font-size:${size}px;font-weight:${w}" class="yn-t">${esc(l)}</text>`).join(''); };
       let g = '';
       // 출발 조건
       const sx0 = cx(0), sy0 = PADY + 4;
@@ -112,7 +114,7 @@ export function diagram(b, inl) {
         });
       }
       const defs = `<defs><marker id="ynah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#495057"/></marker></defs>`;
-      return `<div class="dg dg-yesno"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W * 1.1}px;display:block;margin:0 auto">${defs}<style>.yn-start,.yn-q,.yn-end,.yn-lg{fill:#fff;stroke:#495057;stroke-width:1.1}.yn-lg{stroke:#adb5bd}.yn-a{stroke:#495057;stroke-width:1.2;fill:none}.yn-no{stroke-dasharray:4 3}.yn-l{font-size:10.5px;fill:#343a40}.yn-t{fill:#212529}</style>${g}</svg></div>`;
+      return `<div class="dg dg-yesno"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W * 1.1}px;display:block;margin:0 auto">${defs}<style>.yn-start,.yn-q,.yn-end,.yn-lg{fill:#fff;stroke:#495057;stroke-width:1.1}.yn-lg{stroke:#adb5bd}.yn-a{stroke:#495057;stroke-width:1.2;fill:none}.yn-no{stroke-dasharray:4 3}.yn-l{font-size:${r1(10.5 * fs)}px;fill:#343a40}.yn-t{fill:#212529}</style>${g}</svg></div>`;
     }
     case 'citymodel': {
       // 강사 2026-11-07: 도심·부도심·주거 지역 + 공업 지역을 한 그림에. 서울 지도(용도 색)와 같은 색을 쓴다.
