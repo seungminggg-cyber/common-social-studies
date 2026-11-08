@@ -21,7 +21,7 @@ export default [
     id: 't1-14-1-002', level: '중상', concept: [2], type: '그래프 해석', src: '2026.3 고2 20번 유형(지역 간 도시화 차이)',
     stem: '그래프는 (가), (나) 지역의 산업별 취업자 비율 변화를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'chart', kind: 'stack100', w: 420, rowH: 28,
+      t: 'chart', kind: 'stack100', w: 390, rowH: 28,
       categories: ['(가) 2005년', '(가) 2025년', '(나) 2005년', '(나) 2025년'],
       series: [
         { name: '1차 산업', values: [45, 12, 55, 62] },
@@ -46,7 +46,7 @@ export default [
     stem: '지도의 A~C 지역 특징을 표의 (가)~(다)로 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (단, (가)~(다)는 각각 A~C 중 하나이다.)',
     data: [
       {
-        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 420, h: 330, style: 'thematic', provinces: true,
+        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 350, h: 275, style: 'thematic', provinces: true,
         markers: [
           { lon: 126.83, lat: 37.2, label: 'A', pos: 'left' },
           { lon: 127.29, lat: 36.48, label: 'B', pos: 'right' },

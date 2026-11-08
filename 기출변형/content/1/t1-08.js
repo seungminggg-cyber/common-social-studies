@@ -118,7 +118,7 @@ export default [
     id: 't1-08-1-007', level: '중', concept: [2], type: '그래프 해석', src: '2025.10 고1 12번 쌀·계절풍 선지 유형',
     stem: '그래프는 주식 작물 (가), (나)의 대륙별 생산 비중을 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (단, (가), (나)는 각각 쌀, 밀 중 하나이다.)',
     data: [{
-      t: 'chart', kind: 'stack100', h: 150, w: 420,
+      t: 'chart', kind: 'stack100', h: 150, w: 390,
       categories: ['(가)', '(나)'],
       series: [
         { name: '아시아', values: [89, 44] },
@@ -213,7 +213,7 @@ export default [
     id: 't1-08-1-012', level: '중상', concept: [4], type: '지도 해석', src: '2025.9 고1 5번 종교 발상지·전파 유형',
     stem: '지도는 세계 주요 종교 (가)~(다)의 발상지와 전파 경로를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'map', view: 'world', h: 230,
+      t: 'map', view: 'world', w: 520, h: 199,
       markers: [
         { lon: 35.2, lat: 31.8, ring: 6 },
         { lon: 39.8, lat: 21.4, ring: 6 },
@@ -244,7 +244,7 @@ export default [
     id: 't1-08-1-013', level: '중상', concept: [4], type: '지도 해석', src: '2026.6 고2 5번 세계 주요 종교 분포 유형',
     stem: '지도는 나라별로 신자가 가장 많은 종교 (가)~(라)의 분포 중 일부를 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (단, (가)~(라)는 각각 이슬람교, 힌두교, 불교, 정교 중 하나이다.)',
     data: [{
-      t: 'map', view: 'world', h: 240,
+      t: 'map', view: 'world', w: 520, h: 208,
       highlight: HL({
         k3: [...DRY.filter((c) => c !== 'Israel'), 'Pakistan', 'Bangladesh', 'Malaysia', 'Indonesia', 'Senegal', 'Somalia'],
         k2: ['India', 'Nepal'],
@@ -268,7 +268,7 @@ export default [
     id: 't1-08-1-014', level: '상', concept: [4, 5], type: '그래프 해석', src: '2028 수능 예시 3번 문화권 종교 신자 수 비교 선지 유형',
     stem: '그래프는 세 문화권 A~C의 종교별 신자 비율을 나타낸 것이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은? (단, A~C는 각각 건조, 남부 아시아, 라틴 아메리카 문화권 중 하나이다.)',
     data: [{
-      t: 'chart', kind: 'stack100', h: 170, w: 420,
+      t: 'chart', kind: 'stack100', h: 170, w: 390,
       categories: ['A', 'B', 'C'],
       series: [
         { name: '크리스트교', values: [90, 4, 2] },
@@ -314,7 +314,7 @@ export default [
     id: 't1-08-1-016', level: '중', concept: [5], type: '지도 해석', src: '2025.10 고1 12번·교과 문화권 지도 유형',
     stem: '지도의 A~D 지역에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'map', view: 'world', h: 230,
+      t: 'map', view: 'world', w: 520, h: 199,
       markers: [
         { lon: 3, lat: 28, ring: 14, label: 'A', pos: 'right', size: 14 },
         { lon: 79, lat: 22, ring: 13, label: 'B', pos: 'right', size: 14 },
@@ -361,7 +361,7 @@ export default [
     data: [
       { t: 'p', text: '<게임 방법> 지도의 A~E 중 하나를 골라 그곳이 속한 문화권을 설명한다. 설명이 옳으면 1점, 옳지 않으면 0점이다.' },
       {
-        t: 'map', view: 'world', h: 230,
+        t: 'map', view: 'world', w: 520, h: 199,
         markers: [
           { lon: 10, lat: 50, ring: 9, label: 'A', pos: 'top', size: 14 },
           { lon: 22, lat: 0, ring: 9, label: 'B', pos: 'right', size: 14 },

@@ -82,7 +82,7 @@ export default [
         ['(다)', '1980년대 바닷가를 메운 땅에 대규모 제철소가 세워지면서 공업 도시로 성장하였다.'],
       ] },
       {
-        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 420, h: 330, style: 'thematic', provinces: true,
+        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 350, h: 275, style: 'thematic', provinces: true,
         markers: [
           { lon: 126.77, lat: 37.66, label: 'A', pos: 'left' },
           { lon: 127.92, lat: 37.34, label: 'B', pos: 'right' },
@@ -187,7 +187,7 @@ export default [
     id: 't1-14-2-009', level: '중상', concept: [5, 1], type: '지도 해석', src: '2026.9 고1 21번 ㄹ 유형(통계 지도로 정리)',
     stem: '다음은 학생이 지역 조사 결과를 정리한 지도이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'map', view: [126.85, 36.0, 127.8, 36.68], w: 420, h: 290, style: 'thematic', provinces: true,
+      t: 'map', view: [126.85, 36.0, 127.8, 36.68], w: 350, h: 242, style: 'thematic', provinces: true,
       markers: [
         { lon: 127.38, lat: 36.35, label: '대전', pos: 'right' },
         { lon: 127.29, lat: 36.51, label: '세종', pos: 'top' },

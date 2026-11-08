@@ -185,7 +185,7 @@ export default [
     id: 't1-08-2-010', level: '중상', concept: [3, 5], type: '그래프 해석', src: '2025.10 고1 12번 문화권(플랜테이션) 유형',
     stem: '그래프는 열대 기후 지역에 있는 갑국의 수출액 구성을 나타낸 것이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [{
-      t: 'chart', kind: 'pie', h: 210,
+      t: 'chart', kind: 'pie', w: 480, h: 190,
       slices: [
         { label: '카카오', value: 58 },
         { label: '목재', value: 12 },
@@ -231,7 +231,7 @@ export default [
     id: 't1-08-2-012', level: '상', concept: [4], type: '자료 해석', src: '2026.6 고2 5번 종교 비교 유형',
     stem: '그림은 종교 (가), (나)의 특징을 비교한 것이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은? (단, (가), (나)는 각각 이슬람교, 힌두교 중 하나이다.)',
     data: [{
-      t: 'venn', h: 220, letters: false,
+      t: 'venn', w: 500, h: 220, letters: false,
       left: { label: '(가)', items: ['소고기 금기'] },
       both: { items: ['㉠'] },
       right: { label: '(나)', items: ['돼지고기 금기', '라마단 금식'] },
@@ -329,7 +329,7 @@ export default [
     id: 't1-08-2-017', level: '상', concept: [5], type: '그래프 해석', src: '2028 수능 예시 3번 라틴 아메리카 유형',
     stem: '그래프는 라틴 아메리카에 있는 갑~병국의 인종·민족 구성을 나타낸 것이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [{
-      t: 'chart', kind: 'stack100', h: 150, w: 420,
+      t: 'chart', kind: 'stack100', h: 150, w: 390,
       categories: ['갑국', '을국', '병국'],
       series: [
         { name: '유럽계', values: [85, 15, 5] },
@@ -374,7 +374,7 @@ export default [
     id: 't1-08-2-019', level: '중상', concept: [5, 4], type: '그래프 해석', src: '2026.6 고1 22번 동남아시아 문화권 유형',
     stem: '그래프는 동남아시아에 있는 갑국, 을국의 종교별 신자 비율을 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'chart', kind: 'stack100', h: 120, w: 420,
+      t: 'chart', kind: 'stack100', h: 120, w: 390,
       categories: ['갑국', '을국'],
       series: [
         { name: '불교', values: [88, 19] },
@@ -398,7 +398,7 @@ export default [
     id: 't1-08-2-020', level: '상', concept: [5], type: '지도 해석', src: '2028 수능 예시 3번 세계 문화권 지도 유형',
     stem: '지도는 세계의 문화권 중 일부(A~E)를 나타낸 것이다. 이에 대한 설명으로 옳지 않은 것은?',
     data: [{
-      t: 'map', view: 'world', h: 230,
+      t: 'map', view: 'world', w: 520, h: 199,
       highlight: [
         ...REGION(['USA', 'CAN'], 'hl k6', 'A', [-100, 45]),
         ...REGION(['MEX', 'GTM', 'BLZ', 'HND', 'SLV', 'NIC', 'CRI', 'PAN', 'CUB', 'HTI', 'DOM', 'COL', 'VEN', 'GUY', 'SUR', 'ECU', 'PER', 'BOL', 'BRA', 'PRY', 'URY', 'ARG', 'CHL'], 'hl k7', 'B', [-60, -12]),

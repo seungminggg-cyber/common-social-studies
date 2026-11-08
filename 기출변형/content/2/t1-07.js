@@ -189,7 +189,7 @@ export default [
     id: 't1-07-2-010', level: '중상', concept: [4, 6], type: '그래프 해석', src: '2028 수능 예시 2번 해양 쓰레기 유형',
     stem: '그래프는 ○○ 해안에서 주운 쓰레기의 종류별 비중을 나타낸 것이다. 이에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [{
-      t: 'chart', kind: 'pie', h: 230,
+      t: 'chart', kind: 'pie', w: 480, h: 200,
       slices: [
         { label: '플라스틱 병·용기', value: 34 },
         { label: '어구(그물·밧줄)', value: 28 },
@@ -249,7 +249,7 @@ export default [
     id: 't1-07-2-013', level: '중상', concept: [5], type: '자료 해석', src: '2026.6 고1 7번 해결 주체 비교 유형',
     stem: '그림은 환경 문제 해결 주체 (가), (나)가 하는 노력을 구분한 것이다. 이에 대한 설명으로 옳은 것은? (단, (가), (나)는 각각 정부, 기업, 시민 단체 중 하나이다.)',
     data: [{
-      t: 'venn', h: 220, letters: false,
+      t: 'venn', w: 500, h: 220, letters: false,
       left: { label: '(가)', items: ['환경 관련', '법률 제정'] },
       both: { items: ['㉠'] },
       right: { label: '(나)', items: ['RE100 참여'] },

@@ -62,7 +62,7 @@ export default [
     stem: '다음 자료에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [
       {
-        t: 'map', view: [126.5, 36.95, 129.4, 38.25], w: 420, h: 250, style: 'thematic', provinces: true,
+        t: 'map', view: [126.5, 36.95, 129.4, 38.25], w: 350, h: 208, style: 'thematic', provinces: true,
         markers: [
           { lon: 126.98, lat: 37.56, label: '서울', pos: 'left' },
           { lon: 127.95, lat: 37.34, label: '원주', pos: 'bottom' },
@@ -108,7 +108,7 @@ export default [
     id: 't1-13-1-006', level: '중', concept: [3], type: '지도 해석', src: '교과 개념(공간적 분업)·2028 수능 예시 9번 바탕',
     stem: '지도는 ○○ 전자 기업의 기능별 위치를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'map', view: 'world', h: 230, seas: false,
+      t: 'map', view: 'world', w: 520, h: 199, seas: false,
       markers: [
         { lon: 126.98, lat: 37.57, label: '본사', pos: 'top', cls: 'k1' },
         { lon: -121.9, lat: 37.3, label: '연구소', pos: 'left', cls: 'k2' },
@@ -237,7 +237,7 @@ export default [
     id: 't1-13-1-013', level: '상', concept: [5, 3], type: '그래프 해석', src: '2028 수능 예시 9번 유형(빨대 효과)',
     stem: '다음 자료에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [{
-      t: 'chart', kind: 'stack100', w: 420, rowH: 30,
+      t: 'chart', kind: 'stack100', w: 390, rowH: 30,
       title: 'B시 주민이 대형 병원 진료를 받는 곳',
       categories: ['2010년', '2020년'],
       series: [{ name: 'B시 안', values: [70, 45] }, { name: 'A시', values: [20, 48] }, { name: '그 밖의 지역', values: [10, 7] }],

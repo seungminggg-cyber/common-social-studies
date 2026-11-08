@@ -23,7 +23,7 @@ export default [
     id: 't1-12-1-002', level: '중', concept: [1], type: '그래프 해석', src: '2026.9 고2 5번 유형(산업 구조와 도시화)',
     stem: '그래프는 갑국의 산업별 취업자 비율 변화를 나타낸 것이다. 이에 대한 설명으로 옳은 것은?',
     data: [{
-      t: 'chart', kind: 'stack100', w: 420, rowH: 30,
+      t: 'chart', kind: 'stack100', w: 390, rowH: 30,
       categories: ['1970년', '1990년', '2020년'],
       series: [
         { name: '1차 산업', values: [52, 20, 5] },
