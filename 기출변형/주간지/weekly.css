@@ -1,0 +1,83 @@
+/* 학교별 내신 주간지 — 기출변형 문제집(wb.css, 시안 H) 위에 주간지 부분만 더한다 */
+
+/* 표지 */
+.wk-cover { padding: 4mm 2mm 0; }
+.wk-brand { font-size: 9pt; letter-spacing: .08em; color: var(--gray); border-bottom: .6pt solid var(--ink); padding-bottom: 2mm; }
+.wk-big { display: flex; align-items: baseline; gap: 4mm; margin: 10mm 0 2mm; color: var(--c1); }
+.wk-big span { font-family: var(--sans-h); font-weight: 700; font-size: 22pt; letter-spacing: .12em; }
+.wk-big b { font-family: var(--serif-h); font-size: 88pt; line-height: .85; letter-spacing: -.03em; }
+.wk-school { font-size: 13pt; margin-top: 3mm; }
+.wk-school b { font-family: var(--serif-h); font-size: 20pt; margin-right: 1.5mm; }
+.wk-range { font-size: 10.5pt; color: var(--ink-2); margin-top: 1.5mm; padding-left: 3mm; border-left: 2.4pt solid var(--c1); }
+.wk-name { margin: 7mm 0 8mm auto; width: 70mm; font-size: 10pt; display: flex; gap: 2mm; align-items: flex-end; }
+.wk-name i { flex: 1; border-bottom: .6pt solid var(--ink); height: 6mm; }
+.wk-h { font-family: var(--serif-h); font-size: 11.5pt; margin: 6mm 0 2mm; color: var(--c1-dark); }
+.wk-plan { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+.wk-plan th { background: var(--c1); color: #fff; font-weight: 700; padding: 1.6mm 1mm; border: .4pt solid var(--c1); }
+.wk-plan td { border: .4pt solid var(--rule); padding: 0 1.5mm; height: 10mm; }
+.wk-plan td.d { font-weight: 700; color: var(--c1-dark); text-align: center; width: 13mm; }
+.wk-plan td.n { color: var(--ink-2); width: 26mm; text-align: center; font-size: 8pt; }
+.wk-plan td:nth-child(n+4) { width: 17mm; }
+.wk-how { margin: 0; padding-left: 5mm; list-style: decimal; font-size: 9.2pt; line-height: 1.7; }
+.wk-msg { margin-top: 6mm; padding: 3mm 4mm; background: var(--c1-pale); border-left: 2.4pt solid var(--c1); font-size: 9.4pt; }
+
+/* DAY 머리 */
+.wk-day { display: grid; grid-template-columns: 19mm 1fr auto; column-gap: 4mm; align-items: end; border-bottom: 1.2pt solid var(--c1); padding-bottom: 2.4mm; margin-bottom: 3mm; }
+.wk-day-no { background: var(--c1); color: #fff; text-align: center; padding: 1.2mm 0 1.6mm; clip-path: polygon(0 0, 100% 0, 100% 78%, 82% 100%, 0 100%); }
+.wk-day-no span { display: block; font-size: 7.6pt; letter-spacing: .14em; font-weight: 700; }
+.wk-day-no b { display: block; font-family: var(--serif-h); font-size: 24pt; line-height: 1; }
+.wk-day-t span { font-size: 8pt; color: var(--gray); }
+.wk-day-t h2 { margin: .6mm 0 0; font-family: var(--serif-h); font-size: 14.5pt; line-height: 1.25; }
+.wk-day-log { display: flex; flex-direction: column; gap: 1mm; font-size: 7.8pt; color: var(--ink-2); text-align: right; }
+.wk-day-log i { display: inline-block; width: 7mm; border-bottom: .4pt solid var(--ink-2); }
+
+/* 개념 정리 · O/X (쪽 위, 두 단 너비) */
+.wk-sec-t { font-family: var(--sans-h); font-weight: 700; font-size: 9pt; color: var(--c1-dark); margin-bottom: 1.4mm; }
+.wk-sec-t i { font-style: normal; font-weight: 400; color: var(--gray); font-size: 7.6pt; margin-left: 2mm; }
+.wk-sum { border: .6pt solid var(--c1-line); background: var(--c1-pale); padding: 2.4mm 3mm 2mm; margin-bottom: 3mm; }
+.wk-core { font-size: 8.6pt; margin: 0 0 2mm; line-height: 1.5; }
+.wk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4mm 5mm; }
+.wk-c { display: grid; grid-template-columns: 6mm 1fr; font-size: 7.9pt; line-height: 1.45; }
+.wk-c > b { color: var(--c1); font-family: var(--serif-h); font-size: 9pt; }
+.wk-c h4 { margin: 0; font-size: 8.3pt; }
+.wk-c p { margin: 0; color: var(--ink-2); }
+.wk-traps { margin-top: 2mm; border-top: .4pt dashed var(--c1-line); padding-top: 1.6mm; display: grid; grid-template-columns: 20mm 1fr; font-size: 7.8pt; }
+.wk-traps > span { font-weight: 700; color: #a3361f; }
+.wk-traps ul { margin: 0; padding: 0; list-style: none; }
+.wk-traps li b { margin-right: 1.5mm; }
+.wk-ox { margin-bottom: 3.5mm; }
+.wk-ox ol { margin: 0; padding: 0; list-style: none; counter-reset: ox; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2mm 5mm; }
+.wk-ox li { counter-increment: ox; display: grid; grid-template-columns: 4.5mm 1fr 13mm; font-size: 8.2pt; line-height: 1.4; align-items: start; }
+.wk-ox li::before { content: counter(ox); font-weight: 700; color: var(--c1); }
+.wk-ox li .b { text-align: right; color: var(--ink-2); white-space: nowrap; letter-spacing: .05em; }
+.wk-review { font-size: 9pt; padding: 2.4mm 3mm; background: var(--c1-pale); border-left: 2.4pt solid var(--c1); margin: 0 0 3mm; }
+
+/* 객관식·서답형 구분 띠 */
+.wk-sep { display: flex; align-items: baseline; gap: 2mm; border-bottom: .6pt solid var(--ink); padding-bottom: .8mm; margin-bottom: 1.5mm; }
+.wk-sep b { font-family: var(--sans-h); font-size: 9.4pt; }
+.wk-sep i { font-style: normal; font-size: 7.6pt; color: var(--gray); }
+
+/* 서답형 */
+.wk-short .q-no { width: auto !important; padding: 0 1.6mm; }
+.wk-lines { margin-top: 2mm; }
+.wk-lines i { display: block; height: 7.2mm; border-bottom: .4pt solid var(--rule); }
+
+/* 오답 기록지 */
+.wk-log h2 { font-family: var(--serif-h); font-size: 18pt; margin: 2mm 0 1mm; color: var(--c1-dark); }
+.wk-log > p { font-size: 9pt; color: var(--ink-2); margin: 0 0 4mm; }
+.wk-log table { width: 100%; border-collapse: collapse; font-size: 8.6pt; }
+.wk-log th { background: var(--c1); color: #fff; padding: 1.6mm; border: .4pt solid var(--c1); }
+.wk-log td { border: .4pt solid var(--rule); height: 11mm; padding: 0 1.5mm; }
+.wk-log td:nth-child(1), .wk-log td:nth-child(2) { width: 13mm; }
+.wk-log td.why { width: 42mm; color: #b9b3ac; font-size: 7.6pt; text-align: center; }
+.wk-log td:nth-child(5) { width: 18mm; }
+.wk-log-key { margin-top: 3mm; font-size: 8pt; color: var(--ink-2); }
+
+/* 정답과 해설: O/X 답 · 서답형 */
+.wk-oxa { font-size: 8pt; line-height: 1.5; }
+.wk-oxa > b { display: block; color: var(--c1-dark); margin-bottom: .5mm; }
+.wk-oxa span { display: block; }
+.wk-oxa i { font-style: normal; font-weight: 700; margin-right: 1mm; }
+.wk-oxa em { font-style: normal; color: var(--ink-2); }
+.wk-sa ul { margin: 1mm 0; padding-left: 4mm; font-size: 8.2pt; }
+.wk-sa .aq-no { width: auto !important; padding: 0 1.4mm; }

@@ -245,6 +245,7 @@
     exam: ['틀린 문제 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'],
     answers: ['틀린 문제 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'],
   };
+  Object.assign(PROMPTS, L.prompts || {}); // 책마다 메모 칸 문구를 더하거나 바꾼다(주간지 등)
   const memoHtml = (label, prompt) =>
     `<div class="memo"><div class="memo-head"><span class="memo-tag">${label}</span><span class="memo-q">${prompt}</span></div><div class="memo-lines"></div></div>`;
 

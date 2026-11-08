@@ -104,3 +104,8 @@
 
 바뀐 문항 검수 순서: `changed.mjs --ids` → 그 문항을 읽고 고침 → `check`·`explain-check --ids`·`note-check`·`dup-check` → `build.mjs <차수> order` → 빌드 → `page-check --only <id들>`(전체도 한 번) → 걸린 쪽만 PNG로 눈 확인 → 한글 파일 → `hwpx-check`.
 
+
+## 학교별 내신 주간지 (2026-11-08 시작, `주간지/`)
+- 인천 계양 고1 5개 학교 2학기 기말 대비 종이 주간지. 규칙·만들기·시험 범위는 `주간지/README.md`, 출제 규칙은 `주간지/참고/출제지시.md`.
+- `node 주간지/build.mjs <학교> <주>`. 문제집의 그림 손질 함수는 `lib/prep.js`로 옮겨 함께 쓴다(문제집 build.mjs 동작은 같음).
+- 학교 학습지 사진·원문은 저장소에 올리지 않는다.
