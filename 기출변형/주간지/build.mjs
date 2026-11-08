@@ -103,7 +103,7 @@ await ensureTerrain(all);
 
 // ── HTML ──
 const chapterNo = (u) => BOOKS[u.book].chapter.no;
-const headLeft = `${esc(W.school)} 내신 주간지 <b>WEEK ${two(week)}</b>`;
+const headLeft = STYLE ? `<b>승민T WEEKLY</b> | ${esc(W.school)} ${week}주차` : `${esc(W.school)} 내신 주간지 <b>WEEK ${two(week)}</b>`;
 
 function coverPage() {
   if (STYLE) return coverStyled();
@@ -142,9 +142,14 @@ function coverStyled() {
   const sub = '학교별 내신 주간지';
   const total = days.reduce((a, d) => a + d.qs.length, 0);
   const msg = W.message ? `<div class="wk-msg">${inl(W.message)}</div>` : '';
+  // 4주 중 몇 주차인지 막대로, 대단원 번호를 큰 로마 숫자 그림으로(강사가 모아 준 참고 표지, 2026-11-08)
+  const weeks = W.weeks || 4;
+  const prog = `<div class="cv-prog"><span>WEEK ${week} / ${weeks}</span>${Array.from({ length: weeks }, (_, i) => `<i class="${i < week ? 'on' : ''}"></i>`).join('')}</div>`;
+  const roman = /^[ⅠⅡⅢⅣⅤ]$/.test(W.tab || '') ? W.tab : '';
+  const mark = roman ? `<div class="cv-mark" aria-hidden="true">${roman}</div>` : '';
   const body = {
-    1: `<div class="cv cv1">
-      <div class="cv-top"><span>${brand}</span><span>${sub}</span></div>
+    1: `<div class="cv cv1">${mark}
+      <div class="cv-top"><span>${brand} <b>WEEKLY</b></span>${prog}</div>
       <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
       <div class="cv-school"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span></div>
       <div class="cv-range">${esc(W.range)}</div>
@@ -173,8 +178,9 @@ function coverStyled() {
       </div>
     </div>`,
     4: `<div class="cv cv4">
-      <div class="cv-side">
-        <div class="cv-top">${brand}<br>${sub}</div>
+      <div class="cv-side">${mark}
+        <div class="cv-top">${brand} <b>WEEKLY</b><br>${sub}</div>
+        ${prog}
         <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
         <div class="cv-range">${esc(W.range)}</div>
       </div>
@@ -218,10 +224,11 @@ function dayPage(d) {
   const tab = unit ? chapterNo(unit) : W.tab;
   const title = d.title || `${unit.no} ${unit.title}`;
   const total = d.qs.length + (d.short ? 1 : 0) + (d.ox ? d.ox.length : 0);
+  const goal = Math.ceil((d.qs.length * 2.5 + (d.ox ? 3 : 0)) / 5) * 5; // 문항당 2분 30초 + O/X 3분, 5분 단위
   const top = `<div class="top" id="day-${d.day}"><div class="wk-day">
       <div class="wk-day-no"><span>DAY</span><b>${d.day}</b><em>${two(d.day)}</em></div>
       <div class="wk-day-t"><span>${esc(unit ? `${BOOKS[unit.book].subject} ${chapterNo(unit)}. ${BOOKS[unit.book].chapter.title}` : W.range)}</span><h2>${esc(title)}</h2></div>
-      <div class="wk-day-log"><span>푼 날 <i></i>월 <i></i>일</span><span>걸린 시간 <i></i>분</span><span>맞은 개수 <i></i>/ ${total}</span></div>
+      <div class="wk-day-log"><span>푼 날 <i></i>월 <i></i>일</span><span>걸린 시간 <i></i>분${STYLE ? ` <em class="wk-goal">목표 ${goal}분</em>` : ''}</span><span>맞은 개수 <i></i>/ ${total}</span></div>
     </div></div>`;
   const row = (h) => `<div class="row"><div class="main">${h}</div></div>`;
   const crow = d.spec ? row(summaryBox(d.spec)) + row(oxBox(d.ox)) : row(`<p class="wk-review">${inl(d.note || '')}</p>`);
@@ -232,7 +239,7 @@ function dayPage(d) {
     return `<section class="flow" data-kind="day" ${head}>${top.replace(/<\/div>$/, `<p class="wk-review">${inl(d.note || '')}</p>${sepTop('객관식', `${d.qs.length}문항 · 20분`)}</div>`)}${qrows}</section>`;
   }
   // 강사 요청(2026-11-08): 백지 테스트 칸을 빼고, 개념 정리·O/X 바로 아래에서 객관식이 이어지게(빈 공간 없이)
-  const topAll = top.replace(/<\/div>$/, `${summaryBox(d.spec)}${oxBox(d.ox)}${sepTop('객관식', `${d.qs.length}문항`)}</div>`);
+  const topAll = top.replace(/<\/div>$/, `${summaryBox(d.spec)}${oxBox(d.ox)}${sepTop('객관식', `${d.qs.length}문항${STYLE ? ` · 목표 ${Math.ceil(d.qs.length * 2.5 / 5) * 5}분` : ''}`)}</div>`);
   return `<section class="flow" data-kind="day" ${head}>${topAll}${qrows}${d.short ? sep('서답형', '학교 시험처럼 문장으로') + shortHtml(d.short) : ''}</section>`;
 }
 

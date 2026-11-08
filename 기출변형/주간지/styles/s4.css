@@ -60,3 +60,25 @@
 .wk-s4 .wk-sep { border-bottom: 2pt solid var(--ink); }
 .wk-s4 .wk-sep b { font: 800 10.5pt var(--disp); }
 .wk-s4 .q-no { background: none; color: var(--ink); clip-path: none; font: 900 14pt/1 var(--disp); min-width: 0; height: auto; padding-bottom: .6mm; border-bottom: 2pt solid var(--c1); letter-spacing: -.03em; }
+
+/* ── 보완(2026-11-08, 강사가 모아 준 실제 주간지 참고) ── */
+/* 표지: 색 기둥에 대단원 번호 큰 윤곽 글자, 4주 진행 막대, 시리즈 이름 WEEKLY */
+.cv4 .cv-side { position: relative; overflow: hidden; }
+.cv4 .cv-side > *:not(.cv-mark) { position: relative; }
+.cv-mark { position: absolute; font: 600 150pt/1 'Noto Serif KR', serif; color: rgba(255,255,255,.10); pointer-events: none; }
+.cv4 .cv-mark { left: 6mm; top: 78mm; }
+.cv-top b { font-weight: 900; letter-spacing: .16em; }
+.cv-prog { display: flex; align-items: center; gap: 1mm; margin-top: 6mm; font-size: 8pt; }
+.cv-prog span { margin-right: 1.6mm; font-weight: 800; letter-spacing: .08em; }
+.cv-prog i { width: 5.6mm; height: 1.8mm; background: currentColor; opacity: .3; }
+.cv-prog i.on { opacity: 1; }
+/* 쪽 머리: 굵은 검정 밑줄 + 시리즈 이름 */
+.wk-s4 .page-head, .wk-s4 .page.even .page-head { border-bottom: 1.2pt solid var(--ink); color: var(--ink-2); }
+.wk-s4 .ph-left b { font-family: var(--disp); font-weight: 900; letter-spacing: .06em; }
+/* 문제 두 단 사이 세로선(시험지처럼) */
+.wk-s4 .region-day .region-slots { position: relative; }
+.wk-s4 .region-day .region-slots::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: .6pt solid #aaa49d; }
+/* 목표 시간 */
+.wk-goal { font-style: normal; margin-left: 1.4mm; padding: 0 1.2mm; background: var(--ink); color: #fff; font-size: 6.8pt; font-weight: 700; }
+.cv4 .cv-prog { flex-wrap: wrap; }
+.cv4 .cv-prog span { flex-basis: 100%; margin: 0 0 1.4mm; }

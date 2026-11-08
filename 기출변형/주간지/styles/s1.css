@@ -54,3 +54,23 @@
 .wk-s1 .wk-sep b { font: 800 9.6pt var(--disp); letter-spacing: .06em; }
 .wk-s1 .wk-sep i { color: rgba(255,255,255,.7); }
 .wk-s1 .q-no { background: var(--ink); font-family: var(--disp); font-weight: 800; }
+
+/* ── 보완(2026-11-08, 강사가 모아 준 실제 주간지 참고) ── */
+/* 표지: 대단원 번호 큰 윤곽 글자(참고: 한 글자 표지), 4주 진행 막대, 시리즈 이름 WEEKLY */
+.cv1 { position: relative; overflow: hidden; }
+.cv1 > *:not(.cv-mark) { position: relative; }
+.cv-mark { position: absolute; font: 600 210pt/1 'Noto Serif KR', serif; color: rgba(255,255,255,.10); pointer-events: none; }
+.cv1 .cv-mark { right: 16mm; top: 98mm; }
+.cv-top b { font-weight: 900; letter-spacing: .16em; margin-left: 1mm; }
+.cv-prog { display: flex; align-items: center; gap: 1.2mm; }
+.cv-prog span { margin-right: 1.6mm; font-weight: 800; letter-spacing: .1em; }
+.cv-prog i { width: 7mm; height: 1.8mm; background: currentColor; opacity: .3; }
+.cv-prog i.on { opacity: 1; }
+/* 쪽 머리: 연한 대단원 색 띠 */
+.wk-s1 .page-head, .wk-s1 .page.even .page-head { background: var(--c1-soft); border-bottom: 0; padding: 0 3mm; color: var(--c1-dark); }
+.wk-s1 .ph-left b { color: var(--c1-dark); font-family: var(--disp); font-weight: 900; letter-spacing: .06em; }
+/* 문제 두 단 사이 세로선(시험지처럼) */
+.wk-s1 .region-day .region-slots { position: relative; }
+.wk-s1 .region-day .region-slots::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: .6pt solid #aaa49d; }
+/* 목표 시간 */
+.wk-goal { font-style: normal; margin-left: 1.4mm; padding: 0 1.2mm; border: .5pt solid currentColor; font-size: 6.8pt; font-weight: 700; }
