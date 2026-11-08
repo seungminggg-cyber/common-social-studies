@@ -382,7 +382,7 @@ export function drawMap(b, h) {
     const L = km / kmPx, bx = W - L - 17, by = H - 13;
     s += `<rect x="${r1(bx - 9)}" y="${r1(by - 13)}" width="${r1(L + 26)}" height="21" rx="3" fill="#fff" fill-opacity=".86"/>`;
     s += `<rect x="${r1(bx)}" y="${by}" width="${r1(L / 2)}" height="3.6" fill="#2b333b"/><rect x="${r1(bx)}" y="${by}" width="${r1(L)}" height="3.6" fill="none" stroke="#2b333b" stroke-width=".7"/>`;
-    s += text(bx, by - 3, '0', { size: 8, anchor: 'middle', cls: 'mscale' }) + text(bx + L, by - 3, `${km}km`, { size: 8, anchor: 'middle', cls: 'mscale' });
+    s += text(bx, by - 3, '0', { size: b.degSize || 8, anchor: 'middle', cls: 'mscale' }) + text(bx + L, by - 3, `${km}km`, { size: b.degSize || 8, anchor: 'middle', cls: 'mscale' });
   }
   // ── 9. 범례 ──
   if (b.legend) {
