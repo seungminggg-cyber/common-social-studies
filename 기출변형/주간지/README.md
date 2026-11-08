@@ -42,3 +42,14 @@ node 주간지/build.mjs jakjeon 1 [png]   # → 주간지/out/작전고-1주차
 ## 진행
 - 2026-11-08 작전고 1주차 견본 1차(22쪽) → 강사 의견 → 2차(20쪽): DAY = 학습지 주제 1~5, 객관식 33(학습지 문제 12 + 학습지 개념 새 문항 9 + 1차 문항 중 학습지에 맞는 12), 서답형 없음.
   작전고 학습지(12장): 개념 학습 노트 주제 1~5 + 기회비용 예시·연습(6~8쪽) + 무역 이론·연습(9~12쪽). 학습지 강조(필기): 외부 효과의 사적·사회적 비용/편익, 금리·환율·전쟁의 영향.
+
+## 학교별 채팅 (2026-11-08 시작, 안내 `참고/학교채팅안내.md`)
+| 학교 | 채팅 제목 | 브랜치 | 세션 id |
+|---|---|---|---|
+| 계양고 | 주간지 · 계양고 | claude/weekly-gyeyang | session_01QqEa98KLfXrWE5pKg1fENw |
+| 작전고 | 주간지 · 작전고 (2주차부터) | claude/weekly-jakjeon | session_01QqEa98cT52m4sqi5Voe1yB |
+| 계산여고 | 주간지 · 계산여고 | claude/weekly-gyesan | session_01QqEa98WBnA5oetZEWDATQh |
+| 서운고 | 주간지 · 서운고 | claude/weekly-seoun | session_01QqEa9CGiXNFPEeBjAyfJds |
+| 인천국제고 | 주간지 · 인천국제고 | claude/weekly-inguk | session_01QqEa9ARsP6krFyyfNnBLFm |
+- 조정 채팅(작전고 1주차 견본을 만든 채팅, 브랜치 claude/practical-lamport-a7zkp4)이 강사의 견본 수정 사항을 받아
+  ① 이 README의 '강사가 정한 규칙'에 적고 ② 위 5개 채팅에 메시지(send_message)로 보낸다. 각 채팅은 공통 브랜치를 merge해 반영한다.
