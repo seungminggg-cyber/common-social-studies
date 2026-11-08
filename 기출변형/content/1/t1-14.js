@@ -46,7 +46,7 @@ export default [
     stem: '지도의 A~C 지역 특징을 표의 (가)~(다)로 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (단, (가)~(다)는 각각 A~C 중 하나이다.)',
     data: [
       {
-        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 350, h: 275, style: 'thematic', provinces: true,
+        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 420, h: 330, style: 'thematic', provinces: true,
         markers: [
           { lon: 126.83, lat: 37.2, label: 'A', pos: 'left' },
           { lon: 127.29, lat: 36.48, label: 'B', pos: 'right' },

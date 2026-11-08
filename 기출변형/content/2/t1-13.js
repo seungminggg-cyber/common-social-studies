@@ -9,7 +9,7 @@ export default [
     stem: '다음 자료에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [
       {
-        t: 'map', view: [-1.6, 48.4, 3.6, 52.1], w: 350, h: 250, style: 'thematic',
+        t: 'map', view: [-1.6, 48.4, 3.6, 52.1], w: 420, h: 300, style: 'thematic',
         markers: [
           { lon: -0.13, lat: 51.51, label: '런던', pos: 'left' },
           { lon: 2.35, lat: 48.86, label: '파리', pos: 'right' },

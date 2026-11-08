@@ -62,7 +62,7 @@ export default [
     stem: '다음 자료에 대한 옳은 설명만을 <보기>에서 고른 것은?',
     data: [
       {
-        t: 'map', view: [126.5, 36.95, 129.4, 38.25], w: 350, h: 208, style: 'thematic', provinces: true,
+        t: 'map', view: [126.5, 36.95, 129.4, 38.25], w: 420, h: 250, style: 'thematic', provinces: true,
         markers: [
           { lon: 126.98, lat: 37.56, label: '서울', pos: 'left' },
           { lon: 127.95, lat: 37.34, label: '원주', pos: 'bottom' },

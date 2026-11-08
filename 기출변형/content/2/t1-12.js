@@ -179,7 +179,7 @@ export default [
         ['(다)', '1960년대 수출 공업 단지가 처음 들어섰던 곳이 오늘날 정보 기술 기업이 모인 디지털 산업 단지로 바뀌었다.'],
       ] },
       {
-        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 350, h: 275, style: 'thematic', provinces: true,
+        t: 'map', view: [125.6, 33.9, 129.8, 38.0], w: 420, h: 330, style: 'thematic', provinces: true,
         markers: [
           { lon: 126.89, lat: 37.49, label: 'A', pos: 'left' },
           { lon: 128.34, lat: 36.12, label: 'B', pos: 'left' },
