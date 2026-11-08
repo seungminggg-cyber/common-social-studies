@@ -80,8 +80,8 @@ export default {
       stem: '그래프는 A~E국의 1인당 국내 총생산, 삶의 만족도, 민주주의 지수를 나타낸 것이다. 이에 대한 옳은 분석만을 <보기>에서 고른 것은?',
       data: [{
         t: 'chart', kind: 'scatter', w: 340, h: 215,
-        x: { min: 0, max: 8, step: 2, label: '1인당 국내 총생산(만 달러)' },
-        y: { min: 3, max: 9, step: 2, label: '삶의 만족도(점)' },
+        x: { min: 0, max: 10, step: 2, label: '1인당 국내 총생산(만 달러)' },
+        y: { min: 2, max: 10, step: 2, label: '삶의 만족도(점)' },
         groups: [{ name: '나라', points: [[1.0, 4.4, 3.0], [2.8, 6.8, 8.5], [5.0, 6.2, 4.5], [6.2, 7.6, 9.2], [7.5, 5.8, 3.5]] }],
         bubble: { max: 10, rMax: 16, legend: [3, 9], title: '민주주의 지수' },
         labels: [
@@ -183,7 +183,7 @@ export default {
       stem: '다음은 온라인 수업 장면의 일부이다. 답글의 내용이 옳은 학생만을 고른 것은? (단, (가)~(다)는 각각 농림어업, 사업 서비스업, 제조업 중 하나이다.)',
       data: [
         { t: 'dialog', rows: [['교사', '표는 (가)~(다) 산업의 생산액 상위 2개 시·도(순서 없음)를, 지도는 A~D의 위치를 나타낸 것입니다. 산업화 과정과 관련지어 답글을 달아 보세요.']] },
-        { t: 'map', view: [124.6, 33.1, 130.0, 38.65], w: 240, h: 240, style: 'thematic', scale: false, north: false, deg: false, krRivers: false, rivers: false,
+        { t: 'map', view: [124.6, 33.1, 130.0, 38.65], w: 240, h: 240, width: 62, style: 'thematic', scale: false, north: false, deg: false, krRivers: false, rivers: false,
           subregions: { file: 'kr-provinces.json', base: '#f4f1ea', fills: { 서울특별시: '#f9b46b', 충청남도: '#fcc99a', 경상북도: '#fcc99a', 전라남도: '#fcc99a' } },
           labels: [
             { at: [126.62, 37.72], text: 'A', size: 15, cls: 'strong' },
@@ -223,11 +223,11 @@ export default {
             { name: '활용', values: [52, 57, 61, 64], dash: true },
             { name: '역량', values: [45, 49, 52, 54] },
           ],
-          y: { min: 40, max: 100, step: 10 },
+          y: { min: 30, max: 100, step: 10 },
           notes: [
-            { x: 0, y: 86, text: '82', size: 11, weight: 400 }, { x: 1, y: 92, text: '88', size: 11, weight: 400 }, { x: 2, y: 97, text: '93', size: 11, weight: 400 }, { x: 3, y: 91, text: '96', size: 11, weight: 400 },
-            { x: 0, y: 56, text: '52', size: 11, weight: 400 }, { x: 1, y: 61, text: '57', size: 11, weight: 400 }, { x: 2, y: 65, text: '61', size: 11, weight: 400 }, { x: 3, y: 68, text: '64', size: 11, weight: 400 },
-            { x: 0, y: 41.2, text: '45', size: 11, weight: 400 }, { x: 1, y: 45.2, text: '49', size: 11, weight: 400 }, { x: 2, y: 48.2, text: '52', size: 11, weight: 400 }, { x: 3, y: 50.2, text: '54', size: 11, weight: 400 },
+            { x: 0.2, y: 76, text: '82', size: 11, weight: 400 }, { x: 1, y: 82, text: '88', size: 11, weight: 400 }, { x: 2, y: 87, text: '93', size: 11, weight: 400 }, { x: 2.85, y: 90, text: '96', size: 11, weight: 400 },
+            { x: 0.2, y: 56, text: '52', size: 11, weight: 400 }, { x: 1, y: 61, text: '57', size: 11, weight: 400 }, { x: 2, y: 65, text: '61', size: 11, weight: 400 }, { x: 2.85, y: 68, text: '64', size: 11, weight: 400 },
+            { x: 0.2, y: 38.5, text: '45', size: 11, weight: 400 }, { x: 1, y: 42.5, text: '49', size: 11, weight: 400 }, { x: 2, y: 45.5, text: '52', size: 11, weight: 400 }, { x: 2.85, y: 47.5, text: '54', size: 11, weight: 400 },
           ],
           note: '일반 국민의 수준을 100으로 한 값이다. 접근은 기기를 가졌는지, 역량은 쓸 줄 아는지, 활용은 생활에서 얼마나 잘 쓰는지를 뜻한다.' },
       ],
@@ -329,7 +329,7 @@ export default {
           ['갑', '나라는 다스리는 사람, 지키는 사람, 생산하는 사람으로 이루어진다. 저마다 타고난 성향에 맞는 제 일을 하고 남의 일에 끼어들지 않을 때 나라는 정의롭다.'],
           ['을', '법을 지키는 것이 넓은 뜻의 정의라면, 좁은 뜻의 정의는 공정함에 관한 것이다. 명예와 재물은 각자의 가치에 비례해 나누고, 남에게 손해를 입힌 사람은 누구이든 입힌 손해만큼 갚아야 한다.'],
         ] },
-        { t: 'diagram', kind: 'yesno', legend: false, start: '갑, 을의 입장 탐구', tree: { q: 'A', yes: { q: 'B', yes: '을의 입장' }, no: { q: 'C', yes: '갑의 입장' } } },
+        { t: 'diagram', kind: 'yesno', legend: false, width: 80, start: '갑, 을의 입장 탐구', tree: { q: 'A', yes: { q: 'B', yes: '을의 입장' }, no: { q: 'C', yes: '갑의 입장' } } },
       ],
       bogi: [
         'A: 정의를 법을 지키는 일반적 정의와 공정함에 관한 특수적 정의로 나누는가?',
@@ -484,12 +484,12 @@ export default {
       src: '2027학년도 6월 모평 세계지리 11번 형식(세계 도시 순위 표와 위도·경도로 도시 판별, 교사 질문에 대한 학생 대답) · 세계 도시 계층 함정',
       stem: '다음은 세계 도시에 관한 수업 장면이다. 교사의 질문에 옳게 답한 학생만을 고른 것은?',
       data: [
-        { t: 'table', head: ['도시', '위도', '경도', '2010년', '2025년'], widths: [14, 20, 22, 22, 22], align: ['center', 'center', 'center', 'center', 'center'], rows: [
-          ['A', '북위 51.5°', '서경 0.1°', '2위', '2위'],
-          ['B', '북위 40.7°', '서경 74.0°', '1위', '1위'],
-          ['C', '북위 1.3°', '동경 103.8°', '8위', '4위'],
-          ['D', '북위 34.1°', '서경 118.2°', '6위', '9위'],
-        ], note: '순위는 경제, 연구·개발, 문화 교류, 거주·환경, 접근성을 종합한 어느 연구소의 세계 도시 종합 순위이다.' },
+        { t: 'table', head: ['도시', '위도', '경도', '2010년', '2025년'], widths: [10, 26, 28, 18, 18], align: ['center', 'center', 'center', 'center', 'center'], rows: [
+          ['A', '북위 51.5°', '서경 0.1°', '2', '2'],
+          ['B', '북위 40.7°', '서경 74.0°', '1', '1'],
+          ['C', '북위 1.3°', '동경 103.8°', '8', '4'],
+          ['D', '북위 34.1°', '서경 118.2°', '6', '9'],
+        ], note: '2010년·2025년 칸은 경제, 연구·개발, 문화 교류, 거주·환경, 접근성을 종합한 어느 연구소의 세계 도시 종합 순위이다.' },
         { t: 'dialog', rows: [
           ['교사', 'A~D는 각각 런던, 뉴욕, 싱가포르, 로스앤젤레스 중 하나이고, B와 D는 같은 나라에 있어요. 세계 도시에 대해 말해 볼까요?'],
           ['갑', 'A와 B는 최상위 세계 도시로, 다국적 기업의 본사와 국제 금융 기관이 많이 모여 있어요.'],
