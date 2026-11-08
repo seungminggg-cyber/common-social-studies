@@ -26,9 +26,9 @@ const week = +(args[1] || 1);
 const wantPng = args.includes('png');
 const STYLE_ARG = (args.find((a) => /^s\d$/.test(a)) || '').slice(1); // 비교용 시안 번호(s1~s4)
 const STYLE = STYLE_ARG || '1'; // 강사 확정(2026-11-08): 시안 1(실전 띠형)이 기본 디자인
-// 시리즈 이름(정하는 중, 2026-11-08 후보 MINT · MIN WEEKLY): name=MINT 처럼 주면 그 이름으로 표지·쪽 머리를 만든다
+// 시리즈 이름: 강사 확정 MINT(MIN + T = 승민T, 2026-11-08). name=… 은 다른 이름 미리보기용
 const NAME_ARG = (args.find((a) => a.startsWith('name=')) || '').slice(5);
-const SERIES = NAME_ARG || 'WEEKLY';
+const SERIES = NAME_ARG || 'MINT';
 const OUT = join(ROOT, 'out');
 mkdirSync(OUT, { recursive: true });
 
@@ -148,8 +148,8 @@ function coverStyled() {
   const sub = '학교별 내신 주간지';
   const total = days.reduce((a, d) => a + d.qs.length, 0);
   const msg = W.message ? `<div class="wk-msg">${inl(W.message)}</div>` : '';
-  // 4주 중 몇 주차인지 막대로, 대단원 번호를 큰 로마 숫자 그림으로(강사가 모아 준 참고 표지, 2026-11-08)
-  const weeks = W.weeks || 4;
+  // 3주 중 몇 주차인지 막대로, 대단원 번호를 큰 로마 숫자 그림으로(강사가 모아 준 참고 표지, 2026-11-08)
+  const weeks = W.weeks || 3; // 강사(2026-11-08): 주간지는 3번(3주) 나감
   const prog = `<div class="cv-prog"><span>WEEK ${week} / ${weeks}</span>${Array.from({ length: weeks }, (_, i) => `<i class="${i < week ? 'on' : ''}"></i>`).join('')}</div>`;
   const roman = /^[ⅠⅡⅢⅣⅤ]$/.test(W.tab || '') ? W.tab : '';
   const mark = roman ? `<div class="cv-mark" aria-hidden="true">${roman}</div>` : '';
@@ -158,10 +158,10 @@ function coverStyled() {
   const wordmark = m
     ? `<h1 class="wm ${/\s/.test(SERIES) ? 'wm-two' : 'wm-one'}"><span class="wm-a">MIN</span><span class="wm-b">${esc(m[1])}</span></h1>`
     : `<h1 class="wm wm-one"><span class="wm-a">${esc(SERIES)}</span></h1>`;
-  const tagline = SERIES === 'MINT' ? 'MIN + T · 승민T의 학교별 내신 주간지' : '승민T의 학교별 내신 주간지';
+  const tagline = '승민T 학교별 내신 주간지';
   const body = {
     1: `<div class="cv cv1">${mark}
-      <div class="cv-top"><span>통합사회 내신 · 4주 완성</span>${prog}</div>
+      <div class="cv-top"><span>통합사회 내신 · ${weeks}주 완성</span>${prog}</div>
       <div class="cv-wm">${wordmark}<p>${esc(tagline)}</p></div>
       <div class="cv-week"><span>WEEK</span><b>${two(week)}</b></div>
       <div class="cv-school"><b>${esc(W.school)}</b><span>${esc(W.grade)} · ${esc(W.exam)}</span></div>
