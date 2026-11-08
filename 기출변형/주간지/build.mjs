@@ -57,17 +57,33 @@ async function reuseQ(id) { // MINIMAX 문항 가져오기: 't2-07-1-003'
   return { ...structuredClone(q), unit: `${b}-${u}` };
 }
 
-const days = [];
-for (const d of W.days) {
-  if (d.file && !existsSync(join(ROOT, 'content', school, d.file))) { console.warn(`아직 없음: ${d.file} (건너뜀)`); continue; }
-  if (d.file) {
-    const m = (await import(pathToFileURL(join(ROOT, 'content', school, d.file)).href)).default;
-    const spec = await cc(m.unit);
-    days.push({ ...d, unit: UNITS[m.unit], qs: m.questions.map((q) => ({ ...q, unit: m.unit })), short: m.short, spec, ox: pickOx(spec, d.ox || 6) });
-  } else {
-    days.push({ ...d, qs: await Promise.all(d.reuse.map(reuseQ)), short: null });
+// 문항 모으기: 이 학교 폴더의 문항 파일(w1-07.js 같은 단원 파일, w1-extra.js, private/*.js)을 id로 찾는다.
+// private/ 는 학교 학습지에서 옮긴 문제(저장소에 올리지 않음) — 없으면 그 문항은 빼고 경고한다.
+const { readdirSync } = await import('node:fs');
+const POOL = new Map();
+async function loadPool(dir) {
+  if (!existsSync(dir)) return;
+  for (const f of readdirSync(dir)) {
+    if (!/\.js$/.test(f) || /^w\d+\.js$/.test(f)) continue;
+    const m = (await import(pathToFileURL(join(dir, f)).href)).default;
+    for (const q of m.questions || []) POOL.set(q.id, { ...q, unit: q.unit || m.unit });
   }
 }
+await loadPool(join(ROOT, 'content', school));
+await loadPool(join(ROOT, 'content', school, 'private'));
+const missing = [];
+const days = [];
+for (const d of W.days) {
+  const qs = [];
+  for (const id of d.items || []) {
+    if (/^t[12]-\d\d-\d-\d+$/.test(id)) qs.push(await reuseQ(id));
+    else if (POOL.has(id)) qs.push(structuredClone(POOL.get(id)));
+    else missing.push(id);
+  }
+  const ox = (d.ox || []).map(([text, o, why]) => ({ text, ox: o, why: why || '' }));
+  days.push({ ...d, unit: d.unit ? UNITS[d.unit] : null, qs, short: null, spec: d.summary ? { summary: d.summary } : null, ox });
+}
+if (missing.length) console.warn(`찾지 못한 문항 ${missing.length}개(빠짐): ${missing.join(', ')}\n  학교 학습지 문제는 content/${school}/private/ 에 있어야 한다(저장소에 없음 — 학습지 사진을 보고 다시 만든다).`);
 // 번호는 한 주 안에서 이어진다(오답 기록지에 적기 쉽게)
 let qn = 0;
 let sn = 0;
@@ -90,7 +106,7 @@ const headLeft = `${esc(W.school)} 내신 주간지 <b>WEEK ${two(week)}</b>`;
 function coverPage() {
   const rows = days.map((d) => {
     const n = d.qs.length + (d.short ? 1 : 0);
-    const name = d.unit ? `${d.unit.no} ${d.unit.title}` : d.title;
+    const name = d.title || `${d.unit.no} ${d.unit.title}`;
     const ox = d.ox ? `O/X ${d.ox.length} · ` : '';
     return `<tr><td class="d">DAY ${d.day}</td><td class="u">${esc(name)}</td><td class="n">${ox}${n}문항</td><td></td><td></td><td></td><td></td></tr>`;
   }).join('');
@@ -106,8 +122,7 @@ function coverPage() {
     <ol class="wk-how">
       <li>${inl('**개념 정리**를 읽고 모르는 말에 표시한다.')}</li>
       <li>${inl('**개념 O/X**로 개념을 확인한다. 헷갈리면 바로 개념 정리로 돌아간다.')}</li>
-      <li>${inl('**객관식**은 시간을 재고 풀고, 고른 근거를 선지 옆에 짧게 적는다.')}</li>
-      <li>${inl('**서답형**은 답을 문장으로 끝까지 쓴다(학교 시험처럼).')}</li>
+      <li>${inl('**객관식**은 시간을 재고 풀고, 고른 근거를 선지 옆에 짧게 적는다. 계산 문제는 풀이 과정을 문제 옆 빈칸에 쓴다.')}</li>
       <li>${inl('책 뒤 **정답과 해설**로 채점하고, 틀린 문제는 **오답 기록지**에 적는다. 다음 수업에 주간지를 가져온다.')}</li>
     </ol>
     ${W.message ? `<div class="wk-msg">${inl(W.message)}</div>` : ''}
@@ -116,7 +131,7 @@ function coverPage() {
 
 function summaryBox(spec) {
   const s = spec.summary;
-  const items = s.concepts.map((c) => `<div class="wk-c"><b>${esc(c.no)}</b><div><h4>${inl(c.title || '')}</h4>${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
+  const items = (s.items || s.concepts).map((c) => `<div class="wk-c"><b>${esc(c.no)}</b><div><h4>${inl(c.title || '')}</h4>${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
   const traps = (s.traps || []).slice(0, 3).map(([a, b]) => `<li><b>${inl(a)}</b> ${inl(b)}</li>`).join('');
   return `<div class="wk-sum"><div class="wk-sec-t">개념 정리</div><p class="wk-core">${inl(s.core)}</p><div class="wk-grid">${items}</div>${traps ? `<div class="wk-traps"><span>헷갈리지 말자</span><ul>${traps}</ul></div>` : ''}</div>`;
 }
@@ -140,7 +155,7 @@ function shortHtml(s) {
 function dayPage(d) {
   const unit = d.unit;
   const tab = unit ? chapterNo(unit) : W.tab;
-  const title = unit ? `${unit.no} ${unit.title}` : d.title;
+  const title = d.title || `${unit.no} ${unit.title}`;
   const total = d.qs.length + (d.short ? 1 : 0) + (d.ox ? d.ox.length : 0);
   const top = `<div class="top" id="day-${d.day}"><div class="wk-day">
       <div class="wk-day-no"><span>DAY</span><b>${d.day}</b></div>
@@ -172,7 +187,7 @@ function logPage() {
 function answersSection() {
   const rows = [];
   for (const d of days) {
-    const title = d.unit ? `${d.unit.no} ${d.unit.title}` : d.title;
+    const title = d.title || `${d.unit.no} ${d.unit.title}`;
     rows.push(`<div class="row row-ah" data-keep="next"><div class="main"><div class="ans-unit"><b>DAY ${d.day}</b> ${esc(title)}</div></div></div>`);
     if (d.ox) {
       rows.push(`<div class="row row-ae"><div class="main"><div class="wk-oxa"><b>개념 O/X</b>${d.ox.map((o, i) => `<span><i>${i + 1}</i> ${o.ox}${o.ox === 'X' && o.why ? ` <em>${inl(o.why)}</em>` : ''}</span>`).join('')}</div></div></div>`);
