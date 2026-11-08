@@ -3,7 +3,7 @@
 //   node 주간지/build.mjs jakjeon 1          작전고 1주차 → 주간지/out/작전고-1주차.pdf (문제 + 뒤쪽 정답과 해설)
 //   node 주간지/build.mjs jakjeon 1 png      쪽 그림(PNG)까지
 //
-// 한 주 = 표지(이번 주 계획표) → DAY 1~5 → 오답 기록지 → 정답과 해설.
+// 한 주 = 표지(이번 주 계획표) → DAY 1~5 → 정답과 해설. (백지 테스트·오답 기록지는 강사 요청으로 뺌, 2026-11-08)
 // DAY마다: 개념 정리(개념서 '한 장 정리') → 개념 O/X(개념서 '이렇게 나온다') → 객관식 6 → 서답형 1.
 // 주의: 학교 학습지 사진·원문은 저장소에 올리지 않는다(공개 저장소). 문항은 새로 쓴다.
 import { createRequire } from 'node:module';
@@ -123,7 +123,7 @@ function coverPage() {
       <li>${inl('**개념 정리**를 읽고 모르는 말에 표시한다.')}</li>
       <li>${inl('**개념 O/X**로 개념을 확인한다. 헷갈리면 바로 개념 정리로 돌아간다.')}</li>
       <li>${inl('**객관식**은 시간을 재고 풀고, 고른 근거를 선지 옆에 짧게 적는다. 계산 문제는 풀이 과정을 문제 옆 빈칸에 쓴다.')}</li>
-      <li>${inl('책 뒤 **정답과 해설**로 채점하고, 틀린 문제는 **오답 기록지**에 적는다. 다음 수업에 주간지를 가져온다.')}</li>
+      <li>${inl('책 뒤 **정답과 해설**로 채점하고, 틀린 문제는 번호에 표시해 두고 다시 푼다. 다음 수업에 주간지를 가져온다.')}</li>
     </ol>
     ${W.message ? `<div class="wk-msg">${inl(W.message)}</div>` : ''}
   </div></div></section>`;
@@ -170,8 +170,9 @@ function dayPage(d) {
   if (!d.spec) { // 종합 점검: 개념 쪽 없이 머리 + 안내 + 문제
     return `<section class="flow" data-kind="day" ${head}>${top.replace(/<\/div>$/, `<p class="wk-review">${inl(d.note || '')}</p>${sepTop('객관식', `${d.qs.length}문항 · 20분`)}</div>`)}${qrows}</section>`;
   }
-  return `<section class="flow" data-kind="dayc" ${head}>${top}${crow}</section>
-  <section class="flow" data-kind="day" ${head}><div class="top" id="dq-${d.day}">${sepTop('객관식', `${d.qs.length}문항`)}</div>${qrows}${d.short ? sep('서답형', '학교 시험처럼 문장으로') + shortHtml(d.short) : ''}</section>`;
+  // 강사 요청(2026-11-08): 백지 테스트 칸을 빼고, 개념 정리·O/X 바로 아래에서 객관식이 이어지게(빈 공간 없이)
+  const topAll = top.replace(/<\/div>$/, `${summaryBox(d.spec)}${oxBox(d.ox)}${sepTop('객관식', `${d.qs.length}문항`)}</div>`);
+  return `<section class="flow" data-kind="day" ${head}>${topAll}${qrows}${d.short ? sep('서답형', '학교 시험처럼 문장으로') + shortHtml(d.short) : ''}</section>`;
 }
 
 function logPage() {
@@ -206,7 +207,7 @@ function answersSection() {
 }
 
 const name = `${W.school}-${week}주차`;
-const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), logPage(), answersSection()]; return `<!doctype html>
+const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), answersSection()]; return `<!doctype html>
 <html lang="ko"><head>
 <meta charset="utf-8">
 <title>${esc(name)}</title>
@@ -225,7 +226,7 @@ const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), lo
 <body class="theme-b theme-d theme-h wb wbc wk mode-student">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
-<script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, prompts: { dayc: ['백지 테스트 — 개념 정리를 덮고, 오늘 단원의 핵심 개념을 기억나는 대로 적어 보자. 다 쓴 뒤 빨간 펜으로 빠진 것을 채운다.'], day: ['풀이 · 오답 메모 — 틀린 문제의 번호, 헷갈린 선지, 다시 볼 개념을 적어 두자.'] } })};</script>
+<script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, memoTitle: '풀이 메모', prompts: { day: ['계산 과정이나 헷갈린 선지를 적어 둔다.'] } })};</script>
 <script>${readFileSync(join(ROOT, '../../textbook/lib/paginate.js'), 'utf8')}</script>
 </body></html>`; };
 
