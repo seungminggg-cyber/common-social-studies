@@ -371,7 +371,7 @@ export function drawMap(b, h) {
     for (let la = Math.ceil(vb[1] / step) * step; la <= vb[3]; la += step) { const [, y] = proj([vb[0], la]); if (y > 22 && y < H - 34) s += text(3, y - 3, ns(r1(la)), { size: b.degSize || 8.5, cls: 'mdeg' }); }
   }
   if (!world && b.north !== false) {
-    const x = W - 19, y = 31;
+    const x = W - 19, y = 31 + Math.max(0, (b.degSize || 8.5) - 8.5); // 방위표 글씨를 키우면 위가 잘리지 않게 내림
     s += `<circle cx="${x}" cy="${y - 7}" r="12.5" fill="#fff" fill-opacity=".82"/><path d="M${x},${y - 17} L${x + 5.2},${y + 0.5} L${x},${y - 3.2} L${x - 5.2},${y + 0.5}Z" fill="#2b333b"/>`;
     s += text(x, y - 21.5, 'N', { size: b.degSize || 8.5, anchor: 'middle', cls: 'mnorth', weight: 800 });
   }
