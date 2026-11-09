@@ -321,7 +321,7 @@ const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), an
 <body class="theme-b theme-d theme-h wb wbc wk${STYLE ? ` wk-s${STYLE}` : ''} mode-student">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
-<script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, memoTitle: '풀이 메모', prompts: { day: ['계산 과정이나 헷갈린 선지를 적어 둔다.'] } })};</script>
+<script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, topAdvance: 1, memoTitle: '풀이 메모', prompts: { day: ['계산 과정이나 헷갈린 선지를 적어 둔다.'] } })};</script>
 <script>${readFileSync(join(ROOT, '../../textbook/lib/paginate.js'), 'utf8')}</script>
 </body></html>`; };
 
