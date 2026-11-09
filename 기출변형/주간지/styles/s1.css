@@ -84,3 +84,18 @@
 .wm-two .wm-a { font-weight: 900; }
 .wm-two .wm-b { font-weight: 300; margin-left: 4mm; letter-spacing: .01em; }
 .cv1 .cv-wm p { margin: 3.4mm 0 0; font-size: 9.6pt; font-weight: 600; letter-spacing: .12em; color: rgba(255,255,255,.8); }
+
+/* ── 내지 보완(강사 확인 2026-11-09) ── */
+/* 정답과 해설: 청록 대신 검정·회색(본문과 맞춤) */
+.wk-s1 .page[data-ch="답"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+/* O/X 정답 한 줄 + X만 이유 */
+.wk-s1 .wk-oxa-row { display: flex; flex-wrap: wrap; gap: .4mm 3.2mm; margin-bottom: .6mm; }
+.wk-s1 .wk-oxa-row span { display: inline; font-weight: 700; }
+.wk-s1 .wk-oxa-row i { color: var(--gray); font-weight: 400; margin-right: .8mm; }
+.wk-s1 .wk-oxa p { margin: 0; color: var(--ink-2); }
+.wk-s1 .wk-oxa p i { font-style: normal; font-weight: 700; color: var(--ink); margin-right: 1mm; }
+/* DAY 옆 색인 */
+.wk-s1 .edge-tab.wk-dtab { height: 24mm; display: flex; align-items: center; justify-content: center; }
+.wk-s1 .edge-tab.wk-dtab span { display: flex; flex-direction: column; align-items: center; line-height: 1; font-family: var(--disp); }
+.wk-s1 .edge-tab.wk-dtab small { font-size: 5pt; font-weight: 800; letter-spacing: .04em; }
+.wk-s1 .edge-tab.wk-dtab b { font-size: 12pt; font-weight: 900; margin-top: .8mm; }
