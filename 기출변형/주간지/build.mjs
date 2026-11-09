@@ -211,12 +211,14 @@ function coverStyled() {
 
 function summaryBox(spec) {
   const s = spec.summary;
-  const items = (s.items || s.concepts).map((c) => `<div class="wk-c"><div class="wk-c-h"><b>${esc(c.no)}</b><h4>${inl(c.title || '')}</h4></div><div class="wk-c-b">${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
+  // 2단 순서는 세로로(강사 2026-11-09): 왼쪽 단을 위에서 아래로 채운 뒤 오른쪽 단 — 개념 정리는 신문 단(column)처럼 흘려 빈 곳 없이, O/X는 열 방향 격자
+  const list = s.items || s.concepts;
+  const items = list.map((c) => `<div class="wk-c" style="break-inside: avoid; margin-bottom: 1.4mm"><div class="wk-c-h"><b>${esc(c.no)}</b><h4>${inl(c.title || '')}</h4></div><div class="wk-c-b">${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
   const traps = (s.traps || []).slice(0, 3).map(([a, b]) => `<li><b>${inl(a)}</b> ${inl(b)}</li>`).join('');
-  return `<div class="wk-sum"><div class="wk-sec-t">개념 정리</div><p class="wk-core">${inl(s.core)}</p><div class="wk-grid">${items}</div>${traps ? `<div class="wk-traps"><span>헷갈리지 말자</span><ul>${traps}</ul></div>` : ''}</div>`;
+  return `<div class="wk-sum"><div class="wk-sec-t">개념 정리</div><p class="wk-core">${inl(s.core)}</p><div class="wk-grid" style="display: block; column-count: 2; column-gap: 5mm">${items}</div>${traps ? `<div class="wk-traps"><span>헷갈리지 말자</span><ul>${traps}</ul></div>` : ''}</div>`;
 }
 function oxBox(ox) {
-  return `<div class="wk-ox"><div class="wk-sec-t">개념 O/X <i>맞으면 O, 틀리면 X에 동그라미</i></div><ol>${ox.map((o) => `<li><span class="t">${inl(o.text)}</span><span class="b"><i>O</i><i>X</i></span></li>`).join('')}</ol></div>`;
+  return `<div class="wk-ox"><div class="wk-sec-t">개념 O/X <i>맞으면 O, 틀리면 X에 동그라미</i></div><ol style="grid-auto-flow: column; grid-template-rows: repeat(${Math.ceil(ox.length / 2)}, auto)">${ox.map((o) => `<li><span class="t">${inl(o.text)}</span><span class="b"><i>O</i><i>X</i></span></li>`).join('')}</ol></div>`;
 }
 const sepTop = (label, sub) => `<div class="wk-sep"><b>${label}</b>${sub ? `<i>${sub}</i>` : ''}</div>`;
 const sep = (label, sub) => `<div class="row row-sep" data-keep="next"><div class="main"><div class="wk-sep"><b>${label}</b>${sub ? `<i>${sub}</i>` : ''}</div></div></div>`;
@@ -321,7 +323,7 @@ const makeHtml = () => { const sections = [coverPage(), ...days.map(dayPage), an
 <body class="theme-b theme-d theme-h wb wbc wk${STYLE ? ` wk-s${STYLE}` : ''} mode-student">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
-<script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, memoTitle: '풀이 메모', prompts: { day: ['계산 과정이나 헷갈린 선지를 적어 둔다.'] } })};</script>
+<script>window.LAYOUT = ${JSON.stringify({ cover: 1, dayc: 1, day: 2, answers: 2, soft: [], memoMin: 0.12, spreadMax: 6, topAdvance: 1, memoTitle: '풀이 메모', prompts: { day: ['계산 과정이나 헷갈린 선지를 적어 둔다.'] } })};</script>
 <script>${readFileSync(join(ROOT, '../../textbook/lib/paginate.js'), 'utf8')}</script>
 </body></html>`; };
 
@@ -385,16 +387,17 @@ const over = await page.evaluate(() => {
 if (over.length) console.warn('넘침 검사:\n  ' + [...new Set(over)].join('\n  '));
 if (warn.length) console.warn('경고:\n  ' + warn.join('\n  '));
 // 옆 색인을 DAY 1~5로(강사 2026-11-09): 책을 덮은 채로도 DAY를 바로 펼치게, DAY마다 칸이 아래로 내려간다
-await page.evaluate(() => {
+await page.evaluate((nDays) => {
+  const step = Math.min(34, 200 / Math.max(nDays, 1)); // DAY가 5개보다 많으면(예: 인천국제고 7일) 간격을 좁힌다
   document.querySelectorAll('.page.page-day').forEach((pg) => {
     const m = /DAY (\d+)/.exec(pg.querySelector('.ph-right')?.textContent || '');
     const tab = pg.querySelector('.edge-tab');
     if (!m || !tab) return;
     tab.classList.add('wk-dtab');
-    tab.style.top = `${40 + (+m[1] - 1) * 34}mm`;
+    tab.style.top = `${40 + (+m[1] - 1) * step}mm`;
     tab.innerHTML = `<span><small>DAY</small><b>${m[1]}</b></span>`;
   });
-});
+}, days.length);
 await page.pdf({ path: join(OUT, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
 if (wantPng) {
   const dir = join(OUT, 'png', name);
