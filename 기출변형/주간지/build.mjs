@@ -245,7 +245,9 @@ function dayPage(d) {
     </div></div>`;
   const row = (h) => `<div class="row"><div class="main">${h}</div></div>`;
   const crow = d.spec ? row(summaryBox(d.spec)) + row(oxBox(d.ox)) : row(`<p class="wk-review">${inl(d.note || '')}</p>`);
-  const qrows = d.qs.map((q) => questionHtml(q, q._n, { unit: UNITS[q.unit] })).join('\n');
+  // 문제 머리의 '개념 NN'은 개념서 번호라 DAY 개념 정리 번호와 달라 헷갈린다(강사 2026-11-09) → 번호 없이 개념 이름만
+  const noCcNo = (h) => h.replace(/<span class="q-cc">개념 [\d·]+(?:<em>(.*?)<\/em>)?<\/span>/, (_, t) => (t ? `<span class="q-cc">${t}</span>` : ''));
+  const qrows = d.qs.map((q) => noCcNo(questionHtml(q, q._n, { unit: UNITS[q.unit] }))).join('\n');
   const head = `data-tab="${esc(tab)}" data-head-left="${headLeft}" data-head-right="${esc(`DAY ${d.day} · ${title}`)}"`;
   // 개념 정리·O/X는 1단(dayc), 문제는 2단(day) — 문제는 남은 자리에 이어 붙고, 긴 문항은 다음 쪽으로
   if (!d.spec) { // 종합 점검: 개념 쪽 없이 머리 + 안내 + 문제
@@ -272,7 +274,8 @@ function answersSection() {
     const title = d.title || `${d.unit.no} ${d.unit.title}`;
     rows.push(`<div class="row row-ah" data-keep="next"><div class="main"><div class="ans-unit"><b>DAY ${d.day}</b> ${esc(title)}</div></div></div>`);
     if (d.ox) {
-      rows.push(`<div class="row row-ae"><div class="main"><div class="wk-oxa"><b>개념 O/X</b>${d.ox.map((o, i) => `<span><i>${i + 1}</i> ${o.ox}${o.ox === 'X' && o.why ? ` <em>${inl(o.why)}</em>` : ''}</span>`).join('')}</div></div></div>`);
+      const why = d.ox.map((o, i) => (o.ox === 'X' && o.why ? `<p><i>${i + 1}</i> ${inl(o.why)}</p>` : '')).join('');
+      rows.push(`<div class="row row-ae"><div class="main"><div class="wk-oxa"><b>개념 O/X</b><div class="wk-oxa-row">${d.ox.map((o, i) => `<span><i>${i + 1}</i>${o.ox}</span>`).join('')}</div>${why}</div></div></div>`);
     }
     rows.push(`<div class="row row-ac"><div class="main"><div class="ans-check wb-quick"><div class="ans-list">${d.qs.map((q) => `<span><b>${two(q._n)}</b> ${CIRCLED[q.answer - 1]}</span>`).join('')}</div></div></div></div>`);
     for (const q of d.qs) {
@@ -370,6 +373,17 @@ const over = await page.evaluate(() => {
 });
 if (over.length) console.warn('넘침 검사:\n  ' + [...new Set(over)].join('\n  '));
 if (warn.length) console.warn('경고:\n  ' + warn.join('\n  '));
+// 옆 색인을 DAY 1~5로(강사 2026-11-09): 책을 덮은 채로도 DAY를 바로 펼치게, DAY마다 칸이 아래로 내려간다
+await page.evaluate(() => {
+  document.querySelectorAll('.page.page-day').forEach((pg) => {
+    const m = /DAY (\d+)/.exec(pg.querySelector('.ph-right')?.textContent || '');
+    const tab = pg.querySelector('.edge-tab');
+    if (!m || !tab) return;
+    tab.classList.add('wk-dtab');
+    tab.style.top = `${40 + (+m[1] - 1) * 34}mm`;
+    tab.innerHTML = `<span><small>DAY</small><b>${m[1]}</b></span>`;
+  });
+});
 await page.pdf({ path: join(OUT, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
 if (wantPng) {
   const dir = join(OUT, 'png', name);
