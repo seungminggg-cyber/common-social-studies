@@ -232,6 +232,18 @@ function shortHtml(s) {
   </div></div></div>`;
 }
 
+// 문제 머리의 관련 개념: 개념서 번호 없이 이름만(강사 2026-11-09). 개념이 둘 이상이면 첫 개념, 이름이 길면 줄인다
+// (문제 머리가 두 줄로 꺾이지 않게 — 예: '사회 환경의 변화와 금융 의사 결정' → '금융 의사 결정')
+function ccName(q, html) {
+  const unit = UNITS[q.unit];
+  const first = (Array.isArray(q.concept) ? q.concept : q.concept ? [q.concept] : [])[0];
+  const c = unit && first ? unit.concepts.find((x) => x.no === two(+first)) : null;
+  let t = c ? c.title.split(' — ')[0] : '';
+  if (t.length > 15) t = t.split(/[와과] (?=\S)/).pop();
+  const label = t ? `<span class="q-cc">${esc(t)}</span>` : '';
+  return html.replace(/<span class="q-cc">.*?<\/span>(?=<span class="q-type">|<\/span><\/div>)/, label);
+}
+
 function dayPage(d) {
   const unit = d.unit;
   const tab = unit ? chapterNo(unit) : W.tab;
@@ -246,8 +258,7 @@ function dayPage(d) {
   const row = (h) => `<div class="row"><div class="main">${h}</div></div>`;
   const crow = d.spec ? row(summaryBox(d.spec)) + row(oxBox(d.ox)) : row(`<p class="wk-review">${inl(d.note || '')}</p>`);
   // 문제 머리의 '개념 NN'은 개념서 번호라 DAY 개념 정리 번호와 달라 헷갈린다(강사 2026-11-09) → 번호 없이 개념 이름만
-  const noCcNo = (h) => h.replace(/<span class="q-cc">개념 [\d·]+(?:<em>(.*?)<\/em>)?<\/span>/, (_, t) => (t ? `<span class="q-cc">${t}</span>` : ''));
-  const qrows = d.qs.map((q) => noCcNo(questionHtml(q, q._n, { unit: UNITS[q.unit] }))).join('\n');
+  const qrows = d.qs.map((q) => ccName(q, questionHtml(q, q._n, { unit: UNITS[q.unit] }))).join('\n');
   const head = `data-tab="${esc(tab)}" data-head-left="${headLeft}" data-head-right="${esc(`DAY ${d.day} · ${title}`)}"`;
   // 개념 정리·O/X는 1단(dayc), 문제는 2단(day) — 문제는 남은 자리에 이어 붙고, 긴 문항은 다음 쪽으로
   if (!d.spec) { // 종합 점검: 개념 쪽 없이 머리 + 안내 + 문제
