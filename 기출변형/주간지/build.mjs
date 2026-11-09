@@ -237,7 +237,7 @@ function dayPage(d) {
   const tab = unit ? chapterNo(unit) : W.tab;
   const title = d.title || `${unit.no} ${unit.title}`;
   const total = d.qs.length + (d.short ? 1 : 0) + (d.ox ? d.ox.length : 0);
-  const goal = Math.ceil((d.qs.length * 2.5 + (d.ox ? 3 : 0)) / 5) * 5; // 문항당 2분 30초 + O/X 3분, 5분 단위
+  const goal = d.goal || W.goal || 30; // 강사(2026-11-08): 하루 목표 30분(개념 정리·O/X·객관식 8문항 모두)
   const top = `<div class="top" id="day-${d.day}"><div class="wk-day">
       <div class="wk-day-no"><span>DAY</span><b>${d.day}</b><em>${two(d.day)}</em></div>
       <div class="wk-day-t"><span>${esc(unit ? `${BOOKS[unit.book].subject} ${chapterNo(unit)}. ${BOOKS[unit.book].chapter.title}` : W.range)}</span><h2>${esc(title)}</h2></div>
@@ -252,7 +252,7 @@ function dayPage(d) {
     return `<section class="flow" data-kind="day" ${head}>${top.replace(/<\/div>$/, `<p class="wk-review">${inl(d.note || '')}</p>${sepTop('객관식', `${d.qs.length}문항 · 20분`)}</div>`)}${qrows}</section>`;
   }
   // 강사 요청(2026-11-08): 백지 테스트 칸을 빼고, 개념 정리·O/X 바로 아래에서 객관식이 이어지게(빈 공간 없이)
-  const topAll = top.replace(/<\/div>$/, `${summaryBox(d.spec)}${oxBox(d.ox)}${sepTop('객관식', `${d.qs.length}문항${STYLE ? ` · 목표 ${Math.ceil(d.qs.length * 2.5 / 5) * 5}분` : ''}`)}</div>`);
+  const topAll = top.replace(/<\/div>$/, `${summaryBox(d.spec)}${oxBox(d.ox)}${sepTop('객관식', `${d.qs.length}문항`)}</div>`);
   return `<section class="flow" data-kind="day" ${head}>${topAll}${qrows}${d.short ? sep('서답형', '학교 시험처럼 문장으로') + shortHtml(d.short) : ''}</section>`;
 }
 
