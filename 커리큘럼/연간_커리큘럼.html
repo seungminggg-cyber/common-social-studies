@@ -1,0 +1,868 @@
+<title>승민T 통합사회 연간 커리큘럼</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 위에서 아래로 — 3년 흐름 → 12달 가로 띠(합반은 여러 학년 줄을 덮는 한 덩어리) → 겨울 합반 주차표 → 학년별 단계 표. 단계 색 = 교재 시리즈 색 */
+:root {
+  --bg: #F3F4F8;
+  --surface: #FFFFFF;
+  --ink: #0B1026;
+  --muted: #565E77;
+  --line: #D7DAE4;
+  --line-2: #E8EAF0;
+  --map: #2C52CF;  --map-bg: #E3E9FB;   /* MINIMAP 통합사회1 */
+  --map2: #6A3EC2; --map2-bg: #ECE4FA;  /* MINIMAP 통합사회2 */
+  --max: #08867E;  --max-bg: #D6F1EE;   /* MINIMAX */
+  --red: #CF2744;  --red-bg: #FBE0E5;   /* MAXIMIN 고난도 */
+  --gold: #9E6E06; --gold-bg: #F7ECCD;  /* MAXIMIN FINAL */
+  --nae: #2E7A39;  --nae-bg: #DEEFDF;   /* 내신 대비 */
+  --mock: #B4520A; --mock-bg: #FBE5D2;  /* 학평 대비 실모 */
+  --rest: #8A90A3;
+  --f-display: "Archivo", "IBM Plex Sans KR", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1026; --surface: #121A37; --ink: #ECEFF8; --muted: #9EA6BF; --line: #29325B; --line-2: #1B2347;
+    --map: #8AACFF;  --map-bg: #1B2A5E;
+    --map2: #BA9EFF; --map2-bg: #2A1F56;
+    --max: #3BE2D4;  --max-bg: #0D3A43;
+    --red: #FF627B;  --red-bg: #47172B;
+    --gold: #FFC84F; --gold-bg: #3A2C0B;
+    --nae: #80DA88;  --nae-bg: #163923;
+    --mock: #FFAB58; --mock-bg: #42290F;
+    --rest: #6E7694;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1026; --surface: #121A37; --ink: #ECEFF8; --muted: #9EA6BF; --line: #29325B; --line-2: #1B2347;
+  --map: #8AACFF;  --map-bg: #1B2A5E;
+  --map2: #BA9EFF; --map2-bg: #2A1F56;
+  --max: #3BE2D4;  --max-bg: #0D3A43;
+  --red: #FF627B;  --red-bg: #47172B;
+  --gold: #FFC84F; --gold-bg: #3A2C0B;
+  --nae: #80DA88;  --nae-bg: #163923;
+  --mock: #FFAB58; --mock-bg: #42290F;
+  --rest: #6E7694;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+  display: grid;
+  gap: 48px;
+}
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+p { margin: 0; }
+ul { margin: 0; padding-left: 1.1em; }
+li + li { margin-top: 2px; }
+a { color: var(--map); }
+a:focus-visible { outline: 2px solid var(--map); outline-offset: 2px; border-radius: 2px; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* 교재 시리즈 색 */
+.c-map  { --c: var(--map);  --cbg: var(--map-bg); }
+.c-map2 { --c: var(--map2); --cbg: var(--map2-bg); }
+.c-max  { --c: var(--max);  --cbg: var(--max-bg); }
+.c-red  { --c: var(--red);  --cbg: var(--red-bg); }
+.c-gold { --c: var(--gold); --cbg: var(--gold-bg); }
+.c-nae  { --c: var(--nae);  --cbg: var(--nae-bg); }
+.c-mock { --c: var(--mock); --cbg: var(--mock-bg); }
+.c-rest { --c: var(--rest); --cbg: transparent; }
+
+/* 모서리 잘린 네모 (교재 표지의 상징) */
+.mk {
+  display: inline-block;
+  width: 11px; height: 11px;
+  flex: none;
+  background: var(--c);
+  clip-path: polygon(0 0, 68% 0, 100% 32%, 100% 100%, 0 100%);
+}
+.c-rest .mk { background: repeating-linear-gradient(135deg, var(--rest) 0 2px, transparent 2px 4px); }
+
+/* 합반 표시 */
+.chip {
+  display: inline-flex; align-items: center;
+  font-size: 11.5px; font-weight: 700; line-height: 1.5;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+.chip.maybe { border-style: dashed; border-color: var(--muted); color: var(--muted); }
+
+/* 머리 */
+header { display: grid; gap: 14px; }
+.eyebrow {
+  font-family: var(--f-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .14em;
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+}
+.eyebrow .c-map { color: var(--map); }
+.eyebrow .c-max { color: var(--max); }
+.eyebrow .c-red { color: var(--red); }
+h1 { font-size: clamp(28px, 4.6vw, 42px); font-weight: 700; letter-spacing: -.01em; }
+.lead { color: var(--muted); max-width: 48em; font-size: 16px; }
+.meta { font-size: 13px; color: var(--muted); }
+
+/* 3년 흐름 */
+.ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.step {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 16px 18px;
+  display: grid; gap: 8px;
+  align-content: start;
+  min-width: 0;
+}
+.step .who { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; }
+.step ul { font-size: 14px; color: var(--muted); }
+.step a { font-size: 13px; font-weight: 500; text-decoration: none; }
+.step a:hover { text-decoration: underline; }
+
+section { display: grid; gap: 18px; min-width: 0; }
+.sec-head { display: grid; gap: 6px; }
+h2 { font-size: 24px; font-weight: 700; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+h2 small { font-size: 14px; font-weight: 500; color: var(--muted); }
+h2 .chip { align-self: center; }
+h3 { font-size: 17px; font-weight: 700; }
+h3 small { font-weight: 500; color: var(--muted); font-size: 13px; }
+
+/* 한눈에 보기 (가로 띠) */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px 18px 14px; min-width: 0; }
+.tl-scroll { overflow-x: auto; }
+.tl { min-width: 880px; position: relative; }
+.tl-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; }
+.tl-name { font-size: 14px; font-weight: 700; padding-right: 10px; line-height: 1.25; }
+.tl-name small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; }
+.tl-axis { position: relative; height: 62px; }
+.tl-month { position: absolute; bottom: 0; font-size: 12px; color: var(--muted); padding-left: 4px; line-height: 1.2; }
+.tl-month b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 10px; letter-spacing: .04em; }
+.tl-mark {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+  color: var(--ink);
+  background: var(--surface);
+  padding: 0 4px;
+  line-height: 16px;
+}
+.tl-mark.strong { color: var(--red); }
+.tl-lanes { position: relative; display: grid; gap: 8px; padding-block: 8px 2px; }
+.tl-track { position: relative; height: 40px; }
+.tl-row.sub .tl-track { height: 24px; }
+.tl-row.sub .tl-name { font-size: 11px; font-weight: 500; color: var(--muted); }
+.tl-over { position: absolute; top: 0; bottom: 0; left: 96px; right: 0; pointer-events: none; }
+.tl-over i { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line-2); }
+.tl-over i.m { border-left: 1px dashed var(--muted); opacity: .55; }
+.tl-over i.m.strong { border-left: 2px solid var(--red); opacity: .8; }
+.blk {
+  position: absolute; top: 0; bottom: 0;
+  background: var(--cbg);
+  border: 1px solid var(--c);
+  border-radius: 3px;
+  color: var(--ink);
+  font-size: 12px; font-weight: 500;
+  padding: 0 6px;
+  display: flex; align-items: center; gap: 6px;
+  overflow: hidden; white-space: nowrap;
+}
+.blk em, .merge em { font-style: normal; font-family: var(--f-display); font-stretch: 108%; font-weight: 800; font-size: 10.5px; letter-spacing: .06em; color: var(--c); }
+.blk.dashed { border-style: dashed; }
+.blk.rest {
+  background: repeating-linear-gradient(135deg, var(--line-2) 0 5px, transparent 5px 10px);
+  border-color: var(--line);
+  color: var(--muted);
+}
+/* 합반: 여러 학년 줄을 한 덩어리로 덮는다 */
+.merge {
+  position: absolute;
+  background: var(--cbg);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  color: var(--ink);
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  padding: 6px 12px;
+  overflow: hidden;
+  z-index: 2;
+}
+.merge b { font-size: 15px; font-weight: 700; line-height: 1.3; }
+.merge span { font-size: 12px; font-weight: 700; }
+/* 합반 가능: 두 줄을 점선 틀로 묶는다 */
+.maybe-box { position: absolute; border: 2px dashed var(--ink); border-radius: 4px; z-index: 2; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); margin-top: 12px; align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg-merge { width: 18px; height: 12px; border: 2px solid var(--ink); border-radius: 2px; }
+.lg-maybe { width: 18px; height: 12px; border: 2px dashed var(--ink); border-radius: 2px; }
+.swipe { display: none; font-size: 12px; color: var(--muted); }
+
+/* 단계 표 */
+.phases { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; min-width: 0; }
+.phase {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr) 190px 210px;
+  gap: 4px 22px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+}
+.phase:first-child { border-top: 0; }
+.phase.head { padding-block: 10px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.when { display: grid; gap: 2px; align-content: start; }
+.when .d { font-weight: 700; font-size: 14px; }
+.when .w { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.what { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.what .name { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-weight: 700; font-size: 16px; }
+.what ul { font-size: 14px; }
+.book, .sched { font-size: 13.5px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.sched { color: var(--muted); }
+.k { display: none; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .04em; }
+.series { font-family: var(--f-display); font-stretch: 110%; font-weight: 800; letter-spacing: .05em; color: var(--c); font-size: 13px; }
+.phase.rest .when .d { color: var(--muted); font-weight: 500; }
+.phase.rest .what .name { color: var(--muted); font-weight: 500; font-size: 15px; }
+.phase.note { background: var(--line-2); }
+.phase.note .what .name { font-size: 15px; }
+.next { padding: 12px 20px; border-top: 1px solid var(--line); font-size: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* 겨울 13주 */
+.weeks { display: grid; gap: 14px; }
+.band { display: grid; gap: 8px; }
+.band-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.band-label span:last-child { font-weight: 500; color: var(--muted); }
+.cells { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 8px; }
+.cell { background: var(--cbg); border-radius: 4px; padding: 10px 12px; display: grid; gap: 2px; align-content: start; min-width: 0; }
+.cell .wk { font-family: var(--f-mono); font-size: 12px; color: var(--c); font-weight: 500; }
+.cell .rg { font-size: 13.5px; font-weight: 500; line-height: 1.45; }
+.flow { display: grid; gap: 8px; }
+.flow-bar { display: flex; height: 30px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+.flow-bar div { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; border-left: 1px solid var(--surface); color: var(--ink); }
+.flow-bar div:first-child { border-left: 0; }
+.fb1 { background: var(--max-bg); }
+.fb2 { background: var(--map-bg); }
+.fb3 { background: var(--red-bg); }
+.fb4 { background: var(--line-2); }
+.flow-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 16px; font-size: 13px; color: var(--muted); }
+.flow-list b { color: var(--ink); font-weight: 700; display: block; }
+
+/* 고2 선택과목 상자 */
+.opt { background: var(--surface); border: 1px dashed var(--line); border-radius: 6px; padding: 16px 20px; display: grid; gap: 10px; }
+.opt h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.subj { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 4px 12px; font-size: 14px; }
+.subj dt { font-weight: 700; color: var(--muted); }
+.subj dd { margin: 0; }
+.opt p { font-size: 14px; color: var(--muted); }
+
+/* 안내 */
+.notes { font-size: 13.5px; color: var(--muted); display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 20px; }
+.notes h3 { color: var(--ink); font-size: 15px; }
+.notes ul { display: grid; gap: 4px; }
+
+@media (max-width: 960px) {
+  .phase { grid-template-columns: 120px minmax(0, 1fr); }
+  .phase .book, .phase .sched { grid-column: 2; }
+  .phase.head { display: none; }
+  .k { display: block; }
+  .book, .sched { margin-top: 6px; }
+  .book:empty, .sched:empty { display: none; }
+}
+@media (max-width: 820px) {
+  .ladder { grid-template-columns: minmax(0, 1fr); }
+  .cells[style*="--n:6"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cells[style*="--n:4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flow-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .swipe { display: block; }
+}
+@media (max-width: 560px) {
+  body { font-size: 14.5px; }
+  .wrap { padding-block: 28px 48px; gap: 40px; }
+  .phase { grid-template-columns: minmax(0, 1fr); padding: 14px 16px; }
+  .phase > * { grid-column: 1 !important; }
+  .when { grid-auto-flow: column; justify-content: start; gap: 10px; align-items: baseline; }
+  .cells, .cells[style*="--n:6"], .cells[style*="--n:4"] { grid-template-columns: minmax(0, 1fr); }
+  .subj { grid-template-columns: minmax(0, 1fr); }
+  .subj dd { margin-bottom: 6px; }
+  .panel { padding: 14px 12px 12px; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow"><span class="c-map">MINIMAP</span><span class="c-max">MINIMAX</span><span class="c-red">MAXIMIN</span></div>
+  <h1>승민T 통합사회 연간 커리큘럼</h1>
+  <p class="lead">고1 내신반, 고2 시즌반, 고3 수능반(2028학년도 수능)의 1년 계획입니다. 겨울 개념 13주는 예비 고1·2·3이 한 반에서 함께 듣고, 그 뒤에는 학년별로 나눕니다. 고2와 고3은 여름 고난도 특강을 함께 듣고, 학력평가 직전 실전 모의고사도 같은 반으로 열 수 있습니다.</p>
+  <p class="meta">2026년 12월 개강 · 날짜는 2025·2026년 일정을 바탕으로 한 예상입니다 · 2026년 11월 작성</p>
+</header>
+
+<section aria-labelledby="ladder-h">
+  <h3 id="ladder-h">3년 흐름</h3>
+  <div class="ladder">
+    <div class="step c-nae">
+      <div class="who"><span class="mk"></span>고1 내신반</div>
+      <ul>
+        <li>겨울 개념 13주 (합반)</li>
+        <li>학교 시험 4번: 승민T와 내신 대비</li>
+        <li>그 사이: 6·9·10월 학력평가 실전 모의고사</li>
+        <li>여름: 통합사회2 개념 + 주간 실전</li>
+      </ul>
+      <a href="#go1">고1 표 보기 ↓</a>
+    </div>
+    <div class="step c-mock">
+      <div class="who"><span class="mk"></span>고2 시즌반</div>
+      <ul>
+        <li>겨울 개념 13주 (합반)</li>
+        <li>학력평가 4번 직전: 실전 모의고사 (고3과 합반 가능)</li>
+        <li>여름: 고난도 특강 (고3과 합반)</li>
+        <li>학교 시험 기간: 쉼, 또는 조교 1:1 선택과목</li>
+      </ul>
+      <a href="#go2">고2 표 보기 ↓</a>
+    </div>
+    <div class="step c-red">
+      <div class="who"><span class="mk"></span>고3 수능반</div>
+      <ul>
+        <li>겨울 개념 13주 (합반)</li>
+        <li>기출 N제 → 고난도 + 주간 실전 → 파이널</li>
+        <li>6·9월 모의평가 분석은 다음 단계 첫 수업</li>
+      </ul>
+      <a href="#go3">고3 표 보기 ↓</a>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="tl-h">
+  <div class="sec-head">
+    <h2 id="tl-h">한눈에 보기 <small>2026년 12월 ~ 2027년 12월</small></h2>
+    <p class="lead">여러 학년 줄을 한 덩어리로 덮은 칸이 합반입니다. 점선 틀로 묶은 칸은 합반으로 열 수 있는 기간입니다.</p>
+  </div>
+  <div class="panel">
+    <p class="swipe">옆으로 밀어서 보세요 →</p>
+    <div class="tl-scroll"><div class="tl" id="tl" role="img" aria-label="고1·고2·고3의 월별 수업 단계와 합반 기간, 주요 시험 일정을 나타낸 가로 띠"></div></div>
+    <div class="legend">
+      <span><span class="lg-merge"></span>합반</span>
+      <span><span class="lg-maybe"></span>합반 가능</span>
+      <span class="c-map"><span class="mk"></span>개념 (MINIMAP)</span>
+      <span class="c-map2"><span class="mk"></span>통합사회2 개념</span>
+      <span class="c-max"><span class="mk"></span>기출 N제 (MINIMAX)</span>
+      <span class="c-red"><span class="mk"></span>고난도·실전 (MAXIMIN)</span>
+      <span class="c-gold"><span class="mk"></span>파이널 (MAXIMIN FINAL)</span>
+      <span class="c-nae"><span class="mk"></span>학교 내신 대비</span>
+      <span class="c-mock"><span class="mk"></span>학력평가 실전 모의고사</span>
+      <span class="c-rest"><span class="mk"></span>쉼 (고2: 선택하면 조교 1:1)</span>
+    </div>
+  </div>
+</section>
+
+<!-- 겨울 합반 -->
+<section id="winter" aria-labelledby="w-h">
+  <div class="sec-head">
+    <h2 id="w-h">겨울 개념 13주 <span class="chip">합반 · 예비 고1·2·3</span> <small>12월 중순 ~ 3월 중순</small></h2>
+    <p class="lead">세 학년이 같은 교재, 같은 진도로 통합사회1·2 전 범위와 2028 예시문항 7가지 유형을 공부합니다.</p>
+  </div>
+  <div class="panel weeks">
+    <div class="band c-map">
+      <div class="band-label"><span class="mk"></span><span>통합사회1</span><span>MINIMAP 통합사회1 · 1~4주</span></div>
+      <div class="cells" style="--n:4">
+        <div class="cell"><span class="wk">1주</span><span class="rg">Ⅰ 통합적 관점 · Ⅱ 인간, 사회, 환경과 행복</span></div>
+        <div class="cell"><span class="wk">2주</span><span class="rg">Ⅲ 자연환경과 인간</span></div>
+        <div class="cell"><span class="wk">3주</span><span class="rg">Ⅳ 문화와 다양성</span></div>
+        <div class="cell"><span class="wk">4주</span><span class="rg">Ⅴ 생활공간과 사회</span></div>
+      </div>
+    </div>
+    <div class="band c-map2">
+      <div class="band-label"><span class="mk"></span><span>통합사회2</span><span>MINIMAP 통합사회2 · 5~10주</span></div>
+      <div class="cells" style="--n:6">
+        <div class="cell"><span class="wk">5주</span><span class="rg">Ⅰ 인권 보장과 헌법</span></div>
+        <div class="cell"><span class="wk">6주</span><span class="rg">Ⅱ 사회 정의와 불평등</span></div>
+        <div class="cell"><span class="wk">7주</span><span class="rg">Ⅲ 시장경제와 지속가능발전 ①</span></div>
+        <div class="cell"><span class="wk">8주</span><span class="rg">Ⅲ 시장경제와 지속가능발전 ②</span></div>
+        <div class="cell"><span class="wk">9주</span><span class="rg">Ⅳ 세계화와 평화</span></div>
+        <div class="cell"><span class="wk">10주</span><span class="rg">Ⅴ 미래와 지속가능한 삶</span></div>
+      </div>
+    </div>
+    <div class="band c-red">
+      <div class="band-label"><span class="mk"></span><span>예시문항 7가지 유형</span><span>2028 예시문항 분석 특강 교재 · 11~13주</span></div>
+      <div class="cells" style="--n:3">
+        <div class="cell"><span class="wk">11주</span><span class="rg">유형 01 사상가 한 명의 입장 · 02 두 사상가 비교</span></div>
+        <div class="cell"><span class="wk">12주</span><span class="rg">유형 03 지도·기후 · 04 통계 그래프·지표 · 05 계산</span></div>
+        <div class="cell"><span class="wk">13주</span><span class="rg">유형 06 사료·문서·연표 · 07 수업 장면·사례 + 쌍둥이 세트 25문항</span></div>
+      </div>
+    </div>
+    <div class="flow">
+      <h3 style="font-size:15px">매주 수업 흐름 <small>3시간 · 숙제 주 2~3시간</small></h3>
+      <div class="flow-bar" aria-hidden="true">
+        <div class="fb1" style="flex:20">20</div>
+        <div class="fb2" style="flex:110">개념 강의 110분</div>
+        <div class="fb3" style="flex:40">문제 40</div>
+        <div class="fb4" style="flex:10"></div>
+      </div>
+      <div class="flow-list">
+        <div><b>쪽지 시험 <span class="num">20분</span></b>지난주 개념 확인 (O/X·빈칸)</div>
+        <div><b>개념 강의 <span class="num">110분</span></b>형광펜·사상가 카드·그래프와 지도 해석</div>
+        <div><b>수능형 문제 <span class="num">40분</span></b>풀이와 해설</div>
+        <div><b>정리 <span class="num">10분</span></b>한마디, 숙제 안내</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 고1 내신반 -->
+<section id="go1" aria-labelledby="g1-h">
+  <div class="sec-head">
+    <h2 id="g1-h">고1 내신반 <small>1학기 통합사회1 · 2학기 통합사회2</small></h2>
+    <p class="lead">학교 시험 기간에는 승민T와 학교별 내신 대비, 그 사이 학력평가 기간에는 실전 모의고사 수업을 합니다.</p>
+  </div>
+
+  <div class="phases">
+    <div class="phase head"><div>기간</div><div>단계 · 수업 내용</div><div>교재</div><div>이 무렵 일정</div></div>
+
+    <div class="phase c-map">
+      <div class="when"><span class="d">12월 중순 ~ 3월 중순</span><span class="w">13주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>겨울 개념 <span class="chip">합반 · 예비 고1·2·3</span></div>
+        <ul><li>학교 수업 전에 통합사회1·2 전 범위를 한 번 끝냅니다 (위 주차표)</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAP</span> 통합사회1·2</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>3월 학력평가 (3월 말, 중학교 범위)</span></div>
+    </div>
+
+    <div class="phase c-nae">
+      <div class="when"><span class="d">3월 중순 ~ 4월 말</span><span class="w">6~7주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>1학기 중간고사 대비</div>
+        <ul>
+          <li>앞 2~3주: 통합사회1 Ⅰ~Ⅲ 문제 풀이, 학교 프린트·부교재 정리</li>
+          <li>뒤 4주: 학교별 직전 대비, 학교 기출·서술형</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAX</span> 기본편 (통합사회1)</span><span>학교별 자료</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>중간고사 4월 말 ~ 5월 초</span><span>범위는 보통 Ⅰ~Ⅱ, 학교에 따라 Ⅲ까지</span></div>
+    </div>
+
+    <div class="phase c-mock">
+      <div class="when"><span class="d">5월</span><span class="w">약 4주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>6월 학력평가 실전</div>
+        <ul>
+          <li>실전 압축 개념과 실전 모의고사</li>
+          <li>범위가 통합사회1 Ⅰ~Ⅳ-3이라 기말 범위 앞부분까지 미리 다룹니다</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>실전 모의고사 (통합사회1 범위)</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>6월 학력평가 (6월 첫 주)</span></div>
+    </div>
+
+    <div class="phase c-nae">
+      <div class="when"><span class="d">6월 ~ 7월 초</span><span class="w">5~6주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>1학기 기말고사 대비</div>
+        <ul><li>통합사회1 기말 범위 (학교에 따라 Ⅲ~Ⅴ 또는 Ⅳ~Ⅴ), 학교 기출·서술형</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>학교별 자료</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>기말고사 7월 첫 주</span></div>
+    </div>
+
+    <div class="phase c-map2">
+      <div class="when"><span class="d">7월 중순 ~ 9월 초</span><span class="w">약 7주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>여름: 통합사회2 개념 + 주간 실전</div>
+        <ul>
+          <li>통합사회2 개념을 주마다 한 대단원씩</li>
+          <li>매주 실전 모의고사: 통합사회1 + 그 주까지 배운 통합사회2</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAP</span> 통합사회2</span><span>실전 모의고사</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>9월 학력평가 (9월 첫 주, 통합사회1 + 통합사회2 Ⅰ·Ⅱ)</span></div>
+    </div>
+
+    <div class="phase c-nae">
+      <div class="when"><span class="d">9월 초 ~ 10월 초</span><span class="w">4~6주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>2학기 중간고사 대비</div>
+        <ul><li>개학과 동시에 시작. 통합사회2 Ⅰ·Ⅱ (학교에 따라 Ⅲ까지), 학교 기출·서술형</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAX</span> 기본편 (통합사회2)</span><span>학교별 자료</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>중간고사 9월 말 ~ 10월 중순</span></div>
+    </div>
+
+    <div class="phase c-mock">
+      <div class="when"><span class="d">중간고사 뒤 ~ 10월 학평</span><span class="w">1~3주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>10월 학력평가 실전</div>
+        <ul><li>실전 모의고사: 통합사회1 + 통합사회2 Ⅳ-1까지</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>실전 모의고사</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>10월 학력평가 (10월 중순)</span></div>
+    </div>
+
+    <div class="phase c-nae">
+      <div class="when"><span class="d">10월 말 ~ 12월 초</span><span class="w">5~6주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>2학기 기말고사 대비</div>
+        <ul><li>통합사회2 기말 범위, 학교 기출·서술형. 시험이 늦은 학교는 12월 중순까지</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>학교별 자료</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>기말고사 11월 말 ~ 12월 중순</span></div>
+    </div>
+    <div class="next c-map"><span class="mk"></span><span>12월 중순: 예비 고2로 겨울 개념 13주 합반에 다시 들어갑니다</span></div>
+  </div>
+</section>
+
+<!-- 고2 시즌반 -->
+<section id="go2" aria-labelledby="g2-h">
+  <div class="sec-head">
+    <h2 id="g2-h">고2 시즌반 <small>학교 통합사회 수업이 없는 1년 · 1학기와 2학기를 같은 방식으로</small></h2>
+    <p class="lead">고2 학력평가는 네 번 모두 통합사회 전 범위입니다. 학력평가 기간에는 실전 모의고사, 여름방학에는 고난도 특강을 하고, 학교 시험 기간에는 승민T 수업을 쉽니다.</p>
+  </div>
+
+  <div class="phases">
+    <div class="phase head"><div>기간</div><div>단계 · 수업 내용</div><div>교재</div><div>이 무렵 일정</div></div>
+
+    <div class="phase c-map">
+      <div class="when"><span class="d">12월 중순 ~ 3월 중순</span><span class="w">13주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>겨울 개념 <span class="chip">합반 · 예비 고1·2·3</span></div>
+        <ul><li>통합사회1·2 전 범위 다시 보기와 예시문항 7가지 유형 (위 주차표)</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAP</span> 통합사회1·2</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>1월 말 EBS 수능특강 출간</span></div>
+    </div>
+
+    <div class="phase c-mock">
+      <div class="when"><span class="d">3월 중순 ~ 3월 학평</span><span class="w">1~2회</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>3월 학력평가 실전 <span class="chip maybe">합반 가능 · 고2·3</span></div>
+        <ul><li>전 범위 실전 모의고사. 처음 치르는 전 범위 학력평가</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>실전 모의고사 (전 범위)</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>3월 학력평가 (3월 말, 고3과 같은 날)</span></div>
+    </div>
+
+    <div class="phase rest c-rest">
+      <div class="when"><span class="d">4월 ~ 5월 초</span><span class="w">중간고사</span></div>
+      <div class="what"><div class="name"><span class="mk"></span>쉼 · 선택하면 조교 1:1 선택과목 내신 (아래)</div></div>
+      <div class="book"></div><div class="sched"></div>
+    </div>
+
+    <div class="phase c-mock">
+      <div class="when"><span class="d">5월 중순 ~ 6월 초</span><span class="w">2~3주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>6월 학력평가 실전 <span class="chip maybe">합반 가능 · 고2·3</span></div>
+        <ul><li>전 범위 실전 모의고사. 고3의 6월 모의평가 직전 실전과 같은 시험지로 함께 풀 수 있습니다</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>실전 모의고사 (전 범위)</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>6월 학력평가 (6월 첫 주, 6월 모의평가와 같은 날)</span></div>
+    </div>
+
+    <div class="phase rest c-rest">
+      <div class="when"><span class="d">6월 ~ 7월 초</span><span class="w">기말고사</span></div>
+      <div class="what"><div class="name"><span class="mk"></span>쉼 · 선택하면 조교 1:1 선택과목 내신</div></div>
+      <div class="book"></div><div class="sched"></div>
+    </div>
+
+    <div class="phase c-red">
+      <div class="when"><span class="d">7월 중순 ~ 8월 말</span><span class="w">약 7주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>여름방학 고난도 특강 <span class="chip">합반 · 고2·3</span></div>
+        <ul>
+          <li>수능특강·수능완성·6월 모의평가를 반영한 고난도 문제</li>
+          <li>매주 전 범위 실전 모의고사, 마지막 주는 9월 학력평가 대비</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>여름 고난도 문제집</span><span>실전 모의고사</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>9월 학력평가 (9월 첫 주, 9월 모의평가와 같은 날)</span></div>
+    </div>
+
+    <div class="phase rest c-rest">
+      <div class="when"><span class="d">9월 ~ 10월 초</span><span class="w">중간고사</span></div>
+      <div class="what"><div class="name"><span class="mk"></span>쉼 · 선택하면 조교 1:1 선택과목 내신</div></div>
+      <div class="book"></div><div class="sched"></div>
+    </div>
+
+    <div class="phase c-mock">
+      <div class="when"><span class="d">중간고사 뒤 ~ 10월 학평</span><span class="w">2~3주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>10월 학력평가 실전 <span class="chip maybe">합반 가능 · 고2·3</span></div>
+        <ul><li>전 범위 실전 모의고사. 고3 파이널 실전 모의고사에 함께 들어갈 수 있습니다</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span>실전 모의고사 (전 범위)</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>10월 학력평가 (10월 중순, 고3과 같은 날)</span></div>
+    </div>
+
+    <div class="phase rest c-rest">
+      <div class="when"><span class="d">11월 ~ 12월 초</span><span class="w">기말고사</span></div>
+      <div class="what"><div class="name"><span class="mk"></span>쉼 · 선택하면 조교 1:1 선택과목 내신</div></div>
+      <div class="book"></div><div class="sched"></div>
+    </div>
+    <div class="next c-map"><span class="mk"></span><span>12월 중순: 예비 고3으로 겨울 개념 13주 합반에 들어가 고3 수능반으로 이어집니다</span></div>
+  </div>
+
+  <div class="opt">
+    <h3><span class="chip maybe">선택</span>학교 시험 기간: 조교 1:1 선택과목 내신</h3>
+    <p>고2 학교 시험 기간에는 승민T 수업 대신 조교와 1:1로 학교 선택과목 내신을 준비할 수 있습니다. 수강생 학교의 고2 편성표를 모아 많이 겹치는 과목부터 받습니다.</p>
+    <dl class="subj">
+      <dt>일반선택</dt><dd>사회와 문화, 현대사회와 윤리, 세계시민과 지리, 세계사</dd>
+      <dt>진로선택</dt><dd>정치, 법과 사회, 경제, 윤리와 사상, 인문학과 윤리, 한국지리 탐구, 도시의 미래 탐구, 동아시아 역사 기행, 국제 관계의 이해</dd>
+      <dt>평가</dt><dd>일반선택·진로선택은 5등급 상대평가입니다. 사회·과학 융합선택(여행지리, 사회문제 탐구 등)만 절대평가로 매깁니다.</dd>
+    </dl>
+    <p>출처: <a href="https://www.newsis.com/view/NISX20250102_0003019022" target="_blank" rel="noopener">뉴시스 (2025-01-02)</a>, <a href="https://riroschool.kr/kceenews/detail/224" target="_blank" rel="noopener">리로스쿨 입시 뉴스</a>, <a href="https://geteduify.com/parent-guide/2022-%ea%b0%9c%ec%a0%95-%ea%b5%90%ec%9c%a1%ea%b3%bc%ec%a0%95-%ec%82%ac%ed%9a%8c-%ea%b3%bc%eb%aa%a9-%ec%b4%9d%ec%a0%95%eb%a6%ac-%ea%b3%b5%ed%86%b5%c2%b7%ec%84%a0%ed%83%9d%c2%b7%ec%88%98%eb%8a%a5/" target="_blank" rel="noopener">2022 개정 사회 과목 정리</a></p>
+  </div>
+</section>
+
+<!-- 고3 수능반 -->
+<section id="go3" aria-labelledby="g3-h">
+  <div class="sec-head">
+    <h2 id="g3-h">고3 수능반 <small>2028학년도 수능 대비 · 2026년 12월 ~ 2027년 11월</small></h2>
+    <p class="lead">개념 → 기출 → 고난도 → 파이널, 네 단계로 갑니다. 6월·9월 모의평가 분석은 다음 단계의 첫 수업에서 합니다.</p>
+  </div>
+
+  <div class="phases">
+    <div class="phase head"><div>기간</div><div>단계 · 수업 내용</div><div>교재</div><div>이 무렵 일정</div></div>
+
+    <div class="phase c-map">
+      <div class="when"><span class="d">12월 중순 ~ 3월 중순</span><span class="w">13주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>개념 <span class="chip">합반 · 예비 고1·2·3</span></div>
+        <ul>
+          <li>1~4주 통합사회1, 5~10주 통합사회2</li>
+          <li>11~13주 2028 예시문항 7가지 유형 풀이 전략과 쌍둥이 세트</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAP</span> 통합사회1·2</span><span>2028 예시문항 분석 특강 교재</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>1월 말 EBS 수능특강 출간</span></div>
+    </div>
+
+    <div class="phase c-max">
+      <div class="when"><span class="d">3월 중순 ~ 6월 초</span><span class="w">약 12주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>기출 N제</div>
+        <ul>
+          <li>단원별 기출 변형 문제, 기본편 → 심화편</li>
+          <li>매 수업 같은 단원 수능특강 핵심 문항</li>
+          <li>새로 나온 고3 학력평가 문항 풀이</li>
+          <li>3월 학평 주와 6월 모의평가 직전 실전 모의고사 <span class="chip maybe">합반 가능 · 고2·3</span></li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAX</span> 기본편·심화편</span><span>EBS 수능특강</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>3월 고3 학력평가</span><span>3월 말 2028 수능 시행 계획 발표</span><span>5월 고3 학력평가</span><span>5월 말 EBS 수능완성 출간</span></div>
+    </div>
+
+    <div class="phase c-red">
+      <div class="when"><span class="d">6월 중순 ~ 9월 초</span><span class="w">약 12주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>고난도 + 주간 실전</div>
+        <ul>
+          <li>첫 수업: 6월 모의평가 분석 (25문항과 새로 나온 선지)</li>
+          <li>여름방학(7월 중순 ~ 8월 말) 고난도 특강 <span class="chip">합반 · 고2·3</span></li>
+          <li>매주 실전 모의고사 1회는 고3만 따로: 과목별 6회 → 전 범위 4회</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MAXIMIN</span> 시즌1 (실전 모의고사 10회)</span><span>여름 고난도 문제집</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>6월 모의평가 (6월 첫 주, 평가원이 내는 첫 통합사회 시험)</span><span>7월 고3 학력평가</span></div>
+    </div>
+
+    <div class="phase c-gold">
+      <div class="when"><span class="d">9월 초 ~ 수능 전</span><span class="w">약 11주</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>파이널</div>
+        <ul>
+          <li>첫 수업: 9월 모의평가 분석</li>
+          <li>매주 실전 모의고사와 새로 나온 개념·선지 정리. 10월 학평 직전 회차 <span class="chip maybe">합반 가능 · 고2·3</span></li>
+          <li>마지막 주: 핵심 주제, EBS 세부 내용, 오답 총정리</li>
+        </ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MAXIMIN</span> FINAL (6·9월 모의평가 반영 실전 모의고사 6~8회)</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>9월 모의평가 (9월 첫 주)</span><span>10월 고3 학력평가</span><span>수능 11월 18일 (예상)</span></div>
+    </div>
+
+    <div class="phase note c-map">
+      <div class="when"><span class="d">6월 중순 ~ 7월 말</span><span class="w">8회</span></div>
+      <div class="what">
+        <div class="name"><span class="mk"></span>6월 모의평가 뒤 시작하는 학생: 압축 개념반</div>
+        <ul><li>MINIMAP 중단원 '한 장 정리'로 핵심 개념을 빠르게 끝낸 뒤 고난도반에 합류</li></ul>
+      </div>
+      <div class="book"><span class="k">교재</span><span><span class="series">MINIMAP</span> 한 장 정리</span></div>
+      <div class="sched"><span class="k">이 무렵 일정</span><span>7월 고3 학력평가</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="notes">
+  <h3>일정 안내</h3>
+  <ul>
+    <li>날짜는 2025·2026년 일정과 학교 사례를 바탕으로 한 예상입니다. 2027년 학력평가 시행 계획과 3월 말 수능 시행 계획(EBS 연계 비중, 모의평가 날짜)이 나오면 실제 날짜로 고칩니다.</li>
+    <li>학교 시험 날짜와 범위는 학교마다 다릅니다. 내신 대비 기간은 학교 일정표를 받아 맞춥니다.</li>
+    <li>고1 학력평가 통합사회 범위 (2025·2026년 기준): 3월 중학교 범위 · 6월 통합사회1 Ⅰ~Ⅳ-3 · 9월 통합사회1 + 통합사회2 Ⅰ·Ⅱ · 10월 통합사회2 Ⅳ-1까지. 고2 학력평가는 네 번 모두 전 범위라 고3과 같은 시험지로 실전 수업을 열 수 있습니다.</li>
+    <li>모의평가(6모·9모)는 평가원이 고3에게 내는 시험이고, 학력평가는 교육청이 내는 시험입니다. 2026년에는 6월과 9월에 두 시험을 같은 날 치렀습니다.</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+(function () {
+  var S = Date.UTC(2026, 11, 1), E = Date.UTC(2027, 11, 22);
+  function t(s) { var a = s.split('-'); return Date.UTC(+a[0], +a[1] - 1, +a[2]); }
+  function p(s) { return (t(s) - S) / (E - S) * 100; }
+  function el(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; }
+
+  // 줄 순서: 고1, 고2, 고3 (고2·고3이 붙어 있어야 둘만의 합반을 한 덩어리로 그릴 수 있다)
+  var ROW_H = [40, 40, 40, 24], GAP = 8, PAD = 8;
+  var LANES = [
+    { name: '고1', sub: '내신반', items: [
+      { f: '2027-03-15', to: '2027-04-30', c: 'nae', label: '중간 대비' },
+      { f: '2027-05-01', to: '2027-06-03', c: 'mock', label: '6월 학평 실전', short: '학평' },
+      { f: '2027-06-04', to: '2027-07-07', c: 'nae', label: '기말 대비' },
+      { f: '2027-07-12', to: '2027-08-31', c: 'map2', label: '통합사회2 + 주간 실전', short: '통합사회2' },
+      { f: '2027-09-01', to: '2027-10-08', c: 'nae', label: '중간 대비' },
+      { f: '2027-10-09', to: '2027-10-19', c: 'mock', label: '10월 학평 실전', short: '' },
+      { f: '2027-10-25', to: '2027-12-10', c: 'nae', label: '기말 대비' }
+    ] },
+    { name: '고2', sub: '시즌반', items: [
+      { f: '2027-03-15', to: '2027-03-23', c: 'mock', label: '3월 학평 실전', short: '' },
+      { f: '2027-03-24', to: '2027-05-16', c: 'rest', label: '쉼 · 조교 1:1 선택과목', short: '쉼' },
+      { f: '2027-05-17', to: '2027-06-02', c: 'mock', label: '6월 학평 실전', short: '학평' },
+      { f: '2027-06-03', to: '2027-07-10', c: 'rest', label: '쉼 · 조교 1:1', short: '쉼' },
+      { f: '2027-09-02', to: '2027-10-03', c: 'rest', label: '쉼 · 조교 1:1', short: '쉼' },
+      { f: '2027-10-04', to: '2027-10-19', c: 'mock', label: '10월 학평 실전', short: '학평' },
+      { f: '2027-10-20', to: '2027-12-10', c: 'rest', label: '쉼 · 조교 1:1 선택과목', short: '쉼' }
+    ] },
+    { name: '고3', sub: '수능반', items: [
+      { f: '2027-03-15', to: '2027-06-02', c: 'max', label: '기출 N제', tag: 'MINIMAX' },
+      { f: '2027-06-07', to: '2027-07-10', c: 'red', label: '고난도 + 주간 실전', short: '고난도' },
+      { f: '2027-09-02', to: '2027-11-17', c: 'gold', label: '파이널', tag: 'MAXIMIN FINAL' }
+    ] },
+    { name: '고3 · 6모 뒤 합류', small: true, items: [
+      { f: '2027-06-14', to: '2027-07-31', c: 'map', label: '압축 개념반 8회', dashed: true }
+    ] }
+  ];
+  // 합반: rows = [첫 줄, 끝 줄]
+  var MERGES = [
+    { f: '2026-12-14', to: '2027-03-13', rows: [0, 2], c: 'map', tag: 'MINIMAP', title: '개념 13주', who: '합반 · 예비 고1·2·3' },
+    { f: '2027-07-12', to: '2027-08-31', rows: [1, 2], c: 'red', tag: 'MAXIMIN', title: '여름 고난도 특강', who: '합반 · 고2·3' }
+  ];
+  // 합반 가능: 학평·모평 직전 실전 (고2·고3 같은 전 범위 시험지)
+  var MAYBE = [
+    { f: '2027-03-15', to: '2027-03-23', rows: [1, 2] },
+    { f: '2027-05-17', to: '2027-06-02', rows: [1, 2] },
+    { f: '2027-10-04', to: '2027-10-19', rows: [1, 2] }
+  ];
+  var MARKS = [
+    { d: '2027-01-27', label: '수능특강 출간', row: 0 },
+    { d: '2027-03-23', label: '3월 학평', row: 1 },
+    { d: '2027-05-24', label: '수능완성 출간', row: 0 },
+    { d: '2027-06-03', label: '6모 · 6월 학평', row: 1 },
+    { d: '2027-09-01', label: '9모 · 9월 학평', row: 0 },
+    { d: '2027-10-19', label: '10월 학평', row: 1 },
+    { d: '2027-11-18', label: '수능 11/18', row: 0, strong: true }
+  ];
+
+  var root = document.getElementById('tl');
+  if (!root) return;
+
+  function rowTop(i) { var y = PAD; for (var k = 0; k < i; k++) y += ROW_H[k] + GAP; return y; }
+
+  // 머리: 시험 표시 + 달
+  var head = el('div', 'tl-row');
+  head.appendChild(el('div', 'tl-name'));
+  var axis = el('div', 'tl-axis');
+  for (var i = 0; i < 13; i++) {
+    var y = 2026 + Math.floor((11 + i) / 12), m = (11 + i) % 12;
+    var lab = el('span', 'tl-month', (m + 1) + '월');
+    lab.style.left = ((Date.UTC(y, m, 1) - S) / (E - S) * 100) + '%';
+    if (i === 0 || m === 0) lab.insertBefore(el('b', null, String(y)), lab.firstChild);
+    axis.appendChild(lab);
+  }
+  MARKS.forEach(function (k) {
+    var n = el('span', 'tl-mark' + (k.strong ? ' strong' : ''), k.label);
+    n.style.left = p(k.d) + '%';
+    n.style.top = (k.row * 17) + 'px';
+    axis.appendChild(n);
+  });
+  head.appendChild(axis);
+  root.appendChild(head);
+
+  // 학년 줄
+  var lanes = el('div', 'tl-lanes');
+  // 달·시험 세로선은 칸 뒤에, 합반 덩어리는 칸 앞에 그린다
+  var back = el('div', 'tl-over');
+  var over = el('div', 'tl-over');
+  for (var j = 0; j < 13; j++) {
+    var y2 = 2026 + Math.floor((11 + j) / 12), m2 = (11 + j) % 12;
+    var g = el('i'); g.style.left = ((Date.UTC(y2, m2, 1) - S) / (E - S) * 100) + '%'; back.appendChild(g);
+  }
+  MARKS.forEach(function (k) { var g = el('i', 'm' + (k.strong ? ' strong' : '')); g.style.left = p(k.d) + '%'; back.appendChild(g); });
+  lanes.appendChild(back);
+
+  LANES.forEach(function (ln, idx) {
+    var row = el('div', 'tl-row' + (ln.small ? ' sub' : ''));
+    var nm = el('div', 'tl-name', ln.name);
+    if (ln.sub) nm.appendChild(el('small', null, ln.sub));
+    row.appendChild(nm);
+    var tr = el('div', 'tl-track');
+    tr.style.height = ROW_H[idx] + 'px';
+    ln.items.forEach(function (it) {
+      var left = p(it.f), w = p(it.to) - left;
+      var b = el('div', 'blk c-' + it.c + (it.c === 'rest' ? ' rest' : '') + (it.dashed ? ' dashed' : ''));
+      b.style.left = left + '%';
+      b.style.width = w + '%';
+      b.title = it.label;
+      var txt = w < 3.2 ? '' : (w < 10 && it.short != null ? it.short : it.label);
+      if (it.tag && w > 14) b.appendChild(el('em', null, it.tag));
+      if (txt) b.appendChild(document.createTextNode(txt));
+      tr.appendChild(b);
+    });
+    row.appendChild(tr);
+    lanes.appendChild(row);
+  });
+
+  MERGES.forEach(function (mg) {
+    var top = rowTop(mg.rows[0]);
+    var bottom = rowTop(mg.rows[1]) + ROW_H[mg.rows[1]];
+    var b = el('div', 'merge c-' + mg.c);
+    b.style.left = p(mg.f) + '%';
+    b.style.width = (p(mg.to) - p(mg.f)) + '%';
+    b.style.top = top + 'px';
+    b.style.height = (bottom - top) + 'px';
+    b.title = mg.title + ' (' + mg.who + ')';
+    b.appendChild(el('em', null, mg.tag));
+    b.appendChild(el('b', null, mg.title));
+    b.appendChild(el('span', null, mg.who));
+    over.appendChild(b);
+  });
+  MAYBE.forEach(function (mb) {
+    var top = rowTop(mb.rows[0]) - 3;
+    var bottom = rowTop(mb.rows[1]) + ROW_H[mb.rows[1]] + 3;
+    var b = el('div', 'maybe-box');
+    b.style.left = 'calc(' + p(mb.f) + '% - 3px)';
+    b.style.width = 'calc(' + (p(mb.to) - p(mb.f)) + '% + 6px)';
+    b.style.top = top + 'px';
+    b.style.height = (bottom - top) + 'px';
+    b.title = '합반 가능 · 고2·3 실전 모의고사';
+    over.appendChild(b);
+  });
+  lanes.appendChild(over);
+  root.appendChild(lanes);
+})();
+</script>
