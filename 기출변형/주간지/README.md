@@ -60,3 +60,4 @@ node 주간지/build.mjs jakjeon 1 [png]   # → 주간지/out/작전고-1주차
 | 인천국제고 | 주간지 · 인천국제고 | claude/weekly-inguk | session_01QqEa9ARsP6krFyyfNnBLFm |
 - **조정 채팅 = '주간지 · 조정 채팅 (디자인·견본 수정)'**(session_01QqEa98Z8tj8bZXnLwjd2Cn, 2026-11-09부터 — 앞 조정 채팅은 대화가 길어져 넘김), 브랜치 claude/practical-lamport-a7zkp4. 이 채팅이 강사의 견본 수정 사항을 받아
   ① 이 README의 '강사가 정한 규칙'에 적고 ② 위 5개 채팅에 메시지(send_message)로 보낸다. 각 채팅은 공통 브랜치를 merge해 반영한다.
+- 2026-11-09 작전고 1주차 3차 구성(21쪽, 작전고 채팅): DAY = 개념서 중단원 07·08·09·10 + DAY 5 Ⅲ단원 총정리, 하루 객관식 8(한 주 40) — 학습지 문제 12(DAY 2·4) + 견본 문항 재사용 20 + 새 문항 8(`w1-new.js`, 검토자 다시 풀기 8/8 일치). 학습지 주제 2·3 → DAY 2(개념 정리·O/X 새로). 08 문항의 관련 개념 번호를 개념서 번호로 바로잡음.
