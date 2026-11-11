@@ -17,12 +17,17 @@ python3 frames.py
 node build.mjs
 # 5) 예비용 PDF(글꼴이 없는 PC용) → out/…pdf
 python3 pdf.py
-# 6) 초록 칠판에 쏜 모습 미리보기 → out/칠판미리보기.png
-python3 board_preview.py
+# 6) 초록 칠판에 쏜 모습 미리보기(계산으로 만든 대략적인 모습)
+python3 board_preview.py            # 대표 6장 → out/칠판미리보기.jpg
+python3 board_preview.py --all      # 모든 장 → out/칠판미리보기-전체.pdf
+python3 board_preview.py --light    # 조명 3가지 비교 → out/칠판미리보기-조명비교.jpg
+# 7) 학원 칠판에 직접 띄워 보는 테스트용 PPT(5장: 화면 크기·색·밝기 계단·글자 크기·선 굵기) → out/칠판-테스트.pptx
+node test-deck.mjs
 ```
 - 글꼴은 Pretendard(무료, OFL). 촬영 PC에 설치해야 PPT가 디자인대로 보인다(`out/Pretendard-글꼴-설치용.zip`).
 - `pdf.py`는 LibreOffice가 한글과 숫자 사이에 넣는 빈칸("10 주")을 끄고 변환한다. PowerPoint 화면과 거의 같다.
 - 마지막 슬라이드 '촬영 전 점검'은 숨김 슬라이드다(빔 크기·색·글자 크기 확인용).
+- 칠판 테스트: `칠판-테스트.pptx`를 실제 칠판에 띄우고 촬영 카메라 자리에서 폰으로 찍는다. 번호(색 1~12, 밝기 1~10, 선 1~6, 상자 A~C)로 결과를 받아 `palette.mjs` 색과 글자 크기를 고친다.
 
 ## 디자인 규칙 (칠판에 쏘는 화면)
 - 바탕은 **검정**: 빛을 안 쏘는 곳이라 칠판 색이 그대로 보인다. 흰 바탕은 칠판 전체를 번쩍이게 한다.
