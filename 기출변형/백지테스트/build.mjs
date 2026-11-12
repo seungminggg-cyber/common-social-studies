@@ -2,6 +2,7 @@
 //
 //   node 기출변형/백지테스트/build.mjs 07            중단원 07 → out/백지-07-학생용.pdf(답지 + 테스트), -교사용.pdf
 //   node 기출변형/백지테스트/build.mjs 07 08 png     여러 중단원, 쪽 그림(PNG)까지
+//   node 기출변형/백지테스트/build.mjs set1          1회 묶음 → out/1회/1회-<학교>-답지.pdf·-테스트.pdf, 1회-교사용-모범답안.pdf
 //
 // 한 중단원 = 답지 1쪽 + 테스트 1쪽(학생용) + 교사용 모범 답안 1쪽.
 // 세 판은 같은 HTML이다. 테스트는 답 글자를 투명하게만 해서, 답지와 칸 크기·위치가 똑같다.
@@ -17,8 +18,9 @@ const { chromium } = (() => { try { return require('playwright'); } catch { retu
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const wantPng = args.includes('png');
-const units = args.filter((a) => /^\d\d$/.test(a));
-if (!units.length) { console.error('중단원 번호를 적어 주세요. 예: node build.mjs 07'); process.exit(1); }
+const units = args.filter((a) => /^(\d\d|[a-z]+\d)$/.test(a));
+const SET = (args.find((a) => /^set\d$/.test(a)) || '').slice(3); // set1 = 1회 묶음(content/sets.js)
+if (!units.length && !SET) { console.error('중단원 번호나 회차를 적어 주세요. 예: node build.mjs 07 / node build.mjs set1'); process.exit(1); }
 const OUT = join(ROOT, 'out');
 const TB = join(ROOT, '../../textbook');
 
@@ -35,7 +37,7 @@ function blockHtml(b, i) {
   const head = `<div class="bk-h"><span class="bk-no">${i + 1}</span><span class="bk-kind">${esc(b.kind)}</span>${b.title ? `<h3>${esc(b.title)}</h3>` : ''}</div>`;
   if (b.t === 'flow') {
     const n = b.steps.length;
-    const cols = `7.5em repeat(${n}, 1fr)`;
+    const cols = `${b.label || '7.5em'} repeat(${n}, 1fr)`;
     let h = `<div class="flow" style="grid-template-columns:${cols}"><div class="fl-c"></div>`;
     h += b.steps.map((s, k) => `<div class="fl-name${k < n - 1 ? ' arrow' : ''}">${esc(s.name)}</div>`).join('');
     b.rows.forEach((r, ri) => {
@@ -47,7 +49,7 @@ function blockHtml(b, i) {
   if (b.t === 'table') {
     const th = `<tr>${b.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr>`;
     const tr = b.rows.map((r) => `<tr><th class="rh">${esc(r[0])}</th>${r.slice(1).map((c) => `<td>${ans(c)}</td>`).join('')}</tr>`).join('');
-    return `<section class="bk half">${head}<table class="cmp">${th}${tr}</table></section>`;
+    return `<section class="bk${b.wide ? '' : ' half'}">${head}<table class="cmp"><colgroup><col style="width:${b.head || '22mm'}">${b.cols.slice(1).map(() => '<col>').join('')}</colgroup>${th}${tr}</table></section>`;
   }
   if (b.t === 'keys') {
     return `<section class="bk">${head}<dl class="keys">${b.items.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${ans(v)}</dd></div>`).join('')}</dl></section>`;
@@ -121,7 +123,7 @@ table.cmp { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .cmp th, .cmp td { border: .5pt solid #888; padding: 1.4mm 1.8mm; vertical-align: top; }
 .cmp tr:first-child th { background: var(--c1); color: #fff; font-weight: 700; text-align: center; border-color: var(--c1); }
 .cmp tr:first-child th:first-child { background: #fff; border-color: #fff #888 #888 #fff; }
-.cmp th.rh { width: 17mm; background: var(--c2); font-size: 8.2pt; text-align: center; vertical-align: middle; }
+.cmp th.rh { background: var(--c2); font-size: 8.2pt; text-align: center; vertical-align: middle; }
 .cmp td { height: 12mm; }
 /* 키워드 */
 dl.keys { display: grid; grid-template-columns: 1fr 1fr; column-gap: 5mm; }
@@ -145,28 +147,61 @@ ol.fill li::before { content: counter(f); position: absolute; left: 0; top: 2.1m
 
 const browser = await chromium.launch();
 mkdirSync(join(OUT, 'html'), { recursive: true });
-for (const no of units) {
-  const u = (await import(pathToFileURL(join(ROOT, 'content', `${no}.js`)).href)).default;
-  for (const [kind, modes] of [['학생용', ['memo', 'blank']], ['교사용', ['teacher']]]) {
-    const name = `백지-${no}-${kind}`;
-    const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${name}</title><style>${CSS}</style></head><body>${modes.map((m) => page(u, m)).join('\n')}</body></html>`;
-    const hp = join(OUT, 'html', `${name}.html`);
-    writeFileSync(hp, html);
-    const pg = await browser.newPage({ viewport: { width: 900, height: 1200 }, deviceScaleFactor: 2 });
-    await pg.goto(pathToFileURL(hp).href);
-    await pg.evaluate(() => document.fonts.ready);
-    const over = await pg.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
-      const ft = p.querySelector('.ft').getBoundingClientRect(); const last = [...p.children].filter((c) => !c.classList.contains('ft')).pop().getBoundingClientRect();
-      return { i: i + 1, room: Math.round((ft.top - last.bottom) / 3.78) };
-    }));
-    over.forEach((o) => { if (o.room < 1) console.warn(`${name} ${o.i}쪽: 넘침(남은 ${o.room}mm)`); else console.log(`${name} ${o.i}쪽: 아래 빈 공간 약 ${o.room}mm`); });
-    await pg.pdf({ path: join(OUT, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
-    if (wantPng) {
-      const dir = join(OUT, 'png'); mkdirSync(dir, { recursive: true });
-      const els = await pg.$$('.page');
-      for (let i = 0; i < els.length; i++) await els[i].screenshot({ path: join(dir, `${name}-${i + 1}.png`) });
-    }
-    await pg.close();
+const load = async (no) => (await import(pathToFileURL(join(ROOT, 'content', `${no}.js`)).href)).default;
+
+// 쪽 묶음 하나를 PDF로(쪽마다 남는 높이는 답 칸에 나눠 줌)
+async function make(name, pages, dir = OUT) {
+  mkdirSync(dir, { recursive: true });
+  const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${name}</title><style>${CSS}</style></head><body>${pages.join('\n')}</body></html>`;
+  const hp = join(OUT, 'html', `${name}.html`);
+  writeFileSync(hp, html);
+  const pg = await browser.newPage({ viewport: { width: 900, height: 1200 }, deviceScaleFactor: 2 });
+  await pg.goto(pathToFileURL(hp).href);
+  await pg.evaluate(() => document.fonts.ready);
+  // 쪽 아래가 비면 그 높이를 답 칸에 고르게 나눠 준다(쓸 자리가 넓어짐, 큰 빈 공간 없음)
+  for (let pass = 0; pass < 4; pass++) await pg.evaluate(() => document.querySelectorAll('.page').forEach((p) => {
+    const room = p.querySelector('.ft').getBoundingClientRect().top - [...p.children].filter((c) => !c.classList.contains('ft')).pop().getBoundingClientRect().bottom - 12;
+    if (room < 20) return;
+    const units = [];
+    p.querySelectorAll('.flow').forEach((f) => { f.querySelectorAll('.fl-row').forEach((r) => { const cells = []; let n = r.nextElementSibling; while (n && n.classList.contains('fl-cell')) { cells.push(n); n = n.nextElementSibling; } units.push([r, ...cells]); }); });
+    p.querySelectorAll('table.cmp tr').forEach((tr) => { if (tr.querySelector('td')) units.push([...tr.querySelectorAll('td')]); });
+    p.querySelectorAll('dl.keys').forEach((dl) => { const d = [...dl.children]; for (let i = 0; i < d.length; i += 2) units.push(d.slice(i, i + 2)); });
+    const add = Math.min(room / units.length, 90);
+    units.forEach((els) => { const h = Math.max(...els.map((e) => e.getBoundingClientRect().height)); els.forEach((e) => { e.style.height = `${h + add}px`; e.style.minHeight = '0'; }); });
+  }));
+  const over = await pg.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
+    const ft = p.querySelector('.ft').getBoundingClientRect(); const last = [...p.children].filter((c) => !c.classList.contains('ft')).pop().getBoundingClientRect();
+    return { i: i + 1, room: Math.round((ft.top - last.bottom) / 3.78) };
+  }));
+  over.forEach((o) => { if (o.room < 1) console.warn(`${name} ${o.i}쪽: 넘침(남은 ${o.room}mm)`); else if (o.room > 15) console.warn(`${name} ${o.i}쪽: 아래 빈 공간 ${o.room}mm`); });
+  await pg.pdf({ path: join(dir, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
+  if (wantPng) {
+    const pdir = join(OUT, 'png'); mkdirSync(pdir, { recursive: true });
+    const els = await pg.$$('.page');
+    for (let i = 0; i < els.length; i++) await els[i].screenshot({ path: join(pdir, `${name}-${i + 1}.png`) });
+  }
+  await pg.close();
+  console.log(`${name}: ${pages.length}쪽`);
+}
+
+if (SET) {
+  // 회차 묶음: 학교마다 답지·테스트 파일, 교사용은 그 회차 전체 한 파일
+  const sets = (await import(pathToFileURL(join(ROOT, 'content', 'sets.js')).href)).default[SET];
+  const dir = join(OUT, `${SET}회`);
+  const all = [];
+  for (const [school, list] of Object.entries(sets)) {
+    const us = await Promise.all(list.map(load));
+    await make(`${SET}회-${school}-답지`, us.map((u) => page(u, 'memo')), dir);
+    await make(`${SET}회-${school}-테스트`, us.map((u) => page(u, 'blank')), dir);
+    list.forEach((n) => { if (!all.includes(n)) all.push(n); });
+  }
+  all.sort((a, b) => (/^\d/.test(a) ? 0 : 1) - (/^\d/.test(b) ? 0 : 1) || a.localeCompare(b));
+  await make(`${SET}회-교사용-모범답안`, (await Promise.all(all.map(load))).map((u) => page(u, 'teacher')), dir);
+} else {
+  for (const no of units) {
+    const u = await load(no);
+    await make(`백지-${no}-학생용`, ['memo', 'blank'].map((m) => page(u, m)));
+    await make(`백지-${no}-교사용`, [page(u, 'teacher')]);
   }
 }
 await browser.close();
