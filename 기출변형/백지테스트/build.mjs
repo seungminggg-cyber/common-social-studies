@@ -1,10 +1,10 @@
 // 백지테스트 만들기 (인천 계양 고1 정규반, 2026-11-12 시작)
 //
-//   node 기출변형/백지테스트/build.mjs 07            중단원 07 → out/백지-07-학생용.pdf(외울 판 + 백지판), -교사용.pdf
+//   node 기출변형/백지테스트/build.mjs 07            중단원 07 → out/백지-07-학생용.pdf(답지 + 테스트), -교사용.pdf
 //   node 기출변형/백지테스트/build.mjs 07 08 png     여러 중단원, 쪽 그림(PNG)까지
 //
-// 한 중단원 = 외울 판 1쪽 + 백지판 1쪽(학생용) + 교사용 모범 답안 1쪽.
-// 세 판은 같은 HTML이다. 백지판은 답 글자를 투명하게만 해서, 외울 판과 칸 크기·위치가 똑같다.
+// 한 중단원 = 답지 1쪽 + 테스트 1쪽(학생용) + 교사용 모범 답안 1쪽.
+// 세 판은 같은 HTML이다. 테스트는 답 글자를 투명하게만 해서, 답지와 칸 크기·위치가 똑같다.
 // 형식: 개념 지도(flow) · 비교 표(table) · 키워드(keys) · 빈칸 정리(fill) — 강사가 고른 가·나·다·마.
 // 주의: 학교 학습지·문제집 원문은 저장소에 올리지 않는다. 내용 파일 문장은 새로 쓴다.
 import { createRequire } from 'node:module';
@@ -32,7 +32,7 @@ const ans = (s) => { blanks += 1; return `<span class="a">${bold(s)}</span>`; };
 const fillLine = (s) => esc(s).replace(/\{(.+?)\}/g, (_, x) => { blanks += 1; return `<span class="a f">${x}</span>`; });
 
 function blockHtml(b, i) {
-  const head = `<div class="bk-h"><span class="bk-no">${i + 1}</span><span class="bk-kind">${esc(b.kind)}</span><h3>${esc(b.title)}</h3></div>`;
+  const head = `<div class="bk-h"><span class="bk-no">${i + 1}</span><span class="bk-kind">${esc(b.kind)}</span>${b.title ? `<h3>${esc(b.title)}</h3>` : ''}</div>`;
   if (b.t === 'flow') {
     const n = b.steps.length;
     const cols = `7.5em repeat(${n}, 1fr)`;
@@ -59,9 +59,10 @@ function blockHtml(b, i) {
 }
 
 const MODE = {
-  memo: { tag: '외울 판', note: '먼저 이 쪽을 외운다. 다 외웠으면 뒤집어서 백지판에 쓴다.' },
-  blank: { tag: '백지 테스트', note: '외운 것만으로 빈칸을 채운다. 다 쓰면 다른 색 펜으로 채점한다.' },
-  teacher: { tag: '교사용 모범 답안', note: '빨간 글자가 학생이 써야 할 답이다. 굵은 글자는 꼭 들어가야 할 핵심어.' },
+  // 이름: 강사 2026-11-12 — 외울 판 → 답지, 백지판 → 테스트. 안내 한마디는 넣지 않는다.
+  memo: { tag: '답지' },
+  blank: { tag: '테스트' },
+  teacher: { tag: '교사용 모범 답안' },
 };
 
 function page(u, mode) {
@@ -79,7 +80,6 @@ function page(u, mode) {
   return `<div class="page m-${mode}" style="--c1:${c1};--c2:${c2}">
   <header class="hd"><div class="hd-no"><small>${esc(u.sub)}</small><b>${esc(u.no)}</b></div>
     <div class="hd-t"><span>통합사회2 · 백지테스트 · ${esc(m.tag)}</span><h1>${esc(u.title)}</h1></div>${score}</header>
-  <p class="how">${esc(m.note)}</p>
   ${html.join('\n')}
   <footer class="ft"><span>승민T 통합사회</span><span>${esc(u.sub)} ${esc(u.title)} — ${esc(m.tag)}</span></footer>
 </div>`;
