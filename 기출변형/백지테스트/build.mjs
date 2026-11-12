@@ -2,7 +2,7 @@
 //
 //   node 기출변형/백지테스트/build.mjs 07            중단원 07 → out/백지-07-학생용.pdf(답지 + 테스트), -교사용.pdf
 //   node 기출변형/백지테스트/build.mjs 07 08 png     여러 중단원, 쪽 그림(PNG)까지
-//   node 기출변형/백지테스트/build.mjs set1          1회 묶음 → out/1회/1회-<학교>-답지.pdf·-테스트.pdf, 1회-교사용-모범답안.pdf
+//   node 기출변형/백지테스트/build.mjs set1 [작전고]  1회 묶음(학교 이름을 주면 그 학교만) → out/1회/1회-<학교>-답지.pdf·-테스트.pdf, 1회-교사용-모범답안.pdf
 //
 // 한 중단원 = 답지 1쪽 + 테스트 1쪽(학생용) + 교사용 모범 답안 1쪽.
 // 세 판은 같은 HTML이다. 테스트는 답 글자를 투명하게만 해서, 답지와 칸 크기·위치가 똑같다.
@@ -30,7 +30,8 @@ const COLOR = { 'Ⅰ': ['#1d6c74', '#e6f0f1'], 'Ⅱ': ['#7d3566', '#f3e8ef'], '�
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const bold = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 let blanks = 0; // 한 쪽의 채점 칸 수
-const ans = (s) => { blanks += 1; return `<span class="a">${bold(s)}</span>`; }; // 칸 전체가 답
+// 칸 전체가 답. '!'로 시작하면 주어진 칸(테스트에도 보이고 칸 수에 넣지 않음) — 1시간 분량 맞추기(강사 2026-11-12)
+const ans = (s) => { if (s.startsWith('!')) return `<span class="g">${bold(s.slice(1))}</span>`; blanks += 1; return `<span class="a">${bold(s)}</span>`; };
 const fillLine = (s) => esc(s).replace(/\{(.+?)\}/g, (_, x) => { blanks += 1; return `<span class="a f">${x}</span>`; });
 
 function blockHtml(b, i) {
@@ -138,9 +139,11 @@ ol.fill li::before { content: counter(f); position: absolute; left: 0; top: 2.1m
 .ft { margin-top: auto; display: flex; justify-content: space-between; font-size: 7pt; color: #888; border-top: .5pt solid #ccc; padding-top: 1.2mm; }
 /* 판마다 다른 점 */
 .m-memo .a b { color: var(--c1); }
+.g { color: #555; }
+.g b { font-weight: 600; }
 .m-blank .a { color: transparent; }
 .m-blank .a b { color: transparent; }
-.m-blank .fl-cell, .m-blank .cmp td, .m-blank dl.keys dd { background-image: repeating-linear-gradient(transparent 0 5.6mm, #e2e2e2 5.6mm 5.85mm); background-position: 0 1.4mm; }
+.m-blank .fl-cell:has(.a), .m-blank .cmp td:has(.a), .m-blank dl.keys dd:has(.a) { background-image: repeating-linear-gradient(transparent 0 5.6mm, #e2e2e2 5.6mm 5.85mm); background-position: 0 1.4mm; }
 .m-teacher .a { color: #c8102e; }
 .m-teacher .a b { color: #c8102e; text-decoration: underline; text-decoration-thickness: .7pt; text-underline-offset: 1.2pt; }
 `;
@@ -166,14 +169,17 @@ async function make(name, pages, dir = OUT) {
     p.querySelectorAll('.flow').forEach((f) => { f.querySelectorAll('.fl-row').forEach((r) => { const cells = []; let n = r.nextElementSibling; while (n && n.classList.contains('fl-cell')) { cells.push(n); n = n.nextElementSibling; } units.push([r, ...cells]); }); });
     p.querySelectorAll('table.cmp tr').forEach((tr) => { if (tr.querySelector('td')) units.push([...tr.querySelectorAll('td')]); });
     p.querySelectorAll('dl.keys').forEach((dl) => { const d = [...dl.children]; for (let i = 0; i < d.length; i += 2) units.push(d.slice(i, i + 2)); });
-    const add = Math.min(room / units.length, 90);
-    units.forEach((els) => { const h = Math.max(...els.map((e) => e.getBoundingClientRect().height)); els.forEach((e) => { e.style.height = `${h + add}px`; e.style.minHeight = '0'; }); });
+    // 주어진 칸만 있는 줄은 늘리지 않는다
+    for (let i = units.length - 1; i >= 0; i--) if (!units[i].some((e) => e.querySelector('.a'))) units.splice(i, 1);
+    if (!units.length) return;
+    // 칸이 지나치게 커지지 않게: 한 줄에 더하는 높이는 여러 번 돌아도 모두 합쳐 60px(약 16mm)까지
+    units.forEach((els) => { const done = +(els[0].dataset.add || 0); const add = Math.min(room / units.length, 60 - done); if (add <= 0) return; const h = Math.max(...els.map((e) => e.getBoundingClientRect().height)); els.forEach((e) => { e.style.height = `${h + add}px`; e.style.minHeight = '0'; e.dataset.add = done + add; }); });
   }));
   const over = await pg.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
     const ft = p.querySelector('.ft').getBoundingClientRect(); const last = [...p.children].filter((c) => !c.classList.contains('ft')).pop().getBoundingClientRect();
     return { i: i + 1, room: Math.round((ft.top - last.bottom) / 3.78) };
   }));
-  over.forEach((o) => { if (o.room < 1) console.warn(`${name} ${o.i}쪽: 넘침(남은 ${o.room}mm)`); else if (o.room > 15) console.warn(`${name} ${o.i}쪽: 아래 빈 공간 ${o.room}mm`); });
+  over.forEach((o) => { if (o.room < 1) console.warn(`${name} ${o.i}쪽: 넘침(남은 ${o.room}mm)`); else if (o.room > 15) console.log(`${name} ${o.i}쪽: 아래 빈 공간 ${o.room}mm`); });
   await pg.pdf({ path: join(dir, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
   if (wantPng) {
     const pdir = join(OUT, 'png'); mkdirSync(pdir, { recursive: true });
@@ -189,14 +195,16 @@ if (SET) {
   const sets = (await import(pathToFileURL(join(ROOT, 'content', 'sets.js')).href)).default[SET];
   const dir = join(OUT, `${SET}회`);
   const all = [];
+  const only = args.find((a) => sets[a]); // 학교 하나만: node build.mjs set1 작전고
   for (const [school, list] of Object.entries(sets)) {
+    if (only && school !== only) continue;
     const us = await Promise.all(list.map(load));
     await make(`${SET}회-${school}-답지`, us.map((u) => page(u, 'memo')), dir);
     await make(`${SET}회-${school}-테스트`, us.map((u) => page(u, 'blank')), dir);
     list.forEach((n) => { if (!all.includes(n)) all.push(n); });
   }
   all.sort((a, b) => (/^\d/.test(a) ? 0 : 1) - (/^\d/.test(b) ? 0 : 1) || a.localeCompare(b));
-  await make(`${SET}회-교사용-모범답안`, (await Promise.all(all.map(load))).map((u) => page(u, 'teacher')), dir);
+  await make(`${SET}회-${only ? `${only}-` : ''}교사용-모범답안`, (await Promise.all(all.map(load))).map((u) => page(u, 'teacher')), dir);
 } else {
   for (const no of units) {
     const u = await load(no);
