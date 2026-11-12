@@ -31,7 +31,12 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const bold = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 let blanks = 0; // 한 쪽의 채점 칸 수
 // 칸 전체가 답. '!'로 시작하면 주어진 칸(테스트에도 보이고 칸 수에 넣지 않음) — 1시간 분량 맞추기(강사 2026-11-12)
-const ans = (s) => { if (s.startsWith('!')) return `<span class="g">${bold(s.slice(1))}</span>`; blanks += 1; return `<span class="a">${bold(s)}</span>`; };
+// '~'로 시작하면 핵심어만 쓰는 칸: 나머지 글은 테스트에도 보이고, **굵은** 핵심어만 빈칸(하나씩 1칸) — 강사 2026-11-12
+const ans = (s) => {
+  if (s.startsWith('!')) return `<span class="g">${bold(s.slice(1))}</span>`;
+  if (s.startsWith('~')) return `<span class="kw">${esc(s.slice(1)).replace(/\*\*(.+?)\*\*/g, (_, x) => { blanks += 1; return `<span class="a f">${x}</span>`; })}</span>`;
+  blanks += 1; return `<span class="a">${bold(s)}</span>`;
+};
 const fillLine = (s) => esc(s).replace(/\{(.+?)\}/g, (_, x) => { blanks += 1; return `<span class="a f">${x}</span>`; });
 
 function blockHtml(b, i) {
@@ -140,10 +145,12 @@ ol.fill li::before { content: counter(f); position: absolute; left: 0; top: 2.1m
 /* 판마다 다른 점 */
 .m-memo .a b { color: var(--c1); }
 .g { color: #555; }
+.kw { line-height: 2; }
+.kw .a.f { min-width: 14mm; }
 .g b { font-weight: 600; }
 .m-blank .a { color: transparent; }
 .m-blank .a b { color: transparent; }
-.m-blank .fl-cell:has(.a), .m-blank .cmp td:has(.a), .m-blank dl.keys dd:has(.a) { background-image: repeating-linear-gradient(transparent 0 5.6mm, #e2e2e2 5.6mm 5.85mm); background-position: 0 1.4mm; }
+.m-blank .fl-cell:has(.a):not(:has(.kw)), .m-blank .cmp td:has(.a):not(:has(.kw)), .m-blank dl.keys dd:has(.a):not(:has(.kw)) { background-image: repeating-linear-gradient(transparent 0 5.6mm, #e2e2e2 5.6mm 5.85mm); background-position: 0 1.4mm; }
 .m-teacher .a { color: #c8102e; }
 .m-teacher .a b { color: #c8102e; text-decoration: underline; text-decoration-thickness: .7pt; text-underline-offset: 1.2pt; }
 `;
@@ -172,8 +179,8 @@ async function make(name, pages, dir = OUT) {
     // 주어진 칸만 있는 줄은 늘리지 않는다
     for (let i = units.length - 1; i >= 0; i--) if (!units[i].some((e) => e.querySelector('.a'))) units.splice(i, 1);
     if (!units.length) return;
-    // 칸이 지나치게 커지지 않게: 한 줄에 더하는 높이는 여러 번 돌아도 모두 합쳐 60px(약 16mm)까지
-    units.forEach((els) => { const done = +(els[0].dataset.add || 0); const add = Math.min(room / units.length, 60 - done); if (add <= 0) return; const h = Math.max(...els.map((e) => e.getBoundingClientRect().height)); els.forEach((e) => { e.style.height = `${h + add}px`; e.style.minHeight = '0'; e.dataset.add = done + add; }); });
+    // 칸이 지나치게 커지지 않게: 한 줄에 더하는 높이는 여러 번 돌아도 모두 합쳐 100px(약 26mm)까지
+    units.forEach((els) => { const done = +(els[0].dataset.add || 0); const add = Math.min(room / units.length, 100 - done); if (add <= 0) return; const h = Math.max(...els.map((e) => e.getBoundingClientRect().height)); els.forEach((e) => { e.style.height = `${h + add}px`; e.style.minHeight = '0'; e.dataset.add = done + add; }); });
   }));
   const over = await pg.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
     const ft = p.querySelector('.ft').getBoundingClientRect(); const last = [...p.children].filter((c) => !c.classList.contains('ft')).pop().getBoundingClientRect();
