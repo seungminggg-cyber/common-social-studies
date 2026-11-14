@@ -6,6 +6,7 @@
 //   node build.mjs 2 teacher         교사용(정답 표시·해설이 문제 아래)도 함께
 //   node build.mjs 1 book t1         단원별을 책(t1 = 통합사회1, t2 = 통합사회2)으로 나눠 만들기
 //   node build.mjs vol t1            합본 MINIMAX 기출분석 통합사회1(기본편 + 심화편, 2026-11-07) — 아래 '합본' 참고
+//   node build.mjs k units teacher   MINIMAX 킬러편(content/k, 2026-11-15) 학생용·교사용 — 'k order'로 싣는 순서, 'k answers'로 정답과 해설만
 //
 // 결과: out/<차수>/*.pdf, out/<차수>/png/, out/<차수>/<이름>.json(한글 파일용), out/<차수>/fig/<이름>/*.png
 import { createRequire } from 'node:module';
@@ -27,7 +28,7 @@ const { chromium } = (() => { try { return require('playwright'); } catch { retu
 const ROOT = dirname(fileURLToPath(import.meta.url));
 
 const args = process.argv.slice(2);
-const ed = args.find((a) => a === '1' || a === '2') || '1';
+const ed = args.find((a) => a === '1' || a === '2' || a === 'k') || '1'; // k = MINIMAX 킬러편(content/k)
 const what = args.find((a) => ['units', 'mock', 'answers', 'all'].includes(a)) || 'all';
 const only = args.filter((a) => /^t[12]-\d\d$/.test(a));
 const sub = args.find((a) => a === 't1' || a === 't2'); // 책 하나만
@@ -41,7 +42,7 @@ const mxMode = args.includes('mx');
 const volMode = args.includes('vol');
 const OUT = join(ROOT, 'out', volMode ? 'vol' : ed);
 mkdirSync(join(OUT, 'png'), { recursive: true });
-const EDITION = ed === '1' ? '1차 · 겨울방학 특강판' : '2차 · 심화(중상·상)판';
+const EDITION = ed === '1' ? '1차 · 겨울방학 특강판' : ed === 'k' ? 'MINIMAX 킬러편' : '2차 · 심화(중상·상)판';
 // soft: 단원이 끝난 쪽에 자리가 남으면 다음 단원을 이어서 싣는다(대단원 첫 단원은 새 쪽). 순서 정하기(order)에서는 끔.
 const LAYOUT = { cover: 1, toc: 1, exam: 2, mock: 2, answers: 2, soft: args.includes('order') ? [] : ['exam'], memoMin: 0.4, spreadMax: 9 };
 const paginateJs = readFileSync(join(ROOT, '../textbook/lib/paginate.js'), 'utf8');
@@ -353,7 +354,7 @@ if (volMode) {
   process.exit(failed ? 1 : 0);
 }
 
-const title = `기출변형 문제집 ${ed}차`;
+const title = ed === 'k' ? 'MINIMAX 킬러편' : `기출변형 문제집 ${ed}차`;
 if (args.includes('order')) {
   const all = await loadUnits(true);
   const order = {};

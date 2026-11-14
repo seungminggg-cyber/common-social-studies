@@ -11,14 +11,14 @@ import { FIGURE_TYPES } from '../../textbook/lib/figures.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
-const ed = args.find((a) => a === '1' || a === '2') || '1';
+const ed = args.find((a) => a === '1' || a === '2' || a === 'k') || '1'; // k = 킬러편
 const only = args.filter((a) => /^t[12]-\d\d$/.test(a));
 const mockOnly = args.includes('mock');
-const quota = JSON.parse(readFileSync(join(ROOT, '참고/배분.json'), 'utf8'));
+const quota = JSON.parse(readFileSync(join(ROOT, ed === 'k' ? '킬러편/배분.json' : '참고/배분.json'), 'utf8'));
 const TYPES = ['개념 이해', '사례 적용', '자료 해석', '그래프 해석', '지도 해석', '사상가 입장', '사상가 비교', '입장 비교', '글 해석', '질문 분류표', '계산'];
 const LEVELS = ['상', '중상', '중', '하'];
 const BLOCKS = new Set(['p', 'ul', 'ol', 'kv', 'table', 'chart', 'venn', 'map', 'diagram', 'photo', 'figrow', 'hub', 'compare', 'dialog', 'source', 'chain', 'flow', ...FIGURE_TYPES]);
-const TARGET = ed === '1' ? { 하: 10, 중: 35, 중상: 35, 상: 20 } : { 하: 3, 중: 15, 중상: 45, 상: 37 };
+const TARGET = ed === '1' ? { 하: 10, 중: 35, 중상: 35, 상: 20 } : ed === 'k' ? { 하: 0, 중: 0, 중상: 0, 상: 100 } : { 하: 3, 중: 15, 중상: 45, 상: 37 };
 
 let errors = 0;
 const err = (where, msg) => { errors++; console.log(`  ✗ ${where}: ${msg}`); };

@@ -26,11 +26,11 @@ const { chromium } = (() => { try { return require('playwright'); } catch { retu
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const args = process.argv.slice(2);
-const ed = args.find((a) => a === '1' || a === '2') || '2';
+const ed = args.find((a) => a === '1' || a === '2' || a === 'k') || '2'; // k = 킬러편
 const jsonOut = args.includes('--json') ? args[args.indexOf('--json') + 1] : null;
 const dirArg = args.includes('--dir') ? args[args.indexOf('--dir') + 1] : null;
 const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',')) : null;
-const names = args.filter((a) => !['1', '2'].includes(a) && !a.startsWith('--') && a !== jsonOut && a !== dirArg && !(only && args[args.indexOf('--only') + 1] === a));
+const names = args.filter((a) => !['1', '2', 'k'].includes(a) && !a.startsWith('--') && a !== jsonOut && a !== dirArg && !(only && args[args.indexOf('--only') + 1] === a));
 const MIN_PT = 5; // 이보다 작으면 인쇄해서 읽기 어렵다
 const EMPTY = 0.35; // 단이 이만큼 넘게 비면 알림
 const showAll = args.includes('--all');
