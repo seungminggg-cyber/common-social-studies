@@ -15,6 +15,7 @@
 - 저장소 스킬 `.claude/skills/minimax-killer/SKILL.md`를 읽고, 거기 적힌 순서로 `기출변형/킬러편/기준.md`, `교훈.md`, `진행.md`, 설계 카드를 읽는다.
 - 새 컨테이너이므로 먼저 저장소 루트에서 `bash scripts/setup-env.sh`를 돌린다. 원문 대조용 자료는 `python3 -I scripts/fetch-sources.py <드라이브 주소> /home/user/자료/통합사회`로 저장소 밖에 받는다(오래 걸리니 백그라운드로).
 - 설계 카드는 Opus가 만든 **제안**이다. 더 좋은 형식·소재·이중추론이 떠오르면 바꿔도 된다.
+- 설계 카드는 준비 세션(Opus)이 아직 만드는 중일 수 있다(2026-11-15 새벽). **단원을 시작할 때마다** `git fetch origin claude/exciting-lovelace-2lu2pq && git merge --no-edit origin/claude/exciting-lovelace-2lu2pq`로 새 카드를 받는다. 단원은 t1-01부터 순서대로 하되, 그 단원 카드가 아직 없으면 카드가 있는 다음 단원을 먼저 한다. 모든 단원의 카드가 없으면 `기준.md`대로 직접 설계한다.
 
 # 진행
 1. 중단원 묶음별로 쓴다. 묶음마다: 출제 → 다른 에이전트(Opus, 노력 수준 high)가 `킬러편/검토지시.md`대로 정답 가리고 다시 풀기 + 난도 판정 → 고침 → 자동 검사·빌드·쪽 그림 확인 → 커밋·push → `진행.md`에 기록.
