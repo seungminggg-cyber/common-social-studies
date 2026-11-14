@@ -44,8 +44,8 @@
 
 /* 대표 예제: 왼쪽 문항, 오른쪽 풀이 */
 .sk-ex-row { margin-top: 3mm; }
-.sk-ex-g { display: grid; grid-template-columns: 97mm 1fr; column-gap: 5mm; align-items: start; }
-.sk-ex-q { min-width: 0; border: .6pt solid var(--rule); padding: 2.4mm 2.6mm 1mm; }
+.sk-ex-g { display: grid; grid-template-columns: 104mm 1fr; column-gap: 4.5mm; align-items: start; }
+.sk-ex-q { min-width: 0; border: .6pt solid var(--rule); padding: 2.2mm 2mm 1mm; }
 .sk-ex-q .q-head { display: none; }
 .sk-ex-q .q { margin: 0; }
 .sk-ex-q .q-explain { display: none !important; }
@@ -63,3 +63,21 @@
 .sk-sum-h b { font-size: 9.4pt; color: var(--c1-dark); }
 .sk-sum-h span { font-size: 8pt; color: var(--gray); }
 .sk-sum ul { margin: 0; padding-left: 4.2mm; font-size: 8.7pt; line-height: 1.72; }
+
+/* 예제 풀이 순서: 동그라미 번호 */
+.sk-steps { list-style: none; margin: 0; padding: 0; }
+.sk-steps li { display: grid; grid-template-columns: 4.6mm 1fr; margin-bottom: .9mm; }
+.sk-steps li > b { color: var(--c1-dark); font-weight: 700; }
+
+/* 스킬 첫 쪽의 문항 기록표 */
+.sk-rec-row { margin-top: 4mm; }
+.sk-rec-h { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 1.2mm; }
+.sk-rec-h b { font-size: 9pt; color: var(--c1-dark); }
+.sk-rec-h span { font-size: 7.6pt; color: var(--gray); }
+.sk-rec .tbl { font-size: 8pt; }
+.sk-rec .tbl td { padding: 1.5mm 1.4mm; }
+.sk-rec .tbl td:nth-child(1) { width: 14mm; font-weight: 700; }
+.sk-rec .tbl td:nth-child(2) { width: 18mm; color: var(--gray); }
+.sk-rec .tbl td:nth-child(4) { width: 24mm; }
+.sk-rec .tbl td:nth-child(5), .sk-rec .tbl td:nth-child(6) { width: 12mm; border-left: .4pt solid var(--rule); }
+.sk-rec .tbl td:nth-child(7) { width: 22mm; border-left: .4pt solid var(--rule); }

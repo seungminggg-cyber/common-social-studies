@@ -2,7 +2,7 @@
 // 문장·사례·자료·숫자는 모두 새로 씀. 숫자 자료는 모두 가상 자료(나라 이름을 붙이지 않음). 인구 정책 표어는 널리 알려진 정부 표어이며 개념서에 실린 것만 씀. src는 형식과 평가 요소의 근거(내부 메모).
 
 const AGES = ['0~9', '10~19', '20~29', '30~39', '40~49', '50~59', '60~69', '70~79', '80~'];
-const PYR = (title, male, female) => ({ t: 'chart', kind: 'pyramid', title, ages: AGES, male, female, max: 18, w: 150, h: 175, labelEvery: 4 });
+const PYR = (title, male, female) => ({ t: 'chart', kind: 'pyramid', title, ages: AGES, male, female, max: 18, w: 150, h: 200, labelEvery: 4 });
 
 export default [
   {

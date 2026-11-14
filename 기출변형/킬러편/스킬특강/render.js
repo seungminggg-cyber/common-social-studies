@@ -76,18 +76,18 @@ function exampleCard(s, ex, i, q, teacher, knum) {
   const html = questionHtml(q, i + 1, { unit: unitOf(q), teacher: false });
   const inner = html.slice(html.indexOf('<div class="q'), html.lastIndexOf('</div></div>'));
   const board = teacher
-    ? `<div class="sp-judge sk-board"><div class="sp-k">판서 노트 · 정답 ${CIRCLED[q.answer - 1]}</div><p>${inl(q.explain)}</p></div>`
+    ? `<div class="row sk-board-row" data-keep="card"><div class="main"><div class="sp-judge sk-board"><div class="sp-k">예제 ${i + 1} 판서 노트 · 정답 ${CIRCLED[q.answer - 1]}</div><p>${inl(q.explain)}</p></div></div></div>`
     : '';
   return `<div class="row row-item sp-card-row sk-ex-row" data-keep="card" data-qid="${esc(q.id)}"><div class="main"><div class="sp-card sk-ex">
     <div class="sp-card-h"><span class="sp-ex"><small>예제</small>${i + 1}</span><div class="sp-card-t"><b>${inl(ex.title)}</b><span>${esc(whereOf(q))}${esc(kNo(q, knum))} · ${esc(q.type)}</span></div><span class="sp-tag">스킬 ${s.no}</span>${teacher ? `<span class="sp-ans">정답 ${CIRCLED[q.answer - 1]}</span>` : ''}</div>
     <div class="sk-ex-g"><div class="sk-ex-q">${inner}</div>
     <div class="sk-ex-s"><div class="sp-grid sp-grid-side">
       <div class="sp-k em">먼저 볼 곳</div><div class="sp-v em">${inl(ex.see)}</div>
-      <div class="sp-k">스킬대로 풀기</div><div class="sp-v"><ol class="sp-steps">${ex.solve.map((x) => `<li>${inl(x)}</li>`).join('')}</ol></div>
+      <div class="sp-k">스킬대로 풀기</div><div class="sp-v"><ol class="sk-steps">${ex.solve.map((x, k) => `<li><b>${CIRCLED[k]}</b><span>${inl(x)}</span></li>`).join('')}</ol></div>
       <div class="sp-k">빠른 풀이</div><div class="sp-v">${inl(ex.fast)}</div>
       <div class="sp-k red">함정</div><div class="sp-v">${inl(ex.trap)}</div>
-    </div>${board}</div></div>
-  </div></div></div>`;
+    </div></div></div>
+  </div></div></div>${board}`;
 }
 
 function summaryCard(s) {
@@ -97,13 +97,22 @@ function summaryCard(s) {
   </div></div></div>`;
 }
 
+// ── 이 스킬의 문항과 풀이 기록표(스킬 첫 쪽) ──
+function recordTable(s, qmap, knum) {
+  const ids = [...s.examples.map((e) => e.id), ...s.practice];
+  const row = (id, i) => { const q = qmap[id], u = unitOf(q);
+    return `<tr><td>${i < s.examples.length ? `예제 ${i + 1}` : two(i + 1)}</td><td>${esc(knum[id] || '')}</td><td class="l">${esc(`${BOOKS[u.book].subject} ${u.no} ${u.title}`)}</td><td>${esc(q.type)}</td><td></td><td></td><td></td></tr>`; };
+  return `<div class="row sk-rec-row" data-keep="card"><div class="main"><div class="tbl-wrap sp-map sk-rec"><div class="sk-rec-h"><b>이 스킬의 문항과 풀이 기록</b><span>풀 때마다 ○ · △ · ×를 적고, 막힌 곳은 STEP 번호로 적는다.</span></div>
+    <table class="tbl compact"><thead><tr><th>번호</th><th>킬러편</th><th>단원</th><th>유형</th><th>1회</th><th>2회</th><th>막힌 STEP</th></tr></thead><tbody>${ids.map(row).join('')}</tbody></table></div></div></div>`;
+}
+
 function skillSections(s, qmap, teacher, knum) {
   const attrs = `data-tab="${esc(s.no)}" data-head-left="${esc(`스킬 ${s.no} <b>${s.title}</b>`)}" data-head-right="${esc(TITLE)}"`;
   const top = `<div class="top" id="sk-${s.no}"><div class="sp-open sp-chap"><div class="sp-open-no">${esc(s.no)}</div><div class="sp-open-t"><span>스킬 ${esc(s.no)} · 예제 ${s.examples.length} · 연습 ${s.practice.length}</span><h1>${inl(s.title)}</h1>
     <p>${inl(s.one)}</p></div></div><div class="sp-intent sk-lead">${inl(s.lead)}</div></div>`;
   const exHead = `<div class="row" data-keep="next"><div class="main">${block({ t: 'sec', mark: '예제', title: '대표 예제 — 스킬 순서대로 따라 풀기' })}</div></div>`;
   const exs = s.examples.map((ex, i) => exampleCard(s, ex, i, qmap[ex.id], teacher, knum));
-  const out = [`<section class="flow" data-kind="type" ${attrs}>${top}${skillCard(s)}${exHead}${exs.join('\n')}${summaryCard(s)}</section>`];
+  const out = [`<section class="flow" data-kind="type" ${attrs}>${top}${skillCard(s)}${recordTable(s, qmap, knum)}${exHead}${exs.join('\n')}${summaryCard(s)}</section>`];
   const qs = s.practice.map((id) => qmap[id]);
   const band = `<div class="top"><div class="band band-exam wb-band" id="p-${s.no}"><span class="band-title">스킬 ${esc(s.no)} 연습 문항</span><span class="band-sub">${qs.length}문항 · 권장 시간 ${Math.round(qs.length * 2.5)}분</span></div></div>`;
   out.push(`<section class="flow" data-kind="exam" ${attrs}>${band}${qs.map((q, i) => questionHtml(q, s.examples.length + i + 1, { unit: unitOf(q), teacher })).join('\n')}</section>`);
@@ -130,5 +139,5 @@ export function renderSkill({ SKILLS, INTRO, qmap, knum }, { mode }) {
   for (const s of SKILLS) sections.push(...skillSections(s, qmap, teacher, knum));
   if (teacher) sections.push(quick(SKILLS, qmap));
   return spPage(sections, { title: `${TITLE}${teacher ? ' (교사용)' : ''}`, mode })
-    .replace('</head>', '<link rel="stylesheet" href="../../킬러편/스킬특강/sk.css"></head>').replace('class="theme-b', 'class="sk theme-b');
+    .replace('</head>', '<link rel="stylesheet" href="../../킬러편/스킬특강/sk.css"></head>').replace('class="theme-b', 'class="sk wbc theme-b');
 }
