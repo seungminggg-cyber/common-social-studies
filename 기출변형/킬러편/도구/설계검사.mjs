@@ -8,6 +8,7 @@ const N = (s) => String(s || '').replace(/[\s·・]/g, '');
 const usedSrc = used.map((u) => N(u.src));
 const TYPES = ['개념 이해', '사례 적용', '자료 해석', '그래프 해석', '지도 해석', '사상가 입장', '사상가 비교', '입장 비교', '글 해석', '질문 분류표', '계산'];
 let err = 0, warn = 0, total = 0;
+const seen = new Map(); // 카드끼리 같은 평가원 씨앗
 const ids = new Set();
 const skills = {}, types = {}, forms = [];
 for (const [k, n] of Object.entries(quota)) {
@@ -34,6 +35,7 @@ for (const [k, n] of Object.entries(quota)) {
     for (const sd of s.seeds || []) {
       if (!sd.no || /예시|학평|고1|고2/.test(sd.exam || '')) continue;
       const key = N(`${sd.exam}${sd.subject}${sd.no}번`);
+      if (seen.has(key) && seen.get(key) !== s.id) { console.log(`! ${w}: 씨앗 ${sd.exam} ${sd.subject} ${sd.no}번을 ${seen.get(key)}도 씀`); warn++; } else seen.set(key, s.id);
       const hit = used.find((x, i) => usedSrc[i].includes(key));
       if (hit) { console.log(`! ${w}: 이미 쓴 씨앗 ${sd.exam} ${sd.subject} ${sd.no}번 (${hit.book} ${hit.id})`); warn++; }
     }
