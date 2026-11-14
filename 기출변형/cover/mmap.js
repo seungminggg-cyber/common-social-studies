@@ -85,21 +85,64 @@ export function m1Inner(v, id = '') {
   const G = neonGlobe(c, { cx: 105, cy: 104, R: 80, id });
   const { lay, lo, hi } = neonWord();
   const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: 160, top: 200, yTop: -4.5 });
+  // 왼쪽 위 '승민T 통합사회'는 뺀다(2026-11-07 강사). 출판사 이름은 책등 아래에 있다. 책 이름 줄은 로고와 13mm 띄움(강사)
   return `${full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter(`${id}nb`, 4))}
-    ${brand(c.fg)}
-    ${kindLine(v, c.fg, L.bottom + 8)}
+    ${kindLine(v, c.fg, L.bottom + 13)}
     ${exam(c.sub)}`;
 }
 const m1 = (v) => sheet(C1[v.n].bg, m1Inner(v));
 // 뒷표지(강사 2026-11-07 1번 '네온 지구' 고름): MINIMAX 뒷표지와 같은 짜임 — 문구 없이 작은 지구본 + 작은 네온 MINIMAP을 한 덩어리로 쪽 가운데
-export function m1Back(v, { R = 31, logoW = 64, gap = 16, cy = H / 2 } = {}) {
+// id: 한 문서에 앞·뒷표지를 함께 그릴 때(펼침 표지) 그림 이름이 겹치지 않게 붙이는 앞글자
+export function m1BackInner(v, { R = 31, logoW = 64, gap = 16, cy = H / 2 } = {}, id = '') {
   const c = C1[v.n];
   const { lay, lo, hi } = neonWord();
   const s = logoW / (hi - lo), logoH = (100 + 9) * s;
   const top = cy - (2 * R + gap + logoH) / 2;
-  const G = neonGlobe(c, { cx: W / 2, cy: top + R, R });
-  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon }), { lo, hi, w: logoW, top: top + 2 * R + gap, yTop: -4.5 });
-  return sheet(c.bg, full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter('nb', 4)));
+  const G = neonGlobe(c, { cx: W / 2, cy: top + R, R, id });
+  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: logoW, top: top + 2 * R + gap, yTop: -4.5 });
+  return full(bgRect(c.bg) + G.svg + L.g, G.defs + neonFilter(`${id}nb`, 4));
+}
+export const m1Back = (v, o = {}) => sheet(C1[v.n].bg, m1BackInner(v, o));
+
+// 책등(S mm, 2026-11-07 Paffy 견본용): 글자는 위에서 아래로 읽게 90° 돌림(글자 머리가 앞표지 쪽).
+// style — 'linemid': 'line'과 같고 로고·책 이름 크기는 'line'과 'big'의 중간(강사 고름) / 'top': 로고·책 이름은 위, 출판사 이름은 아래(첫 견본) / 'center': 맨 위 작은 지구본, 가운데 로고·책 이름, 맨 아래 출판사
+//         'big': 'center'에서 로고를 크게 / 'line': 'center' 사이를 표지의 비행선처럼 가는 네온 선으로 이음
+// 접히는 선에서 2mm 안쪽만 쓰도록 글자 높이를 책등 폭에 맞춘다.
+export function m1Spine(v, S, id = 's', style = 'top') {
+  const c = C1[v.n];
+  const { lay, lo, hi } = neonWord();
+  const big = style === 'big', mid = style === 'linemid'; // linemid: 'line'에 글자·로고를 'line'과 'big'의 중간 크기로(2026-11-07 강사)
+  const sizeOf = (a, b) => (big ? b : mid ? (a + b) / 2 : a);
+  const logoH = sizeOf(Math.min(S * 0.42, 7.2), Math.min(S * 0.6, 9.5)), logoW = (logoH / 109) * (hi - lo);
+  const svgH = logoH + 1.2;
+  const L = placeWord(drawNeon(lay, { w: 9, glow: c.neon, blurId: `${id}nb` }), { lo, hi, w: logoW, top: 0.6, yTop: -4.5, cx: logoW / 2 + 1.5 });
+  const logo = `<svg style="width:${f(logoW + 3)}mm;height:${f(svgH)}mm;overflow:visible;flex:none" viewBox="0 0 ${f(logoW + 3)} ${f(svgH)}" xmlns="http://www.w3.org/2000/svg"><defs>${neonFilter(`${id}nb`, 4)}</defs>${L.g}</svg>`;
+  const titlePt = f(sizeOf(Math.min(S * 0.78, 12.5), Math.min(S * 0.85, 13.5))), brandPt = f(Math.min(S * 0.55, 8.6));
+  const title = `<span style="font-family:'KoPub Dotum';font-weight:700;font-size:${titlePt}pt;color:${c.fg};letter-spacing:-.01em;white-space:nowrap;line-height:1;flex:none">${esc(v.kind)}</span>`;
+  const brand = `<span style="font-family:'KoPub Dotum';font-weight:700;font-size:${brandPt}pt;color:${c.sub};letter-spacing:.02em;white-space:nowrap;line-height:1;flex:none">${esc(MMAP.brand)}</span>`;
+  const box = (inner, gap = 7) => `<div class="abs" style="left:${S}mm;top:${B}mm;width:${H}mm;height:${S}mm;transform-origin:0 0;transform:rotate(90deg);display:flex;align-items:center;gap:${gap}mm;padding:0 16mm">${inner}</div>`;
+  if (style === 'top') return box(`${logo}${title}<span style="margin-left:auto"></span>${brand}`);
+  // 맨 위 작은 지구본(앞표지 지구본과 같은 그림, 돌려도 모양이 같도록 지구본만)
+  const R = Math.min(S * 0.3, 4.4), A = R + 16 * Math.max(R / 80, 0.55);
+  const G = neonGlobe(c, { cx: A, cy: A, R, id: `${id}g` });
+  // 넓은 대기 빛(atm)은 책등 폭보다 커서 네모나게 잘려 보이므로 빼고, 지구본 둘레의 작은 빛만 남긴다
+  const gsvg = G.svg.replace(/<circle[^>]*url\(#[^)]*atm\)[^>]*\/>/, `<circle cx="${f(A)}" cy="${f(A)}" r="${f(R + 0.9)}" fill="${c.neon}" opacity=".35" filter="url(#${id}ggl)"/>`);
+  const globe = `<svg style="width:${f(2 * A)}mm;height:${f(2 * A)}mm;margin:0 ${f(-(A - R) + 1)}mm;flex:none;overflow:visible" viewBox="0 0 ${f(2 * A)} ${f(2 * A)}" xmlns="http://www.w3.org/2000/svg"><defs>${G.defs}</defs>${gsvg}</svg>`;
+  const fill = '<span style="flex:1"></span>';
+  // 네온 선: 번짐 없이 가는 한 줄(강사 2026-11-07)
+  const line = () => `<span style="flex:1;height:.3mm;background:${c.neon}"></span>`;
+  if (style === 'line' || mid) return box(`${globe}${line('90deg')}${logo}${title}${line('270deg')}${brand}`, mid ? 6.5 : 6);
+  return box(`${globe}${fill}${logo}${title}${fill}${brand}`, big ? 7 : 6);
+}
+// 펼침 표지 한 장(뒷표지 + 책등 + 앞표지). 재단선 기준 폭 = 210 + S + 210, 도련 3mm는 doc()이 둘레에 붙인다.
+// 뒷·앞표지 그림의 안쪽 도련(3mm)은 책등 밑에 깔리고, 책등 칸이 그 위를 덮는다.
+export function m1Spread(v, S, style = 'top') {
+  const c = C1[v.n];
+  return `<section class="sheet" style="background:${c.bg}"><div class="t" style="overflow:visible">
+    <div class="abs" style="left:0;top:0;width:${W}mm;height:${H}mm">${m1BackInner(v, {}, 'b')}</div>
+    <div class="abs" style="left:${mm(W + S)};top:0;width:${W}mm;height:${H}mm">${m1Inner(v, 'f')}</div>
+    <div class="abs" style="left:${mm(W)};top:-${B}mm;width:${mm(S)};height:${H + 2 * B}mm;background:${c.bg};overflow:hidden">${m1Spine(v, S, 's', style)}</div>
+  </div></section>`;
 }
 
 // ───────────── M2 게임 미니맵 ─────────────
@@ -371,7 +414,7 @@ function m5(v) {
   const L = placeWord(drawExtrude(lay, { color: c.fg, side: c.side, steps: 10, dx: 0.8, dy: 0.8 }), { lo: 0, hi: lay.width + 8, w: 182, top: 28 });
   return sheet(c.bg, `${full(`${bgRect(c.bg)}${shadow}${panels}${pin}${L.g}`, defs)}
     ${brand(c.fg)}
-    ${kindLine(v, c.fg, L.bottom + 8)}
+    ${kindLine(v, c.fg, L.bottom + 13)}
     ${exam(c.sub)}`);
 }
 

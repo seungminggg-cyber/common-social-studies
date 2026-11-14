@@ -2,6 +2,7 @@
 //   node cover/build-cover.mjs fronts        앞표지 다듬은 안 A·B·C (02권) + 바탕별 비교(02·03·06)
 // 결과: out/cover/*.pdf, out/cover/png/*.png  (out/은 커밋하지 않음)
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -18,7 +19,7 @@ import { V7, face7 } from './v7.js';
 import { mmFront, mmBack, MM_CONCEPTS, MM_CSS, LOGO_FONTS } from './mm.js';
 import { mmVol } from './mm-data.js';
 import { MMX, mmxFace, x5BackMini, setX5Palette } from './mmx.js';
-import { MMAPS, mmapFace, m1Back } from './mmap.js';
+import { MMAPS, mmapFace, m1Back, m1Spread } from './mmap.js';
 import { MAXIS, maxiFront, maxiBack, maxiTitlePage, maxiRoundPage, maxiAnswerFront, K as MXK } from './maxi.js';
 import { MMAP } from './mm-data.js';
 import { mmSubjectPage, mmChapterPage, mmTitlePage } from './mm-div.js';
@@ -205,16 +206,62 @@ if (args.includes('mmapfinal')) {
     await emit(`MINIMAP-${v.subject}-앞표지`, doc([mmapFace('M1', v)]));
     await emit(`MINIMAP-${v.subject}-뒷표지`, doc([m1Back(v)]));
     // 속표지 + 대단원 간지 5장(도련 3mm, 엄지 색인 포함). 표의 쪽 번호는 개념서 본문 빌드(textbook: node build-book.mjs mm)가 남긴 json
-    const { mmapTitlePage, mmapChapterPage, chapterInfo } = await import('./mmap-div.js');
+    const { mmapChapterLeft, mmapChapterRight, chapterInfo } = await import('./mmap-div.js');
     const { C1 } = await import('./mmap.js');
     const book = (await import(`../../textbook/content/_book/${v.id}.js`)).default;
     const pj = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-쪽.json`);
     const pages = existsSync(pj) ? JSON.parse(readFileSync(pj, 'utf8')) : null;
     if (!pages) console.warn(`[${v.subject}] 쪽 번호 파일이 없어 간지 표의 쪽 칸이 비어 있습니다 → textbook에서 node build-book.mjs mm${v.n === 2 ? ' t2' : ''}`);
     const sheet = (inner) => `<section class="sheet" style="background:${C1[v.n].bg}"><div class="t" style="overflow:visible">${inner}</div></section>`;
-    const divs = [sheet(mmapTitlePage(v)), ...book.chapters.map((ch, ci) => sheet(mmapChapterPage(v, chapterInfo(ch, ci), { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages })))];
+    // 속표지는 빼고(2026-11-07 강사: 앞표지와 같은 그림이 두 번) 대단원 간지 5장만
+    // 두 쪽 펼침 간지(왼쪽 쪽 + 오른쪽 쪽) × 대단원 5개 = 10쪽
+    const divs = book.chapters.flatMap((ch, ci) => {
+      const info = chapterInfo(ch, ci);
+      return [sheet(mmapChapterLeft(v, info, { uid: `c${ci}`, tab: true })),
+        sheet(mmapChapterRight(v, info, { keys: book.dividers?.[ch.chapter.no]?.keys || [], uid: `c${ci}`, tab: true, pages }))];
+    });
     await emit(`MINIMAP-${v.subject}-속표지간지-도련`, doc(divs, { css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
   }
+}
+// MINIMAP 펼침 표지(Paffy 견본 주문용, 2026-11-07): node cover/build-cover.mjs mmappaffy
+//   뒷표지 + 책등 + 앞표지 한 장(책등은 강사가 고른 'linemid' — 네온 선 + 중간 크기). Paffy 규격: 표지 한 면 213mm(210 + 바깥 도련 3), 높이 303mm(297 + 도련 3×2),
+//   책등 = 내지 두께 × 쪽수 ÷ 2를 0.5mm 단위로 올림(미색 모조플러스 100g = 0.11mm, 홀수 쪽은 1쪽 더함).
+//   쪽수는 textbook/out/MINIMAP-<과목>-본문.pdf에서 센다(먼저 textbook에서 node build-book.mjs mm [t2]).
+if (args.includes('mmappaffy')) {
+  const THICK = 0.11; // 미색 모조플러스 100g (Paffy /v1.0/books/public/options의 paperThickness)
+  const spineOf = (pages) => { const a = (THICK * pages) / 2; return a - Math.floor(a) <= 0.5 ? Math.floor(a) + 0.5 : Math.ceil(a); };
+  for (const v of MMAP.vols) {
+    const pdf = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-본문.pdf`);
+    if (!existsSync(pdf)) { console.error(`본문 PDF가 없습니다: ${pdf}`); continue; }
+    const n = +execFileSync('pdfinfo', [pdf], { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1];
+    const pages = n % 2 ? n + 1 : n;
+    const S = spineOf(pages);
+    console.log(`${v.subject}: 본문 ${n}쪽 → ${pages}쪽 기준, 책등 ${S}mm, 표지 ${213 * 2 + S} × 303mm`);
+    await emit(`MINIMAP-${v.subject}-펼침표지-${S}mm`, doc([m1Spread(v, S, 'linemid')], { w: 420 + S }).replace('<body>', `<body data-spine="${S}">`), { scale: 1 });
+  }
+}
+// 두 쪽 펼침 간지 시안(2026-11-07 강사): node cover/build-cover.mjs mmapdivspread → out/cover/MINIMAP-<과목>-펼침간지-시안.pdf
+//   왼쪽 쪽 + 오른쪽 쪽을 한 장에 나란히(가운데 회색 선 = 접히는 곳)
+if (args.includes('mmapdivspread')) {
+  const { mmapChapterLeft, mmapChapterRight, chapterInfo } = await import('./mmap-div.js');
+  for (const v of MMAP.vols) {
+    const book = (await import(`../../textbook/content/_book/${v.id}.js`)).default;
+    const pj = join(ROOT, `../../textbook/out/MINIMAP-${v.subject}-쪽.json`);
+    const pages = existsSync(pj) ? JSON.parse(readFileSync(pj, 'utf8')) : null;
+    const sheets = book.chapters.map((ch, ci) => {
+      const info = chapterInfo(ch, ci), keys = book.dividers?.[ch.chapter.no]?.keys || [];
+      return `<section class="sheet" style="background:#000"><div class="t" style="overflow:visible">
+        <div class="abs" style="left:0;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterLeft(v, info, { uid: `c${ci}` })}</div>
+        <div class="abs" style="left:210mm;top:0;width:210mm;height:297mm;overflow:hidden">${mmapChapterRight(v, info, { keys, uid: `c${ci}`, pages, align: args.includes('top') ? 'top' : 'center' })}</div>
+        <div class="abs" style="left:209.85mm;top:0;width:.3mm;height:297mm;background:#888"></div></div></section>`;
+    });
+    await emit(`MINIMAP-${v.subject}-펼침간지-시안${args.includes('top') ? '-위' : ''}`, doc(sheets, { w: 420, css: '.mm-page .abs{position:absolute}' }), { scale: 1 });
+  }
+}
+// 책등 시안 비교(2026-11-07 강사: 책등 가운데가 허전함): node cover/build-cover.mjs mmapspines → out/cover/MINIMAP-책등시안-<style>.pdf
+if (args.includes('mmapspines')) {
+  for (const v of MMAP.vols) for (const st of (args.includes('mid') ? ['line', 'linemid', 'big'] : ['top', 'center', 'big', 'line']))
+    await emit(`MINIMAP-${v.subject}-책등시안-${st}`, doc([m1Spread(v, 14.5, st)], { w: 434.5 }).replace('<body>', '<body data-spine="14.5">'), { scale: 1 });
 }
 // MAXIMIN 실전 모의고사 앞·뒷표지 시안: node cover/build-cover.mjs maxi [G1 …] → out/cover/MAXI-<후보>-<이름>-앞표지·뒷표지
 if (args.includes('maxi')) {

@@ -19,10 +19,12 @@ function blank(ans) {
 }
 
 // 문장 안 표시법: [[빈칸]] **굵게** ==형광펜== __밑줄__
+// 짧은 굵은 글씨(핵심어, 공백 포함 14자 이하)에는 nw 표시 → 개념서 CSS가 한 줄로 묶는다(개념어가 두 줄로 쪼개지지 않게)
+const nwTerm = (t) => [...t.replace(/<[^>]+>/g, '').replace(/&\w+;/g, '_')].length <= 14 && /[\s·(]/.test(t);
 export function inl(s) {
   return esc(s)
     .replace(/\[\[(.+?)\]\]/g, (_, a) => blank(a))
-    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\*\*(.+?)\*\*/g, (_, t) => `<b${nwTerm(t) ? ' class="nw"' : ''}>${t}</b>`)
     .replace(/==(.+?)==/g, '<mark>$1</mark>')
     .replace(/__(.+?)__/g, '<u>$1</u>');
 }
@@ -53,10 +55,13 @@ export function block(b) {
     case 'table': {
       // 칸: 글자 또는 { text, rs(세로 합치기), cs(가로 합치기), cls: 'hl'(노랑) | 'em'(굵게) | 'hatch'(빗금 빈칸), align }
       // head: ['a','b'] 한 줄 또는 [['a',{text:'b',cs:2}],['c','d']] 여러 줄
-      const cellHtml = (c, tag, align) => {
+      // 짧은 칸(공백 포함 12자 이하, 띄어쓰기 있음)은 nw 표시 → 개념서에서 한 줄로. hal: 머리 칸도 그 열의 정렬을 따름(개념서만)
+      const cellHtml = (c, tag, align, hal) => {
         const o = c && typeof c === 'object' ? c : { text: c };
         const at = [o.rs > 1 ? ` rowspan="${o.rs}"` : '', o.cs > 1 ? ` colspan="${o.cs}"` : ''].join('');
-        const cls = [o.cls, (o.align || align) ? `al-${o.align || align}` : ''].filter(Boolean).join(' ');
+        const plain = String(o.text ?? '').replace(/\*\*|==|__|\[\[|\]\]/g, '');
+        const cls = [o.cls, (o.align || align) ? `al-${o.align || align}` : '', hal ? `hal-${hal}` : '',
+          [...plain].length <= 12 && /[\s·(]/.test(plain) ? 'nw' : ''].filter(Boolean).join(' ');
         return `<${tag}${at}${cls ? ` class="${cls}"` : ''}>${inl(o.text ?? '')}</${tag}>`;
       };
       const grid = (rows) => {
@@ -79,7 +84,7 @@ export function block(b) {
       const rowHead = b.rowHeader !== false;
       const cols = (b.widths || []).map((w) => `<col style="width:${w}%">`).join('');
       const thead = headRows.length
-        ? `<thead>${grid(headRows).map((row) => `<tr>${row.map(({ cell }) => cellHtml(cell, 'th')).join('')}</tr>`).join('')}</thead>` : '';
+        ? `<thead>${grid(headRows).map((row) => `<tr>${row.map(({ cell, col }) => cellHtml(cell, 'th', null, (cell && typeof cell === 'object' && cell.cs > 1) ? null : al[col])).join('')}</tr>`).join('')}</thead>` : '';
       const tbody = `<tbody>${grid(b.rows).map((row) => `<tr>${row
         .map(({ cell, col }) => cellHtml(cell, col === 0 && rowHead ? 'th' : 'td', al[col]))
         .join('')}</tr>`).join('')}</tbody>`;
@@ -252,7 +257,8 @@ function summaryHtml(u) {
 function row(b) {
   if (b.t === 'thinker') return thinkerRows(b);
   if (b.t === 'photo' && !b.items.some((it) => hasPhoto(it.src))) return ''; // 사진을 아직 못 받았으면 건너뜀
-  const keep = b.t === 'sec' || b.t === 'concept' ? ' data-keep="next"' : '';
+  // keepNext: 다음 블록과 같은 쪽에 두기(예: 지도와 그 지도를 정리한 표)
+  const keep = b.t === 'sec' || b.t === 'concept' || b.keepNext ? ' data-keep="next"' : '';
   return `<div class="row row-${b.t}${b.side ? ' has-side' : ''}${b._inc ? ' in-cc' : ''}"${keep}><div class="main">${block(b)}</div>${note(b.side)}</div>`;
 }
 
@@ -425,7 +431,7 @@ ${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/
 <link rel="stylesheet" href="../themes/base.css">
 <link rel="stylesheet" href="../themes/${theme}.css">
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'e' ? 'b theme-d theme-e' : theme === 'f' ? 'b theme-d theme-f' : theme === 'g' ? 'b theme-d theme-g' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} tb">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>
@@ -461,8 +467,8 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         `${bandTop('answers', `${ch.chapter.no}. ${ch.chapter.title}`)}${ch.units.map((u, i) => answerRows(u, starts[i])).join('\n')}`);
     });
   } else {
-    // 표지 (MINIMAP 완성본이면 표지와 같은 그림의 속표지)
-    if (mm?.title) add('mmtitle', '', `<div class="top">${mm.title()}</div>`);
+    // 표지. MINIMAP 완성본은 앞표지를 따로 인쇄하므로 같은 그림의 속표지를 넣지 않는다(2026-11-07 강사: 같은 앞표지가 두 번)
+    if (mm) { /* 속표지 없음 */ }
     else add('cover', '', `<div class="top"><div class="cover">
       <div class="cv-brand">승민T 통합사회</div>
       <div class="cv-title">개념서</div>
@@ -471,7 +477,7 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <ul class="cv-chapters">${chapterList}</ul>
     </div></div>`);
     // 표지 뒤: 이 책의 주인 (+ 특강 진도표가 있으면 함께)
-    const sc = full.schedule;
+    const sc = mm ? null : full.schedule; // MINIMAP 완성본은 특강 진도표 없이 '이 책의 주인'만(2026-11-07 강사)
     if (sc) add('owner', '', `<div class="top"><div class="owner owner-plan">
       <div class="ow-box ow-compact"><div class="ow-title">이 책의 주인</div><div class="ow-grid">
         <div class="ow-line"><span>학교</span><i></i></div><div class="ow-line"><span>학년 · 반</span><i></i></div>
@@ -497,6 +503,29 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <div class="ow-note">이 책의 설명·자료·문제는 승민T 통합사회 수업을 위해 새로 쓴 것입니다. 사상가의 글은 원전을 새로 옮기거나 요지만 정리했고,
       그래프와 지도의 출처는 각 그림 아래에 적었습니다. "개념도"는 원리를 보여 주려고 단순하게 그린 그림, "가상 자료"는 실제 값이 아닌 연습용 자료입니다.</div>
     </div></div>`);
+    // 이 책의 구성 (차례보다 앞, 2026-11-07 강사)
+    const GUIDE = [
+      mm ? ['간지', '대단원을 시작하기 전에 중단원 목록과 대단원 핵심 개념을 먼저 확인한다.']
+        : ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
+      ['단원 첫머리', '핵심 질문, 수능 포인트, 이 단원에서 배울 개념과 출제 빈도를 먼저 보고 시작한다.'],
+      ['개념 번호와 출제 빈도', `중단원을 개념 01, 02 …로 나눴다. 별은 최근 기출 9회에서 그 개념이 나온 정도: ★ 기본 개념, ★★ 빈출, ★★★ 최다 빈출.`],
+      ['개념 정리 · 빈칸', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b class="nw">굵은 글씨</b>는 핵심어. 번호 빈칸의 정답은 그 쪽 맨 아래 띠에 있다.`],
+      ['날개 · 개념 더하기', '본문 옆 날개에 용어 뜻, 헷갈리는 개념, 사진을 두었다. 본문을 읽고 날개로 한 번 더 확인한다.'],
+      ['이렇게 나온다', '개념이 끝날 때마다 기출 선지 모양의 문장을 O/X로 판단한다. 틀린 문장에는 이유를 적어 두었다.'],
+      ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
+      ['그래프 · 지도 · 자료 읽기', '수능 자료와 같은 모양으로 그렸다. 그림 아래의 설명과 출처, "개념도·가상 자료" 표시를 함께 읽는다.'],
+      ['한 장 정리', '중단원 끝 한 쪽에 개념별 핵심, 헷갈리지 말자, 시험 전 체크를 모았다. 시험 직전에 이 쪽만 다시 본다.'],
+      ['개념 확인', `O/X와 빈칸 채우기로 개념을 점검한다.${mm ? ' 틀린 문항은 그 개념으로 돌아가 다시 읽는다.' : ' 맞힌 개수를 학습 계획표에 적는다.'}`],
+      ['수능형 문제', '문제마다 관련 개념 번호와 문제 유형, 난이도를 적었다. 틀리면 그 개념으로 돌아가 다시 읽는다. 해설은 별책.'],
+      ['정리 노트', '남는 칸에 핵심어를 다시 쓰거나 틀린 문제를 적는다. 시험 직전에 다시 볼 한 줄 정리를 직접 만든다.'],
+    ];
+    add('guide', '', `<div class="top" id="guide"><div class="guide"><div class="band band-guide"><span class="band-title">이 책의 구성</span><span class="band-unit">이렇게 공부하세요</span></div>
+      <ol class="guide-list">${GUIDE.map(([t, d], i) => `<li><span class="gd-n">${two(i + 1)}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
+      ${mm // MINIMAP 완성본: 공부 순서 줄 없이 12개 항목만(2026-11-07 강사)
+        ? ''
+        : '<div class="guide-flow"><span>1회독</span> 개념을 읽으며 빈칸 채우기와 이렇게 나온다 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 한 장 정리·오답 노트 다시 보기</div>'}
+    </div></div>`);
+
     // 차례
     const tocUnits = (ch) => unitsOf(ch).map((u) => `<li class="toc-u"><span class="toc-no">${esc(u.no)}</span><span class="toc-t">${esc(u.title)}</span>
         <span class="toc-sub">${u.summary ? `한 장 정리 <i data-pg="s${esc(u.no)}"></i> · ` : ''}개념 확인 <i data-pg="c${esc(u.no)}"></i> · 수능형 문제 <i data-pg="e${esc(u.no)}"></i></span><span class="toc-dots"></span><span class="toc-pg" data-pg="u${esc(u.no)}"></span></li>`).join('');
@@ -504,31 +533,16 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
       <ul class="toc-list"><li class="toc-guide"><span class="toc-t">이 책의 구성</span><span class="toc-dots"></span><span class="toc-pg" data-pg="guide"></span></li>
       ${chapters.map((ch, i) => `<li class="toc-ch"><span class="toc-chno">${esc(ch.chapter.no)}</span><span class="toc-t">${esc(ch.chapter.title)}</span><span class="toc-dots"></span><span class="toc-pg" data-pg="ch${i}"></span></li>${tocUnits(ch)}`).join('')}
       </ul><div class="toc-foot">별책 · 정답과 해설</div></div></div>`);
-    // 이 책의 구성
-    const GUIDE = [
-      ['간지 · 학습 계획표', '대단원을 시작하기 전에 중단원 목록과 꼭 잡을 내용을 확인하고, 뒷면의 계획표에 공부한 날과 점수를 적는다.'],
-      ['단원 첫머리', '핵심 질문, 수능 포인트, 이 단원에서 배울 개념과 출제 빈도를 먼저 보고 시작한다.'],
-      ['개념 번호와 출제 빈도', `중단원을 개념 01, 02 …로 나눴다. 별은 최근 기출 9회에서 그 개념이 나온 정도: ★ 기본 개념, ★★ 빈출, ★★★ 최다 빈출.`],
-      ['개념 정리 · 빈칸', `${esc(full.basis || '교과서 9종의 공통 내용')}을 수능에 맞게 정리했다. <b>굵은 글씨</b>는 핵심어. 번호 빈칸의 정답은 그 쪽 맨 아래 띠에 있다.`],
-      ['날개 · 개념 더하기', '본문 옆 날개에 용어 뜻, 헷갈리는 개념, 사진을 두었다. 본문을 읽고 날개로 한 번 더 확인한다.'],
-      ['이렇게 나온다', '개념이 끝날 때마다 기출 선지 모양의 문장을 O/X로 판단한다. 틀린 문장에는 이유를 적어 두었다.'],
-      ['사상가 카드', '핵심 주장 → 원전 읽기 → 기출 선지로 확인하기 → 헷갈리지 말자. 사상가 문제는 카드 한 장으로 끝낸다.'],
-      ['그래프 · 지도 · 자료 읽기', '수능 자료와 같은 모양으로 그렸다. 그림 아래의 설명과 출처, "개념도·가상 자료" 표시를 함께 읽는다.'],
-      ['한 장 정리', '중단원 끝 한 쪽에 개념별 핵심, 헷갈리지 말자, 시험 전 체크를 모았다. 시험 직전에 이 쪽만 다시 본다.'],
-      ['개념 확인', 'O/X와 빈칸 채우기로 개념을 점검한다. 맞힌 개수를 학습 계획표에 적는다.'],
-      ['수능형 문제', '문제마다 관련 개념 번호와 문제 유형, 난이도를 적었다. 틀리면 그 개념으로 돌아가 다시 읽는다. 해설은 별책.'],
-      ['정리 노트', '남는 칸에 핵심어를 다시 쓰거나 틀린 문제를 적는다. 시험 직전에 다시 볼 한 줄 정리를 직접 만든다.'],
-    ];
-    add('guide', '', `<div class="top" id="guide"><div class="guide"><div class="band band-guide"><span class="band-title">이 책의 구성</span><span class="band-unit">이렇게 공부하세요</span></div>
-      <ol class="guide-list">${GUIDE.map(([t, d], i) => `<li><span class="gd-n">${two(i + 1)}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
-      <div class="guide-flow"><span>1회독</span> 개념을 읽으며 빈칸 채우기와 이렇게 나온다 → <span>2회독</span> 개념 확인과 수능형 문제 풀기 → <span>시험 직전</span> 한 장 정리·오답 노트 다시 보기</div>
-    </div></div>`);
-
     chapters.forEach((ch, ci) => {
       const d = full.dividers?.[ch.chapter.no] || {};
       const headLeft = `${esc(subject)} <b>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</b>`;
       // 간지 (오른쪽 쪽). MINIMAP 완성본이면 MINIMAP 간지
-      if (mm?.chapter) add('mmdiv', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
+      // MINIMAP: 두 쪽 펼침 간지(왼쪽 쪽은 짝수 쪽에서 시작 → 펼쳤을 때 마주 보게)
+      if (mm?.chapterLeft) {
+        add('mmdiv', `data-even="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapterLeft(ch, ci, d)}</div>`);
+        add('mmdiv', `data-tab="${esc(ch.chapter.no)}"`, `<div class="top">${mm.chapterRight(ch, ci, d)}</div>`);
+      }
+      else if (mm?.chapter) add('mmdiv', `data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}">${mm.chapter(ch, ci, d)}</div>`);
       else add('divider', `data-odd="1" data-tab="${esc(ch.chapter.no)}"`, `<div class="top" id="ch${ci}"><div class="divider">
         <div class="dv-bg">${esc(ch.chapter.no)}</div>
         <div class="dv-label">대단원 ${ci + 1}</div>
@@ -536,9 +550,10 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         <div class="dv-title">${esc(ch.chapter.title)}</div>
         ${d.lead ? `<div class="dv-lead">${inl(d.lead)}</div>` : ''}
         <ol class="dv-units">${unitsOf(ch).map((u) => `<li><b>${esc(u.no)}</b><span>${esc(u.title)}</span><i data-pg="u${esc(u.no)}"></i></li>`).join('')}</ol>
-        ${d.keys ? `<div class="dv-keys"><div class="dv-kt">이 대단원에서 꼭 잡을 것</div><ul>${d.keys.map((k) => `<li>${inl(k)}</li>`).join('')}</ul></div>` : ''}
+        ${d.keys ? `<div class="dv-keys"><div class="dv-kt">대단원 핵심 개념</div><ul>${d.keys.map((k) => `<li>${inl(k)}</li>`).join('')}</ul></div>` : ''}
       </div></div>`);
-      // 간지 뒷면: 학습 계획표
+      // 간지 뒷면: 학습 계획표 (MINIMAP 완성본은 쪽수를 줄이려고 뺀다, 2026-11-07 강사)
+      if (!mm) {
       const rows = unitsOf(ch).map((u) => {
         const nc = (u.check?.ox?.length || 0) + (u.check?.blank?.length || 0);
         return `<tr><td class="pl-u"><b>${esc(u.no)}</b> ${esc(u.title)}</td><td class="pl-pg" data-pg="u${esc(u.no)}"></td><td>월 &nbsp;&nbsp; 일</td><td>월 &nbsp;&nbsp; 일</td><td>&nbsp;&nbsp;&nbsp; / ${nc}</td><td>&nbsp;&nbsp;&nbsp; / ${u.exam?.length || 0}</td></tr>`;
@@ -547,8 +562,9 @@ export function renderFull(full, { mode, layout, paginateJs, part = 'book', them
         <div class="band band-plan"><span class="band-title">학습 계획표</span><span class="band-unit"><b>${esc(ch.chapter.no)}</b> ${esc(ch.chapter.title)}</span></div>
         <table class="plan-t"><thead><tr><th>중단원</th><th>쪽</th><th>1회독</th><th>2회독</th><th>개념 확인</th><th>수능형 문제</th></tr></thead><tbody>${rows}</tbody></table>
         <ul class="plan-how"><li><b>1회독</b> 개념 정리를 읽고 빈칸을 채운 날을 적는다.</li><li><b>2회독</b> 개념 확인·수능형 문제를 다시 푼 날을 적는다.</li><li>맞힌 개수가 80%가 안 되는 중단원은 시험 전에 한 번 더 본다.</li></ul>
-        <div class="memo plan-memo"><div class="memo-head"><span class="memo-tag">나의 목표</span><span class="memo-q">이 대단원을 마치면 꼭 설명할 수 있어야 할 것을 적어 보자.</span></div><div class="memo-lines"></div></div>
+        <div class="memo plan-memo"><div class="memo-head"><span class="memo-tag">나의 목표</span></div><div class="memo-lines"></div></div>
       </div></div>`);
+      }
       // 중단원들 (수능형 문제 번호는 대단원마다 01부터)
       let qNo = 1;
       for (const u of ch.units) {
@@ -599,7 +615,7 @@ ${theme === 'h' ? '<link rel="stylesheet" href="../node_modules/font-kopubworld/
 ${theme === 'd' || theme === 'h' ? '<link rel="stylesheet" href="../themes/d-book.css">' : ''}
 ${theme === 'h' ? '<link rel="stylesheet" href="../themes/h-book.css">' : ''}
 </head>
-<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part}">
+<body class="theme-${theme === 'd' ? 'b theme-d' : theme === 'h' ? 'b theme-d theme-h' : theme} mode-${mode} full-book part-${part} tb${mm ? ' mmbook' : ''}">
 <div id="book"></div>
 <div id="source">${sections.join('\n')}</div>
 <script>window.LAYOUT = ${JSON.stringify(layout)};</script>

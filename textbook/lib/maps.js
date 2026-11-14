@@ -54,6 +54,50 @@ function rewind(fc) {
   return fc;
 }
 const geo = (n) => (cache[n] ||= JSON.parse(readFileSync(ROOT + 'data/geo/' + n, 'utf8')));
+// 시·도 사이의 경계선만(두 시·도가 함께 쓰는 변) 이어 붙인 MultiLineString — 해안선까지 점선이 되지 않게
+function krProvBorders() {
+  if (cache.krProvBorders) return cache.krProvBorders;
+  const key = (p) => `${p[0].toFixed(5)},${p[1].toFixed(5)}`;
+  const owners = new Map(), pts = new Map();
+  geo('kr-provinces.json').features.forEach((f, fi) => {
+    const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    for (const poly of polys) for (const ring of poly) for (let i = 1; i < ring.length; i++) {
+      const a = key(ring[i - 1]), c = key(ring[i]);
+      if (a === c) continue;
+      pts.set(a, ring[i - 1]); pts.set(c, ring[i]);
+      const e = a < c ? `${a}|${c}` : `${c}|${a}`;
+      if (!owners.has(e)) owners.set(e, new Set());
+      owners.get(e).add(fi);
+    }
+  });
+  const adj = new Map();
+  for (const [e, o] of owners) {
+    if (o.size < 2) continue;
+    const [a, c] = e.split('|');
+    (adj.get(a) || adj.set(a, []).get(a)).push(c);
+    (adj.get(c) || adj.set(c, []).get(c)).push(a);
+  }
+  const used = new Set(), lines = [];
+  const ek = (a, c) => (a < c ? `${a}|${c}` : `${c}|${a}`);
+  const walk = (start) => {
+    for (const next of adj.get(start)) {
+      if (used.has(ek(start, next))) continue;
+      const line = [pts.get(start)];
+      let prev = start, cur = next;
+      used.add(ek(prev, cur));
+      for (;;) {
+        line.push(pts.get(cur));
+        const nx = (adj.get(cur) || []).filter((n) => !used.has(ek(cur, n)));
+        if (adj.get(cur).length !== 2 || !nx.length) break; // 갈림길이나 끝에서 멈춤
+        prev = cur; cur = nx[0]; used.add(ek(prev, cur));
+      }
+      lines.push(line);
+    }
+  };
+  for (const [p, n] of adj) if (n.length !== 2) walk(p); // 갈림길·끝점에서 먼저 시작
+  for (const p of adj.keys()) walk(p); // 남은 고리
+  return (cache.krProvBorders = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: lines } });
+}
 // 예전 world-atlas 이름 → 한국 관점 자료의 코드 (null: 다른 나라에 포함되어 따로 칠하지 않음)
 const ALIAS = { 'South Korea': 'KOR', 'North Korea': 'PRK', Macedonia: 'MKD', 'United States of America': 'USA', 'Dem. Rep. Congo': 'COD', Congo: 'COG', 'N. Cyprus': null, Somaliland: null };
 const metaOf = (f) => ({ c7: f.properties.c7, iso3: f.properties.iso });
@@ -214,7 +258,12 @@ export function drawMap(b, h) {
       s += `<path d="${path(f)}" fill="${fill}" stroke="#8f8578" stroke-width=".7" stroke-linejoin="round"/>`;
     }
   }
-  if (b.provinces) for (const f of geo('kr-provinces.json').features) s += `<path d="${path(f)}" fill="none" stroke="${terrain ? 'rgba(88,64,110,.55)' : '#a395b3'}" stroke-width=".6" stroke-dasharray="3 1.6"/>`;
+  // 시·도 경계: 지형도 위에서도 도별 구분이 잘 보이게 흰 테두리 위에 진한 점선(2026-11 강사 피드백 — 예전 선은 너무 옅었음)
+  if (b.provinces) {
+    const ps = path(krProvBorders()); // 해안선은 빼고 시·도 사이 경계만
+    if (terrain) s += `<path d="${ps}" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<path d="${ps}" fill="none" stroke="${terrain ? '#4e3b63' : '#7d6d92'}" stroke-width="${terrain ? 1 : .9}" stroke-dasharray="4 1.8" stroke-linejoin="round"/>`;
+  }
 
   // ── 4. 호수·강 ──
   const riverRank = b.rivers ?? (world ? (terrain ? 3 : false) : span > 90 ? 4 : span > 40 ? 5 : span > 15 ? 7 : 9);
@@ -401,7 +450,7 @@ export function drawMap(b, h) {
       let x = lx + 7; const y = ly + 3 + (i + 1) * lh - 3;
       for (const it of row) {
         if (it.line) {
-          const st = { border: 'stroke="#8a4f8f" stroke-width="1.2" stroke-dasharray="5 2 1.5 2"', river: `stroke="${water}" stroke-width="1.8"`, prov: 'stroke="#7a6290" stroke-width=".9" stroke-dasharray="3 1.6"', mdl: 'stroke="#a61e4d" stroke-width="1.3" stroke-dasharray="6 2 1.5 2"', plate: 'stroke="#c92a2a" stroke-width="1.6"', warm: 'stroke="#e03131" stroke-width="2"', cold: 'stroke="#1971c2" stroke-width="2"', wind: 'stroke="#868e96" stroke-width="2" stroke-dasharray="5 3"' }[it.line];
+          const st = { border: 'stroke="#8a4f8f" stroke-width="1.2" stroke-dasharray="5 2 1.5 2"', river: `stroke="${water}" stroke-width="1.8"`, prov: 'stroke="#4e3b63" stroke-width="1" stroke-dasharray="4 1.8"', mdl: 'stroke="#a61e4d" stroke-width="1.3" stroke-dasharray="6 2 1.5 2"', plate: 'stroke="#c92a2a" stroke-width="1.6"', warm: 'stroke="#e03131" stroke-width="2"', cold: 'stroke="#1971c2" stroke-width="2"', wind: 'stroke="#868e96" stroke-width="2" stroke-dasharray="5 3"' }[it.line];
           s += `<path d="M${r1(x)},${r1(y - 4)}h20" fill="none" ${st}/>`; x += 26;
         } else if (it.shape) { s += shapeMark(it.shape, x + 5, y - 4, 6, `pin ${it.pin || ''}`); x += 16; }
         else if (it.ring) { s += `<circle cx="${r1(x + 5)}" cy="${r1(y - 4)}" r="5.2" class="ring ${it.ring}"/>`; x += 16; }

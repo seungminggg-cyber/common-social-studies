@@ -9,4 +9,5 @@ step "앱 부품(npm)" npm install --no-save --no-audit --no-fund
 step "개념서 부품(npm)" bash -c "cd textbook && npm install --no-save --no-audit --no-fund"
 step "한글 파일·글꼴 도구(pip)" pip install -q python-hwpx==6.11.0 fonttools
 step "인쇄용 글꼴 변환" bash -c "cd 기출변형 && python3 cover/otf2ttf.py"
+step "Ghostscript(인쇄소용 PDF 글자 윤곽선, cover/paffy.py)" bash -c "command -v gs >/dev/null || apt-get install -y -q ghostscript"
 exit 0
