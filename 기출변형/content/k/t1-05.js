@@ -194,7 +194,7 @@ export default [
     kcond: [1, 2, 4, 5], double: '순서도의 P·Q와 발문의 단서로 A~D 확정 → (가)의 조건(A·B는 예, C·D는 아니요) 추론 + 지도 지점과 짝 → 지점·형성 과정·이용을 함께 묻는 진술 판단', skill: 'S02',
     stem: '다음은 지형 A~D를 구분하는 순서도와, 네 지형이 나타나는 지역 ㉠~㉣을 표시한 지도이다. 이에 대한 옳은 설명만을 <보기>에서 있는 대로 고른 것은? (단, A~D는 각각 화산 지형, 카르스트 지형, 피오르, 갯벌 중 하나이고, B가 나타나는 지역에서는 땅속의 열을 발전과 난방에 이용한다.)',
     data: [
-      { t: 'diagram', kind: 'yesno', legend: false, fs: 1.7, start: 'A~D를 구분한다.', tree: { q: '(가)', yes: { q: 'P', yes: 'A', no: 'B' }, no: { q: 'Q', yes: 'C', no: 'D' } } },
+      { t: 'diagram', kind: 'yesno', legend: false, fs: 1.7, start: '지형 A~D', tree: { q: '(가)', yes: { q: 'P', yes: 'A', no: 'B' }, no: { q: 'Q', yes: 'C', no: 'D' } } },
       { t: 'ul', items: [
         'P: 석회암이 빗물이나 지하수에 녹아 만들어졌는가?',
         'Q: 빙하가 깎은 골짜기에 바닷물이 들어와 만들어졌는가?',

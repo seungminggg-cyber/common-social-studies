@@ -103,7 +103,7 @@ export default [
         ['C', '철거비 지원, 공유 숙소로 고쳐 쓰기, 마을 텃밭 만들기를 놓고 비용과 주민 동의 가능성을 따져 가장 알맞은 것을 고른다.'],
         ['D', '우리 군의 여러 문제 가운데 무엇을 탐구할지 의논하여 ‘늘어나는 빈집’으로 정하고, 탐구로 얻으려는 바를 정리한다.'],
       ] },
-      { t: 'diagram', kind: 'yesno', legend: false, fs: 1.7, start: 'A~D를 분류한다.', tree: { q: '(가)', yes: { q: 'P', yes: '㉠', no: '㉡' }, no: { q: 'Q', yes: '㉢', no: '㉣' } } },
+      { t: 'diagram', kind: 'yesno', legend: false, fs: 1.7, start: '카드 A~D', tree: { q: '(가)', yes: { q: 'P', yes: '㉠', no: '㉡' }, no: { q: 'Q', yes: '㉢', no: '㉣' } } },
       { t: 'ul', items: [
         'P: 관점별 탐구 질문을 만들고 역할을 나누는 활동인가?',
         'Q: 여러 해결 방안을 견주어 하나를 고르는 활동인가?',
