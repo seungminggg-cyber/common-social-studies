@@ -38,7 +38,7 @@ export default [
         y: { min: 0, max: 100, step: 50, label: '누적 소득 비율(%)' },
         series: [
           { name: '완전 평등선', points: [[0, 0], [100, 100]], color: 2, dash: true },
-          { name: '㉠', points: [[0, 0], [20, 9], [40, 22], [60, 40], [80, 64], [100, 100]], color: 1, smooth: true },
+          { name: '㉠', points: [[0, 0], [20, 8], [40, 20], [60, 38], [80, 61], [100, 100]], color: 1, smooth: true },
           { name: '㉡', points: [[0, 0], [20, 6], [40, 15], [60, 30], [80, 52], [100, 100]], color: 3, smooth: true },
         ], source: '가상 자료' },
       { t: 'table', head: ['구분', '갑국', '을국'], widths: [50, 25, 25], align: ['center', 'center', 'center'], rows: [

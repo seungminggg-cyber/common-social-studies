@@ -1,0 +1,65 @@
+/* MINIMAX 킬러편 스킬특강 — 예시문항 특강(sp.css)·문제집(wb.css)·시안 H 위에 스킬특강에만 있는 것을 더한다 */
+
+/* 엄지 색인: 스킬 번호(01~10)를 위에서 아래로, 색은 다섯 가지를 두 번 돌려 쓴다 */
+.page[data-ch="01"], .page[data-ch="06"] { --c1: #1d6c74; --c1-dark: #134a50; --c1-soft: #e3eeef; --c1-line: #a9c9cc; --c1-pale: #f2f7f7; }
+.page[data-ch="02"], .page[data-ch="07"] { --c1: #7d3566; --c1-dark: #5a2449; --c1-soft: #f2e5ee; --c1-line: #d6b3cb; --c1-pale: #faf4f8; }
+.page[data-ch="03"], .page[data-ch="08"] { --c1: #3c7a37; --c1-dark: #295626; --c1-soft: #e7f0e5; --c1-line: #b5d0b1; --c1-pale: #f4f8f3; }
+.page[data-ch="04"], .page[data-ch="09"] { --c1: #b5651d; --c1-dark: #844812; --c1-soft: #f6ebe0; --c1-line: #e2c3a4; --c1-pale: #fcf7f2; }
+.page[data-ch="05"], .page[data-ch="10"] { --c1: #234e8a; --c1-dark: #173562; --c1-soft: #e3e9f3; --c1-line: #aebfdb; --c1-pale: #f3f6fa; }
+.page[data-ch="01"] .edge-tab { top: 41mm; }
+.page[data-ch="02"] .edge-tab { top: 62mm; }
+.page[data-ch="03"] .edge-tab { top: 83mm; }
+.page[data-ch="04"] .edge-tab { top: 104mm; }
+.page[data-ch="05"] .edge-tab { top: 125mm; }
+.page[data-ch="06"] .edge-tab { top: 146mm; }
+.page[data-ch="07"] .edge-tab { top: 167mm; }
+.page[data-ch="08"] .edge-tab { top: 188mm; }
+.page[data-ch="09"] .edge-tab { top: 209mm; }
+.page[data-ch="10"] .edge-tab { top: 230mm; }
+
+/* 표지 */
+.sk-cover .cv-title { font-size: 30pt; line-height: 1.22; max-width: 100mm; }
+
+/* 스킬 지도 표 */
+.sk-map .tbl td:nth-child(1) { width: 10mm; font-weight: 700; }
+.sk-map .tbl td:nth-child(2) { width: 46mm; }
+.sk-map .tbl td:nth-child(4) { width: 10mm; }
+.sk-map .tbl { font-size: 8.2pt; }
+.sk-map .tbl td { padding: 1.2mm 1.4mm; line-height: 1.5; }
+
+/* 스킬 머리 아래의 길잡이 글 */
+.sk-lead { margin-bottom: 3mm; font-size: 9pt; }
+
+/* 스킬 카드 */
+.sk-card { border-top-color: var(--c1); }
+.sk-card .sp-k { color: var(--c1-dark); }
+.sk-card .sp-k.red { color: var(--red); }
+.sk-shape { display: grid; grid-template-columns: 22mm 1fr; column-gap: 2mm; font-size: 8.4pt; line-height: 1.65; margin-bottom: 2mm; }
+.sk-shape ul { margin: 0; padding-left: 4mm; }
+.sk-card .sp-strat-steps { grid-template-columns: repeat(4, 1fr); margin-bottom: 2.4mm; }
+.sk-card .sp-strat-steps .n { color: var(--c1); }
+.sk-card .sp-strat-tr { grid-template-columns: 22mm 1fr; font-size: 8.3pt; line-height: 1.65; margin-bottom: 1.6mm; }
+.sk-card .sp-strat-tr li { margin-bottom: .4mm; }
+.sk-fast li b { color: var(--c1-dark) !important; }
+
+/* 대표 예제: 왼쪽 문항, 오른쪽 풀이 */
+.sk-ex-row { margin-top: 3mm; }
+.sk-ex-g { display: grid; grid-template-columns: 97mm 1fr; column-gap: 5mm; align-items: start; }
+.sk-ex-q { min-width: 0; border: .6pt solid var(--rule); padding: 2.4mm 2.6mm 1mm; }
+.sk-ex-q .q-head { display: none; }
+.sk-ex-q .q { margin: 0; }
+.sk-ex-q .q-explain { display: none !important; }
+.sk-ex-q svg, .sk-ex-q img { max-width: 100%; height: auto; }
+.sk-ex-s { min-width: 0; }
+.sk-ex-s .sp-grid { font-size: 8.5pt; line-height: 1.66; }
+.sk-ex-s .sp-steps li { margin-bottom: .5mm; }
+.sk-board p { margin: 0; font-size: 7.9pt; line-height: 1.6; }
+.mode-student .sk-ex .sp-ans { display: none; }
+
+/* 요약 카드 */
+.sk-sum-row { margin-top: 4mm; }
+.sk-sum { border: 1pt solid var(--c1); background: var(--c1-pale); padding: 2.6mm 3.4mm; }
+.sk-sum-h { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 1.2mm; border-bottom: .5pt solid var(--c1-line); padding-bottom: 1mm; }
+.sk-sum-h b { font-size: 9.4pt; color: var(--c1-dark); }
+.sk-sum-h span { font-size: 8pt; color: var(--gray); }
+.sk-sum ul { margin: 0; padding-left: 4.2mm; font-size: 8.7pt; line-height: 1.72; }

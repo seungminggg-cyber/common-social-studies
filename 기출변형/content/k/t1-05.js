@@ -226,7 +226,7 @@ export default [
     kcond: [1, 2, 3, 5], double: '꺾은선이 꺾이는 횟수와 댐·관측 지점의 위치 관계로 (가)·(나)와 X·Y 짝, 댐의 가동 순서 확정 → 상댓값 × 기준값 계산과 하류 지형 변화 판단', skill: 'S05',
     stem: '지도는 여러 나라를 흐르는 어느 하천의 댐 ㉮, ㉯와 관측 지점 X, Y를, 그래프의 (가), (나)는 X, Y를 지나 하류로 내려간 흙의 양을 1995년을 100으로 하여 나타낸 것이다. 두 댐은 1995~2020년 사이의 서로 다른 시기에 물을 가두기 시작하였다. 이에 대한 설명으로 옳지 않은 것은? (단, 1995년에 지나간 흙의 양은 X가 1.2억 톤, Y가 1.6억 톤이다.)',
     data: [
-      { t: 'map', view: [92, 7.5, 112, 32], w: 300, h: 330, width: 62, riverEmph: ['Mekong', 'Lancang'], rivers: 5,
+      { t: 'map', view: [92, 7.5, 112, 32], w: 300, h: 330, width: 62, degSize: 11.5, riverEmph: ['Mekong', 'Lancang'], rivers: 5,
         markers: [
           { lon: 100.4, lat: 22.4, label: '㉮', pos: 'left', shape: 'square', size: 14 },
           { lon: 102.6, lat: 17.97, label: 'X', pos: 'left', r: 4.2, size: 14 },
