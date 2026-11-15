@@ -366,7 +366,8 @@ async function layout() {
     let col = 0, used = 0;
     while (left.length) {
       const i = left.findIndex((q) => used + m.rows[q.id] <= caps(col));
-      if (i < 0 && used > 0) { col += 1; used = 0; continue; }
+      // DAY 첫 쪽 두 단(col 0·1)에 들어가는 문항이 없으면 빈 채로 넘긴다(억지로 넣으면 뒤 단 계산이 한 쪽씩 밀림 — 서운고 채팅 제보 2026-11-15)
+      if (i < 0 && (used > 0 || col < 2)) { col += 1; used = 0; continue; }
       const q = left.splice(Math.max(i, 0), 1)[0];
       order.push(q); used += m.rows[q.id];
     }
