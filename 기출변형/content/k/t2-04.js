@@ -130,7 +130,7 @@ export default [
     data: [
       { t: 'diagram', kind: 'yesno', legend: false, fs: 1.6, start: '사례 카드 ㉮~㉱', tree: { q: 'P', no: 'A', yes: { q: '(나)', yes: 'B', no: { q: '(다)', yes: 'C', no: 'D' } } } },
       { t: 'ul', items: [
-        'X: 잘못으로 생긴 손해를 바로잡는 것인가?',
+        'X: 잘못을 바로잡는 것인가?',
         'Y: 재화를 각자의 업적에 비례하여 나누는 것인가?',
         'Z: 같은 가치를 지닌 것끼리 주고받는 것인가?',
       ] },
