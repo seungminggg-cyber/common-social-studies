@@ -44,7 +44,7 @@ export default [
           { name: '㉯', values: [-59, -22, -4] },
           { name: '㉰', values: [-39, -14, 19] },
         ],
-        y: { min: -60, max: 20, step: 20, label: '(억 톤)' }, zero: '채택한 해',
+        y: { min: -80, max: 40, step: 20, label: '(억 톤)' }, zero: '채택한 해',
         source: '자료: Our World in Data(Global Carbon Project), 화석 연료와 산업 공정의 이산화 탄소 배출량(억 톤 단위로 반올림한 값)' },
     ],
     bogi: [
