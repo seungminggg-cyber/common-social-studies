@@ -1,6 +1,7 @@
 // 정답 가리고 다시 풀기 준비(킬러편 단원 문항용)
 //   node 킬러편/도구/solve-prep.mjs <저장 폴더> <단원키…>      예: node 킬러편/도구/solve-prep.mjs /tmp/s/b1 t2-08 t2-10
 //   → <저장 폴더>/문제만.json(정답·해설·출처 뺀 문항, 책에 실리는 순서), 정답.json, 문제 쪽 그림 p-*.png
+//   출제자 메모(kform·kcond·double·skill)는 문제만.json에서 뺀다(이중추론 설명이 답을 알려 줄 수 있음).
 //   검토자에게는 킬러편/검토지시.md + 이 폴더를 준다. 정답.json은 검토자에게 보여 주지 않는다(출제자가 대조).
 //   ※ 기출변형 폴더에서 실행한다.
 import { execFileSync } from 'node:child_process';
@@ -17,7 +18,7 @@ for (const k of keys) {
   if (order[k]) { const pos = new Map(order[k].map((id, i) => [id, i])); list = [...list].sort((a, b) => (pos.get(a.id) ?? 1e9) - (pos.get(b.id) ?? 1e9)); }
   qs.push(...list);
 }
-writeFileSync(join(dest, '문제만.json'), JSON.stringify(qs.map((q, i) => { const { answer, explain, note, src, kplan, ...r } = q; return { no: i + 1, ...r }; }), null, 1));
+writeFileSync(join(dest, '문제만.json'), JSON.stringify(qs.map((q, i) => { const { answer, explain, note, src, kplan, kform, kcond, double, skill, ...r } = q; return { no: i + 1, ...r }; }), null, 1));
 writeFileSync(join(dest, '정답.json'), JSON.stringify(qs.map((q, i) => ({ no: i + 1, id: q.id, answer: q.answer }))));
 // 문제 쪽 그림: 그 단원만 빌드
 execFileSync('node', ['build.mjs', 'k', 'units', ...keys], { stdio: ['ignore', 'pipe', 'inherit'] });
