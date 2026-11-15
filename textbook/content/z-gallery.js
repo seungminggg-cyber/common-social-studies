@@ -91,6 +91,31 @@ export default {
           source: '가상 자료',
         },
 
+        { t: 'sec', mark: '3+', title: '킬러 문항용 그래프 (차이 막대 · 삼각 그래프 · 3축 좌표)' },
+        {
+          t: 'chart', kind: 'diffbar', title: '네 나라 평균과의 차이 (가상 자료)', w: 400, h: 220,
+          categories: ['A국', 'B국', 'C국', 'D국'],
+          series: [
+            { name: '1인당 생태 발자국', values: [4, -2, -3, { blank: '㉠' }] },
+            { name: '1인당 생태 용량', values: [1, -2, { blank: '㉡' }, 1] },
+          ],
+          y: { min: -4, max: 4, step: 1, label: '(gha)' }, zero: '네 나라 평균',
+          source: '가상 자료',
+        },
+        {
+          t: 'chart', kind: 'ternary', title: '산업별 취업자 비율 변화 (가상 자료)', w: 360, h: 330, step: 20,
+          axes: [{ label: '1차 산업(%)' }, { label: '2차 산업(%)' }, { label: '3차 산업(%)' }],
+          points: [{ name: 'A', v: [60, 20, 20] }, { name: 'B', v: [20, 40, 40] }, { name: 'C', v: [10, 30, 60] }],
+          arrows: [{ from: 'A', to: 'B' }],
+          source: '가상 자료',
+        },
+        {
+          t: 'chart', kind: 'axes3', title: '세 입장의 상대 위치 (개념도)', w: 340, h: 280,
+          axes: [{ label: '개인의 자유를 강조하는 정도' }, { label: '국가의 재분배를 인정하는 정도' }, { label: '공동체의 가치를 강조하는 정도' }],
+          lo: '낮음', hi: '높음',
+          points: [{ name: '㉠', at: [1, 0, 1] }, { name: '㉡', at: [0, 1, 1] }, { name: '㉢', at: [1, 1, 0] }],
+        },
+
         { t: 'sec', mark: '4', title: '벤 다이어그램' },
         {
           t: 'venn', title: '아리스토텔레스와 에피쿠로스의 행복론', h: 260,

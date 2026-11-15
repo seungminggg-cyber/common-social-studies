@@ -511,7 +511,243 @@ function pyramid(b) {
   return { W, H, s };
 }
 
-const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev, radar, pyramid };
+// ════ MINIMAX 킬러편 새 그래프(2026-11): diffbar · ternary · axes3 ════
+
+// 부호를 붙인 숫자(+4, −2, 0). 빼기는 인쇄용 빼기표(−)
+const sgn = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(Math.round(v * 1e6) / 1e6));
+// 글씨 둘레에 흰 테두리(선 위에 놓여도 읽히게)
+const halo = (svg) => svg.replace(/<text /g, '<text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" ');
+// 점 이름 자리 고르기: 점 둘레 여덟 자리 가운데 선·다른 글씨·그림 밖과 가장 덜 겹치는 곳
+//   segs: [[x1,y1,x2,y2]…] 피할 선, taken: [{x0,y0,x1,y1}…] 이미 놓인 글씨·점, W·H: 그림 크기
+function pickLabel(px, py, s, size, segs, taken, W, H) {
+  const w = tw(s, size);
+  const C = [['start', 7, -6], ['start', 8, size * 0.36], ['start', 7, size + 3], ['middle', 0, -8],
+    ['middle', 0, size + 7], ['end', -7, -6], ['end', -8, size * 0.36], ['end', -7, size + 3]];
+  let best = null;
+  C.forEach(([an, dx, dy], k) => {
+    const x = px + dx, base = py + dy;
+    const x0 = an === 'start' ? x : an === 'end' ? x - w : x - w / 2;
+    const bx = { x0: x0 - 1.5, x1: x0 + w + 1.5, y0: base - size * 0.82 - 1.5, y1: base + size * 0.18 + 1.5 };
+    let sc = k * 0.3;
+    if (bx.x0 < 2 || bx.x1 > W - 2 || bx.y0 < 2 || bx.y1 > H - 2) sc += 1000;
+    for (const [a, b2, c, d] of segs) {
+      const n = Math.max(1, Math.ceil(Math.hypot(c - a, d - b2) / 2));
+      for (let i = 0; i <= n; i++) {
+        const qx = a + ((c - a) * i) / n, qy = b2 + ((d - b2) * i) / n;
+        if (qx > bx.x0 && qx < bx.x1 && qy > bx.y0 && qy < bx.y1) sc += 1;
+      }
+    }
+    for (const t of taken) {
+      const ox = Math.min(bx.x1, t.x1) - Math.max(bx.x0, t.x0), oy = Math.min(bx.y1, t.y1) - Math.max(bx.y0, t.y0);
+      if (ox > 0 && oy > 0) sc += 40 + ox * oy;
+    }
+    if (!best || sc < best.sc) best = { sc, an, x, base, bx };
+  });
+  return best;
+}
+// 점 이름 그리기(점마다 dx·dy를 주면 그 자리, 없으면 자동으로 고름)
+function pointLabels(pts, size, segs, W, H, taken = []) {
+  taken.push(...pts.map((p) => ({ x0: p.x - 5, x1: p.x + 5, y0: p.y - 5, y1: p.y + 5 })));
+  let s = '';
+  for (const p of pts) {
+    if (p.name == null || p.name === '') continue;
+    let an = p.anchor || 'start', x, base;
+    if (p.dx != null || p.dy != null) { x = p.x + (p.dx ?? 7); base = p.y + (p.dy ?? -6); }
+    else { const k = pickLabel(p.x, p.y, p.name, size, segs, taken, W, H); an = k.an; x = k.x; base = k.base; taken.push(k.bx); }
+    s += halo(text(x, base, p.name, { size, anchor: an, cls: 'cat', weight: 700 }));
+  }
+  return s;
+}
+
+// ── 기준(평균)과의 차이 막대그래프 ──
+// { kind:'diffbar', categories:[…], series:[{ name, values:[수 또는 { blank:'㉠' }], color }],
+//   y:{ min, max, step, label }, zero:'기준선 이름', valueLabels:true, valueSuffix:'' }
+//   0 기준선(굵은 축선) 위로 양수, 아래로 음수 막대. 값 글씨·눈금에 +, − 부호.
+//   값 자리에 { blank:'㉠' }이면 막대 대신 기준선에 걸친 점선 네모 + 기호(값은 숨김).
+//   zero 글씨는 기준선 오른쪽 끝 위(막대와 겹치지 않게 오른쪽 여백을 그만큼 둔다, \n 줄바꿈 가능).
+function diffbar(b) {
+  const W = b.w || 400, H = b.h || 220;
+  const cats = b.categories, series = b.series, y = b.y || {};
+  const isNum = (v) => typeof v === 'number';
+  const ext = Math.max(1, ...series.flatMap((ser) => ser.values).filter(isNum).map(Math.abs));
+  const max = y.max ?? ext, min = y.min ?? -ext, step = y.step ?? (max - min) / 4;
+  const hasLegend = series.length > 1;
+  const zs = 10.5, zl = b.zero ? String(b.zero).split('\n') : [];
+  const zw = zl.length ? Math.max(...zl.map((l) => tw(l, zs))) + 8 : 0;
+  const L = 44, R = Math.max(12, zw), T = hasLegend ? 40 : 24, B = 30;
+  const pw = W - L - R, ph = H - T - B;
+  const sy = (v) => T + ph - ((Math.max(min, Math.min(max, v)) - min) / (max - min)) * ph;
+  const y0 = sy(0);
+  const band = pw / cats.length, gw = band * (series.length > 1 ? 0.7 : 0.5), bw = gw / series.length;
+  let s = '';
+  for (const v of ticks(min, max, step)) {
+    if (v !== 0) s += `<line x1="${L}" y1="${r1(sy(v))}" x2="${L + pw}" y2="${r1(sy(v))}" class="grid"/>`;
+    s += text(L - 6, sy(v) + 4, sgn(v), { size: 11, anchor: 'end', cls: 'tick' });
+  }
+  if (y.label) s += tw(y.label, 11) > L - 8 ? text(2, T - 10, y.label, { size: 11, cls: 'axl' }) : text(L - 6, T - 10, y.label, { size: 11, anchor: 'end', cls: 'axl' });
+  let marks = '';
+  series.forEach((ser, j) => {
+    const c = ser.color || j + 1;
+    ser.values.forEach((v, i) => {
+      const x = L + band * i + (band - gw) / 2 + bw * j, cx = x + bw / 2;
+      if (v && typeof v === 'object' && v.blank != null) {
+        // 빈칸: 기준선에 걸친 점선 네모
+        const bxw = Math.min(bw - 2, 22), bxh = 18;
+        marks += `<rect x="${r1(cx - bxw / 2)}" y="${r1(y0 - bxh / 2)}" width="${r1(bxw)}" height="${bxh}" class="ref" fill="#fff"/>`;
+        marks += text(cx, y0 + 4.5, v.blank, { size: 12, anchor: 'middle', cls: 'cat', weight: 700 });
+        return;
+      }
+      if (!isNum(v)) return;
+      const yv = sy(v);
+      if (v !== 0) s += `<rect x="${r1(x + 1)}" y="${r1(Math.min(yv, y0))}" width="${r1(bw - 2)}" height="${r1(Math.abs(yv - y0))}" class="fl s${c}"/>`;
+      if (b.valueLabels !== false) marks += text(cx, v < 0 ? yv + 12.5 : yv - 4.5, sgn(v) + (b.valueSuffix || ''), { size: 10.5, anchor: 'middle', cls: 'val' });
+    });
+  });
+  // 0 기준선(굵게) — 이름표 자리까지 늘인다
+  s += `<line x1="${L}" y1="${r1(y0)}" x2="${W - 4}" y2="${r1(y0)}" class="axis" style="stroke-width:2"/>`;
+  s += marks;
+  zl.forEach((l, k) => (s += text(W - 4, y0 - 5 - (zl.length - 1 - k) * zs * 1.2, l, { size: zs, anchor: 'end', cls: 'axl' })));
+  cats.forEach((c, i) => (s += text(L + band * i + band / 2, H - 9, c, { size: 11.5, anchor: 'middle', cls: 'cat' })));
+  if (hasLegend) s += legend(series.map((x, j) => ({ ...x, cls: `s${x.color || j + 1}` })), W - 4 - legendWidth(series), 18);
+  return { W, H, s };
+}
+
+// ── 삼각 그래프 (세 비율의 합 = 100) ──
+// { kind:'ternary', step:20, axes:[{label},{label},{label}],
+//   points:[{ name, v:[첫째, 둘째, 셋째], color, dx, dy }], arrows:[{ from, to, dash }] }
+//   꼭짓점: 오른쪽 아래 = 첫째 100, 위 = 둘째 100, 왼쪽 아래 = 셋째 100
+//   첫째 눈금 = 아랫변(왼 0 → 오른 100, 격자선은 왼쪽 변과 나란히)
+//   둘째 눈금 = 오른쪽 변(아래 0 → 위 100, 격자선은 아랫변과 나란히)
+//   셋째 눈금 = 왼쪽 변(위 0 → 아래 100, 격자선은 오른쪽 변과 나란히)
+//   눈금 표시는 그 축의 격자선 방향으로 기울여 바깥에 긋고, 축 이름 옆 화살표가 값이 커지는 방향을 가리킨다.
+function ternary(b) {
+  const W = b.w || 360, H = b.h || 330, step = b.step || 20;
+  const ax = b.axes || [{}, {}, {}];
+  const K = Math.sqrt(3) / 2;
+  const padX = 30, top = 22, bot = 46;
+  const S = Math.min(W - 2 * padX, (H - top - bot) / K), hgt = S * K;
+  const x0 = (W - S) / 2, yb = top + hgt + (H - top - bot - hgt) / 2;
+  const BR = [x0 + S, yb], TP = [x0 + S / 2, yb - hgt], BL = [x0, yb];
+  const P = (v) => { const t = v[0] + v[1] + v[2] || 1; return [0, 1].map((d) => (v[0] * BR[d] + v[1] * TP[d] + v[2] * BL[d]) / t); };
+  const ln = (p, q, cls, extra = '') => `<line x1="${r1(p[0])}" y1="${r1(p[1])}" x2="${r1(q[0])}" y2="${r1(q[1])}" class="${cls}"${extra}/>`;
+  const add = (p, d, k) => [p[0] + d[0] * k, p[1] + d[1] * k];
+  let s = '';
+  // 격자선(옅게)
+  for (let k = step; k < 100 - 1e-9; k += step) {
+    s += ln(P([k, 0, 100 - k]), P([k, 100 - k, 0]), 'grid');
+    s += ln(P([100 - k, k, 0]), P([0, k, 100 - k]), 'grid');
+    s += ln(P([0, 100 - k, k]), P([100 - k, 0, k]), 'grid');
+  }
+  s += `<polygon points="${[BR, TP, BL].map((p) => p.map(r1).join(',')).join(' ')}" class="axis"/>`;
+  // 눈금(변 바깥, 격자선 방향으로 기운 짧은 선 + 숫자)
+  const dB = [-0.5, K], dR = [1, 0], dL = [-0.5, -K];
+  for (const k of ticks(0, 100, step)) {
+    const pb = P([k, 0, 100 - k]), pr = P([100 - k, k, 0]), pl = P([0, 100 - k, k]);
+    s += ln(pb, add(pb, dB, 5), 'axis') + text(...add(add(pb, dB, 13), [0, 4], 1), fmt(k), { size: 10.5, anchor: 'middle', cls: 'tick' });
+    s += ln(pr, add(pr, dR, 5), 'axis') + text(pr[0] + 8, pr[1] + 4, fmt(k), { size: 10.5, anchor: 'start', cls: 'tick' });
+    s += ln(pl, add(pl, dL, 5), 'axis') + text(...add(add(pl, dL, 9), [0, 4], 1), fmt(k), { size: 10.5, anchor: 'end', cls: 'tick' });
+  }
+  // 축 이름 + 값이 커지는 방향 화살표
+  const SIDES = [
+    { lab: ax[0]?.label, M: [(BL[0] + BR[0]) / 2, yb], n: [0, 1], off: 33, rot: 0, u: [1, 0] },
+    { lab: ax[1]?.label, M: [(BR[0] + TP[0]) / 2, (BR[1] + TP[1]) / 2], n: [K, -0.5], off: 38, rot: 60, u: [-0.5, -K] },
+    { lab: ax[2]?.label, M: [(BL[0] + TP[0]) / 2, (BL[1] + TP[1]) / 2], n: [-K, -0.5], off: 40, rot: -60, u: [-0.5, K] },
+  ];
+  for (const sd of SIDES) {
+    if (!sd.lab) continue;
+    const c = add(sd.M, sd.n, sd.off), half = tw(sd.lab, 11) / 2;
+    const t = text(c[0], c[1], sd.lab, { size: 11, anchor: 'middle', cls: 'axl', baseline: 'middle', weight: 700 });
+    s += sd.rot ? `<g transform="rotate(${sd.rot} ${r1(c[0])} ${r1(c[1])})">${t}</g>` : t;
+    s += ln(add(c, sd.u, half + 5), add(c, sd.u, half + 25), 'axis', ' marker-end="url(#ah)"');
+  }
+  // 점과 화살표
+  const pts = (b.points || []).map((p) => { const [x, y] = P(p.v); return { ...p, x, y }; });
+  const byName = Object.fromEntries(pts.map((p) => [p.name, p]));
+  const segs = [[BR[0], BR[1], TP[0], TP[1]], [TP[0], TP[1], BL[0], BL[1]], [BL[0], BL[1], BR[0], BR[1]]];
+  for (const a of b.arrows || []) {
+    const p = byName[a.from], q = byName[a.to];
+    if (!p || !q) throw new Error(`삼각 그래프 화살표: 점 이름을 못 찾음 ${a.from} → ${a.to}`);
+    const d = Math.hypot(q.x - p.x, q.y - p.y) || 1, ux = (q.x - p.x) / d, uy = (q.y - p.y) / d;
+    s += ln([p.x + ux * 6, p.y + uy * 6], [q.x - ux * 7, q.y - uy * 7], `ln s${a.color || 3}${a.dash ? ' dash' : ''}`, ' style="stroke-width:1.8" marker-end="url(#ah2)"');
+    segs.push([p.x, p.y, q.x, q.y]);
+  }
+  for (const p of pts) s += `<circle cx="${r1(p.x)}" cy="${r1(p.y)}" r="4.2" class="dot s${p.color || 1}"/>`;
+  s += pointLabels(pts, 12, segs, W, H);
+  return { W, H, s };
+}
+
+// ── 3축 좌표 (입장의 상대 위치) ──
+// { kind:'axes3', axes:[{label}(X 오른쪽), {label}(Y 위), {label}(Z 앞쪽 = 왼쪽 아래)], lo:'낮음', hi:'높음',
+//   points:[{ name, at:[x, y, z](0~1), color, dx, dy }], guides:true }
+//   0~1 정육면체 틀은 점선, 점에서 바닥(y=0)으로 내린 선과 바닥에서 X·Z축으로 그은 선(가는 점선)으로 위치를 읽는다.
+//   축 이름이 길면 \n으로 줄바꿈(없으면 띄어쓰기에서 알아서 두 줄로).
+function axes3(b) {
+  const W = b.w || 340, H = b.h || 280;
+  const ax = b.axes || [{}, {}, {}];
+  const lo = b.lo ?? '낮음', hi = b.hi ?? '높음';
+  const EZ = [-0.58, 0.42], EXT = 1.3, ls = 11, hs = 10.5;
+  // 긴 축 이름은 가운데 가까운 띄어쓰기에서 나눈다
+  const wrap = (s0) => {
+    const s = String(s0 ?? '');
+    if (s.includes('\n') || tw(s, ls) <= 84) return s.split('\n');
+    const sp = [...s].map((ch, i) => (ch === ' ' ? i : -1)).filter((i) => i > 0);
+    if (!sp.length) return [s];
+    const k = sp.reduce((a, i) => (Math.abs(i - s.length / 2) < Math.abs(a - s.length / 2) ? i : a));
+    return [s.slice(0, k), s.slice(k + 1)];
+  };
+  const LX = wrap(ax[0]?.label), LY = wrap(ax[1]?.label), LZ = wrap(ax[2]?.label);
+  const wOf = (ls2) => Math.max(0, ...ls2.map((l) => tw(l, ls))), hOf = (ls2) => ls2.length * ls * 1.2;
+  // 원점 (0,0)에서 u 크기로 그렸을 때 글씨까지 포함한 테두리
+  const bbox = (u) => {
+    const tx = EXT * u, ty = -EXT * u, zx = EZ[0] * EXT * u, zy = EZ[1] * EXT * u;
+    const xs = [tx + 6 + wOf(LX), -wOf(LY) / 2, wOf(LY) / 2, zx - wOf(LZ) / 2, zx + wOf(LZ) / 2, zx - 6 - tw(hi, hs)];
+    const ys = [ty - 9 - hOf(LY), zy + 8 + hOf(LZ), -hOf(LX) / 2];
+    return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) };
+  };
+  let u = 220, bb;
+  for (; u > 40; u -= 1) { bb = bbox(u); if (bb.x1 - bb.x0 <= W - 8 && bb.y1 - bb.y0 <= H - 8) break; }
+  const ox = 4 - bb.x0 + (W - 8 - (bb.x1 - bb.x0)) / 2, oy = 4 - bb.y0 + (H - 8 - (bb.y1 - bb.y0)) / 2;
+  const P = ([x, y, z]) => [ox + x * u + z * EZ[0] * u, oy - y * u + z * EZ[1] * u];
+  const ln = (p, q, cls, extra = '') => `<line x1="${r1(p[0])}" y1="${r1(p[1])}" x2="${r1(q[0])}" y2="${r1(q[1])}" class="${cls}"${extra}/>`;
+  const segs = [];
+  let s = '';
+  // 정육면체 틀(축 위 세 모서리 말고 아홉 모서리, 점선)
+  const E = [[[1, 0, 0], [1, 1, 0]], [[0, 1, 0], [1, 1, 0]], [[0, 1, 0], [0, 1, 1]], [[0, 0, 1], [0, 1, 1]], [[0, 0, 1], [1, 0, 1]],
+    [[1, 0, 0], [1, 0, 1]], [[1, 1, 0], [1, 1, 1]], [[0, 1, 1], [1, 1, 1]], [[1, 0, 1], [1, 1, 1]]];
+  for (const [a, c] of E) { const p = P(a), q = P(c); s += ln(p, q, 'ref'); segs.push([...p, ...q]); }
+  // 점에서 내리는 보조선(가는 점선)
+  const G = ' stroke="#8a949e" stroke-width=".8" stroke-dasharray="2 2"';
+  const on = (v) => v === 0 || v === 1;
+  const pts = (b.points || []).map((p) => { const [x, y] = P(p.at); return { ...p, x, y }; });
+  if (b.guides !== false) for (const p of pts) {
+    const [x, y, z] = p.at, F = [x, 0, z];
+    const g = [];
+    if (y > 0 && !(on(x) && on(z))) g.push([p.at, F]);
+    if (z > 0 && !on(x)) g.push([F, [x, 0, 0]]);
+    if (x > 0 && !on(z)) g.push([F, [0, 0, z]]);
+    for (const [a, c] of g) { const pa = P(a), pc = P(c); s += ln(pa, pc, 'guide', G); segs.push([...pa, ...pc]); }
+  }
+  // 축(화살표)
+  const O = P([0, 0, 0]), TX = P([EXT, 0, 0]), TY = P([0, EXT, 0]), TZ = P([0, 0, EXT]);
+  for (const t of [TX, TY, TZ]) { s += ln(O, t, 'axis', ' style="stroke-width:1.6" marker-end="url(#ah)"'); segs.push([...O, ...t]); }
+  // 축 이름·높음·낮음
+  const lines = (arr, x, y0, an) => arr.map((l, i) => text(x, y0 + i * ls * 1.2, l, { size: ls, anchor: an, cls: 'axl', weight: 700 })).join('');
+  s += lines(LX, TX[0] + 6, TX[1] - hOf(LX) / 2 + ls * 0.85, 'start');
+  s += text(TX[0], TX[1] + 15, hi, { size: hs, anchor: 'end', cls: 'tick' });
+  s += lines(LY, TY[0], TY[1] - 9 - hOf(LY) + ls * 0.95, 'middle');
+  s += text(TY[0] + 7, TY[1] + 9, hi, { size: hs, cls: 'tick' });
+  s += lines(LZ, TZ[0], TZ[1] + 8 + ls * 0.95, 'middle');
+  s += text(TZ[0] - 6, TZ[1] - 3, hi, { size: hs, anchor: 'end', cls: 'tick' });
+  // 점
+  for (const p of pts) s += `<circle cx="${r1(p.x)}" cy="${r1(p.y)}" r="4.2" class="dot s${p.color || 3}"/>`;
+  const taken = [];
+  s += pointLabels(pts, 12.5, segs, W, H, taken);
+  // '낮음'은 원점 둘레에서 보조선·점 이름과 겹치지 않는 자리에
+  if (lo) { const k = pickLabel(O[0], O[1], lo, hs, segs, taken, W, H); s += halo(text(k.x, k.base, lo, { size: hs, anchor: k.an, cls: 'tick' })); }
+  return { W, H, s };
+}
+
+const KINDS = { bar, hbar, stack100, line, scatter, pie, climate, climdev, radar, pyramid, diffbar, ternary, axes3 };
 
 // 그림 블록 → HTML (<figure>)
 // inl: 글자 안의 **굵게** 등을 HTML로 바꾸는 함수 (render.js 가 넘김) — 도식·사진의 설명에 쓴다
