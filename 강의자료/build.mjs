@@ -1,7 +1,7 @@
 // 강의 화면 만들기
 //   node 강의자료/build.mjs [강의id] [nopdf] [png]
-//   예) node 강의자료/build.mjs sm-1-2          → 강의화면.html + 판서 노트·녹음 메모 PDF
-//       node 강의자료/build.mjs sm-1-2 png      → 화면 그림(PNG)도 (확인용)
+//   예) node 강의자료/build.mjs t1-1-1          → 강의화면.html + 판서 노트·녹음 메모 PDF
+//       node 강의자료/build.mjs t1-1-1 png      → 화면 그림(PNG)도 (확인용)
 // 결과는 강의자료/out/<강의id>/ 에 생긴다 (저장소에는 올리지 않음).
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,7 +16,12 @@ const require = createRequire(import.meta.url);
 const pw = () => { try { return require('playwright'); } catch { return require('/opt/node-tools/node_modules/playwright'); } };
 
 const args = process.argv.slice(2);
-const id = args.find((a) => !['nopdf', 'png', 'steps'].includes(a)) || 'sm-1-2';
+const id = args.find((a) => !['nopdf', 'png', 'steps'].includes(a));
+if (!id) {
+  const ids = fs.existsSync(path.join(ROOT, 'content')) ? fs.readdirSync(path.join(ROOT, 'content')).filter((f) => f.endsWith('.js')).map((f) => f.replace(/\.js$/, '')) : [];
+  console.log('쓰는 법: node 강의자료/build.mjs <강의 id> [png] [nopdf]\n있는 강의: ' + (ids.join(', ') || '(아직 없음)'));
+  process.exit(0);
+}
 const want = new Set(args);
 const OUT = path.join(ROOT, 'out', id);
 fs.mkdirSync(OUT, { recursive: true });

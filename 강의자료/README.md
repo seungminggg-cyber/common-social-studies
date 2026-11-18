@@ -2,7 +2,9 @@
 
 판서가 한 단계씩 나타나는 강의 화면을 만든다. 강사가 화면을 넘기며 목소리만 녹음하면, 그 녹음에 맞춰 판서가 나타나는 강의 영상(mp4)을 만든다.
 **쓰는 기준은 `작성기준.md`** (담백한 말투, 강조색 하나, 장식 없음)를 따른다.
-견본은 사회와 문화 Ⅰ-2 사회·문화 현상의 탐구 방법 4강이다(`content/z-sample.js`, 사회와 문화 저장소에서는 `content/1-2.js`).
+이 저장소에서는 **통합사회** 강의 영상을 만들 때 쓴다(아직 통합사회 강의는 없음).
+형식 견본(사회와 문화 Ⅰ-2 탐구 방법 4강)은 `society-and-culture` 저장소의 `강의자료/content/1-2.js`에 있다.
+선택 과목 강의는 과목별 저장소에서 만든다. 도구를 고치면 `class-prep-template`에도 반영한다.
 
 ## 강사가 쓰는 법
 1. `강의화면.html`을 **크롬이나 엣지로 연다** (파일을 더블클릭하거나 브라우저 창에 끌어 놓기).
@@ -32,8 +34,8 @@ claude.ai 미리 보기 페이지에서는 마이크를 쓸 수 없어서 녹음
 ## 만드는 법 (Claude용)
 ```bash
 bash scripts/setup-env.sh                 # 글꼴(textbook/node_modules)과 pyftsubset(fonttools, brotli) 준비
-node 강의자료/build.mjs 1-2               # 강의화면.html + PDF 3개
-node 강의자료/build.mjs 1-2 png nopdf     # 화면 그림만 (넘치는 화면 검사도 함께)
+node 강의자료/build.mjs <강의 id>          # 강의화면.html + PDF 3개 (id 없이 실행하면 목록)
+node 강의자료/build.mjs <강의 id> png nopdf   # 화면 그림만 (넘치는 화면 검사도 함께)
 node 강의자료/make-video.mjs <녹음파일.json> [강 번호…] [--partial] [--no-anim]
 ```
 - 영상에서 판서는 녹음 때 →를 누른 시각대로 나타나고, 나타나는 움직임(0.66초)도 1/30초씩 찍어 넣는다.
@@ -42,7 +44,7 @@ node 강의자료/make-video.mjs <녹음파일.json> [강 번호…] [--partial]
 - 미리 보기 페이지: `out/<id>/artifact.html`을 Artifact 도구로 올린다(아이콘 `slides`).
 
 ## 내용 쓰는 법 (`content/<id>.js`)
-- 파일 이름(= id)은 `<대단원>-<중단원>`이다. 예: `1-2.js`.
+- 파일 이름(= id)은 선택 과목은 `<대단원>-<중단원>`(예: `1-2.js`), 통합사회는 책 이름을 앞에 붙인다(예: `t1-1-1.js` = 통합사회1 Ⅰ-01).
 - 강(`lectures`) 안에 화면(`slides`)이 있다.
   - 화면마다 `tag`, `title`, `body`, `memo`를 쓴다. `tag`는 메모 칸에만 보이며 개념·도입·비교·주의·연습·자료·확인·정리 중 하나다.
   - 표지는 `kind: 'cover'`와 `today`(오늘 배울 것 목록, 하나씩 나타남)로 쓴다.
