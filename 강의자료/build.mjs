@@ -62,23 +62,12 @@ const runtime = fs.readFileSync(path.join(ROOT, 'lib', 'runtime.js'), 'utf8');
 const NM = path.join(REPO, 'textbook', 'node_modules');
 const CACHE = path.join(ROOT, '.cache');
 fs.mkdirSync(path.join(CACHE, 'subset'), { recursive: true });
-async function penFont() {
-  const p = path.join(CACHE, 'NanumPenScript-Regular.ttf');
-  if (!fs.existsSync(p)) {
-    // 나눔손글씨 펜 (SIL OFL) — Google Fonts 저장소에서 한 번만 받아 둔다
-    const r = await fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/nanumpenscript/NanumPenScript-Regular.ttf');
-    if (!r.ok) throw new Error('나눔손글씨 펜 글꼴을 받지 못했어요: ' + r.status);
-    fs.writeFileSync(p, Buffer.from(await r.arrayBuffer()));
-  }
-  return p;
-}
 const FONTS = [
   { family: 'Pretendard', weight: 400, file: path.join(NM, 'pretendard/dist/web/static/woff2/Pretendard-Regular.woff2') },
   { family: 'Pretendard', weight: 700, file: path.join(NM, 'pretendard/dist/web/static/woff2/Pretendard-Bold.woff2') },
   { family: 'Pretendard', weight: 800, file: path.join(NM, 'pretendard/dist/web/static/woff2/Pretendard-ExtraBold.woff2') },
   { family: 'KoPub Batang', weight: 400, file: path.join(NM, 'font-kopubworld/fonts/KoPubWorld-Batang-Medium.woff2') },
   { family: 'KoPub Batang', weight: 700, file: path.join(NM, 'font-kopubworld/fonts/KoPubWorld-Batang-Bold.woff2') },
-  { family: 'Nanum Pen', weight: 400, file: await penFont() },
 ];
 const ascii = Array.from({ length: 95 }, (_, i) => String.fromCharCode(32 + i)).join('');
 const glyphText = [...new Set([...flat.map((s) => s.html + s.memo.join('') + s.title).join(''), ...runtime, ...JSON.stringify(data.lectures), ascii, '①②③④⑤⑥⑦⑧→←↑↓↺·…“”‘’—–×○●■▶◀※'].join(''))].join('');

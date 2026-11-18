@@ -124,3 +124,5 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - `강의자료/`: 판서가 단계별로 나타나는 16:9 강의 화면 + 단계별 녹음 메모 + 화면별 녹음(→ 넘긴 시각 기록) → `make-video.mjs`로 mp4. 자세한 내용은 `강의자료/README.md`.
 - 첫 견본: 사회와 문화 Ⅰ-2 사회·문화 현상의 탐구 방법 4강(`content/sm-1-2.js`, 화면 28장). 별도 에이전트 검수 반영. 강사 확인 대기.
 - 녹음은 claude.ai 페이지(artifact)에서는 마이크를 못 써서, 강사가 `강의화면.html` 파일을 크롬·엣지로 직접 열어 녹음한다. 결과물(`out/`)은 저장소에 올리지 않는다.
+- **2026-11-18 강사 확정 기준(`강의자료/작성기준.md`)**: 담백한 말투(과장·느낌표·‘함정 문장’ 인용 화면 없이 바른 내용을 그대로), 흰 바탕 + 강조색 하나(남색, X만 빨강), 손글씨·형광펜 색·색 꼬리표·모눈 바탕 없음. 견본 4강을 이 기준으로 다시 씀.
+- 2022 개정 사회 선택 과목 9개는 과목별 저장소(`class-prep-template`에서 만듦)에서 작업한다: world-citizen-geography(세계시민과 지리), world-history(세계사), society-and-culture(사회와 문화), modern-society-ethics(현대사회와 윤리), korean-geography(한국지리 탐구), future-of-cities(도시의 미래 탐구), east-asian-history(동아시아 역사 기행), politics(정치), law-and-society(법과 사회). 강의 화면 도구(`강의자료/`)와 작성기준을 각 저장소와 템플릿에 넣고, 과목마다 첫 세팅 세션을 만들었다(2026-11-18). 사회와 문화 견본은 그 저장소의 `강의자료/content/1-2.js`.

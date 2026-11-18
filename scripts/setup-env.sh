@@ -7,6 +7,6 @@ cd "$(dirname "$0")/.." || exit 0
 step() { echo "== $1"; shift; "$@" >>/tmp/setup-env.log 2>&1 && echo "   완료" || echo "   실패(로그 /tmp/setup-env.log)"; }
 step "앱 부품(npm)" npm install --no-save --no-audit --no-fund
 step "개념서 부품(npm)" bash -c "cd textbook && npm install --no-save --no-audit --no-fund"
-step "한글 파일·글꼴 도구(pip)" pip install -q python-hwpx==6.11.0 fonttools
+step "한글 파일·글꼴 도구(pip)" pip install -q python-hwpx==6.11.0 fonttools brotli
 step "인쇄용 글꼴 변환" bash -c "cd 기출변형 && python3 cover/otf2ttf.py"
 exit 0

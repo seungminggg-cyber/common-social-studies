@@ -14,12 +14,14 @@ export const HL = (n, text) => `<mark class="hl" data-s="${n}">${text}</mark>`;
 export const UL = (n, text, c = 'red') => `<span class="ul ${c}" data-s="${n}">${text}</span>`;
 /** 동그라미 */
 export const CI = (n, text, c = 'red') => `<span class="ci ${c}" data-s="${n}">${text}</span>`;
-/** 손글씨 메모 (빨간 펜) */
-export const H = (n, text, cls = '') => `<span class="hand s ${cls}" data-s="${n}">${text}</span>`;
+/** 정리 한 줄 (왼쪽 강조선이 있는 한 줄). 과장·느낌표 없이 사실만 쓴다 */
+export const H = (n, text, cls = '') => `<div class="hand s ${cls}" data-s="${n}">${text}</div>`;
+/** 글자 옆 덧붙임 (회색 작은 글자) */
+export const A = (n, text) => `<span class="aside s" data-s="${n}">${text}</span>`;
 /** 밑줄 + 위에 작은 이름표 (사례 분석용). 글자는 짧게(한 줄 안에 들어가게) */
 export const LB = (n, text, label, c = 'blue') =>
   `<span class="lb ${c}" data-s="${n}"><span class="lbt">${text}</span><span class="lbl">${label}</span></span>`;
-/** O·X 도장 */
+/** O·X 표시 */
 export const O = (n) => `<span class="stamp o" data-s="${n}">O</span>`;
 export const X = (n) => `<span class="stamp x" data-s="${n}">X</span>`;
 
@@ -52,17 +54,11 @@ export function oxList(items, start = 1) {
     .join('')}</div>`;
 }
 
-/** 함정 문장: 문장이 n단계, X 도장과 바른 설명이 n+1단계 */
-export function traps(items, start = 1) {
-  return `<div class="traps">${items
-    .map(([q, fix], i) => {
-      const n = start + i * 2;
-      return `<div class="trap-i">${S(n, `<span class="num">${i + 1}</span><span class="q">“${q}”</span>`, 'tq')}${X(n + 1)}${S(
-        n + 1,
-        fix,
-        'tfix'
-      )}</div>`;
-    })
+/** 주의할 점: items = [[바른 문장, 덧붙임(없어도 됨)], ...], 하나씩 start단계부터.
+ *  틀린 문장을 따옴표로 보여 주지 않고, 바른 내용을 담백하게 쓴다 */
+export function cautions(items, start = 1) {
+  return `<div class="cautions">${items
+    .map(([t, more], i) => S(start + i, `<span class="num">${i + 1}</span><div>${t}${more ? `<small>${more}</small>` : ''}</div>`, 'cau'))
     .join('')}</div>`;
 }
 
