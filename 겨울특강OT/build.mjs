@@ -135,32 +135,38 @@ section('시작');
   img(s, join(ART, 'globe-t1.png'), 6.75, -0.35, 8.2, 8.2);
   const lg = join(ROOT, 'assets/academy-logo-white.png'), z = sizeOf(lg);
   img(s, lg, ML, 0.62, (0.52 * z.w) / z.h, 0.52);
-  tx(s, '2027 예비 고1 · 겨울방학 특강 OT', ML, 1.75, 7.2, 0.5, { font: F.semi, size: 24, color: C.neon, cs: 1 });
-  tx(s, [r('통합사회 1·2', { breakLine: true }), r('10주 완성', { color: C.neon, glow: { size: 8, opacity: 0.35, color: K.neon } })], ML, 2.4, 7.4, 2.55, { font: F.black, size: 72, lsm: 1.02 });
-  tx(s, '2028 대입부터 수능 공통 과목,\n이번 겨울에 개념을 끝냅니다', ML, 5.05, 7.0, 0.95, { font: F.med, size: 22, color: C.sub, lsm: 1.2 });
-  tx(s, [r('통합사회 '), r('이승민T', { font: F.head, color: C.white })], ML, 6.3, 5, 0.6, { font: F.semi, size: 26, color: C.sub });
-  s.addNotes('안녕하세요, 김포 너를위한메이트학원 통합사회 이승민입니다.\n오늘은 예비 고1 겨울방학 통합사회 10주 완성 특강을 소개해 드리겠습니다.\n12월 20일 일요일에 개강해서 2월 21일까지 10번의 수업으로 통합사회1·2 전 범위를 끝내는 수업입니다.');
+  tx(s, '2027 예비 고1 · 겨울방학 특강 OT', ML, 1.5, 7.2, 0.5, { font: F.semi, size: 24, color: C.neon, cs: 1 });
+  tx(s, [r('통합사회 1·2', { breakLine: true }), r('10주 완성', { color: C.neon, glow: { size: 8, opacity: 0.35, color: K.neon } })], ML, 2.05, 7.4, 2.3, { font: F.black, size: 66, lsm: 1.02 });
+  tx(s, '2028 대입부터 수능 공통 과목, 이번 겨울에 개념을 끝냅니다', ML, 4.4, 6.6, 0.45, { font: F.med, size: 19, color: C.sub });
+  // 개강·종강·시간
+  [['개강', '12/20(일)', 1.9, false], ['종강', '2/21(일)', 1.8, false], ['매주 일요일', '오전 10시~오후 1시', 2.95, true]].reduce((x, [k, v, w, hi]) => {
+    box(s, x, 5.1, w, 0.98, { snip: true, line: hi ? C.yellow : C.neon, lw: 1.75, fill: K.bg });
+    tx(s, k, x + 0.2, 5.18, w - 0.3, 0.35, { font: F.semi, size: 15, color: hi ? C.yellow : C.neon });
+    tx(s, v, x + 0.2, 5.5, w - 0.3, 0.48, { font: F.head, size: 22 });
+    return x + w + 0.15;
+  }, ML);
+  tx(s, [r('통합사회 '), r('이승민T', { font: F.head, color: C.white })], ML, 6.4, 5, 0.55, { font: F.semi, size: 24, color: C.sub });
+  s.addNotes('안녕하세요, 김포 너를위한메이트학원 통합사회 이승민입니다.\n오늘은 예비 고1 겨울방학 통합사회 10주 완성 특강을 소개해 드리겠습니다.\n12월 20일 일요일에 개강해서 2월 21일에 종강하고, 매주 일요일 오전 10시부터 오후 1시까지 10번의 수업으로 통합사회1·2 전 범위를 끝내는 수업입니다.');
 }
 
 // 2. 강사 소개
 {
-  const s = content('강사 소개', '통합사회 이승민T', '먼저 제 소개를 짧게 드리겠습니다.\n메이트학원 사회과 대표강사이고, 목동 에듀메이트, 대치 다원교육·리브 아카데미에서 사회를 가르치고 있습니다.\n족보닷컴 22개정 사회탐구 출제위원으로 문제를 직접 만들고 있고, 이번 특강의 개념서와 학습 앱도 제가 직접 만들었습니다.');
+  const s = content('강사 소개', '통합사회 이승민T', '먼저 제 소개를 짧게 드리겠습니다.\n메이트학원 사회과 대표강사이고, 대치 다원교육·리브 아카데미에서 사회를 가르치고 있습니다.\n족보닷컴 22개정 사회탐구 출제위원으로 문제를 직접 만들고 있고, 이번 특강의 개념서 MINIMAP, 주간지 MINT, 학습 앱도 제가 직접 만들었습니다.');
   const rows = [
     ['메이트학원 사회과 대표강사', true],
-    ['목동 에듀메이트 사회 대표강사', false],
     ['대치 다원교육 · 리브 아카데미', false],
     ['족보닷컴 22개정 사회탐구 출제위원', false],
     ['전) 대치 에듀퍼스트', false],
   ];
   rows.forEach(([t, hi], i) => {
-    const y = 2.2 + i * 0.86;
+    const y = 2.35 + i * 0.98;
     ping(s, hi ? 'yellow' : 'cyan', ML + 0.28, y + 0.3, 0.62);
     tx(s, t, ML + 0.8, y, 6.6, 0.6, { font: hi ? F.head : F.semi, size: 26, color: hi ? C.yellow : C.white, valign: 'middle' });
   });
   // 오른쪽: 직접 만든 것들
   box(s, 8.55, 2.2, 4.03, 4.1, { snip: true, line: C.neon, lw: 2, fill: K.bg, glow: K.neon, glowOpt: { opacity: 0.35, blur: 12 } });
   tx(s, '이번 특강을 위해\n직접 만들었습니다', 8.9, 2.5, 3.5, 0.95, { font: F.semi, size: 20, color: C.sub, lsm: 1.15 });
-  [['book-2', 'MINIMAP 개념서'], ['pencil', '자체 제작 워크북'], ['device-mobile', '통합사회 클래스 앱']].forEach(([ic, t], i) => {
+  [['book-2', 'MINIMAP 개념서'], ['notebook', '주간지 MINT'], ['device-mobile', '통합사회 클래스 앱']].forEach(([ic, t], i) => {
     const y = 3.65 + i * 0.82;
     icon(s, ic, 'cyan', 8.85, y - 0.05, 0.68);
     tx(s, t, 9.6, y, 2.95, 0.58, { font: F.semi, size: 20, valign: 'middle' });
@@ -169,8 +175,8 @@ section('시작');
 
 // 3. 오늘의 순서
 {
-  const s = content('OT 순서', '오늘 이야기할 여섯 가지', '오늘은 여섯 가지를 말씀드리겠습니다.\n왜 지금 통합사회를 해야 하는지, 왜 제 수업이어야 하는지, 10주 커리큘럼, 교재인 MINIMAP, 매일 관리하는 학습 앱, 그리고 신청 안내 순서입니다.');
-  const items = [['01', '왜 지금\n통합사회인가'], ['02', '왜 승민T\n수업인가'], ['03', '10주\n커리큘럼'], ['04', '교재\nMINIMAP'], ['05', '매일 관리\n학습 앱'], ['', '신청\n안내']];
+  const s = content('OT 순서', '오늘 이야기할 여섯 가지', '오늘은 여섯 가지를 말씀드리겠습니다.\n왜 지금 통합사회를 해야 하는지, 왜 제 수업이어야 하는지, 10주 커리큘럼, 교재인 MINIMAP과 주간지 MINT, 매일 관리하는 학습 앱, 그리고 신청 안내 순서입니다.');
+  const items = [['01', '왜 지금\n통합사회인가'], ['02', '왜 승민T\n수업인가'], ['03', '10주\n커리큘럼'], ['04', '교재\n개념서·주간지'], ['05', '매일 관리\n학습 앱'], ['', '신청\n안내']];
   const x0 = 1.55, x1 = 11.78, ly = 4.3, step = (x1 - x0) / 5;
   line(s, x0, ly, x1, ly, { color: C.neon, w: 3, glow: K.neon });
   items.forEach(([n, t], i) => {
@@ -178,7 +184,7 @@ section('시작');
     if (n) tx(s, n, cx - 0.9, 2.9, 1.8, 0.7, { font: F.head, size: 34, color: C.neon, align: 'center', valign: 'bottom' });
     else icon(s, 'map-pin', 'yellow', cx - 0.42, 2.8, 0.84);
     ping(s, n ? 'cyan' : 'yellow', cx, ly, 0.78);
-    tx(s, t, cx - 0.98, 4.9, 1.96, 1.05, { font: F.semi, size: 22, align: 'center', lsm: 1.12, color: n ? C.white : C.yellow });
+    tx(s, t, cx - 1.02, 4.9, 2.04, 1.05, { font: F.semi, size: 21, align: 'center', lsm: 1.12, color: n ? C.white : C.yellow });
   });
 }
 
@@ -339,31 +345,9 @@ divider('01', '왜 예비 고1 겨울방학부터\n통합사회일까?', '중학
   icon(s, 'trophy', 'yellow', sx + sw * 1 + 0.27, 3.95, 0.9);
 }
 
-// PART 1 정리
-{
-  const s = content('정리', '겨울방학 통합사회, 이유 여섯 가지', '정리하면 이렇습니다.\n수능까지 이어지는 과목이고, 국·영·수와 비슷한 학점으로 반영되며, 1등급은 상위 10%뿐입니다.\n외우는 사회가 아니라 추론하는 사회탐구이고, 학기 중에는 시간이 없으며, 첫 시험의 자신감이 고교 3년을 좌우합니다.\n그래서 이번 겨울방학이 통합사회를 시작할 때입니다.');
-  const cells = [
-    ['target', '수능까지 이어진다', '2028 대입부터 수능 공통 과목'],
-    ['scale', '국·영·수와 비슷한 학점', '100점의 무게가 비슷하다'],
-    ['percentage', '1등급은 상위 10%', '5등급제 상대평가'],
-    ['chart-dots-3', '사회 → 사회탐구', '학평·수능·수특 자료로 출제'],
-    ['hourglass-high', '학기 중엔 시간이 없다', '4월 ‘사회 올인족’의 등장'],
-    ['trophy', '첫 시험의 자신감', '고교 3년을 좌우하는 경험'],
-  ];
-  const cw = 3.75, ch = 2.15, gx = (CW - 3 * cw) / 2;
-  cells.forEach(([ic, t, d], i) => {
-    const x = ML + (i % 3) * (cw + gx), y = 2.1 + Math.floor(i / 3) * (ch + 0.3);
-    box(s, x, y, cw, ch, { snip: true, line: C.line, lw: 1.5 });
-    icon(s, ic, i === 2 ? 'yellow' : 'cyan', x + 0.22, y + 0.2, 0.85);
-    tx(s, String(i + 1), x + cw - 0.85, y + 0.2, 0.6, 0.6, { font: F.head, size: 28, color: C.dim, align: 'right' });
-    tx(s, t, x + 0.3, y + 1.1, cw - 0.5, 0.5, { font: F.head, size: 22, color: i === 2 ? C.yellow : C.white });
-    tx(s, d, x + 0.3, y + 1.58, cw - 0.5, 0.45, { font: F.med, size: 17, color: C.sub });
-  });
-}
-
 // ── PART 2 ──
 section('02 왜 승민T 수업');
-divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 · 4단계 워크북 · 킬러 파트 · 1:1 오답 관리',
+divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 · 주간지 MINT · 킬러 파트 · 1:1 오답 관리',
   '두 번째, 그렇다면 왜 제 수업이어야 하는지 네 가지로 말씀드리겠습니다.');
 
 // 강점 1: 원리 이해
@@ -387,22 +371,25 @@ divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 ·
   tx(s, [r('1등급을 가르는 힘 = '), r('사회과 특화 문해력', { color: C.yellow, font: F.head }), r(' + '), r('논리적 추론력', { color: C.yellow, font: F.head })], ML, 6.2, CW, 0.55, { font: F.semi, size: 24, align: 'center' });
 }
 
-// 강점 2: 워크북 4단계
+// 강점 2: 자체 제작 주간지 MINT (매일 30분, 4단계 순서)
+const MINT_STEPS = [['pencil', '빈칸 채우기'], ['square-check', 'O/X 변형'], ['file-text', '사료 분석'], ['pencil-question', '실전문제 풀이']];
 {
-  const s = content('강점 2 · 자체 제작 워크북', '눈으로만 읽는 ‘가짜 공부’를 막습니다', '많은 학생들이 개념서를 눈으로 두세 번 읽고 나면 “다 안다, 다 외웠다”고 착각합니다. 하지만 책을 덮는 순간 기억이 나지 않고, 선지 표현이 조금만 바뀌어도 오답을 고릅니다.\n이 메타인지의 함정을 깨기 위해, 개념 수업 뒤에는 제가 직접 만든 워크북으로 네 단계를 거칩니다.\n빈칸 채우기, O/X 변형, 사료 분석, 그리고 백지 테스트까지. 눈으로만 읽는 공부를 막고 개념을 완전히 내 것으로 만듭니다.');
-  tx(s, '“다 안다, 다 외웠다” → 책을 덮으면 기억나지 않는 착각', ML, 2.0, CW, 0.5, { font: F.med, size: 21, color: C.sub });
-  const st = [['pencil', '빈칸 채우기', '핵심 용어를\n직접 써 본다'], ['square-check', 'O/X 변형', '선지 표현이 바뀌어도\n정확히 고른다'], ['file-text', '사료 분석', '낯선 원전·자료를\n스스로 해석한다'], ['writing', '백지 테스트', '아무것도 없이\n처음부터 다시 쓴다']];
-  const cw = 2.7, gap = (CW - 4 * cw) / 3, y = 2.8, ch = 3.2;
-  st.forEach(([ic, t, d], i) => {
+  const s = content('강점 2 · 자체 제작 주간지 MINT', '하루 30분, 주간지 MINT로 매일 공부합니다', '많은 학생들이 개념서를 눈으로 두세 번 읽고 나면 “다 안다, 다 외웠다”고 착각합니다. 하지만 책을 덮는 순간 기억이 나지 않고, 선지 표현이 조금만 바뀌어도 오답을 고릅니다.\n그래서 이번 특강은 제가 직접 만든 주간지 MINT로 매일 공부합니다. 하루 30분씩, 빈칸 채우기, O/X 변형, 사료 분석, 실전문제 풀이 순서로 구성되어 있습니다.\n수업에서 배운 개념을 매일 손으로 다시 풀어 보면서 완전히 내 것으로 만듭니다.');
+  // 매일 30분
+  box(s, ML, 2.05, CW, 1.05, { snip: true, line: C.yellow, lw: 2, fill: K.bg, glow: K.yellow, glowOpt: { opacity: 0.3, blur: 12 } });
+  icon(s, 'clock', 'yellow', ML + 0.3, 2.17, 0.8);
+  tx(s, [r('매일 '), r('하루 30분', { color: C.yellow, font: F.head }), r('  ·  주간지 형태  ·  아래 순서로 구성')], ML + 1.3, 2.05, CW - 1.5, 1.05, { font: F.semi, size: 24, valign: 'middle' });
+  // 4단계(설명 문구 없이 이름만)
+  const cw = 2.62, gap = (CW - 4 * cw) / 3, y = 3.55, ch = 2.3;
+  MINT_STEPS.forEach(([ic, t], i) => {
     const x = ML + i * (cw + gap), last = i === 3;
-    box(s, x, y, cw, ch, { snip: true, line: last ? C.yellow : C.neon, lw: last ? 2.25 : 1.75, fill: K.bg, glow: last ? K.yellow : undefined, glowOpt: { opacity: 0.35 } });
-    tx(s, `0${i + 1}`, x + 0.25, y + 0.2, 1, 0.55, { font: F.head, size: 26, color: last ? C.yellow : C.neon });
-    icon(s, ic, last ? 'yellow' : 'cyan', x + cw - 1.05, y + 0.2, 0.82);
-    tx(s, t, x + 0.25, y + 1.25, cw - 0.4, 0.55, { font: F.head, size: 24, color: last ? C.yellow : C.white });
-    tx(s, d, x + 0.25, y + 1.9, cw - 0.4, 1.0, { font: F.med, size: 18, color: C.sub, lsm: 1.2 });
+    box(s, x, y, cw, ch, { snip: true, line: last ? C.mint : C.neon, lw: last ? 2.25 : 1.75, fill: K.bg, glow: last ? K.mint : undefined, glowOpt: { opacity: 0.35 } });
+    tx(s, `0${i + 1}`, x + 0.25, y + 0.22, 1, 0.55, { font: F.head, size: 26, color: last ? C.mint : C.neon });
+    icon(s, ic, last ? 'mint' : 'cyan', x + cw - 1.05, y + 0.2, 0.82);
+    tx(s, t, x + 0.25, y + 1.3, cw - 0.35, 0.65, { font: F.head, size: 25, color: last ? C.mint : C.white, valign: 'middle' });
     if (i < 3) line(s, x + cw + 0.05, y + ch / 2, x + cw + gap - 0.05, y + ch / 2, { color: C.neon, w: 2.5, arrow: true });
   });
-  tx(s, '개념 수업 → 워크북 4단계 → 완전히 내 것으로', ML, 6.3, CW, 0.5, { font: F.semi, size: 21, color: C.mint, align: 'center' });
+  tx(s, '눈으로만 읽는 ‘가짜 공부’ 대신, 매일 손으로 풀어 보는 습관', ML, 6.25, CW, 0.5, { font: F.semi, size: 21, color: C.sub, align: 'center' });
 }
 
 // 강점 3: 킬러 파트
@@ -428,25 +415,9 @@ divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 ·
   });
 }
 
-// 강점 3-2: 타임어택
-{
-  const s = content('강점 3 · 타임어택 유형', '시험장에서 시간을 빼앗는 유형, 미리 훈련합니다', '시험장에서 학생들 멘탈이 흔들리는 건 시간을 끄는 유형들입니다.\n세 사람의 주장을 비교하는 벤다이어그램, 사상가 순서도, 비율과 전체 수를 함정으로 파 놓은 도표, 그리고 경제 계산 문제입니다.\n이 유형들을 고2·고3 학력평가와 평가원 기출 수준으로 집중 훈련해서, 어렵게 출제하는 학교에 가더라도 앞서 나갈 수 있게 합니다.');
-  icon(s, 'stopwatch', 'yellow', ML + 0.35, 2.15, 2.6);
-  tx(s, '고2·고3 학평 ·\n평가원 기출 수준으로\n집중 훈련', ML, 4.95, 4.0, 1.5, { font: F.head, size: 24, color: C.yellow, align: 'center', lsm: 1.15 });
-  const rows = [['circles-relation', '3자 비판 벤다이어그램', '세 사상가의 주장을 겹쳐 비교'], ['sitemap', '사상가 순서도(알고리즘)', '질문을 따라가며 사상가 찾기'], ['percentage', '비율·전체 수 함정 도표', '비율만 보고 고르면 틀린다'], ['calculator', '경제 계산 문제', '기회비용 · 비교우위 · 근로기준법']];
-  const rx = 5.25;
-  rows.forEach(([ic, t, d], i) => {
-    const y = 2.1 + i * 1.18;
-    box(s, rx, y, 7.33, 1.0, { snip: true, line: C.line, lw: 1.5 });
-    icon(s, ic, 'cyan', rx + 0.18, y + 0.1, 0.8);
-    tx(s, t, rx + 1.15, y + 0.06, 6.0, 0.5, { font: F.head, size: 23 });
-    tx(s, d, rx + 1.15, y + 0.54, 6.0, 0.4, { font: F.med, size: 17, color: C.sub });
-  });
-}
-
 // 강점 4: 1:1 오답 관리
 {
-  const s = content('강점 4 · 1:1 밀착 오답 관리', '인강과 결정적으로 다른 점', '“인강으로 혼자 들으면 안 되나요?” 하고 묻는 분들이 계십니다.\n인강은 영상을 멈추고 딴짓을 하거나, 테스트에서 모르면 책을 펼쳐 보고 답을 적는 자기기만에 빠지기 쉽습니다.\n현장 수업의 힘은 강제성과 밀착 관리입니다. 매 수업 누적 복습 테스트를 보고, 제가 학생 한 명 한 명의 오답을 직접 확인합니다.\n점수만 매기는 게 아니라 개념 암기가 덜 된 건지, 어휘력·문해력이 부족해 발문을 잘못 읽은 건지, 자료 해석 방법이 흔들린 건지를 진단하고 교정합니다.');
+  const s = content('강점 4 · 1:1 밀착 오답 관리', '인강과 결정적으로 다른 점', '“인강으로 혼자 들으면 안 되나요?” 하고 묻는 분들이 계십니다.\n인강은 영상을 멈추고 딴짓을 하거나, 테스트에서 모르면 책을 펼쳐 보고 답을 적는 자기기만에 빠지기 쉽습니다.\n현장 수업의 힘은 강제성과 밀착 관리입니다. 매 수업 누적 복습 테스트를 보고, 제가 학생 한 명 한 명의 오답을 직접 확인합니다.\n점수만 매기는 게 아니라 개념 암기가 부족한 건지, 자료 해석 방법이 틀린 건지, 문제 풀이에서 실수가 있었던 건지를 진단하고 교정합니다.');
   box(s, ML, 2.1, 5.55, 2.55, { snip: true, line: C.dim, lw: 1.5 });
   tx(s, '인강 혼자 듣기', ML + 0.3, 2.25, 5, 0.5, { font: F.head, size: 22, color: C.sub });
   [['player-pause', '영상 멈추고 딴짓'], ['eye-off', '모르면 책 보고 답 적기']].forEach(([ic, t], i) => {
@@ -466,8 +437,8 @@ divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 ·
   tx(s, '→ 강제성과 밀착 관리', rx + 0.3, 4.12, 5, 0.42, { font: F.semi, size: 18, color: C.mint });
   icon(s, 'zoom-question', 'yellow', ML - 0.05, 5.05, 0.85);
   tx(s, '오답 원인을 진단하고 교정합니다', ML + 0.9, 5.08, 6, 0.75, { font: F.head, size: 24, color: C.yellow, valign: 'middle' });
-  ['개념 암기가 부족한가?', '발문을 잘못 읽었나? (어휘·문해력)', '자료 해석 방법이 흔들렸나?'].forEach((t, i) => {
-    const w = [3.2, 4.65, 3.6][i], x = ML + [0, 3.4, 8.25][i];
+  ['개념 암기가 부족한가?', '자료 해석 방법이 틀렸나?', '문제 풀이에서 실수가 있었나?'].forEach((t, i) => {
+    const w = (CW - 0.4) / 3, x = ML + i * (w + 0.2);
     box(s, x, 6.0, w, 0.7, { line: C.yellow, lw: 1.25 });
     tx(s, t, x, 6.0, w, 0.7, { font: F.semi, size: 18, align: 'center', valign: 'middle' });
   });
@@ -498,49 +469,11 @@ divider('03', '통합사회 1·2\n10주 완성 커리큘럼', '12/20(일) 개강
   row('통합사회2', '5~10주', 'pink', C.pink, 5.6, ['Ⅰ 인권 보장과\n헌법', 'Ⅱ 사회 정의와\n불평등', 'Ⅲ 시장경제 (1)\n경제 체제·선택', 'Ⅲ 시장경제 (2)\n금융·무역', 'Ⅳ 세계화와\n평화', 'Ⅴ 미래와\n지속가능한 삶'], 5, [0, 1, 2, 3, 4, 5]);
 }
 
-// 통합사회1 자세히
-const weekCard = (s, x, y, w, h, wk, unit, themes, cc) => {
-  box(s, x, y, w, h, { snip: true, line: cc, lw: 1.5 });
-  tx(s, wk, x + 0.28, y + 0.2, 1.1, 0.5, { font: F.head, size: 24, color: cc });
-  tx(s, unit, x + 1.25, y + 0.2, w - 1.45, 0.5, { font: F.head, size: 21 });
-  tx(s, themes.map((t, i) => r(t, { bullet: { indent: 18 }, breakLine: i < themes.length - 1 })), x + 0.28, y + 0.85, w - 0.5, h - 0.95, { font: F.med, size: 20, color: C.sub, lsm: 1.12, psa: 6 });
-};
-{
-  const s = content('10주 로드맵 · 통합사회1', '1~4주: 통합사회1 다섯 단원', '1주차에는 통합적 관점과 행복 단원을 함께 나갑니다. 시간·공간·사회·윤리적 관점, 그리고 동서양 사상가의 행복론을 비교합니다.\n2주차는 자연환경과 인간입니다. 기후와 지형에 따른 주민 생활, 인간 중심주의와 생태 중심주의 자연관이 핵심입니다.\n3주차는 문화와 다양성, 4주차는 생활공간과 사회입니다.');
-  const cards = [
-    ['1주', 'Ⅰ 통합적 관점 · Ⅱ 행복', ['시간·공간·사회·윤리적 관점과 통합적 탐구', '동서양 사상가의 행복론, 행복한 삶의 조건']],
-    ['2주', 'Ⅲ 자연환경과 인간', ['세계의 기후와 지형별 주민 생활', '인간 중심주의 vs 생태 중심주의, 환경 문제']],
-    ['3주', 'Ⅳ 문화와 다양성', ['세계의 문화권과 문화 변동', '문화 상대주의와 보편 윤리, 다문화 사회']],
-    ['4주', 'Ⅴ 생활공간과 사회', ['산업화·도시화와 교통·통신 발달', '우리 지역의 공간 변화와 지역 문제 해결']],
-  ];
-  const w = (CW - 0.3) / 2, h = 2.2;
-  cards.forEach(([wk, u, th], i) => weekCard(s, ML + (i % 2) * (w + 0.3), 2.05 + Math.floor(i / 2) * (h + 0.3), w, h, wk, u, th, C.neon));
-}
-{
-  const s = content('10주 로드맵 · 통합사회2', '5~10주: 통합사회2 다섯 단원', '5주차부터는 통합사회2입니다.\n인권 보장과 헌법, 사회 정의와 불평등을 거쳐, 7·8주차에는 시장경제와 지속가능발전을 두 번에 나누어 기회비용, 금융, 비교우위 계산까지 다룹니다.\n9주차 세계화와 평화, 10주차 미래와 지속가능한 삶으로 전 범위를 마무리합니다.');
-  const cards = [
-    ['5주', 'Ⅰ 인권 보장과 헌법', ['인권 확장의 역사와 새로운 인권', '기본권·권력 분립·청소년 노동권']],
-    ['6주', 'Ⅱ 사회 정의와 불평등', ['정의의 기준, 칸트·벤담·베카리아', '자유주의 vs 공동체주의, 사회 복지']],
-    ['7주', 'Ⅲ 시장경제와 지속가능발전 (1)', ['자본주의 전개와 경제 체제', '기회비용·합리적 선택, 시장 실패']],
-    ['8주', 'Ⅲ 시장경제와 지속가능발전 (2)', ['자산 관리와 금융 상품', '비교우위와 국제 무역, 지속가능발전']],
-    ['9주', 'Ⅳ 세계화와 평화', ['세계화와 지역화, 세계도시·다국적 기업', '국제 평화, 남북 분단·동아시아 갈등']],
-    ['10주', 'Ⅴ 미래와 지속가능한 삶', ['인구 문제, 에너지 자원의 분포와 소비', '기후변화 대응과 세계시민의 삶']],
-  ];
-  const w = (CW - 0.3) / 2, h = 1.47;
-  cards.forEach(([wk, u, th], i) => {
-    const x = ML + (i % 2) * (w + 0.3), y = 2.0 + Math.floor(i / 2) * (h + 0.18);
-    box(s, x, y, w, h, { snip: true, line: C.pink, lw: 1.5 });
-    tx(s, wk, x + 0.25, y + 0.14, 1.0, 0.46, { font: F.head, size: 22, color: C.pink });
-    tx(s, u, x + 1.15, y + 0.14, w - 1.3, 0.46, { font: F.head, size: 20 });
-    tx(s, th.join('  ·  '), x + 0.25, y + 0.68, w - 0.45, 0.68, { font: F.med, size: 17, color: C.sub, lsm: 1.1 });
-  });
-}
-
 // ── PART 4 ──
-section('04 교재 MINIMAP');
+section('04 교재 MINIMAP·MINT');
 {
-  const s = divider('04', '교재\nMINIMAP 개념서', '작은 지도에서 온 세상을 보듯,\n개념서 한 권에서 만점의 초석을',
-    '네 번째, 교재입니다. 이번 특강은 제가 직접 쓴 개념서 MINIMAP으로 수업합니다.');
+  const s = divider('04', '교재\nMINIMAP · MINT', '개념은 개념서 MINIMAP으로,\n매일 공부는 주간지 MINT로',
+    '네 번째, 교재입니다. 이번 특강은 제가 직접 쓴 개념서 MINIMAP으로 수업하고, 매일 공부는 제가 만든 주간지 MINT로 합니다.');
 }
 {
   const s = content('교재', '승민T가 직접 쓴 개념서, MINIMAP', 'MINIMAP은 이번 수업을 위해 제가 직접 쓴 통합사회 개념서입니다. 통합사회1, 통합사회2 두 권입니다.\n작은 지도 한 장으로 온 세상을 보듯이, 이 개념서에서 시작해서 만점의 기초를 다진다는 뜻을 담았습니다.\n2028 수능 예시문항과 고1·고2 학력평가 기출을 분석해서, 시험에 나오는 개념과 표현을 그대로 담았습니다.');
@@ -556,7 +489,7 @@ section('04 교재 MINIMAP');
   });
 }
 {
-  const s = content('교재 · MINIMAP 구성', '개념마다 ‘얼마나 자주 나오는지’까지 보입니다', 'MINIMAP의 구성을 보면, 개념마다 번호가 있고 기출에서 얼마나 자주 나왔는지 기본 개념, 빈출, 최다 빈출로 표시해 두었습니다.\n‘이렇게 나온다’에서는 실제 기출 선지 표현을 O/X로 바로 확인합니다.\n사상가는 카드 한 장에 핵심 주장, 원전 읽기, 헷갈리지 말아야 할 점을 모았고, 지도와 통계는 실제 자료로 만들었습니다.\n중단원이 끝나면 한 장 정리와 수능형 문제로 마무리합니다.');
+  const s = content('교재 · MINIMAP', 'MINIMAP 구성', 'MINIMAP의 구성을 보면, 개념마다 번호가 있고 기출에서 얼마나 자주 나왔는지 기본 개념, 빈출, 최다 빈출로 표시해 두었습니다.\n‘이렇게 나온다’에서는 실제 기출 선지 표현을 O/X로 바로 확인합니다.\n사상가는 카드 한 장에 핵심 주장, 원전 읽기, 헷갈리지 말아야 할 점을 모았고, 지도와 통계는 실제 자료로 만들었습니다.\n중단원이 끝나면 한 장 정리와 수능형 문제로 마무리합니다.');
   const pageP = join(ART, 'minimap-page.png');
   const hasPage = existsSync(pageP);
   const PH = 4.25, PW = hasPage ? (PH * sizeOf(pageP).w) / sizeOf(pageP).h : 0;
@@ -582,6 +515,27 @@ section('04 교재 MINIMAP');
   }
 }
 
+// 주간지 MINT 소개
+{
+  const s = content('교재 · 주간지 MINT', '매주 한 권, 주간지 MINT', '두 번째 교재는 제가 직접 만든 주간지 MINT입니다.\n주간지 형태라서 한 주 분량을 하루 30분씩 매일 공부하도록 만들었습니다. 구성은 빈칸 채우기, O/X 변형, 사료 분석, 실전문제 풀이 순서입니다.\n수업 시간에는 MINIMAP으로 개념을 배우고, 매일 MINT로 손으로 다시 풀고, 앱으로 퀴즈와 학습 기록을 확인합니다. 이 세 가지가 한 세트입니다.');
+  const lp = join(ART, 'logo-mint.png'), z = sizeOf(lp), lw = 4.9;
+  img(s, lp, ML - 0.35, 2.0, lw, (lw * z.h) / z.w);
+  tx(s, '승민T 자체 제작 주간지', ML, 4.3, 5.6, 0.5, { font: F.semi, size: 24 });
+  tx(s, [r('매일 '), r('하루 30분', { color: C.yellow, font: F.head })], ML, 4.85, 5.6, 0.6, { font: F.semi, size: 28 });
+  tx(s, MINT_STEPS.map(([, t]) => t).join('  →  '), ML, 5.6, 5.9, 0.45, { font: F.semi, size: 18, color: C.mint });
+  const rx = 7.0, rw = W - ML - rx;
+  tx(s, '교재와 앱, 한 세트로 공부합니다', rx, 2.0, rw, 0.45, { font: F.semi, size: 19, color: C.sub });
+  [['book-2', 'cyan', C.neon, 'MINIMAP 개념서', '수업 시간 · 개념 이해', false],
+   ['notebook', 'mint', C.mint, '주간지 MINT', '매일 30분 · 손으로 다시 풀기', true],
+   ['device-mobile', 'cyan', C.neon, '승민T 통사 앱', '매일 퀴즈 · 학습 기록 확인', false]].forEach(([ic, col, cc, t, d, hi], i) => {
+    const y = 2.6 + i * 1.32;
+    box(s, rx, y, rw, 1.12, { snip: true, line: cc, lw: hi ? 2.25 : 1.5, fill: K.bg, glow: hi ? K.mint : undefined, glowOpt: { opacity: 0.35, blur: 12 } });
+    icon(s, ic, col, rx + 0.2, y + 0.16, 0.8);
+    tx(s, t, rx + 1.15, y + 0.12, rw - 1.3, 0.48, { font: F.head, size: 23, color: hi ? C.mint : C.white });
+    tx(s, d, rx + 1.15, y + 0.6, rw - 1.3, 0.42, { font: F.med, size: 18, color: C.sub });
+  });
+}
+
 // ── PART 5 ──
 section('05 매일 관리');
 divider('05', '수업은 주 1번,\n공부는 매일', '강사가 직접 만든 학습 앱으로 10주 동안 매일 관리합니다',
@@ -589,11 +543,11 @@ divider('05', '수업은 주 1번,\n공부는 매일', '강사가 직접 만든 
 
 // 수업 없는 날
 {
-  const s = content('매일 관리', '방학 특강의 흔한 문제: 수업 없는 날, 공부도 쉰다', '방학 특강에서 가장 흔한 문제는 수업 없는 날 공부도 쉬어 버리는 것입니다.\n수업 시간에 이해한 개념도 며칠만 복습하지 않으면 금방 흐려집니다.\n그래서 이번 특강은 수업이 없는 날에도 학생이 매일 조금씩 공부하고, 제가 매일 그 기록을 확인하는 관리 시스템을 함께 운영합니다.\n그 중심에 제가 직접 만든 승민T 통합사회 클래스 앱이 있습니다.');
+  const s = content('매일 관리', '방학 특강의 흔한 문제: 수업 없는 날, 공부도 쉰다', '방학 특강에서 가장 흔한 문제는 수업 없는 날 공부도 쉬어 버리는 것입니다.\n수업 시간에 이해한 개념도 며칠만 복습하지 않으면 금방 흐려집니다.\n그래서 승민T 특강은 수업이 없는 날에도 학생이 매일 조금씩 공부하고, 제가 매일 그 기록을 확인하는 관리 시스템을 함께 운영합니다.\n그 중심에 제가 직접 만든 승민T 통합사회 클래스 앱이 있습니다.');
   const days = ['일', '월', '화', '수', '목', '금', '토'];
   const rowY = [2.35, 4.05], dx = 1.0, x0 = 3.05, d = 0.8;
   tx(s, '보통의 특강', ML, rowY[0] + 0.1, 2.6, 0.6, { font: F.head, size: 22, color: C.sub, valign: 'middle' });
-  tx(s, '이번 특강', ML, rowY[1] + 0.1, 2.6, 0.6, { font: F.head, size: 22, color: C.neon, valign: 'middle' });
+  tx(s, '승민T 특강', ML, rowY[1] + 0.1, 2.6, 0.6, { font: F.head, size: 22, color: C.neon, valign: 'middle' });
   days.forEach((dd, i) => {
     const x = x0 + i * dx;
     // 보통: 수업 날(일)만
@@ -620,15 +574,13 @@ const dayRow = (s, x, y, w, ic, col, t, d) => {
   tx(s, d, x + 0.95, y + 0.5, w - 0.95, 0.9, { font: F.med, size: 18, color: C.sub, lsm: 1.18 });
 };
 {
-  const s = content('앱으로 보내는 하루 · 아침 · 등하교 3분', '오늘의 10문제와 1분 개념 카드', '학생의 하루를 따라가 보겠습니다. 아침이나 등하교 시간, 앱을 열면 오늘의 10문제가 기다립니다.\n통합사회1·2 전 단원 600여 문제 중 매일 새로운 문제가 나오고, 틀리면 바로 왜 틀렸는지 해설이 나와서 3분이면 그날 복습이 끝납니다.\n벤담과 밀, 동화주의와 다문화주의처럼 시험마다 헷갈리는 비교 개념은 1분 카드로 정리했습니다. 키워드를 가렸다 보였다 하면서 스스로 암기 테스트를 합니다.');
+  const s = content('앱으로 보내는 하루', '오늘의 10문제와 1분 개념 카드', '학생의 하루를 따라가 보겠습니다. 앱을 열면 오늘의 10문제가 기다립니다.\n통합사회1·2 전 단원 600여 문제 중 매일 새로운 문제가 나오고, 틀리면 바로 왜 틀렸는지 해설이 나와서 3분이면 그날 복습이 끝납니다.\n벤담과 밀, 동화주의와 다문화주의처럼 시험마다 헷갈리는 비교 개념은 1분 카드로 정리했습니다. 키워드를 가렸다 보였다 하면서 스스로 암기 테스트를 합니다.');
   const ph = 4.95; let x = ML;
   x += phone(s, 'quiz', x, 1.95, ph) + 0.3;
   x += phone(s, 'card', x, 1.95, ph) + 0.55;
   const w = W - ML - x;
-  icon(s, 'sunrise', 'mint', x, 2.0, 0.6);
-  tx(s, '아침 · 등하교 3분', x + 0.7, 2.0, w - 0.7, 0.6, { font: F.semi, size: 19, color: C.mint, valign: 'middle' });
-  dayRow(s, x, 2.95, w, 'list-check', 'cyan', '오늘의 10문제', '전 단원 600여 문제 중\n매일 새 문제 · 틀리면 바로 해설');
-  dayRow(s, x, 4.55, w, 'cards', 'cyan', '1분 비교 카드', '벤담 vs 밀처럼 헷갈리는 개념을\n가렸다 보였다 셀프 테스트');
+  dayRow(s, x, 2.55, w, 'list-check', 'cyan', '오늘의 10문제', '전 단원 600여 문제 중\n매일 새 문제 · 틀리면 바로 해설');
+  dayRow(s, x, 4.25, w, 'cards', 'cyan', '1분 비교 카드', '벤담 vs 밀처럼 헷갈리는 개념을\n가렸다 보였다 셀프 테스트');
 }
 {
   const s = content('앱으로 보내는 하루 · 저녁', '플래너와 집중 타이머로 혼자 공부하는 시간까지', '저녁에 스스로 공부하는 시간에는, 오늘 할 공부를 플래너에 적고 끝낸 만큼 체크하면 달성률이 쌓입니다. “오늘 뭐 하지?” 고민하는 시간이 줄어듭니다.\n25분, 50분, 100분 집중 타이머와 빗소리·도서관 같은 집중 사운드로 혼자 공부하는 시간에도 흐름을 지킵니다. 완주한 집중 횟수도 기록으로 남습니다.');
@@ -704,12 +656,12 @@ const dayRow = (s, x, y, w, ic, col, t, d) => {
 
 // 관리 사이클
 {
-  const s = content('10주 동안 매주', '매주 반복되는 관리 사이클', '정리하면, 10주 동안 매주 이 사이클이 반복됩니다.\n수업에서 대단원 개념을 배우고, 매일 앱으로 오늘의 10문제와 개념 카드, 플래너로 복습합니다. 저는 매일 학습 기록을 확인하고 쉬는 학생을 챙깁니다.\n주간 테스트로 점수를 기록하고 오답 노트를 정리한 뒤, 다음 수업은 많이 틀린 문제부터 다시 짚고 시작합니다.\n이 사이클을 10주 동안 반복하면, 통합사회1·2 전 범위를 한 바퀴 돌고 약점까지 정리한 상태로 고등학교 첫 학기를 시작할 수 있습니다.');
+  const s = content('10주 동안 매주', '매주 반복되는 관리 사이클', '정리하면, 10주 동안 매주 이 사이클이 반복됩니다.\n수업에서 대단원 개념을 배우고, 매일 주간지 MINT 과제로 복습하고, 승민T 통사 앱으로 매일 공부합니다. 저는 매일 학습 기록을 확인하고 쉬는 학생을 챙깁니다.\n주간 테스트로 점수를 기록하고 오답 노트를 정리한 뒤, 다음 수업은 많이 틀린 문제부터 다시 짚고 시작합니다.\n이 사이클을 10주 동안 반복하면, 통합사회1·2 전 범위를 한 바퀴 돌고 약점까지 정리한 상태로 고등학교 첫 학기를 시작할 수 있습니다.');
   // 다섯 단계를 한 줄 노선으로, 위쪽 되돌이 선으로 '매주 반복'
   const nodes = [
     ['chalkboard', '수업', '대단원\n개념 수업'],
-    ['device-mobile', '매일 복습', '오늘의 10문제\n카드 · 플래너'],
-    ['user-check', '매일 확인', '기록 확인 ·\n쉬는 학생 관리'],
+    ['notebook', '매일 복습', '주간지 MINT\n과제'],
+    ['device-mobile', '매일 공부', '승민T 통사 앱\n활용'],
     ['clipboard-text', '주간 테스트', '점수 기록 ·\n오답 노트 정리'],
     ['repeat', '다음 수업', '많이 틀린\n문제부터 다시'],
   ];
@@ -736,15 +688,16 @@ const dayRow = (s, x, y, w, ic, col, t, d) => {
 // ── 신청 안내 ──
 section('신청 안내');
 {
-  const s = content('신청 안내', '2027 겨울방학 통합사회 10주 완성', '신청 안내입니다.\n12월 20일 일요일에 개강해서 2월 21일까지 총 10회 수업이고, 이후에는 정규반으로 이어질 예정입니다.\n수능과 고1 내신 통합사회를 준비하는 학생 대상이고, 정원은 25명입니다.\n장소는 김포 사우역에서 걸어서 5분, 너를위한메이트학원입니다.\n상담은 학원 전화나 문자, 카카오톡 채널로 남겨 주시면 됩니다.');
+  const s = content('신청 안내', '2027 겨울방학 통합사회 10주 완성', '신청 안내입니다.\n12월 20일 일요일에 개강해서 2월 21일까지 총 10회 수업이고, 이후에는 정규반으로 이어질 예정입니다.\n수업은 매주 일요일 오전 10시부터 오후 1시까지입니다.\n수능과 고1 내신 통합사회를 준비하는 학생 대상이고, 정원은 25명입니다.\n장소는 김포 사우역에서 걸어서 5분, 너를위한메이트학원입니다.\n상담은 학원 전화나 문자, 카카오톡 채널로 남겨 주시면 됩니다.');
   const rows = [
     ['calendar', '기간', '12/20(일) ~ 2/21(일) · 총 10회', '이후 정규반으로 전환 예정'],
+    ['clock', '시간', '매주 일요일 오전 10시 ~ 오후 1시', '주 1회 3시간'],
     ['users', '대상', '수능 · 고1 내신 통합사회 준비 학생', '정원 25명'],
-    ['books', '교재', 'MINIMAP 통합사회1·2 개념서', '+ 자체 제작 워크북'],
+    ['books', '교재', 'MINIMAP 통합사회1·2 개념서', '+ 주간지 MINT'],
     ['map-pin', '장소', '너를위한메이트학원 김포관', '김포시 사우중로 92, 3층 · 사우역 도보 5분'],
   ];
   rows.forEach(([ic, k, v, d], i) => {
-    const y = 2.0 + i * 1.02;
+    const y = 1.95 + i * 0.87;
     icon(s, ic, 'cyan', ML, y + 0.05, 0.72);
     tx(s, k, ML + 0.9, y + 0.05, 1.1, 0.5, { font: F.semi, size: 20, color: C.neon });
     tx(s, v, ML + 2.0, y, 6.2, 0.5, { font: F.head, size: 23 });
@@ -759,7 +712,7 @@ section('신청 안내');
   tx(s, '010-5528-9505', bx + 0.32, 4.25, bw - 0.5, 0.55, { font: F.head, size: 26 });
   tx(s, '문자 전용', bx + 0.32, 4.78, bw - 0.5, 0.4, { font: F.med, size: 16, color: C.sub });
   tx(s, '카카오톡 채널 ‘너를위한메이트 김포’', bx + 0.32, 5.3, bw - 0.5, 0.45, { font: F.semi, size: 15, color: C.sub });
-  tx(s, '문자: 김포관 + 학교·학년 + 상담 희망 과목 + 통화 가능 시간', ML, 6.3, CW, 0.45, { font: F.med, size: 17, color: C.dim });
+  tx(s, '문자: 김포관 + 학교·학년 + 상담 희망 과목 + 통화 가능 시간', ML, 6.45, CW, 0.45, { font: F.med, size: 17, color: C.dim });
 }
 
 // 마무리

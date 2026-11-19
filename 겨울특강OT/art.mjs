@@ -43,6 +43,17 @@ for (const [k, c] of Object.entries(GLOBE)) {
   }
 }
 
+// ── 네온 MINT 로고(주간지 MINT): MIN은 미니맵 글자 그대로, T는 같은 굵기의 선으로 새로 그림 ──
+{
+  const lay = layout('MIN', { s: 8, d: 9, wf: 1 }, 18);
+  const tw = 70, tx = lay.width + 18;
+  lay.glyphs.push({ ch: 'T', x: tx, w: tw, polys: [], lines: [[[0, 0], [tw, 0]], [[tw / 2, 0], [tw / 2, 100]]] });
+  lay.width = tx + tw;
+  const [lo, hi] = neonExtent(lay, 9);
+  const pad = 28, vw = hi - lo + 2 * pad, vh = 100 + 2 * pad;
+  add('logo-mint', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${lo - pad} ${-pad} ${vw} ${vh}"><defs>${neonFilter('nb', 4)}</defs>${drawNeon(lay, { w: 9, glow: '#' + COLORS.mint, blurId: 'nb' })}</svg>`, Math.round(vw * 4), Math.round(vh * 4));
+}
+
 // ── 네온 숫자(단원 구분 화면 01~05) ──
 for (const n of ['01', '02', '03', '04', '05']) {
   const lay = layoutHangul(n, 16);
