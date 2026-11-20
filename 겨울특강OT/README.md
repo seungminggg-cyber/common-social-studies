@@ -36,6 +36,10 @@ node test-deck.mjs
 - 설정을 끌 수 없을 때: `python3 invert_art.py && OT_INVERT=1 node build.mjs` → `out/…-반전용.pptx`. 색·그림을 미리 뒤집어 둬서(반전 × 반전 = 원래 색) 반전된 화면에서 원래 디자인대로 보인다. PC 화면에서는 흰 바탕 + 빨간 글자로 보이는 게 정상.
 - 반전용 PDF: `python3 pdf.py "out/승민T-통합사회-겨울특강-OT-반전용.pptx" "out/승민T-통합사회-겨울특강-OT-반전용.pdf"`
 
+## 화면 비율·글꼴 (2026-11-20, 학원 칠판 2차 시험 뒤)
+- 학원 빔은 **16:10** → 슬라이드도 16:10(13.333 × 8.333 in). 16:9로 두면 남는 위아래에 PowerPoint가 검은 띠를 넣는데, 색 반전 화면에서는 그 띠가 밝게 보였다. 배치는 16:9 기준 좌표에 `DY`만큼 더해 화면 가운데로 내린다(`newSlide`가 자동으로).
+- 촬영 PC에 Pretendard가 없으면 맑은 고딕으로 바뀐다. 굵은 글자는 글꼴 이름을 'Pretendard ExtraBold'가 아니라 **'Pretendard' + 굵게**로 써서, 글꼴이 없어도 맑은 고딕 굵게로 나오게 했다. 맑은 고딕은 폭이 넓어서, 글꼴을 빼고 그려 보고(`~/.fonts/pretendard`를 잠시 치우고 `pdf.py`) 넘치는 칸을 고쳤다.
+
 ## 애니메이션 (2026-11-20)
 - pptxgenjs는 애니메이션을 못 넣어서, `anim.mjs`가 만든 .pptx의 슬라이드 XML에 PowerPoint 애니메이션(`<p:timing>`)을 직접 써 넣는다. 같은 그림이 여러 번 들어가면 하나로 합친다.
 - `build.mjs`에서 `mark(s, '이름')` 다음에 그린 도형이 한 묶음, `plan(s, { auto, clicks })`로 묶음마다 [이름, 효과, 시작 ms, 설정]을 정한다.

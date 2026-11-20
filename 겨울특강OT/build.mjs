@@ -31,7 +31,7 @@ const FILE = join(OUT, INVERT ? '승민T-통합사회-겨울특강-OT-반전용.
 //    (강사가 PowerPoint에서 새 글상자를 만들어도 흰 글자로 나오게)
 const THEME = {
   name: '승민T 통합사회 OT',
-  headFontFace: 'Pretendard ExtraBold',
+  headFontFace: 'Pretendard',
   bodyFontFace: 'Pretendard',
   colors: {
     dk1: K.text, lt1: K.bg, dk2: K.sub, lt2: INVERT ? inv('0C1A24') : '0C1A24',
@@ -42,7 +42,8 @@ const THEME = {
 const F = { head: 'Pretendard ExtraBold', body: 'Pretendard', semi: 'Pretendard SemiBold', med: 'Pretendard Medium', black: 'Pretendard Black' };
 
 const pres = new pptxgen();
-pres.layout = 'LAYOUT_WIDE'; // 13.333 × 7.5 in
+pres.defineLayout({ name: 'W1610', width: 13.333, height: 8.333 });
+pres.layout = 'W1610'; // 16:10 (학원 빔 화면 비율. 16:9면 남는 위아래에 검은 띠가 생기고, 색 반전 화면에서는 그 띠가 밝게 보였다)
 pres.author = '이승민';
 pres.title = '승민T 통합사회 겨울특강 OT';
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
@@ -52,7 +53,8 @@ const C = {
   dim: pres.SchemeColor.accent5, line: pres.SchemeColor.accent6,
 };
 const S = pres.ShapeType;
-const W = 13.333, H = 7.5, ML = 0.75, CW = W - 2 * ML;
+const W = 13.333, H = 8.333, ML = 0.75, CW = W - 2 * ML;
+const DY = (8.333 - 7.5) / 2; // 16:9 기준으로 잡은 배치를 16:10 화면 가운데로 내리는 만큼
 
 // ── 레이아웃 ──
 pres.defineSlideMaster({ title: 'BLANK_DARK', background: { color: K.bg } });
@@ -60,31 +62,34 @@ pres.defineSlideMaster({
   title: 'DIVIDER',
   background: { color: K.bg },
   objects: [
-    { placeholder: { options: { name: 'title', type: 'title', x: ML, y: 3.45, w: 7.7, h: 1.95, fontFace: F.head, fontSize: 46, color: C.white, align: 'left', valign: 'top', margin: 0, lineSpacingMultiple: 1.08 }, text: '' } },
-    { placeholder: { options: { name: 'body', type: 'body', x: ML, y: 5.6, w: 7.4, h: 0.95, fontFace: F.med, fontSize: 22, color: C.sub, align: 'left', valign: 'top', margin: 0, lineSpacingMultiple: 1.2 }, text: '' } },
+    { placeholder: { options: { name: 'title', type: 'title', x: ML, y: 3.45 + DY, w: 7.7, h: 1.95, fontFace: 'Pretendard', bold: true, fontSize: 46, color: C.white, align: 'left', valign: 'top', margin: 0, lineSpacingMultiple: 1.08 }, text: '' } },
+    { placeholder: { options: { name: 'body', type: 'body', x: ML, y: 5.6 + DY, w: 7.4, h: 0.95, fontFace: F.med, fontSize: 22, color: C.sub, align: 'left', valign: 'top', margin: 0, lineSpacingMultiple: 1.2 }, text: '' } },
   ],
 });
 pres.defineSlideMaster({
   title: 'CONTENT',
   background: { color: K.bg },
   objects: [
-    { text: { text: '승민T 통합사회', options: { x: 9.6, y: 0.5, w: 2.98, h: 0.4, fontFace: F.semi, fontSize: 13, color: C.dim, align: 'right', valign: 'middle', margin: 0 } } },
-    { placeholder: { options: { name: 'kicker', type: 'body', x: ML, y: 0.5, w: 8.6, h: 0.4, fontFace: F.semi, fontSize: 17, color: C.neon, align: 'left', valign: 'middle', margin: 0, charSpacing: 1 }, text: '' } },
-    { placeholder: { options: { name: 'title', type: 'title', x: ML, y: 0.92, w: CW, h: 0.85, fontFace: F.head, fontSize: 36, color: C.white, align: 'left', valign: 'middle', margin: 0 }, text: '' } },
+    { text: { text: '승민T 통합사회', options: { x: 9.6, y: 0.5 + DY, w: 2.98, h: 0.4, fontFace: F.semi, fontSize: 13, color: C.dim, align: 'right', valign: 'middle', margin: 0 } } },
+    { placeholder: { options: { name: 'kicker', type: 'body', x: ML, y: 0.5 + DY, w: 8.6, h: 0.4, fontFace: F.semi, fontSize: 17, color: C.neon, align: 'left', valign: 'middle', margin: 0, charSpacing: 1 }, text: '' } },
+    { placeholder: { options: { name: 'title', type: 'title', x: ML, y: 0.92 + DY, w: CW, h: 0.85, fontFace: 'Pretendard', bold: true, fontSize: 36, color: C.white, align: 'left', valign: 'middle', margin: 0 }, text: '' } },
   ],
 });
 
 // ── 그리기 도구 ──
 const glow = (hex, o = {}) => ({ type: 'outer', color: hex, blur: o.blur ?? 10, offset: 0, angle: 0, opacity: o.opacity ?? 0.45 });
+const HEAVY = new Set([F.head, F.black]);
+const face = (font) => (HEAVY.has(font) ? { fontFace: F.body, bold: true } : { fontFace: font || F.body });
 function tx(s, text, x, y, w, h, o = {}) {
   s.addText(text, {
     x, y, w, h, isTextBox: true, margin: 0,
-    fontFace: o.font || F.body, fontSize: o.size || 22, color: o.color || C.white, bold: o.bold || false,
+    ...face(o.font), fontSize: o.size || 22, color: o.color || C.white, ...(o.bold ? { bold: true } : {}),
     align: o.align || 'left', valign: o.valign || 'top', lineSpacingMultiple: o.lsm || 1.15,
     charSpacing: o.cs, paraSpaceAfter: o.psa, glow: o.glow, objectName: o.name, fit: 'none',
   });
 }
-const r = (text, o = {}) => ({ text, options: o }); // 글자 조각(색·굵기 바꾸기)
+// 글자 조각(색·굵기 바꾸기). font는 글자 조각에서도 굵기로 바꾼다
+const r = (text, o = {}) => { const { font, ...rest } = o; return { text, options: font ? { ...face(font), ...rest } : rest }; };
 function box(s, x, y, w, h, o = {}) {
   s.addShape(o.shape || (o.snip ? S.snip1Rect : S.rect), {
     x, y, w, h,
@@ -112,10 +117,11 @@ function section(title) { SECTION = title; pres.addSection({ title }); }
 //   auto = 슬라이드가 열리면 저절로, clicks = 클릭 한 번마다(그 안에서는 차례로 저절로).
 const ALL = [];
 let NAMEK = 0;
-function newSlide(masterName) {
+function newSlide(masterName, { shift = true } = {}) {
   const s = pres.addSlide({ masterName, sectionTitle: SECTION });
   s.groups = {}; s.cur = null; s.spec = null; s.cues = []; s.notes = '';
   const tag = (o) => {
+    if (shift && o && !o.placeholder && typeof o.y === 'number') o.y += DY;
     if (s.cur && o && !o.placeholder) { o.objectName = `${s.cur}~${++NAMEK}`; s.groups[s.cur].push(o.objectName); }
     return o;
   };
@@ -193,13 +199,13 @@ section('시작');
   mark(s, 'logo'); img(s, lg, ML, 0.62, (0.52 * z.w) / z.h, 0.52);
   mark(s, 'kick'); tx(s, '2027 예비 고1 · 겨울방학 특강 OT', ML, 1.5, 7.2, 0.5, { font: F.semi, size: 24, color: C.neon, cs: 1 });
   mark(s, 'title'); tx(s, [r('통합사회 1·2', { breakLine: true }), r('10주 완성', { color: C.neon, glow: { size: 8, opacity: 0.35, color: K.neon } })], ML, 2.05, 7.4, 2.3, { font: F.black, size: 66, lsm: 1.02 });
-  mark(s, 'sub'); tx(s, '2028 대입부터 수능 공통 과목, 이번 겨울에 개념을 끝냅니다', ML, 4.4, 6.6, 0.45, { font: F.med, size: 19, color: C.sub });
+  mark(s, 'sub'); tx(s, '2028 대입부터 수능 공통 과목,\n이번 겨울에 개념을 끝냅니다', ML, 4.3, 6.2, 0.72, { font: F.med, size: 18, color: C.sub, lsm: 1.12 });
   // 개강·종강·시간
-  [['개강', '12/20(일)', 1.9, false], ['종강', '2/21(일)', 1.8, false], ['매주 일요일', '오전 10시~오후 1시', 2.95, true]].reduce((x, [k, v, w, hi], i) => {
+  [['개강', '12/20(일)', 1.85, false], ['종강', '2/21(일)', 1.75, false], ['매주 일요일', '오전 10시~오후 1시', 3.1, true]].reduce((x, [k, v, w, hi], i) => {
     mark(s, `chip${i}`);
     box(s, x, 5.1, w, 0.98, { snip: true, line: hi ? C.yellow : C.neon, lw: 1.75, fill: K.bg });
     tx(s, k, x + 0.2, 5.18, w - 0.3, 0.35, { font: F.semi, size: 15, color: hi ? C.yellow : C.neon });
-    tx(s, v, x + 0.2, 5.5, w - 0.3, 0.48, { font: F.head, size: 22 });
+    tx(s, v, x + 0.2, 5.5, w - 0.3, 0.48, { font: F.head, size: 20 });
     return x + w + 0.15;
   }, ML);
   mark(s, 'name'); tx(s, [r('통합사회 '), r('이승민T', { font: F.head, color: C.white })], ML, 6.4, 5, 0.55, { font: F.semi, size: 24, color: C.sub });
@@ -272,7 +278,7 @@ divider('01', '왜 예비 고1 겨울방학부터\n통합사회일까?', '중학
   });
   mark(s, 'end');
   icon(s, 'alert-triangle', 'yellow', ML - 0.05, 5.32, 0.95);
-  tx(s, [r('고등학교 첫 중간고사에서 '), r('가장 큰 후회', { color: C.yellow }), r('로 돌아올 수 있습니다')], ML + 1.0, 5.35, 10.8, 0.6, { font: F.head, size: 30, valign: 'middle' });
+  tx(s, [r('고등학교 첫 중간고사에서 '), r('가장 큰 후회', { color: C.yellow }), r('로 돌아올 수 있습니다')], ML + 1.0, 5.35, 10.8, 0.6, { font: F.head, size: 27, valign: 'middle' });
   tx(s, '2022 개정 교육과정에서 통합사회는 완전히 달라졌습니다', ML + 1.0, 6.0, 10.8, 0.5, { font: F.med, size: 20, color: C.sub });
   plan(s, { clicks: [{ cue: '생각 두 가지', steps: [['q0', 'float', 0], ['q1', 'float', 400]] }, { cue: '결론 “가장 큰 후회”', steps: [['end', 'zoom', 0, { from: 0.85 }]] }] });
 }
@@ -897,7 +903,7 @@ section('신청 안내');
 // 촬영 전 점검(발표 때는 숨김)
 section('촬영 전 점검');
 {
-  const s = newSlide('BLANK_DARK');
+  const s = newSlide('BLANK_DARK', { shift: false });
   s.hidden = true;
   box(s, 0.5, 0.5, W - 1, H - 1, { line: C.neon, lw: 2, dash: 'dash' });
   [[0.08, 0.08], [W - 0.42, 0.08], [0.08, H - 0.42], [W - 0.42, H - 0.42]].forEach(([x, y]) => box(s, x, y, 0.34, 0.34, { line: C.white, lw: 2 }));

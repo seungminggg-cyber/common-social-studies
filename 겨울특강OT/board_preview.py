@@ -48,6 +48,7 @@ def board_texture(w, h, color, seed):
 
 def project(slide_rgb, light, seed):
     color, gain = LIGHT[light]
+    H = round(W * slide_rgb.size[1] / slide_rgb.size[0])  # 슬라이드 비율(16:9·16:10) 그대로
     bw, bh = W + 2 * PADX, H + 2 * PADY
     board = board_texture(bw, bh, color, seed)
     sw, sh = slide_rgb.size
