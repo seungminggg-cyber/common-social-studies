@@ -11,9 +11,11 @@ cd 기출변형 && node cover/build-cover.mjs mmapfinal && cd ..
 cd 겨울특강OT && npm install
 # 2) 네온 그림(지구본·로고·숫자·아이콘) → out/art/
 node art.mjs
+# 2-1) 움직이는 지구본: 반짝이는 반복 GIF + 서울에서 뻗는 화살표 12조각 → out/art/globe-*
+node globe-anim.mjs && python3 globe_post.py
 # 3) 앱 화면 휴대폰 틀·개념서 쪽·표지 JPEG → out/art/
 python3 frames.py
-# 4) PPT → out/승민T-통합사회-겨울특강-OT.pptx
+# 4) PPT(애니메이션 포함) → out/승민T-통합사회-겨울특강-OT.pptx
 node build.mjs
 # 5) 예비용 PDF(글꼴이 없는 PC용) → out/…pdf
 python3 pdf.py
@@ -29,6 +31,15 @@ node test-deck.mjs
 - 마지막 슬라이드 '촬영 전 점검'은 숨김 슬라이드다(빔 크기·색·글자 크기 확인용).
 - 칠판 테스트: `칠판-테스트.pptx`를 실제 칠판에 띄우고 촬영 카메라 자리에서 폰으로 찍는다. 번호(색 1~12, 밝기 1~10, 선 1~6, 상자 A~C)로 결과를 받아 `palette.mjs` 색과 글자 크기를 고친다.
 
+## 애니메이션 (2026-11-20)
+- pptxgenjs는 애니메이션을 못 넣어서, `anim.mjs`가 만든 .pptx의 슬라이드 XML에 PowerPoint 애니메이션(`<p:timing>`)을 직접 써 넣는다. 같은 그림이 여러 번 들어가면 하나로 합친다.
+- `build.mjs`에서 `mark(s, '이름')` 다음에 그린 도형이 한 묶음, `plan(s, { auto, clicks })`로 묶음마다 [이름, 효과, 시작 ms, 설정]을 정한다.
+  - auto = 슬라이드가 열리면 저절로, clicks = 클릭 한 번마다(그 안에서는 차례로 저절로). 강사 요청: 클릭 한 번에 차례로 자동, 2쪽 '직접 만들었습니다' 상자는 한 번에.
+  - 효과: fade(서서히) · float(떠오르기) · zoom(확대, from=시작 배율) · wipe(닦아내기, dir l·r·t·b) · flicker(네온 깜빡이며 켜짐) · breathe(은은한 반복).
+- 발표자 노트 맨 위에 '▶ 클릭 N번 — ①…'이 저절로 붙는다(클릭 모두 24번).
+- 지구본: 바탕은 계속 반짝이는 GIF(둘레 빛 숨쉬기·서울 핑·도시 점·작은 별), 화살표 12개는 표지·마무리에서 서울에서 하나씩 닦아내기로 뻗는다. 단원 구분 화면은 GIF + 화살표 고정, 네온 숫자만 깜빡이며 켜짐.
+- 이 환경에서는 PowerPoint로 재생해 볼 수 없다. LibreOffice로 열어 효과가 읽히는지(종류·방향·반복) 확인했다 — 실제 움직임은 강사 PowerPoint 슬라이드 쇼로 확인. PDF에는 애니메이션이 없다(다 나타난 화면).
+
 ## 디자인 규칙 (칠판에 쏘는 화면)
 - 바탕은 **검정**: 빛을 안 쏘는 곳이라 칠판 색이 그대로 보인다. 흰 바탕은 칠판 전체를 번쩍이게 한다.
 - 글자·선은 밝은 색만: 흰색, 하늘(미니맵 통합사회1 네온), 민트, 분필 노랑, 분홍(통합사회2). 빨강·진한 파랑·보라는 칠판 위에서 탁해진다.
@@ -42,6 +53,8 @@ node test-deck.mjs
 |---|---|
 | `build.mjs` | 슬라이드 내용·배치(문구를 고칠 때 여기) |
 | `palette.mjs` | 색, 아이콘 목록(Tabler Icons, MIT) |
+| `anim.mjs` | 애니메이션 써 넣기 + 같은 그림 합치기 |
+| `globe-anim.mjs`, `globe_post.py` | 움직이는 지구본(GIF + 화살표 조각) |
 | `assets/app/` | 앱 화면(에뮬레이터에 가상 학생 데이터를 넣어 찍음 — 실제 학생 정보 없음) |
 | `assets/minimap-page.png` | MINIMAP 통합사회1 Ⅲ단원 5쪽 위쪽(교재 구성 슬라이드) |
 | `assets/academy-logo-white.png` | 학원 로고(블로그 표지 그림에서 흰색으로 딴 것) |
