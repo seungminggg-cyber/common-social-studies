@@ -94,8 +94,10 @@ function item(no, parts) {
   pres.addSection({ title: `${no}번` });
   const s = pres.addSlide({ masterName: 'ITEM', sectionTitle: `${no}번` });
   scales.push([`${no}번`, stack(s, parts.map((p) => `q${no}-${p}`))]);
-  s.addNotes(`${notes.front[no]}\n\n[선지 판단]\n${notes.back[no]}`);
+  // 자세한 강의 대본(notes.cjs)이 있으면 그것을, 없으면 analysis.js로 만든 짧은 노트를 쓴다
+  s.addNotes(SCRIPT[no] || `${notes.front[no]}\n\n[선지 판단]\n${notes.back[no]}`);
 }
+const SCRIPT = require('./notes.cjs');
 
 // ---------- 발표자 노트(화면에는 안 나옴) ----------
 const CIRCLED = ['①', '②', '③', '④', '⑤'];
