@@ -9,7 +9,8 @@
 //   (2026-11-20 강사 요청 "원본 문제와 정말 유사하게" — 그 전 판은 글자를 다시 입력해 공식·제시문 배치가 어긋났음)
 // - 화면: 16:9, 바탕 검정(빔이 빛을 안 쏘는 곳 = 칠판 그대로), 글자는 흰 분필색, 문항 번호만 분필 노랑.
 //   문제는 왼쪽 약 58%에만 두고 오른쪽은 모든 장에서 비워 판서 칸으로 쓴다(장을 넘겨도 판서가 안 겹침).
-// - 장 구성: 표지 → 문항마다 [앞장: 발문 + 자료] [뒷장: 발문 + 자료(일부) + 〈보기〉 + 선지].
+// - 장 구성: 표지 → 문항마다 **한 장**(발문 + 자료 + 〈보기〉 + 선지). 2026-11-20 강사가 시강 시뮬레이션 뒤
+//   "한 문제가 두 장으로 나뉘면 판서하며 수업하기 불편하다" → 선지까지 무조건 한 장에.
 //   풀이·힌트는 화면에 넣지 않는다(강사가 판서). 정답·단서는 발표자 노트에만(기출변형/특강/content/analysis.js).
 const path = require('path');
 const fs = require('fs');
@@ -45,12 +46,13 @@ const C = pres.SchemeColor;
 const WHITE = C.background1, MUTED = C.background2, CHALK = C.accent1;
 
 // 판서 칸을 뺀 왼쪽 영역 (in)
-const ZX = 0.5, ZW = 7.3, TOP = 0.3, BOTTOM = 7.0;
-const GAP = 10; // 부분 사이 간격(원본 pt, 크기에 맞춰 함께 늘어남)
+// 한 장에 문제 전체를 넣으므로 높이가 모자라다 → 위아래 여백을 줄여 세로를 최대한 쓴다.
+const ZX = 0.5, ZW = 7.3, TOP = 0.2, BOTTOM = 7.12;
+const GAP = 8; // 부분 사이 간격(원본 pt, 크기에 맞춰 함께 늘어남)
 
 // ---------- 레이아웃(틀) ----------
 const footer = {
-  text: { text: SOURCE, options: { x: ZX, y: 7.08, w: ZW, h: 0.28, fontSize: 10, color: MUTED, margin: 0, valign: 'bottom', lang: 'ko-KR' } },
+  text: { text: SOURCE, options: { x: ZX, y: 7.18, w: ZW, h: 0.24, fontSize: 10, color: MUTED, margin: 0, valign: 'bottom', lang: 'ko-KR' } },
 };
 pres.defineSlideMaster({ title: 'TITLE', background: { color: THEME.colors.dk1 }, objects: [footer] });
 pres.defineSlideMaster({ title: 'ITEM', background: { color: THEME.colors.dk1 }, objects: [footer] });
@@ -87,14 +89,12 @@ function titleSlide() {
   tx(s, '승민T', { x: ZX, y: 4.75, w: ZW, h: 0.5, fontSize: 22 });
 }
 
-function item(no, front, back) {
+// 한 문항 = 한 장 (발문부터 선지까지)
+function item(no, parts) {
   pres.addSection({ title: `${no}번` });
-  let s = pres.addSlide({ masterName: 'ITEM', sectionTitle: `${no}번` });
-  scales.push([`${no}번 앞장`, stack(s, front.map((p) => `q${no}-${p}`))]);
-  s.addNotes(notes.front[no]);
-  s = pres.addSlide({ masterName: 'ITEM', sectionTitle: `${no}번` });
-  scales.push([`${no}번 뒷장`, stack(s, back.map((p) => `q${no}-${p}`))]);
-  s.addNotes(notes.back[no]);
+  const s = pres.addSlide({ masterName: 'ITEM', sectionTitle: `${no}번` });
+  scales.push([`${no}번`, stack(s, parts.map((p) => `q${no}-${p}`))]);
+  s.addNotes(`${notes.front[no]}\n\n[선지 판단]\n${notes.back[no]}`);
 }
 
 // ---------- 발표자 노트(화면에는 안 나옴) ----------
@@ -111,7 +111,6 @@ async function loadNotes() {
     ].join('\n');
     const mark = n === 15 ? ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ'] : CIRCLED;
     notes.back[n] = [
-      `정답 ${CIRCLED[it.ans - 1]}`,
       ...it.judge.map(([ox, why], i) => `${mark[i]} ${ox} — ${strip(why)}`),
       '함정:', ...it.traps.map(([k, t]) => `${k} ${strip(t)}`),
     ].join('\n');
@@ -139,9 +138,9 @@ async function finish(file) {
 (async () => {
   await loadNotes();
   titleSlide();
-  item(5, ['stem', 'data'], ['stem', 'mini', 'choices']);
-  item(15, ['stem', 'data'], ['stem', 'mini', 'bogi', 'choices']);
-  item(21, ['stem', 'data'], ['stem', 'mini', 'choices']);
+  item(5, ['stem', 'data', 'choices']);
+  item(15, ['stem', 'data', 'bogi', 'choices']);
+  item(21, ['stem', 'data', 'choices']);
   fs.mkdirSync(path.dirname(path.resolve(outFile)), { recursive: true });
   await pres.writeFile({ fileName: outFile });
   await finish(outFile);
