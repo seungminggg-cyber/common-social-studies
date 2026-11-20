@@ -347,8 +347,8 @@ divider('01', '왜 예비 고1 겨울방학부터\n통합사회일까?', '중학
 
 // ── PART 2 ──
 section('02 왜 승민T 수업');
-divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 · 주간지 MINT · 킬러 파트 · 1:1 오답 관리',
-  '두 번째, 그렇다면 왜 제 수업이어야 하는지 네 가지로 말씀드리겠습니다.');
+divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 · 킬러 파트 · 1:1 오답 관리',
+  '두 번째, 그렇다면 왜 제 수업이어야 하는지 세 가지로 말씀드리겠습니다.');
 
 // 강점 1: 원리 이해
 {
@@ -371,30 +371,9 @@ divider('02', '왜 이승민T의\n통합사회 수업일까?', '원리 이해 ·
   tx(s, [r('1등급을 가르는 힘 = '), r('사회과 특화 문해력', { color: C.yellow, font: F.head }), r(' + '), r('논리적 추론력', { color: C.yellow, font: F.head })], ML, 6.2, CW, 0.55, { font: F.semi, size: 24, align: 'center' });
 }
 
-// 강점 2: 자체 제작 주간지 MINT (매일 30분, 4단계 순서)
-const MINT_STEPS = [['pencil', '빈칸 채우기'], ['square-check', 'O/X 변형'], ['file-text', '사료 분석'], ['pencil-question', '실전문제 풀이']];
+// 강점 2: 킬러 파트
 {
-  const s = content('강점 2 · 자체 제작 주간지 MINT', '하루 30분, 주간지 MINT로 매일 공부합니다', '많은 학생들이 개념서를 눈으로 두세 번 읽고 나면 “다 안다, 다 외웠다”고 착각합니다. 하지만 책을 덮는 순간 기억이 나지 않고, 선지 표현이 조금만 바뀌어도 오답을 고릅니다.\n그래서 이번 특강은 제가 직접 만든 주간지 MINT로 매일 공부합니다. 하루 30분씩, 빈칸 채우기, O/X 변형, 사료 분석, 실전문제 풀이 순서로 구성되어 있습니다.\n수업에서 배운 개념을 매일 손으로 다시 풀어 보면서 완전히 내 것으로 만듭니다.');
-  // 매일 30분
-  box(s, ML, 2.05, CW, 1.05, { snip: true, line: C.yellow, lw: 2, fill: K.bg, glow: K.yellow, glowOpt: { opacity: 0.3, blur: 12 } });
-  icon(s, 'clock', 'yellow', ML + 0.3, 2.17, 0.8);
-  tx(s, [r('매일 '), r('하루 30분', { color: C.yellow, font: F.head }), r('  ·  주간지 형태  ·  아래 순서로 구성')], ML + 1.3, 2.05, CW - 1.5, 1.05, { font: F.semi, size: 24, valign: 'middle' });
-  // 4단계(설명 문구 없이 이름만)
-  const cw = 2.62, gap = (CW - 4 * cw) / 3, y = 3.55, ch = 2.3;
-  MINT_STEPS.forEach(([ic, t], i) => {
-    const x = ML + i * (cw + gap), last = i === 3;
-    box(s, x, y, cw, ch, { snip: true, line: last ? C.mint : C.neon, lw: last ? 2.25 : 1.75, fill: K.bg, glow: last ? K.mint : undefined, glowOpt: { opacity: 0.35 } });
-    tx(s, `0${i + 1}`, x + 0.25, y + 0.22, 1, 0.55, { font: F.head, size: 26, color: last ? C.mint : C.neon });
-    icon(s, ic, last ? 'mint' : 'cyan', x + cw - 1.05, y + 0.2, 0.82);
-    tx(s, t, x + 0.25, y + 1.3, cw - 0.35, 0.65, { font: F.head, size: 25, color: last ? C.mint : C.white, valign: 'middle' });
-    if (i < 3) line(s, x + cw + 0.05, y + ch / 2, x + cw + gap - 0.05, y + ch / 2, { color: C.neon, w: 2.5, arrow: true });
-  });
-  tx(s, '눈으로만 읽는 ‘가짜 공부’ 대신, 매일 손으로 풀어 보는 습관', ML, 6.25, CW, 0.5, { font: F.semi, size: 21, color: C.sub, align: 'center' });
-}
-
-// 강점 3: 킬러 파트
-{
-  const s = content('강점 3 · 킬러 파트 집중 공략', '1등급과 2등급을 가르는 승부처', '통합사회 내신에서 1등급과 2등급을 가르는 승부처는 분명합니다.\n1학기에는 쾨펜의 기후 구분과 낯선 기후 그래프 분석, 인간 중심주의와 생태 중심주의 사상가 비교.\n2학기에는 롤스와 노직 같은 정의관 비교, 기본권과 근로기준법 계산, 기회비용·비교우위 계산, 인구 부양비 도표 분석입니다.\n이 파트들을 고2·고3 학력평가와 수능 기출 수준으로 훈련합니다.');
+  const s = content('강점 2 · 킬러 파트 집중 공략', '1등급과 2등급을 가르는 승부처', '통합사회 내신에서 1등급과 2등급을 가르는 승부처는 분명합니다.\n1학기에는 쾨펜의 기후 구분과 낯선 기후 그래프 분석, 인간 중심주의와 생태 중심주의 사상가 비교.\n2학기에는 롤스와 노직 같은 정의관 비교, 기본권과 근로기준법 계산, 기회비용·비교우위 계산, 인구 부양비 도표 분석입니다.\n이 파트들을 고2·고3 학력평가와 수능 기출 수준으로 훈련합니다.');
   tx(s, [r('●  ', { color: C.neon }), r('1학기 · 통합사회1', { color: C.neon }), r('        ●  ', { color: C.pink }), r('2학기 · 통합사회2', { color: C.pink })], ML, 1.95, CW, 0.45, { font: F.semi, size: 19 });
   const tiles = [
     ['temperature', '지리', '쾨펜 기후 구분\n낯선 기후 그래프', 1],
@@ -415,9 +394,9 @@ const MINT_STEPS = [['pencil', '빈칸 채우기'], ['square-check', 'O/X 변형
   });
 }
 
-// 강점 4: 1:1 오답 관리
+// 강점 3: 1:1 오답 관리
 {
-  const s = content('강점 4 · 1:1 밀착 오답 관리', '인강과 결정적으로 다른 점', '“인강으로 혼자 들으면 안 되나요?” 하고 묻는 분들이 계십니다.\n인강은 영상을 멈추고 딴짓을 하거나, 테스트에서 모르면 책을 펼쳐 보고 답을 적는 자기기만에 빠지기 쉽습니다.\n현장 수업의 힘은 강제성과 밀착 관리입니다. 매 수업 누적 복습 테스트를 보고, 제가 학생 한 명 한 명의 오답을 직접 확인합니다.\n점수만 매기는 게 아니라 개념 암기가 부족한 건지, 자료 해석 방법이 틀린 건지, 문제 풀이에서 실수가 있었던 건지를 진단하고 교정합니다.');
+  const s = content('강점 3 · 1:1 밀착 오답 관리', '인강과 결정적으로 다른 점', '“인강으로 혼자 들으면 안 되나요?” 하고 묻는 분들이 계십니다.\n인강은 영상을 멈추고 딴짓을 하거나, 테스트에서 모르면 책을 펼쳐 보고 답을 적는 자기기만에 빠지기 쉽습니다.\n현장 수업의 힘은 강제성과 밀착 관리입니다. 매 수업 누적 복습 테스트를 보고, 제가 학생 한 명 한 명의 오답을 직접 확인합니다.\n점수만 매기는 게 아니라 개념 암기가 부족한 건지, 자료 해석 방법이 틀린 건지, 문제 풀이에서 실수가 있었던 건지를 진단하고 교정합니다.');
   box(s, ML, 2.1, 5.55, 2.55, { snip: true, line: C.dim, lw: 1.5 });
   tx(s, '인강 혼자 듣기', ML + 0.3, 2.25, 5, 0.5, { font: F.head, size: 22, color: C.sub });
   [['player-pause', '영상 멈추고 딴짓'], ['eye-off', '모르면 책 보고 답 적기']].forEach(([ic, t], i) => {
@@ -515,14 +494,14 @@ section('04 교재 MINIMAP·MINT');
   }
 }
 
-// 주간지 MINT 소개
+// 주간지 MINT 소개(무엇인지) + MINT 구성(4단계)
+const MINT_STEPS = [['pencil', '빈칸 채우기'], ['square-check', 'O/X 변형'], ['file-text', '사료 분석'], ['pencil-question', '실전문제 풀이']];
 {
-  const s = content('교재 · 주간지 MINT', '매주 한 권, 주간지 MINT', '두 번째 교재는 제가 직접 만든 주간지 MINT입니다.\n주간지 형태라서 한 주 분량을 하루 30분씩 매일 공부하도록 만들었습니다. 구성은 빈칸 채우기, O/X 변형, 사료 분석, 실전문제 풀이 순서입니다.\n수업 시간에는 MINIMAP으로 개념을 배우고, 매일 MINT로 손으로 다시 풀고, 앱으로 퀴즈와 학습 기록을 확인합니다. 이 세 가지가 한 세트입니다.');
+  const s = content('교재 · 주간지 MINT', '매주 한 권, 주간지 MINT', '두 번째 교재는 제가 직접 만든 주간지 MINT입니다.\n주간지 형태라서 한 주 분량을 하루 30분씩 매일 공부하도록 만들었습니다.\n수업 시간에는 MINIMAP으로 개념을 배우고, 매일 MINT로 손으로 다시 풀고, 앱으로 퀴즈와 학습 기록을 확인합니다. 이 세 가지가 한 세트입니다.');
   const lp = join(ART, 'logo-mint.png'), z = sizeOf(lp), lw = 4.9;
-  img(s, lp, ML - 0.35, 2.0, lw, (lw * z.h) / z.w);
-  tx(s, '승민T 자체 제작 주간지', ML, 4.3, 5.6, 0.5, { font: F.semi, size: 24 });
-  tx(s, [r('매일 '), r('하루 30분', { color: C.yellow, font: F.head })], ML, 4.85, 5.6, 0.6, { font: F.semi, size: 28 });
-  tx(s, MINT_STEPS.map(([, t]) => t).join('  →  '), ML, 5.6, 5.9, 0.45, { font: F.semi, size: 18, color: C.mint });
+  img(s, lp, ML - 0.35, 2.25, lw, (lw * z.h) / z.w);
+  tx(s, '승민T 자체 제작 주간지', ML, 4.65, 5.6, 0.5, { font: F.semi, size: 24 });
+  tx(s, [r('매일 '), r('하루 30분', { color: C.yellow, font: F.head })], ML, 5.25, 5.6, 0.6, { font: F.semi, size: 28 });
   const rx = 7.0, rw = W - ML - rx;
   tx(s, '교재와 앱, 한 세트로 공부합니다', rx, 2.0, rw, 0.45, { font: F.semi, size: 19, color: C.sub });
   [['book-2', 'cyan', C.neon, 'MINIMAP 개념서', '수업 시간 · 개념 이해', false],
@@ -534,6 +513,22 @@ section('04 교재 MINIMAP·MINT');
     tx(s, t, rx + 1.15, y + 0.12, rw - 1.3, 0.48, { font: F.head, size: 23, color: hi ? C.mint : C.white });
     tx(s, d, rx + 1.15, y + 0.6, rw - 1.3, 0.42, { font: F.med, size: 18, color: C.sub });
   });
+}
+{
+  const s = content('교재 · 주간지 MINT', 'MINT 구성', '많은 학생들이 개념서를 눈으로 두세 번 읽고 나면 “다 안다, 다 외웠다”고 착각합니다. 하지만 책을 덮는 순간 기억이 나지 않고, 선지 표현이 조금만 바뀌어도 오답을 고릅니다.\nMINT는 하루 30분 분량이 빈칸 채우기, O/X 변형, 사료 분석, 실전문제 풀이 순서로 이어집니다.\n수업에서 배운 개념을 매일 손으로 다시 풀어 보면서 완전히 내 것으로 만듭니다.');
+  icon(s, 'clock', 'yellow', ML - 0.05, 2.05, 0.75);
+  tx(s, [r('하루 30분', { color: C.yellow, font: F.head }), r(', 네 단계 순서대로')], ML + 0.85, 2.05, CW - 0.9, 0.75, { font: F.semi, size: 24, valign: 'middle' });
+  // 4단계(설명 문구 없이 이름만)
+  const cw = 2.62, gap = (CW - 4 * cw) / 3, y = 3.15, ch = 2.55;
+  MINT_STEPS.forEach(([ic, t], i) => {
+    const x = ML + i * (cw + gap), last = i === 3;
+    box(s, x, y, cw, ch, { snip: true, line: last ? C.mint : C.neon, lw: last ? 2.25 : 1.75, fill: K.bg, glow: last ? K.mint : undefined, glowOpt: { opacity: 0.35 } });
+    tx(s, `0${i + 1}`, x + 0.25, y + 0.22, 1, 0.55, { font: F.head, size: 26, color: last ? C.mint : C.neon });
+    icon(s, ic, last ? 'mint' : 'cyan', x + cw - 1.05, y + 0.2, 0.82);
+    tx(s, t, x + 0.25, y + 1.45, cw - 0.35, 0.7, { font: F.head, size: 26, color: last ? C.mint : C.white, valign: 'middle' });
+    if (i < 3) line(s, x + cw + 0.05, y + ch / 2, x + cw + gap - 0.05, y + ch / 2, { color: C.neon, w: 2.5, arrow: true });
+  });
+  tx(s, '눈으로만 읽는 ‘가짜 공부’ 대신, 매일 손으로 풀어 보는 습관', ML, 6.15, CW, 0.5, { font: F.semi, size: 21, color: C.sub, align: 'center' });
 }
 
 // ── PART 5 ──

@@ -124,5 +124,5 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - 만드는 순서·규칙은 `겨울특강OT/README.md`(art.mjs → frames.py → build.mjs → pdf.py → board_preview.py). 글꼴 Pretendard(촬영 PC에 설치), 말할 내용은 슬라이드 노트.
 - 내용 출처: 학원 블로그 글 2개. 블로그는 `https://blog.naver.com/PostView.naver?blogId=yourmate_gimpo&logNo=…`로 열림(m.blog는 막힘), 사진은 postfiles.pstatic.net(Default 환경 허용 목록에 추가함).
 - 앱 화면은 에뮬레이터 + 가상 학생 데이터로 찍음(`assets/app/`). 다시 찍을 땐 CLAUDE.md '화면 테스트' 방식.
-- 교재 = 개념서 **MINIMAP** + 자체 제작 **주간지 MINT**(예전 '자체 제작 워크북'). MINT는 매일 하루 30분, 빈칸 채우기 → O/X 변형 → 사료 분석 → 실전문제 풀이 순서. 강사는 짧은 설명 칸의 '~다'로 끝나는 문구(예: '직접 써 본다')를 오글거린다고 싫어함 → 명사형으로.
+- 교재 = 개념서 **MINIMAP** + 자체 제작 **주간지 MINT**(예전 '자체 제작 워크북'). MINT는 매일 하루 30분, 빈칸 채우기 → O/X 변형 → 사료 분석 → 실전문제 풀이 순서. 강사는 짧은 설명 칸의 '~다'로 끝나는 문구(예: '직접 써 본다')를 오글거린다고 싫어함 → 명사형으로. 구성(2026-11-20): MINT는 교재 파트에서만 자세히(MINT 소개 + MINT 구성), 02 파트 강점은 원리 이해·킬러 파트·1:1 오답 관리 세 가지.
 - 칠판 테스트용 PPT(`test-deck.mjs`)와 조명별 미리보기(`board_preview.py --all/--light`)가 있음. 강사가 실제 칠판에서 찍은 결과를 번호로 받으면 `palette.mjs`를 고친다.
