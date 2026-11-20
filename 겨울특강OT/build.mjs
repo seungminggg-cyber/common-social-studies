@@ -10,7 +10,7 @@ import { createRequire } from 'node:module';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COLORS as K } from './palette.mjs';
+import { COLORS as K0 } from './palette.mjs';
 import { applyAnimations } from './anim.mjs';
 
 const require = createRequire(import.meta.url);
@@ -18,9 +18,14 @@ const pptxgen = require('pptxgenjs');
 const JSZip = require(require.resolve('jszip', { paths: [require.resolve('pptxgenjs')] }));
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = join(ROOT, 'out');
-const ART = join(OUT, 'art');
+// 반전용(OT_INVERT=1): 학원 PC·빔이 화면 색을 반전시킬 때 쓰는 판. 색과 그림을 미리 반대로 뒤집어 둔다(반전 × 반전 = 원래 색).
+const INVERT = process.env.OT_INVERT === '1';
+const inv = (h) => (0xffffff ^ parseInt(h, 16)).toString(16).toUpperCase().padStart(6, '0');
+const K = INVERT ? Object.fromEntries(Object.entries(K0).map(([k, v]) => [k, inv(v)])) : K0;
+const ART = join(OUT, INVERT ? 'art-inv' : 'art'); // 반전용 그림은 python3 invert_art.py로 만든다
+const asset = (name) => (INVERT ? join(ART, name) : join(ROOT, 'assets', name));
 mkdirSync(OUT, { recursive: true });
-const FILE = join(OUT, '승민T-통합사회-겨울특강-OT.pptx');
+const FILE = join(OUT, INVERT ? '승민T-통합사회-겨울특강-OT-반전용.pptx' : '승민T-통합사회-겨울특강-OT.pptx');
 
 // ── 테마: 어두운 화면용. 글자 기본색(Text 1)이 흰색, 바탕(Background 1)이 검정이 되도록 칸을 바꿔 넣었다
 //    (강사가 PowerPoint에서 새 글상자를 만들어도 흰 글자로 나오게)
@@ -29,7 +34,7 @@ const THEME = {
   headFontFace: 'Pretendard ExtraBold',
   bodyFontFace: 'Pretendard',
   colors: {
-    dk1: K.text, lt1: K.bg, dk2: K.sub, lt2: '0C1A24',
+    dk1: K.text, lt1: K.bg, dk2: K.sub, lt2: INVERT ? inv('0C1A24') : '0C1A24',
     accent1: K.neon, accent2: K.mint, accent3: K.yellow, accent4: K.pink, accent5: K.dim, accent6: K.line,
     hlink: K.neon, folHlink: K.pink,
   },
@@ -184,7 +189,7 @@ section('시작');
 {
   const s = newSlide('BLANK_DARK');
   const arcs = globe(s, 6.75, -0.35, 8.2, true);
-  const lg = join(ROOT, 'assets/academy-logo-white.png'), z = sizeOf(lg);
+  const lg = asset('academy-logo-white.png'), z = sizeOf(lg);
   mark(s, 'logo'); img(s, lg, ML, 0.62, (0.52 * z.w) / z.h, 0.52);
   mark(s, 'kick'); tx(s, '2027 예비 고1 · 겨울방학 특강 OT', ML, 1.5, 7.2, 0.5, { font: F.semi, size: 24, color: C.neon, cs: 1 });
   mark(s, 'title'); tx(s, [r('통합사회 1·2', { breakLine: true }), r('10주 완성', { color: C.neon, glow: { size: 8, opacity: 0.35, color: K.neon } })], ML, 2.05, 7.4, 2.3, { font: F.black, size: 66, lsm: 1.02 });
@@ -883,7 +888,7 @@ section('신청 안내');
   mark(s, 'l2'); tx(s, '고등학교 첫 시험의\n지도를 함께 그립니다', 7.0, 2.3, 5.8, 1.8, { font: F.black, size: 40, lsm: 1.12 });
   mark(s, 'logo'); img(s, lp, 6.75, 4.35, lw, (lw * z.h) / z.w);
   mark(s, 'name'); tx(s, [r('통합사회 '), r('이승민T', { font: F.head, color: C.white })], 7.0, 5.95, 3.6, 0.6, { font: F.semi, size: 24, color: C.sub, valign: 'middle' });
-  const lg = join(ROOT, 'assets/academy-logo-white.png'), zz = sizeOf(lg), hh = 0.48;
+  const lg = asset('academy-logo-white.png'), zz = sizeOf(lg), hh = 0.48;
   mark(s, 'aclogo'); img(s, lg, W - ML - (hh * zz.w) / zz.h, 6.02, (hh * zz.w) / zz.h, hh);
   plan(s, { auto: [...arcSteps(arcs, 0), ['l1', 'fade', 300], ['l2', 'float', 600], ['logo', 'flicker', 1900], ['name', 'fade', 2400], ['aclogo', 'fade', 2400]] });
   s.notes = ('작은 지도 한 장으로 온 세상을 보듯이, 이번 겨울 10주 동안 MINIMAP과 함께 고등학교 첫 시험까지 가는 길을 같이 그리겠습니다.\n확실한 개념 설명과 꼼꼼한 관리로 통합사회를 끝내고 싶다면, 너를위한메이트학원 승민T 수업에서 만나겠습니다. 감사합니다.');

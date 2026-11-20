@@ -126,4 +126,5 @@ npx -y firebase-tools@13.29.1 emulators:exec --project demo-rules-test --only fi
 - 앱 화면은 에뮬레이터 + 가상 학생 데이터로 찍음(`assets/app/`). 다시 찍을 땐 CLAUDE.md '화면 테스트' 방식.
 - 교재 = 개념서 **MINIMAP** + 자체 제작 **주간지 MINT**(예전 '자체 제작 워크북'). MINT는 매일 하루 30분, 빈칸 채우기 → O/X 변형 → 사료 분석 → 실전문제 풀이 순서. 강사는 짧은 설명 칸의 '~다'로 끝나는 문구(예: '직접 써 본다')를 오글거린다고 싫어함 → 명사형으로. 구성(2026-11-20): MINT는 교재 파트에서만 자세히(MINT 소개 + MINT 구성), 02 파트 강점은 원리 이해·킬러 파트·1:1 오답 관리 세 가지.
 - **애니메이션(2026-11-20)**: `anim.mjs`가 PowerPoint 애니메이션 XML을 써 넣음(`build.mjs`의 mark/plan). 강사 결정: 클릭 한 번에 차례로 자동, 핵심만 클릭(모두 24번, 노트에 '▶ 클릭' 안내). 지구본은 반짝이는 GIF + 화살표 닦아내기(`globe-anim.mjs`·`globe_post.py`). PowerPoint 재생은 강사 확인 필요. 정원 25명은 강사 요청으로 삭제.
+- **학원 칠판 첫 시험(2026-11-20)**: 화면 색이 통째로 반전돼 나옴(그림까지 → PC 색 필터나 빔 설정). 강사에게 끄는 법 안내 + 대비책 '반전용' 판(`invert_art.py` → `OT_INVERT=1 node build.mjs`). 사진상 Pretendard 미설치(글꼴 바뀜)·슬라이드 쇼 아님(작업 표시줄 보임)도 안내.
 - 칠판 테스트용 PPT(`test-deck.mjs`)와 조명별 미리보기(`board_preview.py --all/--light`)가 있음. 강사가 실제 칠판에서 찍은 결과를 번호로 받으면 `palette.mjs`를 고친다.
