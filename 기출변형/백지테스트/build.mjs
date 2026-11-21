@@ -40,7 +40,7 @@ const ans = (s) => {
 const fillLine = (s) => esc(s).replace(/\{(.+?)\}/g, (_, x) => { blanks += 1; return `<span class="a f">${x}</span>`; });
 
 function blockHtml(b, i) {
-  const head = `<div class="bk-h"><span class="bk-no">${i + 1}</span><span class="bk-kind">${esc(b.kind)}</span>${b.title ? `<h3>${esc(b.title)}</h3>` : ''}</div>`;
+  const head = `<div class="bk-h"><span class="bk-no">${i + 1}</span><span class="bk-kind">${esc(b.kind)}</span>${b.title ? `<h3>${esc(b.title)}</h3>` : ''}${b.pass?.length ? `<span class="pass">패스 ${b.pass.map(esc).join(' · ')}</span>` : ''}</div>`; // pass = 시험 범위가 아니어서 건너뛸 학교(2회부터)
   if (b.t === 'flow') {
     const n = b.steps.length;
     const cols = `${b.label || '7.5em'} repeat(${n}, 1fr)`;
@@ -115,6 +115,7 @@ body { font-family: 'Pretendard Variable', sans-serif; color: #1a1a1a; font-size
 .bk-no { background: var(--c1); color: #fff; font-weight: 800; font-size: 8.6pt; width: 5mm; height: 5mm; display: inline-grid; place-items: center; align-self: center; }
 .bk-kind { font-size: 7.6pt; font-weight: 700; color: var(--c1); border: .7pt solid var(--c1); padding: 0 1.4mm; align-self: center; }
 .bk-h h3 { font-size: 10.4pt; font-weight: 800; letter-spacing: -.01em; }
+.bk-h .pass { margin-left: auto; align-self: center; font-size: 7.6pt; font-weight: 700; color: #fff; background: #6b6b6b; padding: .3mm 1.8mm; }
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
 /* 개념 지도: 단계 상자 + 화살표 */
 .flow { display: grid; border-top: .6pt solid #1a1a1a; }
@@ -202,6 +203,14 @@ if (SET) {
   const sets = (await import(pathToFileURL(join(ROOT, 'content', 'sets.js')).href)).default[SET];
   const dir = join(OUT, `${SET}회`);
   const all = [];
+  if (Array.isArray(sets)) {
+    // 한 묶음(2회부터, 강사 2026-11-21): 모든 학교가 같은 PDF — 답지 전체 → 테스트 전체. 파트마다 '패스' 학교 표시
+    const us = await Promise.all(sets.map(load));
+    await make(`${SET}회-백지테스트`, [...us.map((u) => page(u, 'memo')), ...us.map((u) => page(u, 'blank'))], dir);
+    await make(`${SET}회-교사용-모범답안`, us.map((u) => page(u, 'teacher')), dir);
+    await browser.close();
+    process.exit(0);
+  }
   const only = args.find((a) => sets[a]); // 학교 하나만: node build.mjs set1 작전고
   for (const [school, list] of Object.entries(sets)) {
     if (only && school !== only) continue;
