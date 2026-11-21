@@ -11,4 +11,5 @@
 | 계산여고 | 1BTfUiREv0O9VVZ5AWUm1YCPHM_GwEah9 | (아직) |
 | 서운고 | 1f-L2m2I36a-Y4k2WybX1107lyuRXUa83 | (아직) |
 - 형식 모음(`형식모음.md`)·빌드(`build.mjs`)는 인천국제고 채팅이 먼저 만들고, 다른 학교가 같이 쓴다.
-- 드라이브 업로드: Google Drive 연결 `create_file`(parentId = 위 폴더 id, application/pdf, disableConversionToGoogleType, base64Content = `sha256:<해시>:<절대 경로>` 파일 참조). 연결은 강사가 연결한 뒤 새로 연 채팅에서만 쓸 수 있다.
+- 드라이브 업로드: Google Drive 연결 `create_file`(parentId = 위 폴더 id, application/pdf, disableConversionToGoogleType, base64Content = `sha256:<해시>:<절대 경로>` 파일 참조).
+  **2026-11-21 확인: 학교 채팅에서는 파일 참조가 거부됐고, 조정 채팅에서는 됐다** → 학교 채팅은 PDF를 SendUserFile로 보내고 조정 채팅에 '빌드 명령'을 알리면, 조정 채팅이 그 브랜치에서 같은 PDF를 다시 만들어 올린다(인천국제고 1회 문제·해설 업로드 완료).
