@@ -29,3 +29,12 @@ node 상중하/build.mjs <학교 키> [png]   # → 상중하/out/<학교>-상�
 - 빌드가 단원·난이도별 문항 수를 계획(하 1·중 2·상 3)과 비교해 경고하고, 정답 분포를 출력한다.
 - 결과 PDF·PNG(`out/`)는 저장소에 올리지 않는다. 학교 학습지 사진·원문도 올리지 않는다.
 - 공통 파일(build.mjs, 주간지 styles)은 학교 채팅에서 고치지 않는다 — 필요하면 조정 채팅에 알린다.
+
+## 학교별 채팅 (2026-11-21 열림, 조정 채팅 = 주간지 · 조정 채팅 session_01QqEa98Z8tj8bZXnLwjd2Cn)
+| 학교 | 브랜치 | 세션 id |
+|---|---|---|
+| 작전고 | claude/level-jakjeon | session_01QqEa9A5E9wZ89cckcxvWfp |
+| 계양고 | claude/level-gyeyang | session_01QqEa9AapteqCFojPhaFj1L |
+| 계산여고 | claude/level-gyesan | session_01QqEa99oCzwCsTtKZRxsVyv |
+| 서운고 | claude/level-seoun | session_01QqEa99CyiTLjTsnxvPM4vo |
+| 인천국제고 | claude/level-inguk | session_01QqEa98QQ2EaiZcpVNhGncp |
