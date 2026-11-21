@@ -148,6 +148,13 @@
         for (const sg of makeGroups(g, ['next'])) place(sg, sec, false);
         return;
       }
+      // L.topAdvance(주간지): 쪽 머리 블록(개념 정리 등)이 길어 남은 단에 문항이 안 들어가면, 잘린 채 두지 말고 다음 단·쪽으로 넘긴다
+      if (wasEmpty && L.topAdvance && !pg.region.dataset.soft && pg.region.querySelector('.region-top')?.children.length && groupHeight(g) <= fullHeight(pg)) {
+        g.forEach((r) => r.remove());
+        refreshStrip(pg);
+        advance(sec);
+        continue;
+      }
       if (wasEmpty && !pg.region.dataset.soft) {
         WARN.push(`${sec.dataset.kind} ${pageNo}쪽: 블록이 한 단보다 큽니다 (${g[0].className})`);
         return;
