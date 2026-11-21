@@ -211,12 +211,14 @@ function coverStyled() {
 
 function summaryBox(spec) {
   const s = spec.summary;
-  const items = (s.items || s.concepts).map((c) => `<div class="wk-c"><div class="wk-c-h"><b>${esc(c.no)}</b><h4>${inl(c.title || '')}</h4></div><div class="wk-c-b">${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
+  // 2단 순서는 세로로(강사 2026-11-09): 왼쪽 단을 위에서 아래로 채운 뒤 오른쪽 단 — 개념 정리는 신문 단(column)처럼 흘려 빈 곳 없이, O/X는 열 방향 격자
+  const list = s.items || s.concepts;
+  const items = list.map((c) => `<div class="wk-c" style="break-inside: avoid; margin-bottom: 1.4mm"><div class="wk-c-h"><b>${esc(c.no)}</b><h4>${inl(c.title || '')}</h4></div><div class="wk-c-b">${c.lines.map((l) => `<p>${inl(l)}</p>`).join('')}</div></div>`).join('');
   const traps = (s.traps || []).slice(0, 3).map(([a, b]) => `<li><b>${inl(a)}</b> ${inl(b)}</li>`).join('');
-  return `<div class="wk-sum"><div class="wk-sec-t">개념 정리</div><p class="wk-core">${inl(s.core)}</p><div class="wk-grid">${items}</div>${traps ? `<div class="wk-traps"><span>헷갈리지 말자</span><ul>${traps}</ul></div>` : ''}</div>`;
+  return `<div class="wk-sum"><div class="wk-sec-t">개념 정리</div><p class="wk-core">${inl(s.core)}</p><div class="wk-grid" style="display: block; column-count: 2; column-gap: 5mm">${items}</div>${traps ? `<div class="wk-traps"><span>헷갈리지 말자</span><ul>${traps}</ul></div>` : ''}</div>`;
 }
 function oxBox(ox) {
-  return `<div class="wk-ox"><div class="wk-sec-t">개념 O/X <i>맞으면 O, 틀리면 X에 동그라미</i></div><ol>${ox.map((o) => `<li><span class="t">${inl(o.text)}</span><span class="b"><i>O</i><i>X</i></span></li>`).join('')}</ol></div>`;
+  return `<div class="wk-ox"><div class="wk-sec-t">개념 O/X <i>맞으면 O, 틀리면 X에 동그라미</i></div><ol style="grid-auto-flow: column; grid-template-rows: repeat(${Math.ceil(ox.length / 2)}, auto)">${ox.map((o) => `<li><span class="t">${inl(o.text)}</span><span class="b"><i>O</i><i>X</i></span></li>`).join('')}</ol></div>`;
 }
 const sepTop = (label, sub) => `<div class="wk-sep"><b>${label}</b>${sub ? `<i>${sub}</i>` : ''}</div>`;
 const sep = (label, sub) => `<div class="row row-sep" data-keep="next"><div class="main"><div class="wk-sep"><b>${label}</b>${sub ? `<i>${sub}</i>` : ''}</div></div></div>`;
@@ -364,7 +366,8 @@ async function layout() {
     let col = 0, used = 0;
     while (left.length) {
       const i = left.findIndex((q) => used + m.rows[q.id] <= caps(col));
-      if (i < 0 && used > 0) { col += 1; used = 0; continue; }
+      // DAY 첫 쪽 두 단(col 0·1)에 들어가는 문항이 없으면 빈 채로 넘긴다(억지로 넣으면 뒤 단 계산이 한 쪽씩 밀림 — 서운고 채팅 제보 2026-11-15)
+      if (i < 0 && (used > 0 || col < 2)) { col += 1; used = 0; continue; }
       const q = left.splice(Math.max(i, 0), 1)[0];
       order.push(q); used += m.rows[q.id];
     }
