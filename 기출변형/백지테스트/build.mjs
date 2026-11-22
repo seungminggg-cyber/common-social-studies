@@ -19,7 +19,7 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const wantPng = args.includes('png');
 const units = args.filter((a) => /^(\d\d|[a-z]+\d)$/.test(a));
-const SET = (args.find((a) => /^set\d$/.test(a)) || '').slice(3); // set1 = 1회 묶음(content/sets.js)
+const SET = (args.find((a) => /^set\w+$/.test(a)) || '').slice(3); // set1 = 1회 묶음, set2k = 2회 인천국제고(content/sets.js)
 if (!units.length && !SET) { console.error('중단원 번호나 회차를 적어 주세요. 예: node build.mjs 07 / node build.mjs set1'); process.exit(1); }
 const OUT = join(ROOT, 'out');
 const TB = join(ROOT, '../../textbook');
@@ -202,13 +202,15 @@ async function make(name, pages, dir = OUT) {
 if (SET) {
   // 회차 묶음: 학교마다 답지·테스트 파일, 교사용은 그 회차 전체 한 파일
   const sets = (await import(pathToFileURL(join(ROOT, 'content', 'sets.js')).href)).default[SET];
-  const dir = join(OUT, `${SET}회`);
+  const NAME = sets.name || `${SET}회`; // 파일 이름 앞부분(예: '2회-인천국제고')
+  const dir = join(OUT, `${parseInt(SET, 10)}회`);
   const all = [];
-  if (Array.isArray(sets)) {
+  if (Array.isArray(sets) || sets.pages) {
+    const list = sets.pages || sets;
     // 한 묶음(2회부터, 강사 2026-11-21): 모든 학교가 같은 PDF — 답지 전체 → 테스트 전체. 파트마다 '패스' 학교 표시
-    const us = await Promise.all(sets.map(load));
-    await make(`${SET}회-백지테스트`, [...us.map((u) => page(u, 'memo')), ...us.map((u) => page(u, 'blank'))], dir);
-    await make(`${SET}회-교사용-모범답안`, us.map((u) => page(u, 'teacher')), dir);
+    const us = await Promise.all(list.map(load));
+    await make(`${NAME}-백지테스트`, [...us.map((u) => page(u, 'memo')), ...us.map((u) => page(u, 'blank'))], dir);
+    await make(`${NAME}-교사용-모범답안`, us.map((u) => page(u, 'teacher')), dir);
     await browser.close();
     process.exit(0);
   }
