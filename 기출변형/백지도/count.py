@@ -5,7 +5,7 @@ import sys, re, json, os, subprocess
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import names as N
 
-NAMES = N.load(); OTH = N.others()
+NAMES = N.load(); NAMES.pop('타이', None); OTH = N.others()
 KEYS = {k: (v[0], v[1], None) for k, v in NAMES.items()}
 for k, t in OTH.items():
     if k not in KEYS: KEYS[k] = (k, 'other', t)
