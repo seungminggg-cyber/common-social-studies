@@ -185,7 +185,8 @@ async function make(name, pages, dir = OUT) {
   }));
   const over = await pg.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
     const ft = p.querySelector('.ft').getBoundingClientRect(); const last = [...p.children].filter((c) => !c.classList.contains('ft')).pop().getBoundingClientRect();
-    return { i: i + 1, room: Math.round((ft.top - last.bottom) / 3.78) };
+    const pb = p.getBoundingClientRect().bottom; // 바닥글이 쪽 밖으로 밀려나면 넘침
+    return { i: i + 1, room: ft.bottom > pb - 2 ? -1 : Math.round((ft.top - last.bottom) / 3.78) };
   }));
   over.forEach((o) => { if (o.room < 1) console.warn(`${name} ${o.i}쪽: 넘침(남은 ${o.room}mm)`); else if (o.room > 15) console.log(`${name} ${o.i}쪽: 아래 빈 공간 ${o.room}mm`); });
   await pg.pdf({ path: join(dir, `${name}.pdf`), preferCSSPageSize: true, printBackground: true });
