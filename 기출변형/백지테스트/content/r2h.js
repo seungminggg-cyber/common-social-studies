@@ -25,7 +25,7 @@ export default {
       ],
     },
     {
-      t: 'table', kind: '비교 표', title: '분단의 고착', wide: true, head: '24mm', pass: ['계양고', '작전고', '인천국제고', '계산여고'],
+      t: 'table', kind: '비교 표', title: '분단의 고착', wide: true, head: '24mm', pass: ['계양고', '작전고', '계산여고'],
       cols: ['', '사건'],
       rows: [
         ['1950. 6. 25.', '~북한의 남침, **6·25 전쟁**(한국 전쟁) 발발'],
