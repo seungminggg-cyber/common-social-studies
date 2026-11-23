@@ -203,8 +203,17 @@ if (SET) {
   // 회차 묶음: 학교마다 답지·테스트 파일, 교사용은 그 회차 전체 한 파일
   const sets = (await import(pathToFileURL(join(ROOT, 'content', 'sets.js')).href)).default[SET];
   const NAME = sets.name || `${SET}회`; // 파일 이름 앞부분(예: '2회-인천국제고')
-  const dir = join(OUT, `${parseInt(SET, 10)}회`);
+  const dir = join(OUT, sets.dir || `${parseInt(SET, 10)}회`);
   const all = [];
+  if (sets.schools) {
+    // 학교마다 파일 하나: 답지 → 테스트 (평일 클리닉, 강사 2026-11-23)
+    for (const [school, list] of Object.entries(sets.schools)) {
+      const us = await Promise.all(list.map(load));
+      await make(`${NAME}-${school}`, [...us.map((u) => page(u, 'memo')), ...us.map((u) => page(u, 'blank'))], dir);
+    }
+    await browser.close();
+    process.exit(0);
+  }
   if (Array.isArray(sets) || sets.pages) {
     const list = sets.pages || sets;
     // 한 묶음(2회부터, 강사 2026-11-21): 모든 학교가 같은 PDF — 답지 전체 → 테스트 전체. 파트마다 '패스' 학교 표시
