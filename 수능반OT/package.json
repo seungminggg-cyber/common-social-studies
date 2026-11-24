@@ -1,0 +1,8 @@
+{
+  "name": "winter-ot-deck",
+  "private": true,
+  "description": "겨울특강 OT 촬영용 PPT 만들기 (pptxgenjs)",
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}
