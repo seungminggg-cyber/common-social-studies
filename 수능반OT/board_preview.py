@@ -100,7 +100,7 @@ def sheet(tiles, cols, title, labels=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--pdf', default=str(ROOT / 'out/승민T-2028수능-통합사회-정규반-OT-칠판용.pdf'))
+    ap.add_argument('--pdf', default=str(ROOT / 'out/승민T-2028수능-통합사회-연간커리큘럼-OT-칠판용.pdf'))
     ap.add_argument('--all', action='store_true')
     ap.add_argument('--light', action='store_true')
     ap.add_argument('--out', default='칠판미리보기')
@@ -114,7 +114,7 @@ def main():
         dst = ROOT / f'out/{a.out}-전체.pdf'
         imgs[0].save(dst, save_all=True, append_images=imgs[1:], resolution=110, quality=85)
     elif a.light:
-        pages = a.pages or [1, 7, 12]
+        pages = a.pages or [1, 6, 11]
         tiles, labels = [], []
         for n in pages:
             src = page_png(pdf, n, tmp)
@@ -124,7 +124,7 @@ def main():
         dst = ROOT / f'out/{a.out}-조명비교.jpg'
         sheet(tiles, 3, f'조명에 따라 칠판 위 화면이 어떻게 보이는지 ({note})', labels).save(dst, quality=88)
     else:
-        pages = a.pages or [1, 4, 7, 10, 12, 16]
+        pages = a.pages or [1, 6, 10, 11, 16, 19]
         tiles = [project(page_png(pdf, n, tmp), NORMAL, n) for n in pages]
         dst = ROOT / f'out/{a.out}.jpg'
         sheet(tiles, 2, f'초록 칠판에 쏜 모습 ({note})').save(dst, quality=88)

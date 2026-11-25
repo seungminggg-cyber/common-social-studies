@@ -14,7 +14,7 @@ import uno
 from com.sun.star.beans import PropertyValue
 
 ROOT = Path(__file__).resolve().parent
-SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / 'out/승민T-2028수능-통합사회-정규반-OT-칠판용.pptx'
+SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / 'out/승민T-2028수능-통합사회-연간커리큘럼-OT-칠판용.pptx'
 DST = Path(sys.argv[2]) if len(sys.argv) > 2 else SRC.with_suffix('.pdf')
 
 
