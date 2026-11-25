@@ -34,19 +34,19 @@ const tick = (len = 34) => ({ tick: len }); // 나무 줄기에서 가지로 가
 // 2026-11-25 강사 요청: 보낸 글자만 넣는다(예시·그림·선·설명 없이). 나머지 자리는 칠판에 직접 판서.
 // 자리는 원래 판서 그림과 같게 두어, 그 사이 빈 곳에 판서할 수 있게 했다.
 // 왼쪽
-T('yo', 80, 40, [['문화 변동의 요인', 'y', 82]]);
-T('in', 112, 190, [['1. 내재적 요인', 'w', 66]]);
-T('ex', 112, 630, [['2. 외재적 요인 =', 'w', 66]]);
+T('yo', 70, 30, [['문화 변동의 요인과 양상', 'y', 112]]);
+T('in', 100, 200, [['1. 내재적 요인', 'w', 92]]);
+T('ex', 100, 630, [['2. 외재적 요인 =', 'w', 92]]);
 // 오른쪽
-const RX = 1055;
-T('as', RX, 40, [['문화 동화', 'y', 72]]);
-T('co', RX, 345, [['문화 병존', 'y', 72]]);
-T('fu', RX, 650, [['문화 융합', 'y', 72]]);
-T('ac', RX, 960, [['문화 접변', 'y', 72]]);
+const RX = 1080;
+T('as', RX, 30, [['문화 동화', 'y', 100]]);
+T('co', RX, 335, [['문화 병존', 'y', 100]]);
+T('fu', RX, 640, [['문화 융합', 'y', 100]]);
+T('ac', RX, 950, [['문화 접변', 'y', 100]]);
 
 // ── 그리기: 분필 느낌(작은 구멍이 난 글씨 + 가루 번짐) ──
 const CIRC = 'display:inline-flex;align-items:center;justify-content:center;border:4px solid;border-radius:50%;width:1.1em;height:1.1em;line-height:1;vertical-align:middle;position:relative;top:-.12em;margin-left:.05em;padding-top:.08em;box-sizing:border-box;';
-const span = ([t, c, s, u]) => `<span style="color:${COL[c]};font-size:${s}px;-webkit-text-stroke:${(s / 30).toFixed(1)}px ${COL[c]};${u === 'c' ? CIRC : ''}${u === 'u' ? `text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:10px;text-decoration-color:${COL[c]};` : ''}">${t}</span>`;
+const span = ([t, c, s, u]) => `<span style="color:${COL[c]};font-size:${s}px;-webkit-text-stroke:${(s / 20).toFixed(1)}px ${COL[c]};${u === 'c' ? CIRC : ''}${u === 'u' ? `text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:10px;text-decoration-color:${COL[c]};` : ''}">${t}</span>`;
 const body = el.map((e) => {
   if (e.svg) return `<div class="el" id="${e.id}" style="left:${e.x}px;top:${e.y}px;width:${e.w}px;height:${e.h}px"><svg width="${e.w}" height="${e.h}" viewBox="0 0 ${e.w} ${e.h}" style="overflow:visible">${e.svg}</svg></div>`;
   const tk = e.tick ? `<span class="tk" style="width:${e.tick}px"></span>` : '';
@@ -58,7 +58,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="styles
   body{margin:0;background:transparent}
   #page{position:relative;width:${Math.round(W * PX)}px;height:${Math.round(H * PX)}px}
   .el{position:absolute;padding:10px;white-space:nowrap;font-family:'Nanum Pen Script';line-height:1.05;filter:url(#chalk)}
-  .el span{text-shadow:0 0 3px rgba(255,255,255,.25)}
+  .el span{text-shadow:0 0 4px rgba(255,255,255,.3)}
   .tk{display:inline-block;height:4px;background:${COL.d};vertical-align:middle;margin-right:10px;border-radius:2px;opacity:.85}
   .un{height:6px;margin-top:4px;border-radius:3px;transform:rotate(-.4deg)}
   svg *{fill:none;stroke:${COL.w};stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
@@ -66,7 +66,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="styles
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><filter id="chalk" x="-4%" y="-8%" width="108%" height="116%">
   <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="7" result="n"/>
-  <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.5 1.62" result="m"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -0.9 1.45" result="m"/>
   <feComposite in="SourceGraphic" in2="m" operator="in"/>
 </filter></svg>
 <div id="page">${body}</div></body></html>`;
@@ -109,7 +109,7 @@ const down = (id, dur = 900) => ({ names: [id], fx: 'wipe', dir: 't', dur });
 const zoom = (id) => ({ names: [id], fx: 'zoom', from: 0.6, dur: 450 });
 const fade = (id, dur = 450) => ({ names: [id], fx: 'fade', dur });
 const CLICKS = [
-  ['문화 변동의 요인', ['yo']], ['1. 내재적 요인', ['in']], ['2. 외재적 요인 =', ['ex']],
+  ['문화 변동의 요인과 양상', ['yo']], ['1. 내재적 요인', ['in']], ['2. 외재적 요인 =', ['ex']],
   ['문화 동화', ['as']], ['문화 병존', ['co']], ['문화 융합', ['fu']], ['문화 접변', ['ac']],
 ].map(([c, ids]) => [c, seq(ids)]);
 const SPEC = { clicks: CLICKS.map(([, s]) => s) };
