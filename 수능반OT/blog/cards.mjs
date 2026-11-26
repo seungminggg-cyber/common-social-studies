@@ -123,9 +123,9 @@ cards.push(page('', `
     ${stop(3, '고난도 + 주간 실전', '6월 중순 ~ 9월 초', '6모 분석으로 시작 · 수특·수완·6모 반영', '9월 모평')}
     ${stop(4, '파이널', '9월 ~ 수능', '9모 분석으로 시작 · 실전 모의고사 집중', '수능')}
   </div>
-  <div class="foot"><div class="box hi" style="padding:26px 34px;display:flex;align-items:center;justify-content:space-between">
-    <span style="font-size:26px;font-weight:700">1년 내내, 매주 실전 모의고사</span>
-    <span style="font-size:48px;font-weight:900" class="y"><span style="font-size:26px;color:#fff">약 </span>45<span style="font-size:28px;color:#fff">회</span></span>
+  <div class="foot"><div class="box hi" style="padding:24px 34px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:24px;font-weight:700;line-height:1.45">매주 실전 모의고사 최소 약 45회<br><span style="color:#C9D5EE;font-weight:600">파이널까지 최종</span></span>
+    <span style="font-size:52px;font-weight:900" class="y"><span style="font-size:26px;color:#fff">약 </span>70~80<span style="font-size:28px;color:#fff">회</span></span>
   </div></div>`));
 
 // 6. 수강 안내(수업 구성·숙제 원칙 포함)
