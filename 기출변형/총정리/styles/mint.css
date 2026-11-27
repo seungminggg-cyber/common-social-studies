@@ -1,0 +1,224 @@
+/* 시안 1 · 실전 띠형 — 표지: 브랜드형(대단원 색 전면, 큰 회차 번호)
+   DAY 머리는 대단원 색 굵은 띠, 본문은 흰 바탕 + 검정 괘선(시험지 느낌), 문제 번호 검정 네모 */
+.wk-s1 { --disp: 'Pretendard Variable', sans-serif; }
+.wk-s1 .page-cover { padding: 0; }
+.cv { flex: 1; display: flex; flex-direction: column; font-family: var(--disp); }
+.cv-name i { display: inline-block; width: 46mm; height: 5mm; border-bottom: .8pt solid currentColor; vertical-align: bottom; margin-left: 2mm; }
+.cv1 { background: var(--c1-dark); color: #fff; padding: 20mm 20mm 15mm; }
+.cv1 .cv-top { display: flex; justify-content: space-between; font-size: 9pt; font-weight: 600; letter-spacing: .14em; border-bottom: .8pt solid rgba(255,255,255,.45); padding-bottom: 3mm; }
+.cv1 .cv-week { margin-top: 13mm; line-height: .8; }
+.cv1 .cv-week span { display: block; font-size: 20pt; font-weight: 800; letter-spacing: .32em; color: rgba(255,255,255,.7); margin-bottom: 4mm; }
+.cv1 .cv-week b { display: block; font-size: 180pt; font-weight: 900; letter-spacing: -.06em; margin-left: -4mm; }
+.cv1 .cv-school { margin-top: 10mm; display: flex; align-items: baseline; gap: 4mm; }
+.cv1 .cv-school b { font-size: 36pt; font-weight: 800; letter-spacing: -.02em; }
+.cv1 .cv-school span { font-size: 13pt; font-weight: 500; opacity: .9; }
+.cv1 .cv-range { align-self: flex-start; margin-top: 4mm; background: #fff; color: var(--c1-dark); font-size: 11.5pt; font-weight: 700; padding: 1.4mm 3.4mm; }
+.cv1 .cv-inside { margin-top: auto; border-top: 2.6pt solid #fff; padding-top: 4mm; display: grid; grid-template-columns: 30mm 1fr; }
+.cv1 .cv-lab { font-size: 9pt; font-weight: 800; letter-spacing: .2em; padding-top: .8mm; }
+.cv1 .wk-list { list-style: none; margin: 0; padding: 0; }
+.cv1 .wk-list li { display: grid; grid-template-columns: 19mm 1fr; font-size: 10.5pt; line-height: 1.95; border-bottom: .4pt solid rgba(255,255,255,.25); }
+.cv1 .wk-list b { font-weight: 800; color: rgba(255,255,255,.65); }
+.cv1 .cv-foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 7mm; font-size: 8.8pt; }
+
+.cv-mark { position: absolute; font: 600 210pt/1 'Noto Serif KR', serif; color: rgba(255,255,255,.10); pointer-events: none; }
+.cv1 .cv-mark { right: 14mm; top: 104mm; }
+.cv-top b { font-weight: 900; letter-spacing: .16em; margin-left: 1mm; }
+.cv-prog { display: flex; align-items: center; gap: 1.2mm; }
+.cv-prog span { margin-right: 1.6mm; font-weight: 800; letter-spacing: .1em; }
+.cv-prog i { width: 7mm; height: 1.8mm; background: currentColor; opacity: .3; }
+.cv-prog i.on { opacity: 1; }
+/* 쪽 머리: 연한 대단원 색 띠 */
+.wk-s1 .page-head, .wk-s1 .page.even .page-head { background: var(--c1-soft); border-bottom: 0; padding: 0 3mm; color: var(--c1-dark); }
+.wk-s1 .ph-left b { color: var(--c1-dark); font-family: var(--disp); font-weight: 900; letter-spacing: .06em; }
+/* 문제 두 단 사이 세로선(시험지처럼) */
+.wk-s1 .region-day .region-slots { position: relative; }
+.wk-s1 .region-day .region-slots::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: .6pt solid #aaa49d; }
+
+/* ════════ 학습지 총정리(MINT 총정리) — 위는 주간지 시안 1(styles/s1.css)에서 복사한 표지, 아래는 총정리 부분 ════════ */
+.sm { --disp: 'Pretendard Variable', sans-serif; }
+.sm .page-cover { padding: 0; }
+.sm .page-head, .sm .page.even .page-head { background: var(--c1-soft); border-bottom: 0; padding: 0 3mm; color: var(--c1-dark); }
+.sm .ph-left b { color: var(--c1-dark); font-family: var(--disp); font-weight: 900; letter-spacing: .06em; }
+.sm .page[data-ch="답"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+
+/* 표지 */
+.sm-cv .cv-wm { margin-top: 16mm; }
+.sm-cv-school { margin-top: 26mm; display: flex; align-items: baseline; gap: 4mm; }
+.sm-cv-school b { font-size: 40pt; font-weight: 800; letter-spacing: -.02em; }
+.sm-cv-school span { font-size: 13pt; opacity: .9; }
+.sm-cv-title { font-size: 30pt; font-weight: 300; letter-spacing: -.01em; margin-top: 2mm; }
+.sm-cv .cv-range { margin-top: 6mm; }
+.sm-cv-parts { margin-top: auto; border-top: 2.6pt solid #fff; padding-top: 4mm; display: flex; flex-wrap: wrap; gap: 2mm; }
+.sm-cv-parts span { border: .8pt solid rgba(255,255,255,.7); padding: 1mm 3mm; font-size: 10pt; font-weight: 600; }
+
+/* 차례·쓰는 법 */
+.sm-guide h2 { font: 800 15pt var(--disp); color: var(--c1-dark); margin: 2mm 0 3mm; border-bottom: 2pt solid var(--ink); padding-bottom: 1.4mm; }
+.sm-toc { width: 100%; border-collapse: collapse; font-size: 9.4pt; margin-bottom: 6mm; }
+.sm-toc th { font-size: 7.8pt; color: var(--gray); font-weight: 600; text-align: center; border-bottom: .6pt solid var(--ink); padding: 1mm; }
+.sm-toc td { border-bottom: .4pt solid var(--rule); padding: 1.6mm 1.2mm; text-align: center; }
+.sm-toc td:nth-child(2) { text-align: left; }
+.sm-toc td.no { font: 900 11pt var(--disp); color: var(--c1); width: 12mm; }
+.sm-toc td:nth-child(n+3) { width: 15mm; font-weight: 700; }
+.sm-toc td.na { color: #c9c4be; font-weight: 400; }
+.sm-toc tr.toc-big td { text-align: left; background: var(--c1-soft); color: var(--c1-dark); font: 800 9.4pt var(--disp); }
+.sm-toc tr.toc-bt td { color: var(--ink-2); font-size: 8.8pt; }
+.sm-toc tr.toc-bt td:nth-child(3) { text-align: left; }
+.sm-how { margin: 0; padding-left: 5mm; font-size: 9.4pt; line-height: 1.75; }
+
+/* 중단원 첫머리 */
+.sm-open { display: grid; grid-template-columns: auto 1fr auto; align-items: stretch; background: var(--c1); color: #fff; margin-bottom: 3mm; }
+.sm-open-no { background: var(--ink); padding: 2mm 4.5mm; display: flex; flex-direction: column; justify-content: center; }
+.sm-open-no span { font-size: 6.8pt; letter-spacing: .04em; opacity: .8; }
+.sm-open-no b { font: 900 30pt/1 var(--disp); letter-spacing: -.03em; }
+.sm-open-t { padding: 2.6mm 4mm; align-self: center; }
+.sm-open-t h2 { margin: 0; font: 800 17pt/1.2 var(--disp); color: #fff; letter-spacing: -.02em; }
+.sm-open-t p { margin: .8mm 0 0; font-size: 7.6pt; opacity: .85; }
+.sm-open-parts { list-style: none; margin: 0; padding: 2mm 4mm 2mm 0; display: flex; flex-direction: column; justify-content: center; font-size: 7.6pt; }
+.sm-open-parts b { display: inline-block; width: 5mm; opacity: .7; }
+
+/* 부분 띠: 01 자세한 정리, 02 빈칸 테스트 … */
+.sm-band { display: flex; align-items: baseline; gap: 2.4mm; background: var(--ink); color: #fff; padding: 1.2mm 3mm; margin-bottom: 2.6mm; }
+.sm-band b { font: 900 10pt var(--disp); color: var(--c1-line); }
+.sm-band span { font: 800 10.4pt var(--disp); letter-spacing: .04em; }
+.sm-band i { font-style: normal; font-size: 7.6pt; color: rgba(255,255,255,.72); margin-left: auto; }
+
+/* 정리 항목 */
+.sm-item { border-top: 1.4pt solid var(--ink); padding-top: 1.4mm; margin-bottom: 2.2mm; }
+.sm-h { display: flex; align-items: baseline; gap: 2mm; margin-bottom: 1.4mm; }
+.sm-h > b { font: 900 10.4pt var(--disp); color: var(--c1); }
+.sm-h h3 { margin: 0; font: 800 10.6pt var(--disp); letter-spacing: -.01em; }
+.sm-pg { margin-left: auto; font-size: 7pt; font-weight: 700; color: var(--c1-dark); border: .5pt solid var(--c1-line); padding: 0 1.4mm; white-space: nowrap; }
+.sm-item .tbl-wrap, .sm-item .kv, .sm-item .chain, .sm-item .flow, .sm-item .ul, .sm-item p.p { margin-top: 1.2mm; margin-bottom: 1.2mm; }
+.sm-item .p, .sm-item .ul li, .sm-item .kv td, .sm-item .tbl td { font-size: 8.8pt; line-height: 1.55; }
+.sm-item .tbl th { font-size: 8.4pt; }
+.sm-item .kv th { width: 24mm; }
+.sm-item b { color: var(--c1-dark); }
+.star { color: #c8102e; font-weight: 800; margin-right: .5mm; }
+/* 빈칸: 번호 + 밑줄 칸 */
+.bk { display: inline-block; position: relative; border-bottom: .8pt solid var(--ink); height: 1.2em; vertical-align: -.25em; margin: 0 .3em; }
+.bk i { position: absolute; left: -.1em; top: -.55em; font: 800 5.6pt/1 var(--disp); font-style: normal; color: #fff; background: var(--c1); padding: .2mm .7mm; }
+.page-blank .sm-item .tbl td, .page-blank .sm-item .kv td, .page-blank .sm-item .ul li, .page-blank .sm-item .p { line-height: 1.95; }
+.page-blank .ch-step, .page-blank .fl-text { line-height: 1.95; }
+
+/* 경제 그래프 */
+.sv-fig { margin: 1.4mm 0; text-align: center; }
+.sv { max-width: 150mm; font-family: var(--disp); }
+.sv-t { font-size: 10px; font-weight: 800; fill: var(--ink); }
+.sv-l { font-size: 8.5px; fill: var(--ink-2); }
+.sv-b { font-weight: 800; fill: var(--ink); }
+.sv-a { font-size: 10px; font-weight: 800; fill: var(--ink); text-anchor: middle; }
+.sv-ax { stroke: var(--ink); stroke-width: 1; }
+.sv-d, .sv-s { stroke: var(--ink); stroke-width: 1.4; }
+.sv-g { stroke: #888; stroke-width: .7; stroke-dasharray: 2 2; }
+.sv-w { stroke: var(--c1); stroke-width: 1.2; }
+.sv-ar1 { fill: var(--c1-soft); }
+.sv-ar2 { fill: var(--c1-line); }
+.sv-fig figcaption { font-size: 7.4pt; color: var(--gray); }
+
+/* O/X */
+.ox-q { display: grid; grid-template-columns: 5mm 1fr 12mm; column-gap: 1mm; font-size: 8.8pt; line-height: 1.5; border-bottom: .4pt dotted var(--rule); padding: 1mm 0 1.4mm; }
+.ox-n { font: 800 9pt var(--disp); color: var(--c1); }
+.ox-b { display: flex; justify-content: flex-end; gap: 1mm; }
+.ox-b i { display: inline-grid; place-items: center; width: 5mm; height: 5mm; border: .6pt solid var(--ink); font-size: 6.8pt; font-weight: 700; font-style: normal; color: var(--gray); }
+.ox-fix { grid-column: 2 / 4; display: flex; align-items: flex-end; gap: 1.4mm; margin-top: 1.2mm; }
+.ox-fix em { font-style: normal; font-size: 6.6pt; color: var(--gray); white-space: nowrap; }
+.ox-fix i { flex: 1; border-bottom: .4pt solid #bbb; height: 5mm; }
+
+/* 계산 풀이 */
+.cc-formula { border: 1pt solid var(--ink); padding: 2mm 3mm; margin-bottom: 2.6mm; background: var(--c1-pale); }
+.cc-formula > b { font: 800 9.4pt var(--disp); color: var(--c1-dark); }
+.cc-formula ul { margin: 1mm 0 0; padding-left: 4mm; font-size: 8.6pt; line-height: 1.6; }
+.cc-ex, .cc-pr { border-top: 1.4pt solid var(--ink); padding-top: 1.4mm; margin-bottom: 3mm; }
+.cc-h { display: flex; align-items: center; gap: 2mm; margin-bottom: 1mm; }
+.cc-h b { font: 800 10pt var(--disp); }
+.cc-tag { background: var(--c1); color: #fff; font: 800 7.6pt var(--disp); padding: .4mm 1.8mm; }
+.cc-tag2 { background: var(--ink); }
+.cc-stem { margin: 0 0 1.2mm; font-size: 8.8pt; line-height: 1.55; }
+.cc-ex .tbl-wrap, .cc-pr .tbl-wrap { max-width: 110mm; margin: 1mm 0 1.6mm; }
+.cc-steps { background: #f6f4f1; padding: 1.8mm 3mm; }
+.cc-steps > span { font: 800 8pt var(--disp); color: var(--c1-dark); }
+.cc-steps ol { margin: .6mm 0 0; padding-left: 5mm; font-size: 8.6pt; line-height: 1.6; }
+.cc-given { font-size: 8.4pt; border-left: 2.4pt solid var(--c1); padding: .6mm 2.4mm; margin: 1mm 0 1.6mm; background: var(--c1-pale); }
+.cc-given b { color: var(--c1-dark); margin-right: 1mm; }
+.cc-asks { margin: 0; padding-left: 5mm; font-size: 8.8pt; }
+.cc-asks li { margin-bottom: 1.2mm; }
+.cc-asks li i { display: block; height: 15mm; border-bottom: .4pt solid #bbb; background: repeating-linear-gradient(transparent 0 7.2mm, #e4e1dd 7.2mm 7.45mm); }
+
+/* 쪽 아래: 목표 시간 · 채점 칸 */
+.sm .page-foot { gap: 3mm; }
+.sm-log { flex: 1; display: flex; gap: 4.5mm; align-items: center; font-size: 7.8pt; color: var(--ink-2); border-top: .6pt solid var(--ink); padding-top: 1mm; }
+.page.even .sm-log { justify-content: flex-end; }
+.sm-log .g { background: var(--c1); color: #fff; padding: .2mm 2mm; font-weight: 700; }
+.sm-log .g b { color: #fff; }
+.sm-log i { display: inline-block; width: 10mm; border-bottom: .5pt solid var(--ink-2); height: 3.6mm; vertical-align: bottom; }
+.sm-log u { text-decoration: none; display: inline-grid; place-items: center; width: 3.8mm; height: 3.8mm; border: .5pt solid var(--ink-2); font-size: 6pt; margin-left: .8mm; }
+/* 옆 색인: 중단원 번호 */
+.sm .edge-tab.sm-tab { height: 20mm; display: flex; align-items: center; justify-content: center; }
+.sm .edge-tab.sm-tab span { display: flex; flex-direction: column; align-items: center; line-height: 1; font-family: var(--disp); }
+.sm .edge-tab.sm-tab b { font-size: 11pt; font-weight: 900; }
+.sm .edge-tab.sm-tab small { font-size: 6pt; font-weight: 800; writing-mode: vertical-rl; letter-spacing: .1em; }
+
+/* 대단원 백지테스트 (블록 모양은 백지테스트 채팅의 것을 따름) */
+.bt-band { display: flex; align-items: baseline; gap: 2.6mm; background: var(--c1); color: #fff; padding: 1.8mm 3.4mm; margin-bottom: 3mm; }
+.bt-band b { font: 900 18pt/1 var(--disp); }
+.bt-band span { font: 800 13pt var(--disp); }
+.bt-band em { font-style: normal; font-size: 10pt; font-weight: 600; }
+.bt-band i { margin-left: auto; font-style: normal; font-size: 8pt; opacity: .85; }
+.bt { font-family: var(--disp); font-size: 8.8pt; line-height: 1.42; display: flex; flex-direction: column; gap: 3.4mm; }
+.bt-h { display: flex; align-items: baseline; gap: 2mm; border-bottom: 1.4pt solid var(--ink); padding-bottom: .8mm; margin-bottom: 1.4mm; }
+.bt-no { background: var(--c1); color: #fff; font-weight: 800; font-size: 8.4pt; width: 5mm; height: 5mm; display: inline-grid; place-items: center; align-self: center; }
+.bt-kind { font-size: 7.2pt; font-weight: 700; color: var(--c1); border: .7pt solid var(--c1); padding: 0 1.4mm; align-self: center; }
+.bt-h h3 { margin: 0; font-size: 10pt; font-weight: 800; }
+.bt-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.bt-flow { display: grid; border-top: .6pt solid var(--ink); }
+.bt-flow > div { padding: 1.2mm 1.6mm; border-bottom: .5pt solid #bbb; }
+.bt-fname { background: var(--c1-soft); font-weight: 800; color: var(--c1-dark); text-align: center; position: relative; border-left: .5pt solid #fff; }
+.bt-fc { background: var(--c1-soft); }
+.bt-frow { font-weight: 700; font-size: 8pt; color: #444; display: flex; align-items: center; }
+.bt-fcell { border-left: .5pt dotted #bbb; min-height: 10mm; }
+table.bt-cmp { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.bt-cmp th, .bt-cmp td { border: .5pt solid #888; padding: 1.2mm 1.6mm; vertical-align: top; }
+.bt-cmp tr:first-child th { background: var(--c1); color: #fff; font-weight: 700; text-align: center; border-color: var(--c1); }
+.bt-cmp tr:first-child th:first-child { background: #fff; border-color: #fff #888 #888 #fff; }
+.bt-cmp th.rh { background: var(--c1-soft); font-size: 8pt; text-align: center; vertical-align: middle; }
+.bt-test .bt-cmp td { height: 11mm; }
+dl.bt-keys { display: grid; grid-template-columns: 1fr 1fr; column-gap: 5mm; margin: 0; }
+dl.bt-keys > div { display: grid; grid-template-columns: 24mm 1fr; border-bottom: .5pt solid #bbb; min-height: 10mm; }
+dl.bt-keys dt { font-weight: 800; color: var(--c1); padding: 1.2mm 0; }
+dl.bt-keys dd { margin: 0; padding: 1.2mm 0 1.2mm 2mm; border-left: .5pt dotted #bbb; }
+ol.bt-fill { list-style: none; counter-reset: f; margin: 0; padding: 0; }
+ol.bt-fill li { counter-increment: f; padding: 1.2mm 0 1.2mm 6mm; position: relative; border-bottom: .5pt dotted #bbb; line-height: 2.05; }
+ol.bt-fill li::before { content: counter(f); position: absolute; left: 0; top: 1.8mm; font-weight: 800; color: var(--c1); font-size: 8.2pt; }
+.bt-f { display: inline-block; min-width: 18mm; padding: 0 2mm; border-bottom: .8pt solid var(--ink); text-align: center; line-height: 1.45; font-weight: 700; }
+.bt-kw { line-height: 2; }
+.bt-kw .bt-f { min-width: 14mm; }
+.bt-g { color: #555; }
+.bt-test .bt-a, .bt-test .bt-a b { color: transparent; }
+.bt-test .bt-cmp td:has(.bt-whole), .bt-test .bt-fcell:has(.bt-whole), .bt-test dl.bt-keys dd:has(.bt-whole) { background-image: repeating-linear-gradient(transparent 0 5.4mm, #e2e2e2 5.4mm 5.65mm); background-position: 0 1.2mm; }
+.bt-ans .bt-a, .bt-ans .bt-a b { color: #c8102e; }
+.bt-ans { font-size: 8pt; gap: 2mm; }
+
+/* 정답 별책 */
+.ans-cover { border-bottom: 2.4pt solid var(--ink); padding: 2mm 0 3mm; margin-bottom: 2mm; }
+.ans-cover span { font-size: 8pt; color: var(--gray); letter-spacing: .06em; }
+.ans-cover h1 { margin: 1mm 0; font: 900 24pt var(--disp); }
+.ans-cover p { margin: 0; font-size: 8.4pt; color: var(--ink-2); }
+.ans-u { background: var(--ink); color: #fff; font: 800 10.4pt var(--disp); padding: 1.2mm 3mm; margin-top: 1.5mm; }
+.ans-u b { margin-right: 2mm; color: #cfcac4; }
+.ans-sec { margin: 1.4mm 0 2mm; font-size: 8.2pt; line-height: 1.55; }
+.ans-sec h4 { margin: 0 0 .8mm; font: 800 8.8pt var(--disp); border-bottom: .6pt solid var(--ink); padding-bottom: .4mm; }
+.ans-bk { margin: 0; padding: 0; list-style: none; counter-reset: a; columns: 2; column-gap: 4mm; }
+.ans-bk li { counter-increment: a; break-inside: avoid; }
+.ans-bk li::before { content: counter(a); display: inline-block; min-width: 5mm; font-weight: 800; color: var(--gray); font-size: 7pt; }
+.ans-ox, .ans-steps { margin: 0; padding-left: 5mm; }
+.ans-ox b.o { color: #1d6c74; } .ans-ox b.x { color: #c8102e; }
+.ans-fin { margin: .8mm 0 0; background: #f2efeb; padding: 1mm 2mm; }
+.ans-btw h4 { font-size: 9.4pt; }
+.slot > .row:last-child .sm-item, .slot > .row:last-child .cc-ex, .slot > .row:last-child .cc-pr { margin-bottom: 0; }
+p.ans-bk { margin: 0 0 1mm; font-size: 8.2pt; line-height: 1.6; display: block; columns: auto; }
+p.ans-bk > b { display: inline-block; min-width: 5.5mm; color: var(--ink); font-weight: 900; }
+p.ans-bk span { display: inline-block; margin-right: 2.6mm; white-space: nowrap; }
+p.ans-bk span i { font-style: normal; font-size: 6.4pt; font-weight: 800; color: #fff; background: #8a847d; padding: 0 .7mm; margin-right: .7mm; }
+.slot > .row:last-child .sm-item > :last-child { margin-bottom: 0 !important; }
+.ans-ox, .ans-steps, .cc-steps ol, .cc-asks, .sm-how { list-style: decimal outside !important; }
+.ans-ox li::marker, .ans-steps li::marker, .cc-steps li::marker, .cc-asks li::marker { font-weight: 800; color: var(--gray); }
