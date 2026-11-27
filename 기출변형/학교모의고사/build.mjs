@@ -33,7 +33,9 @@ const SCHOOLS = {
   jakjeon: { name: '작전고', range: '통합사회2 Ⅲ·Ⅳ·Ⅴ', units: ['07', '08', '09', '10', '11', '12', '13', '14', '15', '16'] },
   gyeyang: { name: '계양고', range: '통합사회2 Ⅲ·Ⅳ, Ⅴ-2·3', units: ['07', '08', '09', '10', '11', '12', '13', '15', '16'] },
   gyesan: { name: '계산여고', range: '통합사회2 Ⅰ-3, Ⅱ-3, Ⅲ-3·4, Ⅳ-2·3, Ⅴ-2·3', units: ['03', '06', '09', '10', '12', '13', '15', '16'] },
-  seoun: { name: '서운고', range: '통합사회2 Ⅱ-3, Ⅲ-3·4, Ⅳ-2·3, Ⅴ', units: ['06', '09', '10', '12', '13', '14', '15', '16'] }, // Ⅱ-3(06)은 2026-11-27 범위 추가
+  seoun: { name: '서운고', range: '통합사회2 Ⅱ-3, Ⅲ-3·4, Ⅳ-2·3, Ⅴ', units: ['06', '09', '10', '12', '13', '14', '15', '16'],
+    // 표의 widths(칸 너비)를 그대로 지키게 함 — 학생 V·O/X 칸이 많은 표에서 진술 칸이 좁아지는 것을 막음(서운고만 적용)
+    css: '.q-data .tbl:has(colgroup) { table-layout: fixed; width: 100%; } .q-data .tbl:has(colgroup) th, .q-data .tbl:has(colgroup) td { padding-left: .7mm !important; padding-right: .7mm !important; word-break: keep-all; }' }, // Ⅱ-3(06)은 2026-11-27 범위 추가
   inguk: { name: '인천국제고', range: '통합사회2 Ⅲ, Ⅳ-2·3, Ⅴ-2·3', units: ['07', '08', '09', '10', '12', '13', '15', '16'] },
 };
 const SC = SCHOOLS[target];
@@ -123,6 +125,7 @@ const doc = (title, sections) => `<!doctype html>
 <link rel="stylesheet" href="../../../주간지/weekly.css">
 <link rel="stylesheet" href="../../../주간지/styles/s1.css">
 <style>.page[data-ch="종합"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }</style>
+${SC.css ? `<style>${SC.css}</style>` : ''}
 </head>
 <body class="theme-b theme-d theme-h wb wbc wk wk-s1 mode-student">
 <div id="book"></div>
