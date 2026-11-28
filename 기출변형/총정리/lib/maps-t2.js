@@ -116,3 +116,26 @@ export const INNOVATION_MAP = {
   legend: [{ pin: 'k2', label: '혁신 도시' }, { pin: 'k3', label: '행정 중심 복합 도시' }, { pin: 'k1', label: '수도권 중심' }], legendV: true, legendAt: [6, 380],
   source: '지도 자료: Natural Earth, 통계청, 고도 AWS Terrain Tiles (위치는 대략)',
 };
+
+// 12 세계의 여러 갈등 14곳 (2026-11-28 계산여고 채팅에서 추가 — 학습지 '하나 더 공부하기' 지도의 분쟁 지역, 위치는 대략)
+export const CONFLICT_MAP14 = {
+  t: 'map', view: 'world', title: '세계의 여러 갈등 지역', style: 'political', seas: false, h: 300,
+  markers: [
+    { lon: 32.0, lat: 48.8, label: '러시아-우크라이나', pos: 'top', cls: 'k3' },
+    { lon: -6.7, lat: 54.6, label: '북아일랜드', pos: 'left', cls: 'k3' },
+    { lon: 1.5, lat: 41.6, label: '카탈루냐', pos: 'left', cls: 'k3' },
+    { lon: 35.0, lat: 31.6, label: '이스라엘-팔레스타인', pos: 'left', cls: 'k3' },
+    { lon: 38.5, lat: 35.2, label: '시리아', pos: 'right', cls: 'k3' },
+    { lon: 47.5, lat: 15.5, label: '예멘', pos: 'right', cls: 'k3' },
+    { lon: 39.5, lat: 9.0, label: '에티오피아', pos: 'bottom', cls: 'k3' },
+    { lon: -2.0, lat: 17.0, label: '말리', pos: 'left', cls: 'k3' },
+    { lon: 75.5, lat: 34.3, label: '카슈미르', pos: 'top', cls: 'k3' },
+    { lon: 96.0, lat: 21.0, label: '미얀마', pos: 'bottom', cls: 'k3' },
+    { lon: 114.0, lat: 12.0, label: '남중국해', pos: 'right', cls: 'k3' },
+    { lon: -102.0, lat: 23.0, label: '멕시코', pos: 'left', cls: 'k3' },
+    { lon: -74.0, lat: 4.0, label: '콜롬비아', pos: 'right', cls: 'k3' },
+    { lon: -59.0, lat: -51.7, label: '포클랜드 제도', pos: 'right', cls: 'k3' },
+  ],
+  legend: [{ pin: 'k3', label: '분쟁 지역(위치는 대략)' }],
+  source: '지도 자료: Natural Earth',
+};
