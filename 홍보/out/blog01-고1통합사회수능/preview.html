@@ -20,8 +20,8 @@
   --on-dark-2: #b9c1dc; --on-dark-3: #7c87ad; --rule-dark: #2c3a6e;
 
   /* 글자 크기 단계 (카드뉴스 1080 기준) */
-  --fs-display: 124px; --fs-title: 76px; --fs-big: 52px; --fs-lead: 38px;
-  --fs-body: 34px; --fs-small: 29px; --fs-label: 25px;
+  --fs-display: 124px; --fs-title: 76px; --fs-big: 54px; --fs-lead: 40px;
+  --fs-body: 36px; --fs-small: 30px; --fs-label: 28px;
   /* 여백 단계 */
   --sp-1: 12px; --sp-2: 24px; --sp-3: 40px; --sp-4: 64px; --sp-5: 96px;
 
@@ -74,7 +74,7 @@ b, strong { font-weight: 700; }
 /* 목록 줄: 맨 위 진한 선 1개 + 줄 사이 가는 선. 왼쪽 작은 이름, 오른쪽 내용. */
 .rows { border-top: 2px solid var(--ink); }
 .dark .rows { border-top-color: #fff; }
-.row { display: grid; grid-template-columns: var(--rl, 150px) 1fr; column-gap: var(--sp-2); padding: 24px 0 26px; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.row { display: grid; grid-template-columns: var(--rl, 150px) 1fr; column-gap: var(--sp-2); padding: 30px 0 32px; border-bottom: 1px solid var(--rule); align-items: baseline; }
 .dark .row { border-bottom-color: var(--rule-dark); }
 .row > .k { font-size: var(--fs-label); font-weight: 700; color: var(--gray); }
 .row > .v { font-size: var(--fs-body); font-weight: 500; line-height: 1.5; letter-spacing: -0.03em; }
@@ -95,7 +95,7 @@ b, strong { font-weight: 700; }
 .dark .aside > .v b { color: #fff; }
 
 /* 출처 한 줄 */
-.source { font-size: 20px; color: var(--gray); line-height: 1.5; font-weight: 500; }
+.source { font-size: 24px; color: var(--gray); line-height: 1.5; font-weight: 500; }
 
 /* 상징: 모서리 하나 잘린 작은 네모. 채널 이름 앞과 표지에만. */
 .mark { display: inline-block; width: 16px; height: 16px; background: var(--mint); clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%); vertical-align: 1px; margin-right: 10px; }
