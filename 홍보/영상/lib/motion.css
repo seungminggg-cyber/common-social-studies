@@ -1,0 +1,62 @@
+/* 영상 공통 모양 — 무대, 장면, 자막, 진행 막대, 움직임(@keyframes)
+ * 색·글꼴은 ../../lib/brand.css(디자인 채팅 담당)를 그대로 가져다 쓴다.
+ * 움직임은 data-a="이름@언제" 로 붙인다(사용법은 README). 여기 있는 이름: up down left right in pop grow-x grow-y wipe draw hl strike dim on pulse out
+ */
+html, body { background: var(--paper); margin: 0; overflow: hidden; }
+.stage { position: relative; width: var(--W); height: var(--H); overflow: hidden; background: var(--paper); }
+.scene { position: absolute; inset: 0; background: var(--paper); color: var(--ink); visibility: hidden; }
+.scene.dark { background: var(--navy); color: #fff; }
+.scene.white { background: #fff; }
+
+/* 맨 위 줄: 이름표 + 장 이름 */
+.v-top { position: absolute; left: var(--pad); right: var(--pad); top: calc(var(--pad) * .72); display: flex; justify-content: space-between; align-items: center;
+  font-size: calc(var(--u) * 26); line-height: 1; }
+.v-top .wm { font-size: inherit; }
+.v-ch { display: flex; align-items: center; gap: calc(var(--u) * 14); font-weight: 700; color: var(--gray); letter-spacing: -0.01em; }
+.v-ch b { color: var(--mint-ink); font-weight: 800; font-feature-settings: 'tnum' 1; }
+.dark .v-ch { color: #aab4d6; }
+.dark .v-ch b { color: var(--mint); }
+
+/* 자막: 화면 아래, 어두운 띠 위 흰 글자 (밝은·어두운 장면 모두 잘 읽힘) */
+.sub { position: absolute; left: 50%; bottom: var(--subB); transform: translateX(-50%); width: max-content; max-width: calc(var(--W) - var(--pad) * 2);
+  padding: calc(var(--u) * 12) calc(var(--u) * 28) calc(var(--u) * 14); background: rgba(10, 14, 32, .82); color: #fff;
+  font-size: var(--subF); font-weight: 650; line-height: 1.38; letter-spacing: -0.02em; text-align: center; border-radius: calc(var(--u) * 6);
+  white-space: pre-line; z-index: 50; }
+.sub:empty { display: none; }
+.sub b { color: var(--mint); font-weight: 800; }
+
+/* 진행 막대 (긴 영상) */
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--u) * 6); background: rgba(18, 29, 69, .14); z-index: 60; }
+.prog i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--mint-2); }
+.prog s { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(255, 255, 255, .9); }
+
+/* ── 움직임 ── (시간은 data-a 에서 정함) */
+@keyframes up { from { opacity: 0; transform: translateY(calc(var(--u) * 36)); } to { opacity: 1; transform: none; } }
+@keyframes down { from { opacity: 0; transform: translateY(calc(var(--u) * -36)); } to { opacity: 1; transform: none; } }
+@keyframes left { from { opacity: 0; transform: translateX(calc(var(--u) * -60)); } to { opacity: 1; transform: none; } }
+@keyframes right { from { opacity: 0; transform: translateX(calc(var(--u) * 60)); } to { opacity: 1; transform: none; } }
+@keyframes in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.6); } 70% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: none; } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes grow-y { from { transform: scaleY(0); } to { transform: none; } }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes draw { from { stroke-dashoffset: var(--len, 1000); } to { stroke-dashoffset: 0; } }
+@keyframes hl { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
+@keyframes strike { from { --s: 0%; } to { --s: 100%; } }
+@keyframes dim { from { opacity: 1; } to { opacity: .28; } }
+@keyframes pulse { 0% { transform: none; } 40% { transform: scale(1.07); } 100% { transform: none; } }
+@property --s { syntax: '<percentage>'; inherits: true; initial-value: 0%; }
+
+[data-a] { transform-origin: var(--origin, center); }
+.grow-l { --origin: left center; }
+.grow-b { --origin: center bottom; }
+svg [data-a~="draw"], svg .draw { stroke-dasharray: var(--len, 1000); }
+
+/* 형광펜 (hl 움직임과 함께) */
+.mk { background-image: linear-gradient(transparent 60%, rgba(63, 216, 182, .55) 60%, rgba(63, 216, 182, .55) 92%, transparent 92%);
+  background-repeat: no-repeat; background-size: 0% 100%; padding: 0 .08em; }
+.dark .mk { background-image: linear-gradient(transparent 62%, rgba(63, 216, 182, .42) 62%, rgba(63, 216, 182, .42) 94%, transparent 94%); }
+/* 취소선 (strike 움직임과 함께) */
+.st { position: relative; }
+.st::after { content: ''; position: absolute; left: -4%; top: 52%; height: calc(var(--u) * 5); width: calc(var(--s) * 1.08); background: var(--coral); border-radius: 3px; }
