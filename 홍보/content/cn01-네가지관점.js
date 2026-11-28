@@ -112,7 +112,7 @@ export default function (H) {
     ['정치적·경제적 관점은 따로 있는 관점?', '정치·경제는 <b>사회적 관점 안에</b> 들어감'],
     ['한 해의 분포 지도로 변화 추이를 알 수 있다?', '한 해의 분포는 공간적 관점. <b>변화</b>를 보려면 여러 시기의 자료가 필요함(시간적)'],
   ];
-  pages.push({ name: '함정', html: `<section class="slide">
+  pages.push({ name: '함정', html: `<section class="slide s8">
     ${run(8, N)}
     ${head({ eyebrow: '헷갈림 주의', title: '자주 헷갈리는 것<br><span class="acc">3가지</span>' })}
     <div class="body">${rows(traps.map(([q, a], i) => [String(i + 1), `${q}<small>${a}</small>`]), { big: true, rl: '64px' })}</div>
@@ -153,8 +153,11 @@ export default function (H) {
   /* 관점 */
   .persp .title { font-size: 104px; line-height: 1.1; }
   .p-q { margin-top: 32px; font-size: var(--fs-big); font-weight: 700; letter-spacing: -0.045em; line-height: 1.3; }
+  .persp .row { padding: 26px 0 28px; }
   .clues { font-weight: 700; }
   .clues i { font-style: normal; color: var(--gray); font-weight: 400; margin: 0 14px; }
+
+  .s8 .row { padding: 40px 0 42px; }
 
   /* 퀴즈 */
   .qz .row > .end { font-size: var(--fs-small); color: var(--gray); font-weight: 600; letter-spacing: 0.04em; padding-left: 24px; }
