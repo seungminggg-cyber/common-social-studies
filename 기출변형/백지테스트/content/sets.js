@@ -17,7 +17,7 @@ export default {
   // 2회 인천국제고 전용(강사 2026-11-22: 심화가 많아 따로) — node build.mjs set2k
   '2k': { name: '2회-인천국제고', pages: ['k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8', 'k9', 'k10'] },
   // 평일 클리닉(강사 2026-11-23): 학교별 핵심 개념 백지 20분 — 학교 학습지에서 특히 자세히 다룬 부분. node build.mjs setc
-  c: { name: '클리닉', dir: '클리닉', schools: { 계양고: ['cgy'], 작전고: ['cjj'], 서운고: ['csw'], 계산여고: ['cgs'], 인천국제고: ['cig'] } },
+  c: { name: '클리닉', dir: '클리닉', schools: { 계양고: ['fa', 'fm', 'fw', 'fn', 'foL'], 작전고: ['fa', 'fm', 'fw', 'fn', 'fv1', 'foJ'], 서운고: ['fm', 'fns', 'fv1s', 'fo'], 계산여고: ['fg', 'fm', 'fn', 'foL'], 인천국제고: ['cig'] } },
   // 11/29 수업 '시험 직전 누적 백지'(강사 2026-11-28: 국제고 먼저, 30분) — node build.mjs setf
-  f: { name: '1129', dir: '1129', schools: { 계양고: ['fa', 'fb', 'fw', 'fp', 'fe'], 작전고: ['fa', 'fb', 'fw', 'fp', 'fv1', 'fe2'], 서운고: ['fbs', 'fps', 'fv1s', 'fe2'], 계산여고: ['fg', 'fbc', 'fp', 'fec'], 인천국제고: ['fk3a', 'fk3b', 'fk5', 'fk6', 'fk7', 'fk8'] } },
+  f: { name: '1129', dir: '1129', schools: { 계양고: ['fa', 'fm', 'fw', 'fn', 'foL'], 작전고: ['fa', 'fm', 'fw', 'fn', 'fv1', 'foJ'], 서운고: ['fm', 'fns', 'fv1s', 'fo'], 계산여고: ['fg', 'fm', 'fn', 'foL'], 인천국제고: ['fk3a', 'fk3b', 'fk5', 'fk6', 'fk7', 'fk8'] } },
 };
