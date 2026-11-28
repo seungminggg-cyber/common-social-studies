@@ -10,7 +10,7 @@ export default {
   opt: { ethics: true },
   // 맨 끝 Ⅳ·Ⅴ 백지도(공통 55개국판, 백지도 채팅 브랜치 claude/blank-map으로 만든 PDF)
   blankMap: true,
-  // 대단원 끝 백지테스트(백지테스트 채팅의 계양고 쪽 — content/gyeyang/blank/*.js로 복사해 씀)
-  blank: { 'Ⅲ': [], 'Ⅳ': [], 'Ⅴ': [] },
+  // 대단원 끝 백지테스트(백지테스트 채팅 claude/blank-test에서 복사: 1회 공통 07~10·gy1, 2회 r2c·r2d·r2h(계양고 패스 블록 뺌)·r2f, 1회 공통 15·16)
+  blank: { 'Ⅲ': ['07', '08', '09', '10', 'gy1'], 'Ⅳ': ['r2c', 'r2d', 'r2h'], 'Ⅴ': ['15', '16', 'r2f'] },
   append: [{ title: '실전 모의고사', file: 'out/append/계양고-모의고사.pdf' }],
 };
