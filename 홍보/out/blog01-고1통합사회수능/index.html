@@ -1,0 +1,204 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>/* 통합사회 승민T — 홍보물 공통 디자인
+ *  색: 남색(바탕) + 민트(강조, '승민T' → seungmint 말장난) + 산호색(틀린 것·주의)
+ *  글꼴: Pretendard(SIL OFL, 상업 이용 가능)
+ *  상징: 모서리 하나를 잘라 낸 네모(개념서 시안 H와 같은 모양) — .cut
+ *  @font-face 주소(아래 url)는 build.mjs가 채운다.
+ */
+@font-face { font-family: 'Pretendard Variable'; src: url('../../../textbook/node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 45 920; font-display: block; }
+
+:root {
+  --navy: #121d45; --navy-2: #1b2a5f; --navy-3: #2b3d7e; --navy-line: #34478c;
+  --mint: #3fd8b6; --mint-2: #1fb894; --mint-ink: #0c7a63; --mint-soft: #e2f7f1; --mint-pale: #f1fbf8;
+  --paper: #f5f6f8; --white: #ffffff;
+  --ink: #141a2c; --ink-2: #3b4258; --gray: #767d92; --rule: #dde1ea; --rule-2: #c9cfdc;
+  --coral: #f2573f; --coral-soft: #fde8e3;
+  /* 대단원 색 (개념서 시안 H와 같은 톤) */
+  --u1: #1d6c74; --u2: #7d3566; --u3: #3c7a37; --u4: #b5651d; --u5: #234e8a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #8a8f9c; }
+body { font-family: 'Pretendard Variable', sans-serif; color: var(--ink); word-break: keep-all; overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased; font-feature-settings: 'ss06' 1; letter-spacing: -0.01em; }
+b, strong { font-weight: 750; }
+.cut { clip-path: polygon(0 0, calc(100% - var(--cut, 18px)) 0, 100% var(--cut, 18px), 100% 100%, 0 100%); }
+.ic { display: inline-block; vertical-align: middle; flex: none; }
+
+/* ── 카드뉴스 한 장 (인스타그램 4:5) ── */
+.slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; background: var(--paper);
+  padding: 80px 84px 120px; display: flex; flex-direction: column; margin: 0 0 40px; }
+.slide.dark { background: var(--navy); color: #fff; }
+.top { display: flex; justify-content: space-between; align-items: center; font-size: 26px; line-height: 1; height: 40px; flex: none; }
+.wm { font-weight: 800; letter-spacing: -0.03em; display: flex; align-items: center; gap: 12px; }
+.wm i { width: 22px; height: 22px; background: var(--mint); --cut: 7px; display: inline-block;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%); }
+.wm .s { font-weight: 500; opacity: .72; }
+.wm .t { color: var(--mint-2); }
+.dark .wm .t { color: var(--mint); }
+.crumb { font-size: 23px; font-weight: 600; color: var(--gray); letter-spacing: -0.01em; }
+.dark .crumb { color: #aab4d6; }
+.foot { position: absolute; left: 84px; right: 84px; bottom: 50px; display: flex; justify-content: space-between; align-items: center;
+  font-size: 22px; color: var(--gray); font-weight: 600; }
+.dark .foot { color: #8f9ac2; }
+.foot .pg b { color: var(--ink); }
+.dark .foot .pg b { color: #fff; }
+.next { display: flex; align-items: center; gap: 8px; color: var(--mint-ink); font-weight: 700; }
+.dark .next { color: var(--mint); }
+
+/* 큰 제목 */
+.h { font-size: 76px; font-weight: 850; line-height: 1.16; letter-spacing: -0.045em; }
+.h .m { color: var(--mint-2); }
+.dark .h .m { color: var(--mint); }
+.hl { background: linear-gradient(transparent 62%, rgba(63, 216, 182, .55) 62%, rgba(63, 216, 182, .55) 92%, transparent 92%); padding: 0 4px; }
+.lead { font-size: 34px; line-height: 1.5; color: var(--ink-2); font-weight: 500; letter-spacing: -0.02em; }
+.dark .lead { color: #c9d1ee; }
+.kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 28px; font-weight: 750; color: var(--mint-ink); letter-spacing: -0.01em; }
+.dark .kicker { color: var(--mint); }
+
+/* 이름표 */
+.tag { display: inline-flex; align-items: center; justify-content: center; font-weight: 750; color: #fff; background: var(--navy);
+  --cut: 12px; padding: 10px 22px 11px; font-size: 28px; letter-spacing: -0.02em; white-space: nowrap; }
+.chip { display: inline-flex; align-items: center; height: 54px; padding: 0 22px; border: 2px solid var(--rule-2); background: #fff;
+  font-size: 27px; font-weight: 650; color: var(--ink-2); --cut: 12px; }
+
+/* ── 블로그 그림 (가로 1080, 높이 자유) ── */
+.fig { width: 1080px; position: relative; background: #fff; padding: 76px 80px 64px; margin: 0 0 40px; overflow: hidden; }
+.fig.dark { background: var(--navy); color: #fff; }
+.fig .src { margin-top: 36px; font-size: 22px; color: var(--gray); line-height: 1.5; }
+.fig .brand { position: absolute; right: 80px; bottom: 26px; font-size: 21px; font-weight: 800; color: var(--gray); letter-spacing: -0.02em; }
+.fig.dark .brand { color: #8f9ac2; }
+
+  .sq { width: 18px; height: 18px; background: var(--mint); display: inline-block; clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%); }
+  .hl-d { color: var(--navy); background: var(--mint); padding: 0 12px 4px; margin: 0 2px; }
+  .sq1 { height: 1080px; padding: 76px 80px; }
+  .f1-k { margin-top: 110px; }
+  .f1-h { font-size: 96px; font-weight: 900; line-height: 1.16; letter-spacing: -0.055em; margin-top: 24px; }
+  .f1-l { margin-top: 30px; font-size: 38px; }
+  .f1-s { position: absolute; left: 80px; right: 80px; bottom: 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .f1-s div { background: var(--navy-2); border-top: 4px solid var(--mint); padding: 26px 26px 28px; --cut: 18px; }
+  .f1-s b { display: block; font-size: 34px; font-weight: 850; letter-spacing: -0.04em; color: var(--mint); }
+  .f1-s span { display: block; font-size: 24px; color: #c9d1ee; margin-top: 8px; font-weight: 550; }
+
+  .f-k { font-size: 26px; font-weight: 800; color: var(--mint-ink); }
+  .f-h { font-size: 56px; font-weight: 900; letter-spacing: -0.05em; line-height: 1.2; margin-top: 10px; }
+  .f-h .m { color: var(--mint-2); }
+  .f-l { font-size: 30px; color: var(--ink-2); margin-top: 16px; font-weight: 550; }
+
+  .cmp { margin-top: 44px; }
+  .cmp-h, .cmp-r { display: grid; grid-template-columns: 190px 1fr 1fr; gap: 0; }
+  .cmp-h span { font-size: 26px; font-weight: 800; padding: 16px 22px; }
+  .cmp-h .old { color: var(--gray); background: var(--paper); }
+  .cmp-h .new { color: var(--mint); background: var(--navy); --cut: 14px; }
+  .cmp-r { border-bottom: 2px solid var(--rule); }
+  .cmp-r span { padding: 24px 22px; font-size: 29px; line-height: 1.42; letter-spacing: -0.03em; }
+  .cmp-r .ck { font-weight: 800; color: var(--ink); font-size: 27px; }
+  .cmp-r .old { color: var(--gray); background: #fafbfc; font-weight: 550; }
+  .cmp-r .new { color: var(--ink); background: var(--mint-pale); font-weight: 600; }
+  .cmp-r .new b { color: var(--mint-ink); }
+  .cmp-r small { font-size: 23px; }
+
+  .gen { margin-top: 44px; display: flex; flex-direction: column; gap: 16px; }
+  .gen-r { display: grid; grid-template-columns: 210px 60px 1fr 150px; align-items: center; padding: 26px 30px; border: 2px solid var(--rule); background: #fff; }
+  .gen-r.me { background: var(--navy); color: #fff; border-color: var(--navy); --cut: 22px; }
+  .g-who { font-size: 36px; font-weight: 850; letter-spacing: -0.04em; line-height: 1.2; }
+  .g-who small { display: block; font-size: 24px; font-weight: 700; color: var(--mint); margin-top: 4px; }
+  .g-arr { color: var(--mint-2); }
+  .g-ex b { display: block; font-size: 34px; font-weight: 850; letter-spacing: -0.03em; }
+  .g-ex span { display: block; font-size: 26px; color: var(--gray); margin-top: 6px; font-weight: 550; }
+  .me .g-ex span { color: #c9d1ee; }
+  .g-nth { justify-self: end; font-size: 26px; font-weight: 800; color: var(--mint-ink); background: var(--mint-soft); padding: 10px 18px; }
+  .me .g-nth { background: var(--mint); color: var(--navy); }
+  .gen-n { margin-top: 30px; display: flex; gap: 16px; align-items: flex-start; background: var(--paper); padding: 24px 28px; }
+  .gen-n .ic { color: var(--mint-ink); margin-top: 3px; }
+  .gen-n p { font-size: 28px; line-height: 1.5; font-weight: 550; color: var(--ink-2); }
+  .gen-n b { color: var(--ink); }
+
+  .units { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .uc-h { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px solid var(--ink); padding-bottom: 14px; }
+  .uc-h b { font-size: 36px; font-weight: 900; letter-spacing: -0.04em; }
+  .uc-h span { font-size: 24px; color: var(--gray); font-weight: 650; }
+  .ur { display: grid; grid-template-columns: 60px 1fr; gap: 18px; padding: 20px 0; border-bottom: 2px solid var(--rule); height: 162px; align-items: start; }
+  .un { width: 60px; height: 60px; color: #fff; font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center; --cut: 12px; font-feature-settings: 'tnum' 0; }
+  .ut { font-size: 30px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.3; }
+  .uk { font-size: 24px; color: var(--gray); line-height: 1.45; margin-top: 6px; font-weight: 550; }
+
+  .bars { margin-top: 48px; display: flex; flex-direction: column; gap: 34px; }
+  .b-t { display: flex; justify-content: space-between; align-items: baseline; }
+  .b-t span { font-size: 31px; font-weight: 700; letter-spacing: -0.03em; }
+  .b-t b { font-size: 48px; font-weight: 900; color: var(--mint-ink); letter-spacing: -0.03em; }
+  .b-t small { font-size: 26px; color: var(--gray); font-weight: 700; margin-left: 4px; }
+  .b-tr { display: grid; grid-template-columns: repeat(25, 1fr); gap: 6px; margin-top: 14px; }
+  .b-tr i { height: 46px; background: var(--rule); }
+  .b-tr i.on { background: var(--mint-2); }
+  .split { margin-top: 52px; }
+  .sp-t { font-size: 26px; font-weight: 800; color: var(--gray); }
+  .sp-b { display: flex; margin-top: 14px; height: 84px; }
+  .sp-b div { display: flex; align-items: center; padding: 0 24px; font-size: 28px; color: #fff; font-weight: 600; gap: 10px; }
+  .sp-b b { font-weight: 850; }
+  .s1 { background: var(--navy-3); }
+  .s2 { background: var(--navy); }
+  .f5-n { margin-top: 40px; display: flex; gap: 16px; align-items: flex-start; background: var(--mint-pale); border-left: 8px solid var(--mint-2); padding: 24px 28px; }
+  .f5-n .ic { color: var(--mint-ink); margin-top: 3px; }
+  .f5-n p { font-size: 29px; line-height: 1.5; font-weight: 550; }
+  </style></head><body><section data-shot="01-대표" class="fig dark sq1">
+    <div class="top"><div class="wm"><i></i><span><span class="s">통합사회</span> 승민<span class="t">T</span></span></div><div class="crumb">2028 대입 개편</div></div>
+    <div class="kicker f1-k"><i class="sq"></i>예비 고1 학부모님께</div>
+    <h1 class="f1-h">고1 통합사회,<br>이제 <span class="hl-d">수능 과목</span>입니다</h1>
+    <p class="lead f1-l">2028 대입 개편 후 꼭 알아야 할 5가지</p>
+    <div class="f1-s">
+      <div class="cut"><b>25문항 · 40분</b><span>수능 통합사회</span></div>
+      <div class="cut"><b>문·이과 모두</b><span>탐구 응시자 전원</span></div>
+      <div class="cut"><b>고1 과목 = 범위</b><span>통합사회1·2</span></div>
+    </div>
+  </section>
+<section data-shot="02-달라진점" class="fig">
+    <div class="f-k">무엇이 달라졌나</div>
+    <h2 class="f-h">수능 사회탐구, <span class="m">이렇게 바뀝니다</span></h2>
+    <div class="cmp">
+      <div class="cmp-h"><span></span><span class="old">2027학년도 수능까지</span><span class="new cut">2028학년도 수능부터</span></div>
+      <div class="cmp-r"><span class="ck">사회탐구</span><span class="old">9과목 중 골라서 응시<br><small>생활과 윤리, 한국지리, 사회·문화 등</small></span><span class="new"><b>통합사회</b> 1과목</span></div><div class="cmp-r"><span class="ck">응시 방법</span><span class="old">사회·과학탐구 17과목 중<br>최대 2과목 선택</span><span class="new">탐구를 보면 <b>통합사회 + 통합과학</b><br>둘 다 응시</span></div><div class="cmp-r"><span class="ck">문항 · 시간</span><span class="old">과목당 20문항 · 30분</span><span class="new">과목당 <b>25문항 · 40분</b></span></div><div class="cmp-r"><span class="ck">출제 범위</span><span class="old">2·3학년 선택과목</span><span class="new"><b>고1</b> 통합사회1·2</span></div><div class="cmp-r"><span class="ck">고1 통합사회</span><span class="old">수능에 나오지 않음</span><span class="new"><b>수능 범위 전체</b></span></div>
+    </div>
+    <div class="src">자료: 교육부·한국교육과정평가원 발표(2025.1), 2028학년도 대학수학능력시험 개편 내용</div>
+    <div class="brand">통합사회 승민T</div>
+  </section>
+<section data-shot="03-누가언제" class="fig">
+    <div class="f-k">누가, 언제 보나</div>
+    <h2 class="f-h">통합사회 수능, <span class="m">학년별 시험 시기</span></h2>
+    <div class="gen"><div class="gen-r">
+      <div class="g-who">지금 고2</div>
+      <div class="g-arr"><svg class="ic" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0" /> <path d="M13 18l6 -6" /> <path d="M13 6l6 6" /></svg></div>
+      <div class="g-ex"><b>2028학년도 수능</b><span>2027년 11월 18일 (예정)</span></div>
+      <div class="g-nth">첫 번째</div></div><div class="gen-r">
+      <div class="g-who">지금 고1</div>
+      <div class="g-arr"><svg class="ic" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0" /> <path d="M13 18l6 -6" /> <path d="M13 6l6 6" /></svg></div>
+      <div class="g-ex"><b>2029학년도 수능</b><span>2028년 11월</span></div>
+      <div class="g-nth">두 번째</div></div><div class="gen-r me cut">
+      <div class="g-who">지금 중3<br><small>예비 고1</small></div>
+      <div class="g-arr"><svg class="ic" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0" /> <path d="M13 18l6 -6" /> <path d="M13 6l6 6" /></svg></div>
+      <div class="g-ex"><b>2030학년도 수능</b><span>2029년 11월</span></div>
+      <div class="g-nth">세 번째</div></div></div>
+    <div class="gen-n"><svg class="ic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z" /> <path d="M5 21v-7" /></svg><p>통합사회 학력평가는 2025년부터 치르고 있고, <b>2027년 6월</b>에는 평가원 모의평가가 처음 열립니다.</p></div>
+    <div class="src">수능 날짜: 2028학년도는 발표된 예정일, 2029·2030학년도는 해마다 11월에 치르는 일정에 따른 예상</div>
+    <div class="brand">통합사회 승민T</div>
+  </section>
+<section data-shot="04-단원" class="fig">
+    <div class="f-k">어떤 과목인가</div>
+    <h2 class="f-h">통합사회1·2, <span class="m">10개 단원 한눈에</span></h2>
+    <p class="f-l">윤리 · 지리 · 일반사회 · 역사가 한 과목 안에 섞여 있습니다.</p>
+    <div class="units"><div class="uc"><div class="uc-h"><b>통합사회1</b><span>보통 1학기</span></div>
+    <div class="ur"><span class="un cut" style="background:var(--u1)">I</span><div><div class="ut">통합적 관점</div><div class="uk">네 가지 관점 · 통합적 탐구</div></div></div><div class="ur"><span class="un cut" style="background:var(--u2)">II</span><div><div class="ut">인간, 사회, 환경과 행복</div><div class="uk">행복의 기준 · 행복의 조건</div></div></div><div class="ur"><span class="un cut" style="background:var(--u3)">III</span><div><div class="ut">자연환경과 인간</div><div class="uk">기후와 생활 · 자연관 · 환경 문제</div></div></div><div class="ur"><span class="un cut" style="background:var(--u4)">IV</span><div><div class="ut">문화와 다양성</div><div class="uk">문화권 · 문화 변동 · 문화 상대주의 · 다문화</div></div></div><div class="ur"><span class="un cut" style="background:var(--u5)">V</span><div><div class="ut">생활공간과 사회</div><div class="uk">도시화 · 교통·통신 · 지역의 변화</div></div></div></div><div class="uc"><div class="uc-h"><b>통합사회2</b><span>보통 2학기</span></div>
+    <div class="ur"><span class="un cut" style="background:var(--u1)">I</span><div><div class="ut">인권 보장과 헌법</div><div class="uk">인권 · 헌법과 기본권 · 인권 문제</div></div></div><div class="ur"><span class="un cut" style="background:var(--u2)">II</span><div><div class="ut">사회 정의와 불평등</div><div class="uk">정의관(롤스·노직) · 사회·공간 불평등</div></div></div><div class="ur"><span class="un cut" style="background:var(--u3)">III</span><div><div class="ut">시장경제와 지속가능발전</div><div class="uk">자본주의 · 합리적 선택 · 금융 생활 · 무역</div></div></div><div class="ur"><span class="un cut" style="background:var(--u4)">IV</span><div><div class="ut">세계화와 평화</div><div class="uk">세계화 · 국제 사회 · 남북 분단·동아시아 갈등</div></div></div><div class="ur"><span class="un cut" style="background:var(--u5)">V</span><div><div class="ut">미래와 지속가능한 삶</div><div class="uk">인구 문제 · 자원 · 세계시민</div></div></div></div></div>
+    <div class="src">단원 이름: 2022 개정 교육과정 통합사회1·2 · 학기 편성은 학교마다 다를 수 있습니다.</div>
+    <div class="brand">통합사회 승민T</div>
+  </section>
+<section data-shot="05-예시문항" class="fig">
+    <div class="f-k">어떤 문제가 나오나</div>
+    <h2 class="f-h">예시문항 25문항, <span class="m">직접 분류해 보니</span></h2>
+    <div class="bars"><div class="bar"><div class="b-t"><span>지도 · 그래프 · 표를 읽어야 푸는 문항</span><b>13<small>/25</small></b></div><div class="b-tr"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div><div class="bar"><div class="b-t"><span>사상가의 주장을 판단하는 문항</span><b>6<small>/25</small></b></div><div class="b-tr"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div><div class="bar"><div class="b-t"><span>역사 자료(사료·문서)를 읽는 문항</span><b>4<small>/25</small></b></div><div class="b-tr"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div></div>
+    <div class="split">
+      <div class="sp-t">단원별 문항 수</div>
+      <div class="sp-b"><div class="s1" style="flex:9"><b>통합사회1</b> 9문항</div><div class="s2" style="flex:16"><b>통합사회2</b> 16문항</div></div>
+    </div>
+    <div class="f5-n"><svg class="ic" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" /> <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" /> <path d="M9.7 17l4.6 0" /></svg><p>개념 암기만으로는 부족합니다. <b>처음 보는 자료를 배운 개념에 연결하는 연습</b>이 필요합니다.</p></div>
+    <div class="src">자료: 2028학년도 대학수학능력시험 예시문항(한국교육과정평가원, 사회탐구 25문항)을 승민T가 직접 분류. 한 문항이 두 유형에 걸칠 수 있습니다.</div>
+    <div class="brand">통합사회 승민T</div>
+  </section></body></html>

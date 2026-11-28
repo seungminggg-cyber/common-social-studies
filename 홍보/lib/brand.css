@@ -1,0 +1,68 @@
+/* 통합사회 승민T — 홍보물 공통 디자인
+ *  색: 남색(바탕) + 민트(강조, '승민T' → seungmint 말장난) + 산호색(틀린 것·주의)
+ *  글꼴: Pretendard(SIL OFL, 상업 이용 가능)
+ *  상징: 모서리 하나를 잘라 낸 네모(개념서 시안 H와 같은 모양) — .cut
+ *  @font-face 주소(아래 url)는 build.mjs가 채운다.
+ */
+@font-face { font-family: 'Pretendard Variable'; src: url('FONT_URL') format('woff2'); font-weight: 45 920; font-display: block; }
+
+:root {
+  --navy: #121d45; --navy-2: #1b2a5f; --navy-3: #2b3d7e; --navy-line: #34478c;
+  --mint: #3fd8b6; --mint-2: #1fb894; --mint-ink: #0c7a63; --mint-soft: #e2f7f1; --mint-pale: #f1fbf8;
+  --paper: #f5f6f8; --white: #ffffff;
+  --ink: #141a2c; --ink-2: #3b4258; --gray: #767d92; --rule: #dde1ea; --rule-2: #c9cfdc;
+  --coral: #f2573f; --coral-soft: #fde8e3;
+  /* 대단원 색 (개념서 시안 H와 같은 톤) */
+  --u1: #1d6c74; --u2: #7d3566; --u3: #3c7a37; --u4: #b5651d; --u5: #234e8a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #8a8f9c; }
+body { font-family: 'Pretendard Variable', sans-serif; color: var(--ink); word-break: keep-all; overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased; font-feature-settings: 'ss06' 1; letter-spacing: -0.01em; }
+b, strong { font-weight: 750; }
+.cut { clip-path: polygon(0 0, calc(100% - var(--cut, 18px)) 0, 100% var(--cut, 18px), 100% 100%, 0 100%); }
+.ic { display: inline-block; vertical-align: middle; flex: none; }
+
+/* ── 카드뉴스 한 장 (인스타그램 4:5) ── */
+.slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; background: var(--paper);
+  padding: 80px 84px 120px; display: flex; flex-direction: column; margin: 0 0 40px; }
+.slide.dark { background: var(--navy); color: #fff; }
+.top { display: flex; justify-content: space-between; align-items: center; font-size: 26px; line-height: 1; height: 40px; flex: none; }
+.wm { font-weight: 800; letter-spacing: -0.03em; display: flex; align-items: center; gap: 12px; }
+.wm i { width: 22px; height: 22px; background: var(--mint); --cut: 7px; display: inline-block;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%); }
+.wm .s { font-weight: 500; opacity: .72; }
+.wm .t { color: var(--mint-2); }
+.dark .wm .t { color: var(--mint); }
+.crumb { font-size: 23px; font-weight: 600; color: var(--gray); letter-spacing: -0.01em; }
+.dark .crumb { color: #aab4d6; }
+.foot { position: absolute; left: 84px; right: 84px; bottom: 50px; display: flex; justify-content: space-between; align-items: center;
+  font-size: 22px; color: var(--gray); font-weight: 600; }
+.dark .foot { color: #8f9ac2; }
+.foot .pg b { color: var(--ink); }
+.dark .foot .pg b { color: #fff; }
+.next { display: flex; align-items: center; gap: 8px; color: var(--mint-ink); font-weight: 700; }
+.dark .next { color: var(--mint); }
+
+/* 큰 제목 */
+.h { font-size: 76px; font-weight: 850; line-height: 1.16; letter-spacing: -0.045em; }
+.h .m { color: var(--mint-2); }
+.dark .h .m { color: var(--mint); }
+.hl { background: linear-gradient(transparent 62%, rgba(63, 216, 182, .55) 62%, rgba(63, 216, 182, .55) 92%, transparent 92%); padding: 0 4px; }
+.lead { font-size: 34px; line-height: 1.5; color: var(--ink-2); font-weight: 500; letter-spacing: -0.02em; }
+.dark .lead { color: #c9d1ee; }
+.kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 28px; font-weight: 750; color: var(--mint-ink); letter-spacing: -0.01em; }
+.dark .kicker { color: var(--mint); }
+
+/* 이름표 */
+.tag { display: inline-flex; align-items: center; justify-content: center; font-weight: 750; color: #fff; background: var(--navy);
+  --cut: 12px; padding: 10px 22px 11px; font-size: 28px; letter-spacing: -0.02em; white-space: nowrap; }
+.chip { display: inline-flex; align-items: center; height: 54px; padding: 0 22px; border: 2px solid var(--rule-2); background: #fff;
+  font-size: 27px; font-weight: 650; color: var(--ink-2); --cut: 12px; }
+
+/* ── 블로그 그림 (가로 1080, 높이 자유) ── */
+.fig { width: 1080px; position: relative; background: #fff; padding: 76px 80px 64px; margin: 0 0 40px; overflow: hidden; }
+.fig.dark { background: var(--navy); color: #fff; }
+.fig .src { margin-top: 36px; font-size: 22px; color: var(--gray); line-height: 1.5; }
+.fig .brand { position: absolute; right: 80px; bottom: 26px; font-size: 21px; font-weight: 800; color: var(--gray); letter-spacing: -0.02em; }
+.fig.dark .brand { color: #8f9ac2; }
