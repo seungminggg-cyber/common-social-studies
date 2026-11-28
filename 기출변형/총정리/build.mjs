@@ -16,6 +16,7 @@ import { dirname, join } from 'node:path';
 import { block, inl } from '../../textbook/lib/render.js';
 import { BOOKS, UNITS } from '../lib/units.js';
 import { svgBlock } from './lib/svg.js';
+import { ensureTerrain } from '../../textbook/lib/terrain.js';
 import { blankPage } from './lib/blank.js';
 
 const require = createRequire(import.meta.url);
@@ -88,13 +89,12 @@ function unitOpener(u, part, id, items) {
   return `<div class="sm-open${part === 2 ? ' sm-open2' : ''}" id="${id}">
     <div class="sm-open-no"><span>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</span><b>${esc(u.no)}</b></div>
     <div class="sm-open-t"><h2>${esc(u.title)}</h2><p>${part === 1 ? esc(u.source) : 'PART 2 연습문제 총정리'}</p></div>
-    <ol class="sm-open-parts">${items.map((p, k) => `<li><b>${two(k + 1)}</b>${p}</li>`).join('')}</ol>
   </div>`;
 }
 function sumRows(u) {
   return u.sum.map((s, i) => {
     const body = star(sumVersion(s.blocks).map(render).join(''));
-    const head = `<div class="sm-h"><b>${two(i + 1)}</b><h3>${star(inl(s.h.replace(KEY, '$1')))}</h3><span class="sm-pg">${s.pg ? `학습지 ${esc(s.pg)}쪽` : '학습지 없음(개념서)'}</span></div>`;
+    const head = `<div class="sm-h"><b>${two(i + 1)}</b><h3>${star(inl(s.h.replace(KEY, '$1')))}</h3><span class="sm-pg">${s.pg ? `학습지 ${esc(s.pg)}쪽` : '필수 개념 참고'}</span></div>`;
     return `<div class="row sm-row" data-min="${readMin(body).toFixed(2)}" data-cnt="0"><div class="main"><div class="sm-item">${head}${body}</div></div></div>`;
   }).join('\n');
 }
@@ -198,19 +198,12 @@ function guidePage(bigs, appendList) {
   }
   if (lastBig && bigs.includes(lastBig)) r2.push(btRow(lastBig));
   for (const a of appendList) r2.push(`<tr class="toc-bt"><td></td><td>${esc(a.title)}</td><td colspan="3">${a.ans ? 'Ⅴ 백지테스트 뒤' : '책 맨 뒤'}</td></tr>`);
-  return `<section class="flow" data-kind="guide" data-tab="Ⅲ" data-head-left="${esc(headLeft)}" data-head-right="차례 · 이 책 쓰는 법"><div class="top"><div class="sm-guide">
+  return `<section class="flow" data-kind="guide" data-tab="Ⅲ" data-head-left="${esc(headLeft)}" data-head-right="차례"><div class="top"><div class="sm-guide">
     <h2>차례</h2>
     <div class="sm-toc2">
       <table class="sm-toc"><thead><tr><th colspan="2">PART 1 학습지 개념 총정리</th><th>쪽</th></tr></thead><tbody>${r1.join('')}</tbody></table>
       <table class="sm-toc"><thead><tr><th colspan="2">PART 2 연습문제 총정리</th><th>학습지 문제</th><th>O/X</th><th>계산</th></tr></thead><tbody>${r2.join('')}</tbody></table>
     </div>
-    <h2>이 책 쓰는 법</h2>
-    <ol class="sm-how">
-      <li>${inl('**PART 1 학습지 개념 총정리**: 학교 학습지를 순서대로 자세히 정리했다. 항목마다 붙은 **학습지 ○쪽**으로 학습지를 찾아볼 수 있고, **★는 학교 선생님이 필기·강조한 곳**이니 두 번 읽는다. 학습지에 없는 시험 범위는 **학습지 없음(개념서)**으로 표시했다.')}</li>
-      <li>${inl('**PART 2 연습문제 총정리**: 중단원마다 **학습지에 실린 문제**(그대로) → **O/X**(학습지 문장을 살짝 바꿈, X는 바르게 고쳐 쓰기) → **계산 풀이**(08·10: 학습지 예시 풀이를 따라 읽고 숫자를 바꾼 연습을 직접 품) 순서로 푼다.')}</li>
-      <li>${inl('대단원이 끝나면 **백지테스트**, 맨 끝에는 **Ⅳ·Ⅴ 백지도**(나라 위치)로 머릿속에 남은 것을 확인한다.')}</li>
-      <li>${inl('정답과 풀이는 모두 **별책**에 있다. 쪽 아래의 **목표 시간**을 보고 시간을 재며 풀고, **걸린 시간과 채점 결과**를 적는다. 수업 때 선생님이 이 칸을 보고 도와준다.')}</li>
-    </ol>
   </div></div></section>`;
 }
 
@@ -258,9 +251,10 @@ const page = (title, sections, layout) => `<!doctype html>
 </body></html>`;
 
 // ── 조립 ──
+await ensureTerrain(units.map((u) => u.sum)); // 지형도 바탕(없을 때만 만듦)
 const bigs = [...new Set(units.map((u) => u.big))];
 const blankAns = [];
-const body = [partPage(1, '학습지 개념 총정리', ['학교 학습지를 순서대로, 빈칸 없이 자세하게 정리했다.', '★ = 학교 선생님 필기·강조, **학습지 ○쪽** = 학습지 위치'])];
+const body = [partPage(1, '학습지 개념 총정리', ['★ = 학교 선생님 필기·강조, **학습지 ○쪽** = 학습지 위치, **필수 개념 참고** = 학습지 밖 시험 범위'])];
 for (const u of units) body.push(sumSection(u));
 body.push(partPage(2, '연습문제 총정리', ['중단원마다 학습지 문제(그대로) → O/X → 계산 풀이', '대단원 끝 백지테스트, 맨 끝 Ⅳ·Ⅴ 백지도', '정답과 풀이는 별책']));
 for (const big of bigs) {
