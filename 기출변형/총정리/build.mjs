@@ -213,7 +213,7 @@ function answerBook(blankAns) {
   for (const u of units) {
     rows.push(`<div class="row" data-keep="next"><div class="main"><div class="ans-u"><b>${esc(u.no)}</b> ${esc(u.title)}</div></div></div>`);
     (u.priv?.problems || []).forEach((q, i) => {
-      const ans = q.fill ? q.answer.map((x, k) => `${k + 1}) ${x}`).join(' / ') : CIRC[q.answer - 1];
+      const ans = q.fill ? q.answer.map((x, k) => `${k + 1}) ${x}`).join(' / ') : typeof q.answer === 'string' ? q.answer : CIRC[q.answer - 1]; // 선지 없는 <보기> 문제는 답을 글자로(예: 'ㄱ, ㄷ')
       rows.push(`<div class="row"><div class="main"><div class="ans-sec"><h4>학습지 문제 ${i + 1} · ${esc(q.from)} <span class="ans-a">${inl(ans)}</span></h4>${q.steps ? `<ol class="ans-steps">${q.steps.map((x) => `<li>${inl(x)}</li>`).join('')}</ol>` : ''}</div></div></div>`);
     });
     rows.push(`<div class="row"><div class="main"><div class="ans-sec"><h4>O/X</h4><ol class="ans-ox">${u.ox.map(([, o, fix]) => `<li><b class="${o === 'O' ? 'o' : 'x'}">${o}</b>${fix ? ` ${inl(fix)}` : ''}</li>`).join('')}</ol></div></div></div>`);
