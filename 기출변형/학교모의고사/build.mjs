@@ -122,7 +122,10 @@ const doc = (title, sections) => `<!doctype html>
 <link rel="stylesheet" href="../../../wb.css">
 <link rel="stylesheet" href="../../../주간지/weekly.css">
 <link rel="stylesheet" href="../../../주간지/styles/s1.css">
-<style>.page[data-ch="종합"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }</style>
+<style>.page[data-ch="종합"] { --c1: #1f1d1b; --c1-dark: #1f1d1b; --c1-soft: #eeeae5; --c1-line: #cfcac4; --c1-pale: #f7f5f2; }
+/* 십자말풀이 빗금 칸: 복사해도 흐려지지 않게 진하게(2026-11-28) */
+.tbl td.hatch { background: repeating-linear-gradient(135deg, #fff 0 2.6px, #8f8f8f 2.6px 3.9px) !important; }
+</style>
 </head>
 <body class="theme-b theme-d theme-h wb wbc wk wk-s1 mode-student">
 <div id="book"></div>
