@@ -16,6 +16,29 @@ export const CONFLICT_MAP = {
   source: '지도 자료: Natural Earth',
 };
 
+// 12 세계의 전쟁과 분쟁 지역(넓은 판 — 계양고 학습지 105쪽 지도의 지역들, 2026-11-28 추가)
+export const CONFLICT_MAP_WIDE = {
+  t: 'map', view: 'world', title: '세계의 주요 전쟁과 분쟁 지역', style: 'political', seas: false, h: 320,
+  markers: [
+    { lon: -6.7, lat: 54.6, label: '북아일랜드', pos: 'left', cls: 'k3' },
+    { lon: 1.5, lat: 41.8, label: '카탈루냐(에스파냐)', pos: 'left', cls: 'k3' },
+    { lon: -2.0, lat: 17.0, label: '말리', pos: 'left', cls: 'k3' },
+    { lon: 32.0, lat: 48.8, label: '러시아–우크라이나', pos: 'right', cls: 'k3' },
+    { lon: 35.0, lat: 31.6, label: '이스라엘–팔레스타인', pos: 'left', cls: 'k3' },
+    { lon: 38.5, lat: 35.0, label: '시리아', pos: 'right', cls: 'k3' },
+    { lon: 47.5, lat: 15.5, label: '예멘', pos: 'right', cls: 'k3' },
+    { lon: 39.5, lat: 9.0, label: '에티오피아', pos: 'bottom', cls: 'k3' },
+    { lon: 75.5, lat: 34.3, label: '카슈미르', pos: 'right', cls: 'k3' },
+    { lon: 96.0, lat: 21.0, label: '미얀마', pos: 'bottom', cls: 'k3' },
+    { lon: 114.0, lat: 12.0, label: '남중국해', pos: 'right', cls: 'k3' },
+    { lon: -102.0, lat: 23.5, label: '멕시코', pos: 'left', cls: 'k3' },
+    { lon: -74.0, lat: 4.0, label: '콜롬비아', pos: 'right', cls: 'k3' },
+    { lon: -59.0, lat: -51.7, label: '포클랜드 제도', pos: 'right', cls: 'k3' },
+  ],
+  legend: [{ pin: 'k3', label: '전쟁·분쟁 지역(위치는 대략)' }],
+  source: '지도 자료: Natural Earth',
+};
+
 // 13 동아시아의 영토 분쟁 지역과 독도 (개념서 13 지도와 같은 설정 — 지형 바탕을 함께 씀)
 export const EAST_ASIA_MAP = {
   t: 'map', view: [103, 4, 152, 49], title: '동아시아의 영토 분쟁 지역과 독도', h: 400, width: 70, style: 'terrain',
