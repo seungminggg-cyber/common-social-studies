@@ -43,8 +43,27 @@ function tradeSurplus() {
   return `<svg class="sv" viewBox="-6 -2 430 196" width="100%">${ex}${im}</svg>`;
 }
 
+// 좌표 그래프(생산 가능 곡선·수요 공급 등): { kind:'xy', xMax, yMax, xName, yName, xTicks, yTicks,
+//   lines:[{ a:[x,y], b:[x,y], name, at:[x,y], bold }], guides:[[x,y]...](점에서 두 축으로 점선) }
+function xy(b) {
+  const W = 230, H = 176, L = 34, B = 28;
+  const X = (x) => L + (x / b.xMax) * (W - L - 18);
+  const Y = (y) => H - B - (y / b.yMax) * (H - B - 18);
+  let s = `<line class="sv-ax" x1="${X(0)}" y1="${Y(b.yMax * 1.05)}" x2="${X(0)}" y2="${Y(0)}"/><line class="sv-ax" x1="${X(0)}" y1="${Y(0)}" x2="${X(b.xMax * 1.05)}" y2="${Y(0)}"/>`;
+  s += `<text class="sv-l" x="${X(0) - 4}" y="${Y(b.yMax * 1.05) - 4}" text-anchor="middle">${esc(b.yName)}</text><text class="sv-l" x="${X(b.xMax * 1.05)}" y="${Y(0) + 21}" text-anchor="end">${esc(b.xName)}</text>`;
+  s += `<text class="sv-l" x="${X(0) - 4}" y="${Y(0) + 10}" text-anchor="end">0</text>`;
+  for (const [x, y] of b.guides || []) s += `<line class="sv-g" x1="${X(0)}" y1="${Y(y)}" x2="${X(x)}" y2="${Y(y)}"/><line class="sv-g" x1="${X(x)}" y1="${Y(y)}" x2="${X(x)}" y2="${Y(0)}"/>`;
+  for (const t of b.xTicks || []) s += `<text class="sv-l" x="${X(t)}" y="${Y(0) + 10}" text-anchor="middle">${t}</text>`;
+  for (const t of b.yTicks || []) s += `<text class="sv-l" x="${X(0) - 4}" y="${Y(t) + 3}" text-anchor="end">${t}</text>`;
+  for (const l of b.lines) {
+    s += `<line class="${l.bold ? 'sv-d' : 'sv-s2'}" x1="${X(l.a[0])}" y1="${Y(l.a[1])}" x2="${X(l.b[0])}" y2="${Y(l.b[1])}"/>`;
+    if (l.name) s += `<text class="sv-l sv-b" x="${X(l.at[0])}" y="${Y(l.at[1])}">${esc(l.name)}</text>`;
+  }
+  return `<svg class="sv sv-xy" viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
+}
+
 export function svgBlock(b, inl) {
-  const body = { tradeSurplus }[b.kind];
+  const body = { tradeSurplus, xy }[b.kind];
   if (!body) throw new Error(`모르는 svg 그림: ${b.kind}`);
   return `<figure class="sv-fig">${body(b)}${b.caption ? `<figcaption>${inl(b.caption)}</figcaption>` : ''}</figure>`;
 }

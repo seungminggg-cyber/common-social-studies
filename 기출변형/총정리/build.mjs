@@ -78,33 +78,37 @@ const render = (b) => (b.t === 'svg' ? svgBlock(b, inl) : block(b));
 const chapterOf = (u) => BOOKS[UNITS[u.unit].book];
 const headLeft = `<b>${SERIES}</b> 총정리 | ${esc(BOOK.school)}`;
 const sectionAttrs = (u, part, kind, extra = '') => `data-kind="${kind}" data-tab="${esc(u.big)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${u.no} ${u.title} · ${part}`)}" ${extra}`;
-const PARTS = ['자세한 정리', '빈칸 테스트', 'O/X', '계산 풀이'];
-const partBand = (k, sub, id) => `<div class="sm-band"${id ? ` id="${id}"` : ''}><b>${two(k + 1)}</b><span>${PARTS[k]}</span>${sub ? `<i>${sub}</i>` : ''}</div>`;
 const readMin = (html) => Math.max(0.5, html.replace(/<[^>]+>/g, '').length / 250); // 꼼꼼히 읽기(외우며): 1분에 약 250자
+// 강사 결정(2026-11-28): 책을 PART 1 학습지 개념 총정리(빈칸 없는 정리) / PART 2 연습문제 총정리(학습지 문제 그대로 · O/X · 계산 풀이 · 백지테스트 · 백지도)로 나눈다. 빈칸판은 뺀다.
+const CIRC = ['①', '②', '③', '④', '⑤'];
+const band = (k, label, sub, id) => `<div class="sm-band"${id ? ` id="${id}"` : ''}><b>${two(k)}</b><span>${label}</span>${sub ? `<i>${sub}</i>` : ''}</div>`;
 
-function unitOpener(u) {
+function unitOpener(u, part, id, items) {
   const ch = chapterOf(u);
-  const parts = PARTS.filter((_, k) => k < 3 || u.calc).map((p, k) => `<li><b>${two(k + 1)}</b>${p}</li>`).join('');
-  return `<div class="sm-open" id="u${u.no}-sum">
+  return `<div class="sm-open${part === 2 ? ' sm-open2' : ''}" id="${id}">
     <div class="sm-open-no"><span>${esc(ch.chapter.no)}. ${esc(ch.chapter.title)}</span><b>${esc(u.no)}</b></div>
-    <div class="sm-open-t"><h2>${esc(u.title)}</h2><p>${esc(u.source)}</p></div>
-    <ol class="sm-open-parts">${parts}</ol>
+    <div class="sm-open-t"><h2>${esc(u.title)}</h2><p>${part === 1 ? esc(u.source) : 'PART 2 연습문제 총정리'}</p></div>
+    <ol class="sm-open-parts">${items.map((p, k) => `<li><b>${two(k + 1)}</b>${p}</li>`).join('')}</ol>
   </div>`;
 }
-function sumRows(u, mode, answers) {
-  if (mode !== 'sum') u._secAns = [];
+function sumRows(u) {
   return u.sum.map((s, i) => {
-    const from = answers ? answers.length : 0;
-    const blocks = mode === 'sum' ? sumVersion(s.blocks) : blankVersion(s.blocks, answers);
-    const title = mode === 'sum' ? s.h.replace(KEY, '$1') : s.h.replace(KEY, '$1');
-    let body = blocks.map(render).join('');
-    if (mode !== 'sum') body = fillBlanks(body, answers);
-    body = star(body);
-    const head = `<div class="sm-h"><b>${two(i + 1)}</b><h3>${star(inl(title))}</h3><span class="sm-pg">${s.pg ? `학습지 ${esc(s.pg)}쪽` : '학습지 없음(개념서)'}</span></div>`;
-    const n = mode === 'sum' ? 0 : (body.match(/class="bk"/g) || []).length;
-    if (mode !== 'sum') u._secAns.push({ no: two(i + 1), h: title, from, to: answers.length });
-    const min = mode === 'sum' ? readMin(body) : n * 0.35;
-    return `<div class="row sm-row" data-min="${min.toFixed(2)}" data-cnt="${n}"><div class="main"><div class="sm-item">${head}${body}</div></div></div>`;
+    const body = star(sumVersion(s.blocks).map(render).join(''));
+    const head = `<div class="sm-h"><b>${two(i + 1)}</b><h3>${star(inl(s.h.replace(KEY, '$1')))}</h3><span class="sm-pg">${s.pg ? `학습지 ${esc(s.pg)}쪽` : '학습지 없음(개념서)'}</span></div>`;
+    return `<div class="row sm-row" data-min="${readMin(body).toFixed(2)}" data-cnt="0"><div class="main"><div class="sm-item">${head}${body}</div></div></div>`;
+  }).join('\n');
+}
+// 학습지에 실린 문제(그대로, private/<중단원>.js의 problems)
+function probRows(u) {
+  return (u.priv?.problems || []).map((q, i) => {
+    const data = (q.data || []).map(render).join('');
+    const bogi = q.bogi ? `<div class="pq-bogi"><span>〈보기〉</span><ol>${q.bogi.map((x, k) => `<li><b>${'ㄱㄴㄷㄹ'[k]}.</b> ${inl(x)}</li>`).join('')}</ol></div>` : '';
+    const short = q.choices && q.choices.every((c) => [...c].length <= 8);
+    const choices = q.choices ? `<ol class="pq-ch${short ? ' pq-ch-short' : ''}">${q.choices.map((c, k) => `<li><b>${CIRC[k]}</b> ${inl(c)}</li>`).join('')}</ol>` : '';
+    const fill = q.fill ? `<ol class="pq-fill">${q.fill.map((f) => `<li>${inl(f.replace(/___/g, '<<B>>')).replace(/&lt;&lt;B&gt;&gt;/g, '<span class="pq-blank"></span>')}</li>`).join('')}</ol>` : '';
+    const n = q.fill ? q.fill.length : 1;
+    return `<div class="row" data-min="${q.fill ? n * 0.5 : 2.5}" data-cnt="${n}"><div class="main"><div class="pq"><div class="cc-h"><span class="cc-tag">학습지 문제 ${i + 1}</span><span class="sm-pg">${esc(q.from)}</span></div>
+      <p class="pq-stem">${inl(q.stem)}</p>${data}${bogi}${choices}${fill}</div></div></div>`;
   }).join('\n');
 }
 function oxRows(u) {
@@ -114,8 +118,7 @@ function calcRows(u) {
   const c = u.calc;
   const rows = [];
   rows.push(`<div class="row" data-keep="next" data-min="1" data-cnt="0"><div class="main"><div class="cc-formula"><b>공식 모음</b><ul>${c.formulas.map((f) => `<li>${inl(f)}</li>`).join('')}</ul></div></div></div>`);
-  const ex = u.priv?.examples || [];
-  ex.forEach((e, i) => {
+  (u.priv?.examples || []).forEach((e, i) => {
     rows.push(`<div class="row" data-min="3" data-cnt="0"><div class="main"><div class="cc-ex"><div class="cc-h"><span class="cc-tag">학습지 예시 ${i + 1}</span><b>${inl(e.title)}</b><span class="sm-pg">${esc(e.from)}</span></div>
       <p class="cc-stem">${inl(e.stem)}</p>${(e.data || []).map(render).join('')}
       <div class="cc-steps"><span>단계별 풀이</span><ol>${e.steps.map((s) => `<li>${inl(s)}</li>`).join('')}</ol></div></div></div></div>`);
@@ -128,17 +131,24 @@ function calcRows(u) {
   });
   return rows.join('\n');
 }
-
-function unitSections(u) {
-  const answers = [];
-  const blankBody = sumRows(u, 'blank', answers);
-  u._answers = answers;
-  const out = [];
-  out.push(`<section class="flow" ${sectionAttrs(u, PARTS[0], 'sum')}><div class="top">${unitOpener(u)}${partBand(0, '학습지 순서대로, ★는 학교 선생님이 강조한 곳')}</div>${sumRows(u, 'sum')}</section>`);
-  out.push(`<section class="flow" ${sectionAttrs(u, PARTS[1], 'blank')}><div class="top">${partBand(1, `정리와 같은 모양 · 빈칸 ${answers.length}개 · 정답은 별책`, `u${u.no}-blank`)}</div>${blankBody}</section>`);
-  out.push(`<section class="flow" ${sectionAttrs(u, PARTS[2], 'ox')}><div class="top">${partBand(2, `${u.ox.length}문항 · 맞으면 O, 틀리면 X에 표시하고 X는 바르게 고쳐 쓴다`, `u${u.no}-ox`)}</div>${oxRows(u)}</section>`);
-  if (u.calc) out.push(`<section class="flow" ${sectionAttrs(u, PARTS[3], 'calc')}><div class="top">${partBand(3, '학습지 예시 → 단계별 풀이 → 숫자를 바꾼 연습', `u${u.no}-calc`)}</div>${calcRows(u)}</section>`);
-  return out;
+const attrs = (u, part, kind) => `data-kind="${kind}" data-tab="${esc(u.big)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${u.no} ${u.title} · ${part}`)}"`;
+function sumSection(u) {
+  return `<section class="flow" ${attrs(u, '학습지 개념 총정리', 'sum')}><div class="top">${unitOpener(u, 1, `u${u.no}-sum`, [`학습지 개념 총정리 ${u.sum.length}항목`])}</div>${sumRows(u)}</section>`;
+}
+function practiceSections(u) {
+  const parts = [];
+  const np = (u.priv?.problems || []).length;
+  if (np) parts.push({ kind: 'prob', label: '학습지 문제', sub: `학습지에 실린 문제 그대로 ${np}개 · 정답과 풀이는 별책`, rows: probRows(u) });
+  parts.push({ kind: 'ox', label: 'O/X', sub: `${u.ox.length}문항 · 맞으면 O, 틀리면 X에 표시하고 X는 바르게 고쳐 쓴다`, rows: oxRows(u) });
+  if (u.calc) parts.push({ kind: 'calc', label: '계산 풀이', sub: '학습지 예시 → 단계별 풀이 → 숫자를 바꾼 연습', rows: calcRows(u) });
+  return parts.map((p, k) => {
+    const id = `u${u.no}-${p.kind}`;
+    const top = k === 0 ? unitOpener(u, 2, id, parts.map((x) => x.label)) + band(k + 1, p.label, p.sub) : band(k + 1, p.label, p.sub, id);
+    return `<section class="flow" ${attrs(u, p.label, p.kind)}${k === 0 ? ' data-nosoft="1"' : ''}><div class="top">${top}</div>${p.rows}</section>`;
+  });
+}
+function partPage(no, title, lines) {
+  return `<section class="flow" data-kind="part" data-tab="${no === 1 ? 'Ⅲ' : 'Ⅳ'}" data-head-left="${esc(headLeft)}" data-head-right="PART ${no}" id="part-${no}"><div class="top"><div class="sm-part"><span>PART ${two(no)}</span><h1>${title}</h1><ul>${lines.map((l) => `<li>${inl(l)}</li>`).join('')}</ul></div></div></section>`;
 }
 
 // 대단원 끝 백지테스트
@@ -166,35 +176,40 @@ function coverPage() {
     <div class="sm-cv-school"><b>${esc(BOOK.school)}</b><span>${esc(BOOK.grade)}</span></div>
     <div class="sm-cv-title">학습지 총정리</div>
     <div class="cv-range">${esc(BOOK.range)}</div>
-    <div class="sm-cv-parts"><span>자세한 정리</span><span>빈칸 테스트</span><span>O/X</span><span>계산 풀이</span><span>백지테스트</span></div>
+    <div class="sm-cv-parts"><span>PART 1 학습지 개념 총정리</span><span>PART 2 연습문제 총정리</span></div>
     <div class="cv-foot"><span>정답과 해설은 별책</span><span class="cv-name">이름 <i></i></span></div>
   </div></div></section>`;
 }
 function guidePage(bigs, appendList) {
-  const rows = [];
+  const cell = (id, on = true) => (on ? `<td><span data-pg="${id}"></span></td>` : '<td class="na">—</td>');
+  const r1 = [];
+  const r2 = [];
   let lastBig = '';
+  const btRow = (big) => `<tr class="toc-bt"><td></td><td>${esc(big)} 대단원 백지테스트</td><td colspan="3"><span data-pg="blank-${esc(big)}"></span>쪽</td></tr>`;
   for (const u of units) {
     if (u.big !== lastBig) {
-      if (lastBig && bigs.includes(lastBig)) rows.push(`<tr class="toc-bt"><td></td><td>${esc(lastBig)} 대단원 백지테스트</td><td colspan="4"><span data-pg="blank-${esc(lastBig)}"></span>쪽</td></tr>`);
+      if (lastBig && bigs.includes(lastBig)) r2.push(btRow(lastBig));
       lastBig = u.big;
-      rows.push(`<tr class="toc-big"><td colspan="6">${esc(u.big)}. ${esc(BIG_TITLE[u.big] || '')}</td></tr>`);
+      r1.push(`<tr class="toc-big"><td colspan="3">${esc(u.big)}. ${esc(BIG_TITLE[u.big] || '')}</td></tr>`);
+      r2.push(`<tr class="toc-big"><td colspan="5">${esc(u.big)}. ${esc(BIG_TITLE[u.big] || '')}</td></tr>`);
     }
-    const cell = (id, on = true) => (on ? `<td><span data-pg="${id}"></span></td>` : '<td class="na">—</td>');
-    rows.push(`<tr><td class="no">${esc(u.no)}</td><td>${esc(u.title)}</td>${cell(`u${u.no}-sum`)}${cell(`u${u.no}-blank`)}${cell(`u${u.no}-ox`)}${cell(`u${u.no}-calc`, !!u.calc)}</tr>`);
+    r1.push(`<tr><td class="no">${esc(u.no)}</td><td>${esc(u.title)}</td>${cell(`u${u.no}-sum`)}</tr>`);
+    r2.push(`<tr><td class="no">${esc(u.no)}</td><td>${esc(u.title)}</td>${cell(`u${u.no}-prob`, !!(u.priv?.problems || []).length)}${cell(`u${u.no}-ox`)}${cell(`u${u.no}-calc`, !!u.calc)}</tr>`);
   }
-  if (lastBig && bigs.includes(lastBig)) rows.push(`<tr class="toc-bt"><td></td><td>${esc(lastBig)} 대단원 백지테스트</td><td colspan="4"><span data-pg="blank-${esc(lastBig)}"></span>쪽</td></tr>`);
-  for (const a of appendList) rows.push(`<tr class="toc-bt"><td></td><td>${esc(a.title)}</td><td colspan="4">${a.ans ? '백지테스트 뒤' : '책 맨 뒤'}</td></tr>`);
+  if (lastBig && bigs.includes(lastBig)) r2.push(btRow(lastBig));
+  for (const a of appendList) r2.push(`<tr class="toc-bt"><td></td><td>${esc(a.title)}</td><td colspan="3">${a.ans ? 'Ⅴ 백지테스트 뒤' : '책 맨 뒤'}</td></tr>`);
   return `<section class="flow" data-kind="guide" data-tab="Ⅲ" data-head-left="${esc(headLeft)}" data-head-right="차례 · 이 책 쓰는 법"><div class="top"><div class="sm-guide">
     <h2>차례</h2>
-    <table class="sm-toc"><thead><tr><th>중단원</th><th></th><th>정리</th><th>빈칸</th><th>O/X</th><th>계산</th></tr></thead><tbody>${rows.join('')}</tbody></table>
+    <div class="sm-toc2">
+      <table class="sm-toc"><thead><tr><th colspan="2">PART 1 학습지 개념 총정리</th><th>쪽</th></tr></thead><tbody>${r1.join('')}</tbody></table>
+      <table class="sm-toc"><thead><tr><th colspan="2">PART 2 연습문제 총정리</th><th>학습지 문제</th><th>O/X</th><th>계산</th></tr></thead><tbody>${r2.join('')}</tbody></table>
+    </div>
     <h2>이 책 쓰는 법</h2>
     <ol class="sm-how">
-      <li>${inl('**자세한 정리**를 학습지 옆에 펴 놓고 읽는다. 쪽마다 붙은 **학습지 ○쪽**으로 학교 학습지를 찾아볼 수 있다. **★는 학교 선생님이 강조한 곳**이니 두 번 읽는다.')}</li>
-      <li>${inl('**빈칸 테스트**는 정리와 같은 모양에서 핵심어만 비웠다. 정리를 덮고 채운 뒤 **별책 정답**으로 채점한다. 틀린 칸은 정리 쪽에서 다시 찾아 읽는다.')}</li>
-      <li>${inl('**O/X**는 학습지 문장을 살짝 바꾼 것이다. X라면 어디가 틀렸는지 찾아 **바르게 고쳐 쓴다**.')}</li>
-      <li>${inl('**계산 풀이**(08·10)는 학습지 예시의 풀이 단계를 따라 읽고, 숫자를 바꾼 연습 문제를 공식대로 직접 푼다.')}</li>
-      <li>${inl('대단원이 끝나면 **백지테스트**로 머릿속에 남은 것을 확인한다.')}</li>
-      <li>${inl('쪽 아래의 **목표 시간**을 보고 시간을 재며 풀고, **걸린 시간과 채점 결과**를 적는다. 수업 때 선생님이 이 칸을 보고 도와준다.')}</li>
+      <li>${inl('**PART 1 학습지 개념 총정리**: 학교 학습지를 순서대로 자세히 정리했다. 항목마다 붙은 **학습지 ○쪽**으로 학습지를 찾아볼 수 있고, **★는 학교 선생님이 필기·강조한 곳**이니 두 번 읽는다. 학습지에 없는 시험 범위는 **학습지 없음(개념서)**으로 표시했다.')}</li>
+      <li>${inl('**PART 2 연습문제 총정리**: 중단원마다 **학습지에 실린 문제**(그대로) → **O/X**(학습지 문장을 살짝 바꿈, X는 바르게 고쳐 쓰기) → **계산 풀이**(08·10: 학습지 예시 풀이를 따라 읽고 숫자를 바꾼 연습을 직접 품) 순서로 푼다.')}</li>
+      <li>${inl('대단원이 끝나면 **백지테스트**, 맨 끝에는 **Ⅳ·Ⅴ 백지도**(나라 위치)로 머릿속에 남은 것을 확인한다.')}</li>
+      <li>${inl('정답과 풀이는 모두 **별책**에 있다. 쪽 아래의 **목표 시간**을 보고 시간을 재며 풀고, **걸린 시간과 채점 결과**를 적는다. 수업 때 선생님이 이 칸을 보고 도와준다.')}</li>
     </ol>
   </div></div></section>`;
 }
@@ -204,9 +219,9 @@ function answerBook(blankAns) {
   const rows = [];
   for (const u of units) {
     rows.push(`<div class="row" data-keep="next"><div class="main"><div class="ans-u"><b>${esc(u.no)}</b> ${esc(u.title)}</div></div></div>`);
-    u._secAns.forEach((g, k) => {
-      const list = u._answers.slice(g.from, g.to).map((a, j) => `<span><i>${g.from + j + 1}</i>${inl(a)}</span>`).join('');
-      rows.push(`<div class="row"${k === 0 ? ' data-keep="next"' : ''}><div class="main">${k === 0 ? '<div class="ans-sec"><h4>빈칸 테스트</h4></div>' : ''}<p class="ans-bk"><b>${g.no}</b>${list}</p></div></div>`);
+    (u.priv?.problems || []).forEach((q, i) => {
+      const ans = q.fill ? q.answer.map((x, k) => `${k + 1}) ${x}`).join(' / ') : CIRC[q.answer - 1];
+      rows.push(`<div class="row"><div class="main"><div class="ans-sec"><h4>학습지 문제 ${i + 1} · ${esc(q.from)} <span class="ans-a">${inl(ans)}</span></h4>${q.steps ? `<ol class="ans-steps">${q.steps.map((x) => `<li>${inl(x)}</li>`).join('')}</ol>` : ''}</div></div></div>`);
     });
     rows.push(`<div class="row"><div class="main"><div class="ans-sec"><h4>O/X</h4><ol class="ans-ox">${u.ox.map(([, o, fix]) => `<li><b class="${o === 'O' ? 'o' : 'x'}">${o}</b>${fix ? ` ${inl(fix)}` : ''}</li>`).join('')}</ol></div></div></div>`);
     if (u.calc) {
@@ -217,7 +232,7 @@ function answerBook(blankAns) {
   }
   const bt = blankAns.map((b) => `<div class="row"><div class="main"><div class="ans-sec ans-btw"><h4>${esc(b.big)} 백지테스트 모범 답안 · ${esc(b.title)}</h4>${b.html}</div></div></div>`).join('\n');
   const btSec = bt ? `<section class="flow" data-kind="answers1" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="백지테스트 모범 답안">${bt}</section>` : '';
-  return [`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설(별책)"><div class="top"><div class="ans-cover"><span>${SERIES} 총정리 · ${esc(BOOK.school)}</span><h1>정답과 해설</h1><p>빈칸 테스트 정답 · O/X 정답과 고친 문장 · 계산 연습 풀이 · 백지테스트 모범 답안</p></div></div>${rows.join('\n')}</section>`, btSec];
+  return [`<section class="flow" data-kind="answers" data-tab="답" data-head-left="${esc(headLeft)}" data-head-right="정답과 해설(별책)"><div class="top"><div class="ans-cover"><span>${SERIES} 총정리 · ${esc(BOOK.school)}</span><h1>정답과 해설</h1><p>학습지 문제 정답과 풀이 · O/X 정답과 고친 문장 · 계산 연습 풀이 · 백지테스트 모범 답안 · 백지도 정답</p></div></div>${rows.join('\n')}</section>`, btSec];
 }
 
 const page = (title, sections, layout) => `<!doctype html>
@@ -245,9 +260,11 @@ const page = (title, sections, layout) => `<!doctype html>
 // ── 조립 ──
 const bigs = [...new Set(units.map((u) => u.big))];
 const blankAns = [];
-const body = [];
+const body = [partPage(1, '학습지 개념 총정리', ['학교 학습지를 순서대로, 빈칸 없이 자세하게 정리했다.', '★ = 학교 선생님 필기·강조, **학습지 ○쪽** = 학습지 위치'])];
+for (const u of units) body.push(sumSection(u));
+body.push(partPage(2, '연습문제 총정리', ['중단원마다 학습지 문제(그대로) → O/X → 계산 풀이', '대단원 끝 백지테스트, 맨 끝 Ⅳ·Ⅴ 백지도', '정답과 풀이는 별책']));
 for (const big of bigs) {
-  for (const u of units.filter((x) => x.big === big)) body.push(...unitSections(u));
+  for (const u of units.filter((x) => x.big === big)) body.push(...practiceSections(u));
   if (!ONLY.length) body.push(...(await blankSections(big, blankAns)));
 }
 // 백지도(Ⅳ·Ⅴ 나라 위치, 백지도 채팅의 학교판 PDF): book.blankMap이 켜져 있고 파일이 있으면 본문 뒤(붙일 PDF 앞)에 넣는다
@@ -256,7 +273,7 @@ if (BM && !existsSync(join(ROOT, BM.file))) console.warn(`백지도 PDF 없음: 
 const appendList = [...(BM && existsSync(join(ROOT, BM.file)) ? [BM] : []), ...(BOOK.append || []).filter((a) => existsSync(join(ROOT, a.file)))];
 const name = `${BOOK.school}-총정리${ONLY.length ? `-${ONLY.join('·')}` : ''}`;
 const student = page(name, [coverPage(), guidePage(ONLY.length ? [] : bigs.filter((b) => BOOK.blank?.[b]), appendList), ...body],
-  { cover: 1, guide: 1, sum: 1, blank: 1, ox: 2, calc: 1, bt: 1, soft: ['ox', 'calc'], softMin: 0.2, memoMin: 0.18, spreadMax: 4, memoTitle: '정리 노트', prompts: { sum: ['헷갈리는 개념을 내 말로 다시 적는다.'], blank: ['틀린 빈칸의 핵심어를 여기에 다시 써 본다.'], ox: ['틀린 O/X 문장을 바르게 고쳐 다시 써 본다.'], calc: ['풀이 과정을 여기에 적는다.'] } });
+  { cover: 1, guide: 1, part: 1, sum: 1, prob: 1, ox: 2, calc: 1, bt: 1, soft: ['prob', 'ox', 'calc'], softMin: 0.2, memoMin: 0.18, spreadMax: 4, memoTitle: '정리 노트', prompts: { sum: ['헷갈리는 개념을 내 말로 다시 적는다.'], prob: ['풀이 과정과 헷갈린 선지를 적는다.'], ox: ['틀린 O/X 문장을 바르게 고쳐 다시 써 본다.'], calc: ['풀이 과정을 여기에 적는다.'] } });
 const answers = page(`${name}-정답`, answerBook(blankAns), { answers: 2, answers1: 1, memoMin: 2 });
 
 const browser = await chromium.launch();
