@@ -76,7 +76,7 @@ const headLeft = `<b>${SERIES}</b> 총정리 | ${esc(BOOK.school)}`;
 const sectionAttrs = (u, part, kind, extra = '') => `data-kind="${kind}" data-tab="${esc(u.big)}" data-head-left="${esc(headLeft)}" data-head-right="${esc(`${u.no} ${u.title} · ${part}`)}" ${extra}`;
 const PARTS = ['자세한 정리', '빈칸 테스트', 'O/X', '계산 풀이'];
 const partBand = (k, sub, id) => `<div class="sm-band"${id ? ` id="${id}"` : ''}><b>${two(k + 1)}</b><span>${PARTS[k]}</span>${sub ? `<i>${sub}</i>` : ''}</div>`;
-const readMin = (html) => Math.max(0.5, html.replace(/<[^>]+>/g, '').length / 450); // 꼼꼼히 읽기: 1분에 약 450자
+const readMin = (html) => Math.max(0.5, html.replace(/<[^>]+>/g, '').length / 250); // 꼼꼼히 읽기(외우며): 1분에 약 250자
 
 function unitOpener(u) {
   const ch = chapterOf(u);
