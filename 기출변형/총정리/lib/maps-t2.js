@@ -94,3 +94,25 @@ export const RENEWABLE_MAP = {
   note: '수력은 강수량이 많고 낙차가 큰 곳(브라질·캐나다·노르웨이), 풍력은 바람이 강한 편서풍 지역(독일·영국·덴마크), 태양광은 일사량이 많은 곳, 지열은 **판의 경계**(환태평양 조산대·아이슬란드)에 발달한다.',
   source: '지도 자료: Natural Earth (주요 나라만 단순화)',
 };
+
+// 06 공공 기관 지방 이전 — 혁신 도시와 세종 (2026-11-28 계산여고 채팅에서 추가, 개념서 06 지도와 같은 설정, 위치는 대략)
+export const INNOVATION_MAP = {
+  t: 'map', view: [124.9, 32.2, 130.5, 38.7], title: '공공 기관 지방 이전: 혁신 도시와 세종', w: 440, h: 460, width: 58, style: 'terrain', provinces: true, krRivers: 600,
+  seas: [['동 해', 130.0, 36.6, 12], ['황 해', 125.4, 36.0, 12], ['남 해', 128.2, 33.9, 11]],
+  markers: [
+    { lon: 126.98, lat: 37.56, label: '서울', pos: 'left', cls: 'k1' },
+    { lon: 127.29, lat: 36.48, label: '세종', pos: 'left', cls: 'k3' },
+    { lon: 127.97, lat: 37.33, label: '원주', pos: 'right', cls: 'k2' },
+    { lon: 127.53, lat: 36.90, label: '진천·음성', pos: 'right', cls: 'k2' },
+    { lon: 128.18, lat: 36.12, label: '김천', pos: 'left', cls: 'k2' },
+    { lon: 128.73, lat: 35.88, label: '대구', pos: 'right', cls: 'k2' },
+    { lon: 129.32, lat: 35.56, label: '울산', pos: 'right', cls: 'k2' },
+    { lon: 129.06, lat: 35.14, label: '부산', pos: 'bottom', cls: 'k2' },
+    { lon: 128.13, lat: 35.16, label: '진주', pos: 'bottom', cls: 'k2' },
+    { lon: 127.06, lat: 35.83, label: '전주·완주', pos: 'left', cls: 'k2' },
+    { lon: 126.79, lat: 35.02, label: '나주', pos: 'left', cls: 'k2' },
+    { lon: 126.51, lat: 33.25, label: '서귀포', pos: 'right', cls: 'k2' },
+  ],
+  legend: [{ pin: 'k2', label: '혁신 도시' }, { pin: 'k3', label: '행정 중심 복합 도시' }, { pin: 'k1', label: '수도권 중심' }], legendV: true, legendAt: [6, 380],
+  source: '지도 자료: Natural Earth, 통계청, 고도 AWS Terrain Tiles (위치는 대략)',
+};
