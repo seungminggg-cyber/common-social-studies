@@ -25,7 +25,6 @@ const args = process.argv.slice(2);
 const school = args[0] || 'inguk';
 const wantPng = args.includes('png');
 const ONLY = (args.find((a) => a.startsWith('only=')) || '').slice(5).split(',').filter(Boolean);
-const SERIES = 'MINT';
 const OUT = join(ROOT, 'out');
 mkdirSync(join(OUT, 'html'), { recursive: true });
 
@@ -36,6 +35,7 @@ const imp = async (f) => (await import(pathToFileURL(f).href)).default;
 // ── 원고 모으기 ──
 const CDIR = join(ROOT, 'content', school);
 const BOOK = await imp(join(CDIR, 'book.js'));
+const SERIES = BOOK.series || 'MINT'; // 시리즈 이름(강사 확인 전 제안: MINT 총정리)
 const units = [];
 const skipped = [];
 for (const no of BOOK.units) {
@@ -45,6 +45,10 @@ for (const no of BOOK.units) {
   const u = await imp(f);
   const pf = join(CDIR, 'private', `${no}.js`);
   u.priv = existsSync(pf) ? await imp(pf) : null;
+  // 켜고 끄는 묶음(예: 16 윤리 부분 opt: 'ethics'): book.js의 opt에서 false면 뺀다
+  const on = (o) => !o || (BOOK.opt || {})[o] !== false;
+  u.sum = u.sum.filter((x) => on(x.opt));
+  u.ox = u.ox.filter((x) => on(x[3]));
   if (!u.priv && u.calc) console.warn(`[${no}] 학습지 예시(private/${no}.js)가 없어 계산 풀이의 학습지 예시를 뺀다(학습지를 보고 다시 만든다).`);
   units.push(u);
 }
@@ -179,7 +183,7 @@ function guidePage(bigs, appendList) {
     rows.push(`<tr><td class="no">${esc(u.no)}</td><td>${esc(u.title)}</td>${cell(`u${u.no}-sum`)}${cell(`u${u.no}-blank`)}${cell(`u${u.no}-ox`)}${cell(`u${u.no}-calc`, !!u.calc)}</tr>`);
   }
   if (lastBig && bigs.includes(lastBig)) rows.push(`<tr class="toc-bt"><td></td><td>${esc(lastBig)} 대단원 백지테스트</td><td colspan="4"><span data-pg="blank-${esc(lastBig)}"></span>쪽</td></tr>`);
-  for (const a of appendList) rows.push(`<tr class="toc-bt"><td></td><td>${esc(a.title)}</td><td colspan="4">책 맨 뒤</td></tr>`);
+  for (const a of appendList) rows.push(`<tr class="toc-bt"><td></td><td>${esc(a.title)}</td><td colspan="4">${a.ans ? '백지테스트 뒤' : '책 맨 뒤'}</td></tr>`);
   return `<section class="flow" data-kind="guide" data-tab="Ⅲ" data-head-left="${esc(headLeft)}" data-head-right="차례 · 이 책 쓰는 법"><div class="top"><div class="sm-guide">
     <h2>차례</h2>
     <table class="sm-toc"><thead><tr><th>중단원</th><th></th><th>정리</th><th>빈칸</th><th>O/X</th><th>계산</th></tr></thead><tbody>${rows.join('')}</tbody></table>
@@ -246,7 +250,10 @@ for (const big of bigs) {
   for (const u of units.filter((x) => x.big === big)) body.push(...unitSections(u));
   if (!ONLY.length) body.push(...(await blankSections(big, blankAns)));
 }
-const appendList = (BOOK.append || []).filter((a) => existsSync(join(ROOT, a.file)));
+// 백지도(Ⅳ·Ⅴ 나라 위치, 백지도 채팅의 학교판 PDF): book.blankMap이 켜져 있고 파일이 있으면 본문 뒤(붙일 PDF 앞)에 넣는다
+const BM = BOOK.blankMap && !ONLY.length ? { title: 'Ⅳ·Ⅴ 백지도(나라 위치)', file: `out/append/백지도_${BOOK.school}_학생용.pdf`, ans: `out/append/백지도_${BOOK.school}_정답.pdf` } : null;
+if (BM && !existsSync(join(ROOT, BM.file))) console.warn(`백지도 PDF 없음: ${BM.file} (README의 '백지도' 참고)`);
+const appendList = [...(BM && existsSync(join(ROOT, BM.file)) ? [BM] : []), ...(BOOK.append || []).filter((a) => existsSync(join(ROOT, a.file)))];
 const name = `${BOOK.school}-총정리${ONLY.length ? `-${ONLY.join('·')}` : ''}`;
 const student = page(name, [coverPage(), guidePage(ONLY.length ? [] : bigs.filter((b) => BOOK.blank?.[b]), appendList), ...body],
   { cover: 1, guide: 1, sum: 1, blank: 1, ox: 2, calc: 1, bt: 1, soft: ['ox', 'calc'], softMin: 0.2, memoMin: 0.18, spreadMax: 4, memoTitle: '정리 노트', prompts: { sum: ['헷갈리는 개념을 내 말로 다시 적는다.'], blank: ['틀린 빈칸의 핵심어를 여기에 다시 써 본다.'], ox: ['틀린 O/X 문장을 바르게 고쳐 다시 써 본다.'], calc: ['풀이 과정을 여기에 적는다.'] } });
@@ -324,6 +331,12 @@ if (appendList.length) {
   const tmp = join(OUT, `${name}-tmp.pdf`);
   execFileSync('pdfunite', [s.pdf, ...appendList.map((x) => join(ROOT, x.file)), tmp]);
   renameSync(tmp, s.pdf);
+}
+const bmAns = appendList.find((x) => x.ans && existsSync(join(ROOT, x.ans)));
+if (bmAns) {
+  const tmp = join(OUT, `${name}-정답-tmp.pdf`);
+  execFileSync('pdfunite', [a.pdf, join(ROOT, bmAns.ans), tmp]);
+  renameSync(tmp, a.pdf);
 }
 console.log(`${name}: 학생용 ${s.pages}쪽${appendList.length ? ` + 붙인 PDF ${appendList.map((x) => x.title).join(', ')}` : ''} → 총정리/out/${name}.pdf · 정답 별책 ${a.pages}쪽 → ${name}-정답.pdf`);
 await browser.close();
