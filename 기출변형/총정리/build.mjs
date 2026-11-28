@@ -53,6 +53,9 @@ for (const no of BOOK.units) {
   if (!u.priv && u.calc) console.warn(`[${no}] 학습지 예시(private/${no}.js)가 없어 계산 풀이의 학습지 예시를 뺀다(학습지를 보고 다시 만든다).`);
   units.push(u);
 }
+// 표지·차례·PART 쪽 색 = 첫 대단원(인천국제고 Ⅲ, 계산여고 Ⅰ), PART 2 쪽 = 둘째 대단원
+const FIRST_BIG = units[0]?.big || 'Ⅲ';
+const SECOND_BIG = [...new Set(units.map((u) => u.big))][1] || FIRST_BIG;
 if (skipped.length) console.warn(`아직 원고가 없는 중단원(건너뜀): ${skipped.join(', ')}`);
 
 // ── 핵심어 표시 바꾸기: 같은 원고 → 정리판(굵게) / 빈칸판(번호 빈칸) ──
@@ -148,11 +151,11 @@ function practiceSections(u) {
   });
 }
 function partPage(no, title, lines) {
-  return `<section class="flow" data-kind="part" data-tab="${no === 1 ? 'Ⅲ' : 'Ⅳ'}" data-head-left="${esc(headLeft)}" data-head-right="PART ${no}" id="part-${no}"><div class="top"><div class="sm-part"><span>PART ${two(no)}</span><h1>${title}</h1><ul>${lines.map((l) => `<li>${inl(l)}</li>`).join('')}</ul></div></div></section>`;
+  return `<section class="flow" data-kind="part" data-tab="${no === 1 ? FIRST_BIG : SECOND_BIG}" data-head-left="${esc(headLeft)}" data-head-right="PART ${no}" id="part-${no}"><div class="top"><div class="sm-part"><span>PART ${two(no)}</span><h1>${title}</h1><ul>${lines.map((l) => `<li>${inl(l)}</li>`).join('')}</ul></div></div></section>`;
 }
 
 // 대단원 끝 백지테스트
-const BIG_TITLE = { 'Ⅲ': '시장경제와 지속가능발전', 'Ⅳ': '세계화와 평화', 'Ⅴ': '미래와 지속가능한 삶' };
+const BIG_TITLE = { 'Ⅰ': '인권 보장과 헌법', 'Ⅱ': '사회 정의와 불평등', 'Ⅲ': '시장경제와 지속가능발전', 'Ⅳ': '세계화와 평화', 'Ⅴ': '미래와 지속가능한 삶' };
 async function blankSections(big, answerOut) {
   const keys = BOOK.blank?.[big] || [];
   const out = [];
@@ -169,8 +172,8 @@ async function blankSections(big, answerOut) {
 }
 
 function coverPage() {
-  return `<section class="flow" data-kind="cover" data-tab="Ⅲ"><div class="top"><div class="cv cv1 sm-cv">
-    <div class="cv-mark" aria-hidden="true">Ⅲ</div>
+  return `<section class="flow" data-kind="cover" data-tab="${FIRST_BIG}"><div class="top"><div class="cv cv1 sm-cv">
+    <div class="cv-mark" aria-hidden="true">${FIRST_BIG}</div>
     <div class="cv-top"><span>통합사회2 내신 · 학교 학습지 총정리</span><span>${esc(BOOK.exam)}</span></div>
     <div class="cv-wm"><h1 class="wm wm-two"><span class="wm-a">MINT</span><span class="wm-b">총정리</span></h1><p>승민T 학교별 내신 · 학습지 총정리</p></div>
     <div class="sm-cv-school"><b>${esc(BOOK.school)}</b><span>${esc(BOOK.grade)}</span></div>
@@ -198,7 +201,7 @@ function guidePage(bigs, appendList) {
   }
   if (lastBig && bigs.includes(lastBig)) r2.push(btRow(lastBig));
   for (const a of appendList) r2.push(`<tr class="toc-bt"><td></td><td>${esc(a.title)}</td><td colspan="3">${a.ans ? 'Ⅴ 백지테스트 뒤' : '책 맨 뒤'}</td></tr>`);
-  return `<section class="flow" data-kind="guide" data-tab="Ⅲ" data-head-left="${esc(headLeft)}" data-head-right="차례"><div class="top"><div class="sm-guide">
+  return `<section class="flow" data-kind="guide" data-tab="${FIRST_BIG}" data-head-left="${esc(headLeft)}" data-head-right="차례"><div class="top"><div class="sm-guide">
     <h2>차례</h2>
     <div class="sm-toc2">
       <table class="sm-toc"><thead><tr><th colspan="2">PART 1 학습지 개념 총정리</th><th>쪽</th></tr></thead><tbody>${r1.join('')}</tbody></table>
